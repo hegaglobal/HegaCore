@@ -13,8 +13,8 @@ MonoBehaviour:
   m_Name: UIManConfig
   m_EditorClassIdentifier: 
   classNamespace: Game.UI
-  dialogPrefabFolder: Addressables/Dialogs/
-  screenPrefabFolder: Addressables/Screens/
+  dialogPrefabFolder: Game/Addressables/Dialogs/
+  screenPrefabFolder: Game/Addressables/Screens/
   backgroundRootFolder: UIMan/Addressables/Backgrounds/
   animRootFolder: UIMan/Animations/
   modelScriptFolder: /Game/Scripts/Model
