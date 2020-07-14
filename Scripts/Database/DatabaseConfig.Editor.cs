@@ -6,15 +6,17 @@ using Sirenix.OdinInspector;
 
 namespace HegaCore
 {
-    public abstract partial class SingletonDatabase<T>
+    public sealed partial class DatabaseConfig
     {
         [Button("Find All"), BoxGroup("Csv Files")]
         private void FindAllCsvFiles()
         {
-            if (!AssetDatabase.IsValidFolder(this.internalPath))
+            this.internalCsvPath = $"Assets/{this.internalCsvFolder}";
+
+            if (!AssetDatabase.IsValidFolder(this.internalCsvPath))
                 return;
 
-            var guids = AssetDatabase.FindAssets($"t:{nameof(TextAsset)}", new[] { this.internalPath });
+            var guids = AssetDatabase.FindAssets($"t:{nameof(TextAsset)}", new[] { this.internalCsvPath });
 
             foreach (var guid in guids)
             {

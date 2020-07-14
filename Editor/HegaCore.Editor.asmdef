@@ -25,7 +25,9 @@
         "Unity.AddressableImporter.Editor",
         "Unity.Addressables.Editor",
         "Unity.ScriptableBuildPipeline",
-        "Unity.ScriptableBuildPipeline.Editor"
+        "Unity.ScriptableBuildPipeline.Editor",
+        "UIMan.Editor",
+        "UIMan.MVVM.Editor"
     ],
     "includePlatforms": [
         "Editor"

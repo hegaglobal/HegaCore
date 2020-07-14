@@ -3,13 +3,13 @@
 namespace HegaCore
 {
     [Serializable]
-    public sealed class SaveData
+    public sealed class UserSaveData
     {
         public PlayerSave[] PlayerSaves;
 
         public GameSettings Settings;
 
-        public SaveData()
+        public UserSaveData()
         {
             this.PlayerSaves = new PlayerSave[4];
 
@@ -23,7 +23,7 @@ namespace HegaCore
             };
         }
 
-        public void Copy(SaveData data)
+        public void Copy(UserSaveData data)
         {
             for (var i = 0; i < this.PlayerSaves.Length; i++)
             {

@@ -1,5 +1,5 @@
 ﻿using System;
-using System.Collections.Generic;
+//using System.Collections.Generic;
 using UnityEngine;
 
 namespace HegaCore
@@ -11,10 +11,10 @@ namespace HegaCore
         public int LastPlayerIndex { get; }
 
         public PlayerSave PlayerSave
-            => this.saveData.PlayerSaves[this.PlayerIndex];
+            => this.userSaveData.PlayerSaves[this.PlayerIndex];
 
         public GameSettings Settings
-            => this.saveData.Settings;
+            => this.userSaveData.Settings;
 
         public bool Initialized { get; private set; }
 
@@ -28,10 +28,6 @@ namespace HegaCore
 
         public bool BattleTutorial { get; set; }
 
-        public bool GirlProgressChanged { get; set; }
-
-        public int LobbyTutorialGreatSpell { get; set; }
-
         //public ListSegment<int> UnlockedMissions
         //    => this.unlockedMissions;
 
@@ -44,19 +40,20 @@ namespace HegaCore
         //public ListSegment<ChapterId> UnlockedWorks
         //    => this.unlockedWorks;
 
-        private readonly SaveData saveData;
+        private readonly UserSaveData userSaveData;
         private readonly ISaveDataHandler handler;
+
         //private readonly List<int> unlockedMissions;
         //private readonly List<ChapterId> unlockedChapters;
         //private readonly List<ChapterId> unlockedPoses;
         //private readonly List<ChapterId> unlockedWorks;
 
-        public GameData(SaveData saveData, ISaveDataHandler handler)
+        public GameData(UserSaveData saveData, ISaveDataHandler handler)
         {
-            this.saveData = saveData ?? throw new ArgumentNullException(nameof(saveData));
+            this.userSaveData = saveData ?? throw new ArgumentNullException(nameof(saveData));
             this.handler = handler ?? throw new ArgumentNullException(nameof(handler));
 
-            this.LastPlayerIndex = this.saveData.PlayerSaves.Length - 1;
+            this.LastPlayerIndex = this.userSaveData.PlayerSaves.Length - 1;
             this.PlayerIndex = 0;
 
             //this.unlockedMissions = new List<int>();
@@ -77,8 +74,6 @@ namespace HegaCore
             this.PlayerIndex = 0;
             //this.BattleId = default;
             this.BattleTutorial = false;
-            this.GirlProgressChanged = false;
-            this.LobbyTutorialGreatSpell = -1;
             //this.unlockedMissions.Clear();
             //this.unlockedChapters.Clear();
             //this.unlockedPoses.Clear();
@@ -89,7 +84,7 @@ namespace HegaCore
         {
             var result = false;
 
-            foreach (var save in this.saveData.PlayerSaves)
+            foreach (var save in this.userSaveData.PlayerSaves)
             {
                 if (save.Existed)
                 {
@@ -158,7 +153,7 @@ namespace HegaCore
             if (!IsValidPlayerIndex(index))
                 return false;
 
-            data = this.saveData.PlayerSaves[index];
+            data = this.userSaveData.PlayerSaves[index];
             return true;
         }
 
@@ -167,7 +162,7 @@ namespace HegaCore
             if (!IsValidPlayerIndex(index))
                 return;
 
-            this.saveData.PlayerSaves[index].New();
+            this.userSaveData.PlayerSaves[index].New();
         }
 
         public void SetBattleTutorial(bool value = true)
@@ -264,17 +259,17 @@ namespace HegaCore
             => this.PlayerSave.BadPoint > this.PlayerSave.GoodPoint;
 
         public void Load()
-            => this.saveData.Copy(this.handler.Load());
+            => this.userSaveData.Copy(this.handler.Load());
 
         public void Save()
-            => this.handler.Save(this.saveData);
+            => this.handler.Save(this.userSaveData);
 
         public void SaveSettings()
         {
             if (this.Daemon)
                 UnuLogger.Log(Newtonsoft.Json.JsonConvert.SerializeObject(this.Settings));
 
-            this.handler.Save(this.saveData);
+            this.handler.Save(this.userSaveData);
         }
 
         public void SavePlayer()
@@ -286,7 +281,7 @@ namespace HegaCore
                 UnuLogger.Log(Newtonsoft.Json.JsonConvert.SerializeObject(this.PlayerSave));
 
             ChangePlayerLastTime();
-            this.handler.Save(this.saveData);
+            this.handler.Save(this.userSaveData);
         }
 
         private bool Validate()

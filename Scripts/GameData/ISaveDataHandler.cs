@@ -2,8 +2,8 @@
 {
     public interface ISaveDataHandler
     {
-        SaveData Load();
+        UserSaveData Load();
 
-        void Save(SaveData data);
+        void Save(UserSaveData data);
     }
 }

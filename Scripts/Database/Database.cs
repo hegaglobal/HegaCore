@@ -1,43 +1,17 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.IO;
 using System.Table;
 using UnityEngine;
 using Cysharp.Threading.Tasks;
 using VisualNovelData.Data;
 using VisualNovelData.Parser;
-using Sirenix.OdinInspector;
 
 namespace HegaCore
 {
     public abstract partial class SingletonDatabase<T> : SingletonBehaviour<T> where T : SingletonDatabase<T>
     {
-        [BoxGroup("Save Data")]
-        [SerializeField, LabelText("Folder")]
-        private string saveDataFolder = string.Empty;
-
-        [BoxGroup("Save Data")]
-        [SerializeField, LabelText("File")]
-        private string saveDataFile = string.Empty;
-
-        [BoxGroup("Csv Files")]
         [SerializeField]
-        private string internalFolder = "Database";
-
-        [BoxGroup("Csv Files")]
-        [SerializeField]
-        private string externalFolder = "Database";
-
-        [BoxGroup("Csv Files")]
-        [SerializeField, DictionaryDrawerSettings(KeyLabel = "Name", ValueLabel = "File"), PropertySpace]
-        private CsvFileMap csvFiles = new CsvFileMap();
-
-        [SerializeField, ReadOnly, BoxGroup("Csv Files")]
-        private string internalPath = string.Empty;
-
-        [BoxGroup("Other Files")]
-        [SerializeField, LabelText("Daemon")]
-        private string DaemonFile = null;
+        private DatabaseConfig config = null;
 
         public string ExternalCsvPath { get; private set; }
 
@@ -80,31 +54,26 @@ namespace HegaCore
             this.QuestData = new QuestData();
         }
 
-        protected virtual void OnValidate()
-        {
-            this.internalPath = $"Assets/{this.internalFolder}";
-        }
-
         protected TextAsset GetCsv(string key)
-            => this.csvFiles[key];
+            => this.config.CsvFiles[key];
 
         public void Initialize()
         {
-            this.ExternalCsvPath = Path.Combine(Application.dataPath, "..", this.externalFolder);
+            this.ExternalCsvPath = Path.Combine(Application.dataPath, "..", this.config.ExternalCsvFolder);
 
 #if UNITY_EDITOR
-            this.SaveDataFolderPath = Path.Combine(Application.dataPath, "..", this.saveDataFolder);
+            this.SaveDataFolderPath = Path.Combine(Application.dataPath, "..", this.config.SaveDataEditorFolder);
 #else
-            this.SaveDataFolderPath = Path.Combine(Application.dataPath, this.saveDataFolder);
+            this.SaveDataFolderPath = Path.Combine(Application.dataPath, this.config.SaveDataFolder);
 #endif
-            this.SaveDataFilePath = Path.Combine(this.SaveDataFolderPath, this.saveDataFile);
+            this.SaveDataFilePath = Path.Combine(this.SaveDataFolderPath, this.config.SaveDataFile);
 
             this.CsvLoader.SetExternalPath(this.ExternalCsvPath);
         }
 
         public virtual UniTask Load()
         {
-            this.Daemon = this.CsvLoader.Daemon(this.DaemonFile);
+            this.Daemon = this.CsvLoader.Daemon(this.config.DaemonFile);
 
             this.CsvLoader.Load<LanguageEntry,
                                 LanguageEntry.Mapping>
