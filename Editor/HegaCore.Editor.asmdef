@@ -1,0 +1,41 @@
+{
+    "name": "HegaCore.Editor",
+    "references": [
+        "HegaCore",
+        "DOTween.Modules",
+        "Live2D.Cubism",
+        "TinyCsvParser",
+        "UIMan",
+        "UIMan.TextMeshPro",
+        "UniTask",
+        "UniTask.Addressables",
+        "UniTask.DOTween",
+        "UniTask.Linq",
+        "UniTask.TextMeshPro",
+        "Unity.Addressables",
+        "Unity.AddressablesManager",
+        "Unity.GoogleSpreadsheet",
+        "Unity.ObjectPooling",
+        "Unity.ObjectPooling.Addressables",
+        "Unity.ResourceManager",
+        "Unity.Supplements",
+        "Unity.TextMeshPro",
+        "UnityEngine.UI",
+        "VisualNovelData",
+        "Unity.AddressableImporter.Editor",
+        "Unity.Addressables.Editor",
+        "Unity.ScriptableBuildPipeline",
+        "Unity.ScriptableBuildPipeline.Editor"
+    ],
+    "includePlatforms": [
+        "Editor"
+    ],
+    "excludePlatforms": [],
+    "allowUnsafeCode": false,
+    "overrideReferences": false,
+    "precompiledReferences": [],
+    "autoReferenced": true,
+    "defineConstraints": [],
+    "versionDefines": [],
+    "noEngineReferences": false
+}
