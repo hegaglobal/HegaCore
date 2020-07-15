@@ -59,10 +59,11 @@ namespace HegaCore
 
         public void Initialize()
         {
-            this.ExternalCsvPath = Path.Combine(Application.dataPath, "..", this.config.ExternalCsvFolder);
+            var parentPath = Directory.GetParent(Application.dataPath).FullName;
+            this.ExternalCsvPath = Path.Combine(parentPath, this.config.ExternalCsvFolder);
 
 #if UNITY_EDITOR
-            this.SaveDataFolderPath = Path.Combine(Application.dataPath, "..", this.config.SaveDataEditorFolder);
+            this.SaveDataFolderPath = Path.Combine(parentPath, this.config.SaveDataEditorFolder);
 #else
             this.SaveDataFolderPath = Path.Combine(Application.dataPath, this.config.SaveDataFolder);
 #endif

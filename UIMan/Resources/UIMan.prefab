@@ -301,11 +301,10 @@ MonoBehaviour:
   rootCanvas: {fileID: 6275795420312667320}
   parent: {fileID: 6187593230858257049}
   tooltips:
-    keys: 000000000100000002000000
+    keys: 0000000001000000
     values:
-    - {fileID: 0}
-    - {fileID: 0}
-    - {fileID: 0}
+    - {fileID: 2500477364984431420}
+    - {fileID: 4797943420424778547}
 --- !u!1 &1820677933316082383
 GameObject:
   m_ObjectHideFlags: 0

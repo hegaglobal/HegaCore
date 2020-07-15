@@ -40,7 +40,7 @@ namespace HegaCore
 
         public string SaveDataFolder => this.saveDataFolder;
 
-        public string SaveDataEditorFolder => this.saveDataFolder;
+        public string SaveDataEditorFolder => this.saveDataEditorFolder;
 
         public string SaveDataFile => this.saveDataFile;
 

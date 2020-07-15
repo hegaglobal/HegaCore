@@ -37,7 +37,8 @@ namespace HegaCore.Editor
         {
             var config = ScriptableObjectHelper.GetOrCreate<DatabaseConfig>(false, "Assets/Game/Resources");
 
-            var folderPath = Path.Combine(Application.dataPath, "..", config.SaveDataEditorFolder);
+            var parentPath = Directory.GetParent(Application.dataPath).FullName;
+            var folderPath = Path.Combine(parentPath, config.SaveDataEditorFolder);
             var filePath = Path.Combine(folderPath, config.SaveDataFile);
 
             if (Directory.Exists(folderPath) && File.Exists(filePath))
@@ -49,7 +50,8 @@ namespace HegaCore.Editor
         {
             var config = ScriptableObjectHelper.GetOrCreate<DatabaseConfig>(false, "Assets/Game/Resources");
 
-            var folderPath = Path.Combine(Application.dataPath, "..", config.ExternalCsvFolder);
+            var parentPath = Directory.GetParent(Application.dataPath).FullName;
+            var folderPath = Path.Combine(parentPath, config.ExternalCsvFolder);
             var filePath = Path.Combine(folderPath, config.DaemonFile);
 
             if (!Directory.Exists(folderPath))
