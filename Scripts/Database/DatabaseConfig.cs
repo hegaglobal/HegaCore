@@ -1,4 +1,5 @@
 ﻿using System.Collections.Generic;
+using System.IO;
 using UnityEngine;
 using Sirenix.OdinInspector;
 
@@ -48,15 +49,33 @@ namespace HegaCore
 
         public string ExternalCsvFolder => this.externalCsvFolder;
 
-        public string InternalCsvPath => this.internalCsvPath;
-
         public IReadOnlyDictionary<string, TextAsset> CsvFiles => this.csvFiles;
 
         public string DaemonFile => this.daemonFile;
+
+        public string SaveDataFolderFullPath => Path.Combine(Application.dataPath, this.saveDataFolder);
+
+        public string SaveDataEditorFolderFullPath => Path.Combine(Application.dataPath, this.saveDataEditorFolder);
+
+        public string SaveDataFileFullPath => Path.Combine(this.SaveDataFolderFullPath, this.saveDataFile);
+
+        public string SaveDataEditorFileFullPath => Path.Combine(this.SaveDataEditorFolderFullPath, this.saveDataFile);
+
+        public string InternalCsvFolderFullPath => Path.Combine(Application.dataPath, this.internalCsvFolder);
+
+        public string ExternalCsvFolderFullPath => Path.Combine(Application.dataPath, this.externalCsvFolder);
+
+        public string DaemonFileFullPath => Path.Combine(this.ExternalCsvFolderFullPath, this.daemonFile);
 
         private void OnValidate()
         {
             this.internalCsvPath = $"Assets/{this.internalCsvFolder}";
         }
+
+        public bool CheckDaemon()
+            => File.Exists(this.DaemonFileFullPath);
+
+        public string GetExternalCsvFileFullPath(string file)
+            => Path.Combine(this.ExternalCsvFolderFullPath, file);
     }
 }

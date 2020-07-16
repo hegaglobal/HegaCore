@@ -12,8 +12,8 @@ namespace HegaCore.Editor
             "CUBISM_USE_MUTUAL_TEXTURE"
         };
 
-        [MenuItem("Tools/Toggle Addressable Cubism")]
-        public static void ToggleAddressableCubism()
+        [MenuItem("Tools/Toggle Addressable Cubism Symbols")]
+        public static void ToggleAddressableCubismSymbols()
         {
             var symbolString = PlayerSettings.GetScriptingDefineSymbolsForGroup(EditorUserBuildSettings.selectedBuildTargetGroup);
             var symbols = symbolString.Split(';').ToList();
@@ -36,12 +36,10 @@ namespace HegaCore.Editor
         public static void DeleteUserDataFile()
         {
             var config = ScriptableObjectHelper.GetOrCreate<DatabaseConfig>(false, "Assets/Game/Resources");
+            var filePath = config.SaveDataEditorFileFullPath;
 
-            var parentPath = Directory.GetParent(Application.dataPath).FullName;
-            var folderPath = Path.Combine(parentPath, config.SaveDataEditorFolder);
-            var filePath = Path.Combine(folderPath, config.SaveDataFile);
-
-            if (Directory.Exists(folderPath) && File.Exists(filePath))
+            if (Directory.Exists(config.SaveDataEditorFolderFullPath) &&
+                File.Exists(filePath))
                 File.Delete(filePath);
         }
 
@@ -50,9 +48,8 @@ namespace HegaCore.Editor
         {
             var config = ScriptableObjectHelper.GetOrCreate<DatabaseConfig>(false, "Assets/Game/Resources");
 
-            var parentPath = Directory.GetParent(Application.dataPath).FullName;
-            var folderPath = Path.Combine(parentPath, config.ExternalCsvFolder);
-            var filePath = Path.Combine(folderPath, config.DaemonFile);
+            var folderPath = config.ExternalCsvFolderFullPath;
+            var filePath = config.DaemonFileFullPath;
 
             if (!Directory.Exists(folderPath))
                 Directory.CreateDirectory(folderPath);

@@ -5,9 +5,10 @@ using Newtonsoft.Json;
 
 namespace HegaCore
 {
-    public abstract class GameDataManager<TGameData, TPlayerData>
-        where TGameData : GameData<TPlayerData>
+    public abstract class GameDataManager<TGameData, TPlayerData, TGameDataHandler>
+        where TGameData : GameData<TPlayerData>, new()
         where TPlayerData : PlayerData<TPlayerData>, new()
+        where TGameDataHandler : GameDataHandler<TGameData, TPlayerData>
     {
         public bool Daemon { get; set; }
 
@@ -44,14 +45,14 @@ namespace HegaCore
         //    => this.unlockedWorks;
 
         private readonly TGameData data;
-        private readonly IHandleGameData<TGameData, TPlayerData> handler;
+        private readonly TGameDataHandler handler;
 
         //private readonly List<int> unlockedMissions;
         //private readonly List<ChapterId> unlockedChapters;
         //private readonly List<ChapterId> unlockedPoses;
         //private readonly List<ChapterId> unlockedWorks;
 
-        public GameDataManager(TGameData data, IHandleGameData<TGameData, TPlayerData> handler)
+        public GameDataManager(TGameData data, TGameDataHandler handler)
         {
             this.data = data ?? throw new ArgumentNullException(nameof(data));
             this.handler = handler ?? throw new ArgumentNullException(nameof(handler));

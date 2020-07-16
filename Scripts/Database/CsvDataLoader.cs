@@ -14,7 +14,7 @@ namespace HegaCore
         private readonly CsvParserOptions parserOptions;
         private readonly CsvReaderOptions readerOptions;
 
-        private string externalPath;
+        private DatabaseConfig config;
 
         public CsvDataLoader()
         {
@@ -24,41 +24,37 @@ namespace HegaCore
             this.readerOptions = new CsvReaderOptions(new[] { "\r\n", "\n" });
         }
 
-        public void SetExternalPath(string value)
-            => this.externalPath = value;
+        public void Initialize(DatabaseConfig config)
+        {
+            this.config = config;
+        }
 
-        public void Load<TEntity, TMapping>(ITable<TEntity> table, TextAsset internalFile, bool autoIncrement = false)
+        public void Load<TEntity, TMapping>(ITable<TEntity> table, TextAsset file, bool autoIncrement = false)
             where TEntity : class, IEntry, new()
             where TMapping : CsvMapping<TEntity>, new()
         {
-            var csvData = GetCsvData(internalFile);
+            var csvData = GetCsvData(file);
             var rawData = Parse<TEntity, TMapping>(csvData);
             table.AddRange(rawData, autoIncrement);
         }
 
-        public void Load<TEntity, TMapping>(ITable<TEntity> table, TextAsset internalFile, IGetId<TEntity> idGetter)
+        public void Load<TEntity, TMapping>(ITable<TEntity> table, TextAsset file, IGetId<TEntity> idGetter)
             where TEntity : class, IEntry, new()
             where TMapping : CsvMapping<TEntity>, new()
         {
-            var csvData = GetCsvData(internalFile);
+            var csvData = GetCsvData(file);
             var rawData = Parse<TEntity, TMapping>(csvData);
             table.AddRange(rawData, idGetter);
         }
 
-        public void Load<TEntity, TMapping, TIdGetter>(ITable<TEntity> table, TextAsset internalFile)
+        public void Load<TEntity, TMapping, TIdGetter>(ITable<TEntity> table, TextAsset file)
             where TEntity : class, IEntry, new()
             where TMapping : CsvMapping<TEntity>, new()
             where TIdGetter : IGetId<TEntity>, new()
         {
-            var csvData = GetCsvData(internalFile);
+            var csvData = GetCsvData(file);
             var rawData = Parse<TEntity, TMapping>(csvData);
             table.AddRange(rawData, new TIdGetter());
-        }
-
-        public bool Daemon(string daemon)
-        {
-            var filePath = Path.Combine(this.externalPath, daemon);
-            return File.Exists(filePath);
         }
 
         private IList<TEntity> Parse<TEntity, TMapping>(string csvData)
@@ -79,14 +75,14 @@ namespace HegaCore
             return result;
         }
 
-        private string GetCsvData(TextAsset internalFile)
+        private string GetCsvData(TextAsset file)
         {
-            var externalFilePath = Path.Combine(this.externalPath, $"{internalFile.name}.csv");
+            var externalFilePath = this.config.GetExternalCsvFileFullPath($"{file.name}.csv");
 
             if (!File.Exists(externalFilePath))
             {
-                UnuLogger.Log($"Read [built-in]/{internalFile.name}");
-                return internalFile.text;
+                UnuLogger.Log($"Read [built-in]/{file.name}");
+                return file.text;
             }
 
             string data;
@@ -100,20 +96,20 @@ namespace HegaCore
             {
                 UnuLogger.LogException(ex);
 
-                UnuLogger.Log($"Read [built-in]/{internalFile.name}");
-                data = internalFile.text;
+                UnuLogger.Log($"Read [built-in]/{file.name}");
+                data = file.text;
             }
 
             return data;
         }
 
-        public void Load<TData, TParser>(TData data, TextAsset internalFile, in Segment<string> languages)
+        public void Load<TData, TParser>(TData data, TextAsset file, in Segment<string> languages)
             where TData : class
             where TParser : VisualNovelData.Parser.ICsvParser<TData>, new()
         {
             var parser = new TParser();
             parser.Initialize(languages);
-            parser.Parse(GetCsvData(internalFile), data);
+            parser.Parse(GetCsvData(file), data);
         }
     }
 }

@@ -1,5 +1,4 @@
 ﻿using System.Collections.Generic;
-using System.IO;
 using System.Table;
 using UnityEngine;
 using Cysharp.Threading.Tasks;
@@ -8,16 +7,12 @@ using VisualNovelData.Parser;
 
 namespace HegaCore
 {
-    public abstract partial class SingletonDatabase<T> : SingletonBehaviour<T> where T : SingletonDatabase<T>
+    public abstract partial class Database<T> : SingletonBehaviour<T> where T : Database<T>
     {
         [SerializeField]
         private DatabaseConfig config = null;
 
-        public string ExternalCsvPath { get; private set; }
-
-        public string SaveDataFolderPath { get; private set; }
-
-        public string SaveDataFilePath { get; private set; }
+        public bool Initialized { get; private set; }
 
         public bool Daemon { get; private set; }
 
@@ -42,12 +37,13 @@ namespace HegaCore
         private readonly List<string> languages;
         private readonly List<string> usedLanguages;
 
-        public SingletonDatabase()
+        public Database()
         {
             this.languages = new List<string>();
             this.usedLanguages = new List<string>();
 
             this.CsvLoader = new CsvDataLoader();
+            this.LanguageTable = new Table<LanguageEntry>();
             this.L10nData = new L10nData();
             this.NovelData = new NovelData();
             this.CharacterData = new CharacterData();
@@ -59,22 +55,21 @@ namespace HegaCore
 
         public void Initialize()
         {
-            var parentPath = Directory.GetParent(Application.dataPath).FullName;
-            this.ExternalCsvPath = Path.Combine(parentPath, this.config.ExternalCsvFolder);
+            Unload();
 
-#if UNITY_EDITOR
-            this.SaveDataFolderPath = Path.Combine(parentPath, this.config.SaveDataEditorFolder);
-#else
-            this.SaveDataFolderPath = Path.Combine(Application.dataPath, this.config.SaveDataFolder);
-#endif
-            this.SaveDataFilePath = Path.Combine(this.SaveDataFolderPath, this.config.SaveDataFile);
-
-            this.CsvLoader.SetExternalPath(this.ExternalCsvPath);
+            this.CsvLoader.Initialize(this.config);
+            this.Initialized = true;
         }
 
-        public virtual UniTask Load()
+        public UniTask Load()
         {
-            this.Daemon = this.CsvLoader.Daemon(this.config.DaemonFile);
+            if (!this.Initialized)
+            {
+                UnuLogger.LogError($"{nameof(Database<T>)} is not initialized");
+                return UniTask.FromResult(false);
+            }
+
+            this.Daemon = this.config.CheckDaemon();
 
             this.CsvLoader.Load<LanguageEntry,
                                 LanguageEntry.Mapping>
@@ -98,16 +93,24 @@ namespace HegaCore
                                 QuestParser>
                                 (this.QuestData, GetCsv(nameof(this.QuestData)), this.Languages);
 
+            OnLoad();
+
             return UniTask.FromResult(true);
         }
 
-        public virtual void Unload()
+        protected void Unload()
         {
             this.L10nData.Clear();
             this.NovelData.Clear();
             this.CharacterData.Clear();
             this.QuestData.Clear();
+
+            OnUnload();
         }
+
+        protected abstract void OnLoad();
+
+        protected abstract void OnUnload();
 
         private void PrepareLanguages()
         {

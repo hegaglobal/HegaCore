@@ -2,14 +2,15 @@
 
 using System.IO;
 using UnityEngine;
+using UnityEditor;
 using Sirenix.OdinInspector;
 
 namespace HegaCore.Editor
 {
-    public abstract class GameDataEditor<TGameData, TPlayerData, THandleGameData, TPlayerDataEditor> : MonoBehaviour
+    public abstract class GameDataEditor<TGameData, TPlayerData, TGameDataHandler, TPlayerDataEditor> : MonoBehaviour
         where TGameData : GameData<TPlayerData>, new()
         where TPlayerData : PlayerData<TPlayerData>, new()
-        where THandleGameData : IHandleGameData<TGameData, TPlayerData>, new()
+        where TGameDataHandler : GameDataHandler<TGameData, TPlayerData>, new()
         where TPlayerDataEditor : PlayerDataEditor<TPlayerData>
     {
         [PropertyOrder(0), BoxGroup(GroupID = "Save Data")]
@@ -17,15 +18,15 @@ namespace HegaCore.Editor
         private DatabaseConfig config = null;
 
         [PropertyOrder(0), BoxGroup(GroupID = "Save Data")]
-        [SerializeField, ReadOnly, FolderPath(AbsolutePath = true, UseBackslashes = true)]
+        [SerializeField, InlineButton(nameof(RevealFolder), "Open")]
         private string folderPath = string.Empty;
 
         [PropertyOrder(0), BoxGroup(GroupID = "Save Data")]
-        [SerializeField, ReadOnly, FilePath(AbsolutePath = true, UseBackslashes = true)]
+        [SerializeField, InlineButton(nameof(RevealFile), "Open")]
         private string filePath = string.Empty;
 
         [SerializeField, HideInInspector]
-        private THandleGameData handler = new THandleGameData();
+        private TGameDataHandler handler = new TGameDataHandler();
 
         [PropertySpace]
         [PropertyOrder(2), InlineEditor]
@@ -40,13 +41,18 @@ namespace HegaCore.Editor
         {
             if (this.config)
             {
-                var parentPath = Directory.GetParent(Application.dataPath).FullName;
-                this.folderPath = Path.Combine(parentPath, this.config.SaveDataEditorFolder);
-                this.filePath = Path.Combine(this.folderPath, this.config.SaveDataFile);
+                this.folderPath = this.config.SaveDataEditorFolderFullPath;
+                this.filePath = this.config.SaveDataEditorFileFullPath;
+            }
+            else
+            {
+                this.folderPath = string.Empty;
+                this.filePath = string.Empty;
             }
 
             this.settings = GetComponentInChildren<GameSettingsEditor>();
             this.players = GetComponentsInChildren<TPlayerDataEditor>();
+            this.handler.Initialize(this.folderPath, this.filePath);
         }
 
         [PropertySpace]
@@ -55,8 +61,8 @@ namespace HegaCore.Editor
         [Button]
         public void Load()
         {
-            EnsureDataFile();
-            var data = LoadData();
+            this.handler.EnsureFileExisting();
+            var data = this.handler.Load();
 
             this.settings.Set(data.Settings);
 
@@ -74,8 +80,8 @@ namespace HegaCore.Editor
         [Button]
         public void Save()
         {
-            EnsureDataFile();
-            var data = LoadData();
+            this.handler.EnsureFileExisting();
+            var data = this.handler.Load();
 
             this.settings.CopyTo(data.Settings);
 
@@ -89,29 +95,11 @@ namespace HegaCore.Editor
             this.handler.Save(data);
         }
 
-        public void EnsureDataFile()
-        {
-            if (!FileSystem.DirectoryExists(this.folderPath))
-                FileSystem.CreateDirectory(this.folderPath);
+        private void RevealFolder()
+            => EditorUtility.RevealInFinder(this.folderPath);
 
-            if (!FileSystem.FileExists(this.filePath))
-                this.handler.Save(new TGameData());
-        }
-
-        private TGameData LoadData()
-        {
-            try
-            {
-                var data = FileSystem.ReadFromBinaryFile<TGameData>(this.filePath);
-                return data;
-            }
-            catch
-            {
-                UnuLogger.LogWarning($"Failed to load data at {this.filePath}.");
-                UnuLogger.LogWarning($"{this.filePath} will be overwrited with new data.");
-                return null;
-            }
-        }
+        private void RevealFile()
+            => EditorUtility.RevealInFinder(this.filePath);
     }
 }
 
