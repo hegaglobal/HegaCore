@@ -7,10 +7,10 @@ using Sirenix.OdinInspector;
 
 namespace HegaCore.Editor
 {
-    public abstract class GameDataEditor<TGameData, TPlayerData, TGameDataHandler, TPlayerDataEditor> : MonoBehaviour
-        where TGameData : GameData<TPlayerData>, new()
+    public abstract class GameDataEditor<TPlayerData, TGameData, THandler, TPlayerDataEditor> : MonoBehaviour
         where TPlayerData : PlayerData<TPlayerData>, new()
-        where TGameDataHandler : GameDataHandler<TGameData, TPlayerData>, new()
+        where TGameData : GameData<TPlayerData>, new()
+        where THandler : GameDataHandler<TPlayerData, TGameData>, new()
         where TPlayerDataEditor : PlayerDataEditor<TPlayerData>
     {
         [PropertyOrder(0), BoxGroup(GroupID = "Save Data")]
@@ -26,7 +26,7 @@ namespace HegaCore.Editor
         private string filePath = string.Empty;
 
         [SerializeField, HideInInspector]
-        private TGameDataHandler handler = new TGameDataHandler();
+        private THandler handler = new THandler();
 
         [PropertySpace]
         [PropertyOrder(2), InlineEditor]

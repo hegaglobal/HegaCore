@@ -202,7 +202,6 @@ namespace HegaCore
                 return;
             }
 
-            this.canvasGroup.alpha = 0f;
             this.showTween = this.canvasGroup.DOFade(1f, this.ShowDuration);
             this.showTween.SetEase(Ease.Linear)
                           .OnComplete(ShowCompleted);
@@ -222,7 +221,6 @@ namespace HegaCore
             if (this.graphicRaycaster)
                 this.graphicRaycaster.enabled = true;
 
-            this.canvasGroup.alpha = 0f;
             this.showTween = this.canvasGroup.DOFade(1f, duration);
             this.showTween.SetEase(Ease.Linear)
                           .OnComplete(ShowCompleted);
@@ -258,7 +256,6 @@ namespace HegaCore
                 return;
             }
 
-            this.canvasGroup.alpha = 1f;
             this.hideTween = this.canvasGroup.DOFade(0f, this.HideDuration);
             this.hideTween.SetEase(Ease.Linear)
                           .OnComplete(HideCompleted);
@@ -272,7 +269,6 @@ namespace HegaCore
             this.showTween?.Kill();
             this.hideTween?.Kill();
 
-            this.canvasGroup.alpha = 1f;
             this.hideTween = this.canvasGroup.DOFade(0f, duration);
             this.hideTween.SetEase(Ease.Linear)
                           .OnComplete(HideCompleted);

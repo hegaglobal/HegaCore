@@ -3,19 +3,19 @@
 namespace HegaCore
 {
     [Serializable]
-    public abstract class GameData<T> where T : PlayerData<T>, new()
+    public abstract class GameData<TPlayerData> where TPlayerData : PlayerData<TPlayerData>, new()
     {
-        public T[] Players;
+        public TPlayerData[] Players;
 
         public GameSettings Settings;
 
         public GameData()
         {
-            this.Players = new T[4];
+            this.Players = new TPlayerData[4];
 
             for (var i = 0; i < this.Players.Length; i++)
             {
-                this.Players[i] = new T();
+                this.Players[i] = new TPlayerData();
             }
 
             this.Settings = new GameSettings {
@@ -23,7 +23,7 @@ namespace HegaCore
             };
         }
 
-        public void Copy(GameData<T> data)
+        public void Copy(GameData<TPlayerData> data)
         {
             for (var i = 0; i < this.Players.Length; i++)
             {

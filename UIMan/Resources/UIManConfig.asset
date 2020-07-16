@@ -17,9 +17,9 @@ MonoBehaviour:
   screenPrefabFolder: Game/Addressables/Screens/
   backgroundRootFolder: Game/Addressables/Backgrounds/
   animRootFolder: Game/Animations/
-  modelScriptFolder: /Game/Scripts/Model
+  modelScriptFolder: /Game/Scripts/UI/Models
   dialogScriptFolder: /Game/Scripts/UI/Dialogs
   screenScriptFolder: /Game/Scripts/UI/Screens
-  selectedType: UILobbyTutorialDialog
+  selectedType: PlayerSlotViewModel
   generatingType: 
   generatingTypeIsDialog: 1

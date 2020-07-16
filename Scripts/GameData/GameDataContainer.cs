@@ -5,20 +5,24 @@ using Newtonsoft.Json;
 
 namespace HegaCore
 {
-    public abstract class GameDataContainer<TGameData, TPlayerData, TGameDataHandler>
-        where TGameData : GameData<TPlayerData>, new()
+    public abstract class GameDataContainer<TPlayerData, TGameData, THandler>
         where TPlayerData : PlayerData<TPlayerData>, new()
-        where TGameDataHandler : GameDataHandler<TGameData, TPlayerData>
+        where TGameData : GameData<TPlayerData>, new()
+        where THandler : GameDataHandler<TPlayerData, TGameData>, new()
     {
-        public bool Daemon { get; set; }
+        public TGameData Data { get; }
+
+        public THandler Handler { get; }
 
         public TPlayerData CurrentPlayer
-            => this.data.Players[this.CurrentPlayerIndex];
+            => this.Data.Players[this.CurrentPlayerIndex];
 
         public GameSettings Settings
-            => this.data.Settings;
+            => this.Data.Settings;
 
-        public bool Initialized { get; private set; }
+        public bool CurrentPlayerInitialized { get; private set; }
+
+        public bool Daemon { get; set; }
 
         public int CurrentPlayerIndex { get; private set; }
 
@@ -44,20 +48,17 @@ namespace HegaCore
         //public ListSegment<ChapterId> UnlockedWorks
         //    => this.unlockedWorks;
 
-        private readonly TGameData data;
-        private readonly TGameDataHandler handler;
-
         //private readonly List<int> unlockedMissions;
         //private readonly List<ChapterId> unlockedChapters;
         //private readonly List<ChapterId> unlockedPoses;
         //private readonly List<ChapterId> unlockedWorks;
 
-        public GameDataContainer(TGameData data, TGameDataHandler handler)
+        public GameDataContainer()
         {
-            this.data = data ?? throw new ArgumentNullException(nameof(data));
-            this.handler = handler ?? throw new ArgumentNullException(nameof(handler));
+            this.Data = new TGameData();
+            this.Handler = new THandler();
 
-            this.LastPlayerIndex = this.data.Players.Length - 1;
+            this.LastPlayerIndex = this.Data.Players.Length - 1;
             this.CurrentPlayerIndex = 0;
 
             //this.unlockedMissions = new List<int>();
@@ -69,12 +70,12 @@ namespace HegaCore
         public virtual void InitializeCurrentPlayer(int playerIndex)
         {
             this.CurrentPlayerIndex = Mathf.Clamp(playerIndex, 0, this.LastPlayerIndex);
-            this.Initialized = true;
+            this.CurrentPlayerInitialized = true;
         }
 
         public virtual void DeinitializeCurrentPlayer()
         {
-            this.Initialized = false;
+            this.CurrentPlayerInitialized = false;
             this.CurrentPlayerIndex = 0;
             this.BattleTutorial = false;
             //this.BattleId = default;
@@ -88,7 +89,7 @@ namespace HegaCore
         {
             var result = false;
 
-            foreach (var save in this.data.Players)
+            foreach (var save in this.Data.Players)
             {
                 if (save.Existed)
                 {
@@ -147,26 +148,26 @@ namespace HegaCore
         public bool IsBattleTutorial()
             => this.BattleTutorial || !this.CurrentPlayer.DoneBattleTutorial;
 
-        public bool IsValidCurrentPlayerIndex(int index)
+        public bool IsValidPlayerIndex(int index)
             => index >= 0 && index <= this.LastPlayerIndex;
 
         public bool TryGetPlayer(int index, out TPlayerData data)
         {
             data = default;
 
-            if (!IsValidCurrentPlayerIndex(index))
+            if (!IsValidPlayerIndex(index))
                 return false;
 
-            data = this.data.Players[index];
+            data = this.Data.Players[index];
             return true;
         }
 
         public void DeletePlayer(int index)
         {
-            if (!IsValidCurrentPlayerIndex(index))
+            if (!IsValidPlayerIndex(index))
                 return;
 
-            this.data.Players[index].Reset();
+            this.Data.Players[index].Reset();
         }
 
         public void SetBattleTutorial(bool value = true)
@@ -263,17 +264,17 @@ namespace HegaCore
             => this.CurrentPlayer.BadPoint > this.CurrentPlayer.GoodPoint;
 
         public void Load()
-            => this.data.Copy(this.handler.Load());
+            => this.Data.Copy(this.Handler.Load());
 
         public void Save()
-            => this.handler.Save(this.data);
+            => this.Handler.Save(this.Data);
 
         public void SaveSettings()
         {
             if (this.Daemon)
                 UnuLogger.Log(JsonConvert.SerializeObject(this.Settings));
 
-            this.handler.Save(this.data);
+            this.Handler.Save(this.Data);
         }
 
         public void SavePlayer()
@@ -285,12 +286,12 @@ namespace HegaCore
                 UnuLogger.Log(JsonConvert.SerializeObject(this.CurrentPlayer));
 
             ChangePlayerLastTime();
-            this.handler.Save(this.data);
+            this.Handler.Save(this.Data);
         }
 
         private bool Validate()
         {
-            if (!this.Initialized)
+            if (!this.CurrentPlayerInitialized)
             {
                 UnuLogger.LogError($"Must call {nameof(InitializeCurrentPlayer)}() before using this method.");
                 return false;

@@ -34,7 +34,7 @@ namespace HegaCore
         }
 
         public override string ToString()
-            => $"({this.Width}, {this.Height})";
+            => $"{this.Width} × {this.Height}";
 
         public static implicit operator ScreenResolution(in Resolution value)
             => new ScreenResolution(value.width, value.height);

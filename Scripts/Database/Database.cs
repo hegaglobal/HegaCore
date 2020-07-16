@@ -12,6 +12,9 @@ namespace HegaCore
         [SerializeField]
         private DatabaseConfig config = null;
 
+        public DatabaseConfig Config
+            => this.config;
+
         public bool Initialized { get; private set; }
 
         public bool Daemon { get; private set; }
