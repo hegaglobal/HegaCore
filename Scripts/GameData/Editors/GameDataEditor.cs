@@ -64,6 +64,9 @@ namespace HegaCore.Editor
             this.handler.EnsureFileExisting();
             var data = this.handler.Load();
 
+            if (data == null)
+                return;
+
             this.settings.Set(data.Settings);
 
             var length = Mathf.Min(this.players.Length, data.Players.Length);
@@ -82,6 +85,9 @@ namespace HegaCore.Editor
         {
             this.handler.EnsureFileExisting();
             var data = this.handler.Load();
+
+            if (data == null)
+                return;
 
             this.settings.CopyTo(data.Settings);
 

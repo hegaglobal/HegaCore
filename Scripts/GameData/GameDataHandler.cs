@@ -15,6 +15,10 @@ namespace HegaCore
         [SerializeField, HideInInspector]
         private string filePath = default;
 
+        protected string FolderPath => this.folderPath;
+
+        public string FilePath => this.filePath;
+
         public void Initialize(string folderPath, string filePath)
         {
             this.folderPath = folderPath ?? string.Empty;
