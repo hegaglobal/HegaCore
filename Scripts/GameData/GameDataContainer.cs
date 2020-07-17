@@ -78,6 +78,7 @@ namespace HegaCore
             this.CurrentPlayerInitialized = false;
             this.CurrentPlayerIndex = 0;
             this.BattleTutorial = false;
+
             //this.BattleId = default;
             //this.unlockedMissions.Clear();
             //this.unlockedChapters.Clear();
@@ -145,7 +146,7 @@ namespace HegaCore
         //    this.unlockedWorks.Add(id);
         //}
 
-        public bool IsBattleTutorial()
+        public bool WillDoBattleTutorial()
             => this.BattleTutorial || !this.CurrentPlayer.DoneBattleTutorial;
 
         public bool IsValidPlayerIndex(int index)
