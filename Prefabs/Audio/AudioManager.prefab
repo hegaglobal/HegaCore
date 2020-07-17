@@ -480,7 +480,7 @@ GameObject:
   - component: {fileID: 6729576314930439843}
   - component: {fileID: 4336882810820812136}
   m_Layer: 0
-  m_Name: AudioSystem
+  m_Name: AudioManager
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -519,7 +519,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   _persistent: 0
-  audioMixer: {fileID: 0}
+  audioMixer: {fileID: 24100000, guid: 7e680d4ea84fc5c42899a196a38c6240, type: 2}
   musicSource: {fileID: 3619283529865830042}
   soundSource: {fileID: 4809003823886964078}
   voiceSource: {fileID: 6124294494836645764}

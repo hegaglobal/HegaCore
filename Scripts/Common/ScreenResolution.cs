@@ -36,6 +36,15 @@ namespace HegaCore
         public override string ToString()
             => $"{this.Width} × {this.Height}";
 
+        public void Apply(bool fullscreen = false)
+        {
+            var mode = fullscreen ? FullScreenMode.ExclusiveFullScreen : FullScreenMode.Windowed;
+#if !UNITY_EDITOR
+            Screen.SetResolution(resolution.Width, resolution.Height, mode);
+#endif
+            Debug.Log($"Resolution: {this} [{mode}]");
+        }
+
         public static implicit operator ScreenResolution(in Resolution value)
             => new ScreenResolution(value.width, value.height);
 

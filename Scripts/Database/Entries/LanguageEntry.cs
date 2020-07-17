@@ -1,7 +1,7 @@
 ﻿using System.Table;
 using TinyCsvParser.Mapping;
 
-namespace HegaCore
+namespace HegaCore.Database
 {
     public sealed class LanguageEntry : IEntry
     {

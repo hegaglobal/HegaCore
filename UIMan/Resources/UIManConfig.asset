@@ -20,6 +20,6 @@ MonoBehaviour:
   modelScriptFolder: /Game/Scripts/UI/Models
   dialogScriptFolder: /Game/Scripts/UI/Dialogs
   screenScriptFolder: /Game/Scripts/UI/Screens
-  selectedType: PlayerSlotViewModel
+  selectedType: UISettingsDialog
   generatingType: 
   generatingTypeIsDialog: 1

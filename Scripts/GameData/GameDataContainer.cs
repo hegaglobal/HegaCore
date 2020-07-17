@@ -1,5 +1,4 @@
 ﻿using System;
-//using System.Collections.Generic;
 using UnityEngine;
 using Newtonsoft.Json;
 
@@ -28,30 +27,9 @@ namespace HegaCore
 
         public int LastPlayerIndex { get; }
 
-        //public BattleId BattleId { get; set; }
-
-        //public ChapterId ChapterId { get; set; }
-
         public bool ShowConversation { get; set; }
 
         public bool BattleTutorial { get; set; }
-
-        //public ListSegment<int> UnlockedMissions
-        //    => this.unlockedMissions;
-
-        //public ListSegment<ChapterId> UnlockedChapters
-        //    => this.unlockedChapters;
-
-        //public ListSegment<ChapterId> UnlockedPoses
-        //    => this.unlockedPoses;
-
-        //public ListSegment<ChapterId> UnlockedWorks
-        //    => this.unlockedWorks;
-
-        //private readonly List<int> unlockedMissions;
-        //private readonly List<ChapterId> unlockedChapters;
-        //private readonly List<ChapterId> unlockedPoses;
-        //private readonly List<ChapterId> unlockedWorks;
 
         public GameDataContainer()
         {
@@ -60,11 +38,6 @@ namespace HegaCore
 
             this.LastPlayerIndex = this.Data.Players.Length - 1;
             this.CurrentPlayerIndex = 0;
-
-            //this.unlockedMissions = new List<int>();
-            //this.unlockedChapters = new List<ChapterId>();
-            //this.unlockedPoses = new List<ChapterId>();
-            //this.unlockedWorks = new List<ChapterId>();
         }
 
         public virtual void InitializeCurrentPlayer(int playerIndex)
@@ -78,12 +51,6 @@ namespace HegaCore
             this.CurrentPlayerInitialized = false;
             this.CurrentPlayerIndex = 0;
             this.BattleTutorial = false;
-
-            //this.BattleId = default;
-            //this.unlockedMissions.Clear();
-            //this.unlockedChapters.Clear();
-            //this.unlockedPoses.Clear();
-            //this.unlockedWorks.Clear();
         }
 
         public bool HasAnyPlayer()
@@ -101,50 +68,6 @@ namespace HegaCore
 
             return result;
         }
-
-        //public void ClearUnlockedMissions()
-        //    => this.unlockedMissions.Clear();
-
-        //public void UnlockMission(int id)
-        //{
-        //    if (this.unlockedMissions.Contains(id))
-        //        return;
-
-        //    this.unlockedMissions.Add(id);
-        //}
-
-        //public void ClearUnlockedChapters()
-        //    => this.unlockedChapters.Clear();
-
-        //public void UnlockChapter(in ChapterId id)
-        //{
-        //    if (this.unlockedChapters.Contains(id))
-        //        return;
-
-        //    this.unlockedChapters.Add(id);
-        //}
-
-        //public void ClearUnlockedPoses()
-        //    => this.unlockedPoses.Clear();
-
-        //public void UnlockPose(in ChapterId id)
-        //{
-        //    if (this.unlockedPoses.Contains(id))
-        //        return;
-
-        //    this.unlockedPoses.Add(id);
-        //}
-
-        //public void ClearUnlockedWorks()
-        //    => this.unlockedWorks.Clear();
-
-        //public void UnlockWork(in ChapterId id)
-        //{
-        //    if (this.unlockedWorks.Contains(id))
-        //        return;
-
-        //    this.unlockedWorks.Add(id);
-        //}
 
         public bool WillDoBattleTutorial()
             => this.BattleTutorial || !this.CurrentPlayer.DoneBattleTutorial;

@@ -47,16 +47,5 @@ namespace HegaCore
                 this.resolutions.Add(resolution);
             }
         }
-
-        public void ApplyResolution(in ScreenResolution resolution, bool fullscreen)
-        {
-            var mode = fullscreen ? FullScreenMode.ExclusiveFullScreen : FullScreenMode.Windowed;
-
-#if !UNITY_EDITOR
-            Screen.SetResolution(resolution.Width, resolution.Height, mode);
-#endif
-
-            UnuLogger.Log($"Resolution: {resolution} [{mode}]");
-        }
     }
 }

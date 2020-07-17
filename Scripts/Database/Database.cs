@@ -2,12 +2,17 @@
 using System.Table;
 using UnityEngine;
 using Cysharp.Threading.Tasks;
+using TinyCsvParser.Mapping;
 using VisualNovelData.Data;
 using VisualNovelData.Parser;
 
 namespace HegaCore
 {
-    public abstract partial class Database<T> : SingletonBehaviour<T> where T : Database<T>
+    using Database;
+
+    public abstract partial class Database<TDatabase, TTables> : SingletonBehaviour<TDatabase>
+        where TDatabase : Database<TDatabase, TTables>
+        where TTables : Tables, new()
     {
         [SerializeField]
         private DatabaseConfig config = null;
@@ -19,15 +24,7 @@ namespace HegaCore
 
         public bool Daemon { get; private set; }
 
-        public Table<LanguageEntry> LanguageTable { get; }
-
-        public L10nData L10nData { get; }
-
-        public NovelData NovelData { get; }
-
-        public CharacterData CharacterData { get; }
-
-        public QuestData QuestData { get; }
+        public TTables Tables { get; }
 
         public ListSegment<string> Languages
             => this.languages;
@@ -35,8 +32,7 @@ namespace HegaCore
         public ListSegment<string> UsedLanguages
             => this.usedLanguages;
 
-        protected CsvDataLoader CsvLoader { get; }
-
+        private readonly CsvDataLoader csvLoader;
         private readonly List<string> languages;
         private readonly List<string> usedLanguages;
 
@@ -45,22 +41,15 @@ namespace HegaCore
             this.languages = new List<string>();
             this.usedLanguages = new List<string>();
 
-            this.CsvLoader = new CsvDataLoader();
-            this.LanguageTable = new Table<LanguageEntry>();
-            this.L10nData = new L10nData();
-            this.NovelData = new NovelData();
-            this.CharacterData = new CharacterData();
-            this.QuestData = new QuestData();
+            this.csvLoader = new CsvDataLoader();
+            this.Tables = new TTables();
         }
-
-        protected TextAsset GetCsv(string key)
-            => this.config.CsvFiles[key];
 
         public void Initialize()
         {
             Unload();
 
-            this.CsvLoader.Initialize(this.config);
+            this.csvLoader.Initialize(this.config);
             this.Initialized = true;
         }
 
@@ -68,50 +57,42 @@ namespace HegaCore
         {
             if (!this.Initialized)
             {
-                UnuLogger.LogError($"{nameof(Database<T>)} is not initialized");
+                UnuLogger.LogError($"{GetType().Name} is not initialized");
                 return UniTask.FromResult(false);
             }
 
             this.Daemon = this.config.CheckDaemon();
 
-            this.CsvLoader.Load<LanguageEntry,
-                                LanguageEntry.Mapping>
-                                (this.LanguageTable, GetCsv("Language"), true);
+            Load<LanguageEntry, LanguageEntry.Mapping>
+                 (this.Tables.Language, nameof(this.Tables.Language), true);
 
             PrepareLanguages();
 
-            this.CsvLoader.Load<L10nData,
-                                L10nParser>
-                                (this.L10nData, GetCsv(nameof(this.L10nData)), this.Languages);
+            Load<L10nData, L10nParser>
+                 (this.Tables.L10nData, nameof(this.Tables.L10nData), this.Languages);
 
-            this.CsvLoader.Load<NovelData,
-                                NovelParser>
-                                (this.NovelData, GetCsv(nameof(this.NovelData)), this.Languages);
+            Load<NovelData, NovelParser>
+                 (this.Tables.NovelData, nameof(this.Tables.NovelData), this.Languages);
 
-            this.CsvLoader.Load<CharacterData,
-                                CharacterParser>
-                                (this.CharacterData, GetCsv(nameof(this.CharacterData)), this.Languages);
+            Load<CharacterData, CharacterParser>
+                 (this.Tables.CharacterData, nameof(this.Tables.CharacterData), this.Languages);
 
-            this.CsvLoader.Load<QuestData,
-                                QuestParser>
-                                (this.QuestData, GetCsv(nameof(this.QuestData)), this.Languages);
+            Load<QuestData, QuestParser>
+                 (this.Tables.QuestData, nameof(this.Tables.QuestData), this.Languages);
 
             OnLoad();
 
             return UniTask.FromResult(true);
         }
 
+        protected abstract void OnLoad();
+
         protected void Unload()
         {
-            this.L10nData.Clear();
-            this.NovelData.Clear();
-            this.CharacterData.Clear();
-            this.QuestData.Clear();
+            this.Tables.Clear();
 
             OnUnload();
         }
-
-        protected abstract void OnLoad();
 
         protected abstract void OnUnload();
 
@@ -120,13 +101,45 @@ namespace HegaCore
             this.languages.Clear();
             this.usedLanguages.Clear();
 
-            foreach (var entry in this.LanguageTable.Entries)
+            foreach (var entry in this.Tables.Language.Entries)
             {
                 this.languages.Add(entry.Key);
 
                 if (entry.IsUsed)
                     this.usedLanguages.Add(entry.Key);
             }
+        }
+
+        private TextAsset GetCsv(string key)
+            => this.config.CsvFiles[key];
+
+        protected void Load<TEntity, TMapping>(ITable<TEntity> table, string file, bool autoIncrement = false)
+            where TEntity : class, IEntry, new()
+            where TMapping : CsvMapping<TEntity>, new()
+        {
+            this.csvLoader.Load<TEntity, TMapping>(table, GetCsv(file), autoIncrement);
+        }
+
+        protected void Load<TEntity, TMapping>(ITable<TEntity> table, string file, IGetId<TEntity> idGetter)
+            where TEntity : class, IEntry, new()
+            where TMapping : CsvMapping<TEntity>, new()
+        {
+            this.csvLoader.Load<TEntity, TMapping>(table, GetCsv(file), idGetter);
+        }
+
+        protected void Load<TEntity, TMapping, TIdGetter>(ITable<TEntity> table, string file)
+            where TEntity : class, IEntry, new()
+            where TMapping : CsvMapping<TEntity>, new()
+            where TIdGetter : IGetId<TEntity>, new()
+        {
+            this.csvLoader.Load<TEntity, TMapping>(table, GetCsv(file));
+        }
+
+        protected void Load<TData, TParser>(TData data, string file, in Segment<string> languages)
+            where TData : class
+            where TParser : VisualNovelData.Parser.ICsvParser<TData>, new()
+        {
+            this.csvLoader.Load<TData, TParser>(data, GetCsv(file), languages);
         }
     }
 }
