@@ -12,7 +12,7 @@ namespace HegaCore.Editor
             "CUBISM_USE_MUTUAL_TEXTURE"
         };
 
-        [MenuItem("Tools/Toggle Addressable Cubism Symbols")]
+        [MenuItem("Live2D/Cubism/Toggle Addressables Support")]
         public static void ToggleAddressableCubismSymbols()
         {
             var symbolString = PlayerSettings.GetScriptingDefineSymbolsForGroup(EditorUserBuildSettings.selectedBuildTargetGroup);
