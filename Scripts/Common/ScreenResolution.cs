@@ -40,7 +40,7 @@ namespace HegaCore
         {
             var mode = fullscreen ? FullScreenMode.ExclusiveFullScreen : FullScreenMode.Windowed;
 #if !UNITY_EDITOR
-            Screen.SetResolution(resolution.Width, resolution.Height, mode);
+            Screen.SetResolution(this.Width, this.Height, mode);
 #endif
             Debug.Log($"Resolution: {this} [{mode}]");
         }
