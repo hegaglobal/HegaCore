@@ -83,17 +83,21 @@ namespace HegaCore
             private string extension = string.Empty;
 
             [SerializeField]
-            private string backupExtension = string.Empty;
+            private string bakExtension = string.Empty;
 
             public string Folder => this.folder;
 
             public string FolderEditor => this.folderEditor;
 
-            public string File => $"{this.fileName}.{this.extension}";
+            public string FileName => this.fileName;
 
-            public string BackupFile => $"{this.fileName}.{this.backupExtension}";
+            public string BakExtension => this.bakExtension;
 
             public string Extension => this.extension;
+
+            public string File => $"{this.fileName}.{this.extension}";
+
+            public string BakFile => $"{this.fileName}.{this.bakExtension}";
 
             public string FolderFullPath => Path.Combine(Application.dataPath, this.folder);
 
@@ -102,12 +106,6 @@ namespace HegaCore
             public string FileFullPath => Path.Combine(this.FolderFullPath, this.File);
 
             public string FileFullPathEditor => Path.Combine(this.FolderFullPathEditor, this.File);
-
-            public string GetBackupFileFullPath(string folderPath)
-                => Path.Combine(folderPath, $"{this.fileName}.{this.backupExtension}");
-
-            public string GetBackupFileFullPath(string folderPath, string suffix)
-                => Path.Combine(folderPath, $"{this.fileName}.{suffix}.{this.backupExtension}");
         }
     }
 }

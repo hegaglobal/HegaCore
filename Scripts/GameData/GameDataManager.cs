@@ -6,7 +6,7 @@ namespace HegaCore
 {
     public abstract class GameDataManager<TPlayerData, TGameData, THandler, TContainer, TManager> : Singleton<TManager>
         where TPlayerData : PlayerData<TPlayerData>, new()
-        where TGameData : GameData<TPlayerData>, new()
+        where TGameData : GameData<TPlayerData>
         where THandler : GameDataHandler<TPlayerData, TGameData>, new()
         where TContainer : GameDataContainer<TPlayerData, TGameData, THandler>, new()
         where TManager : GameDataManager<TPlayerData, TGameData, THandler, TContainer, TManager>, new()
@@ -33,22 +33,33 @@ namespace HegaCore
         public void Initialize(DatabaseConfig config, in ListSegment<string> languages, in SizeInt resolution, bool daemon, bool darkLord)
         {
             this.Languages = languages;
+
             GameSettings.DefaultResolution = new ScreenResolution(resolution.Width, resolution.Height);
             GetResolutions(GameSettings.DefaultResolution);
             EnsureDefaultResolutions();
 
-#if UNITY_EDITOR
-            this.Handler.Initialize(config.SaveData.FolderFullPathEditor, config.SaveData.FileFullPathEditor, config.SaveData.Extension);
-#else
-            this.Handler.Initialize(config.SaveData.FolderFullPath, config.SaveData.FileFullPath, config.SaveData.Extension);
-#endif
-            this.Handler.EnsureFileExisting();
+            InitializeHandler(config);
 
             this.Container.Daemon = daemon;
             this.Container.DarkLord = darkLord;
             this.Container.Load();
 
             EnsureResolution();
+        }
+
+        private void InitializeHandler(DatabaseConfig config)
+        {
+#if UNITY_EDITOR
+            var folderPath = config.SaveData.FolderFullPathEditor;
+#else
+            var folderPath = config.SaveData.FolderFullPath;
+#endif
+            var fileName = config.SaveData.FileName;
+            var extension = config.SaveData.Extension;
+            var bakExtension = config.SaveData.BakExtension;
+
+            this.Handler.Initialize(folderPath, fileName, extension, bakExtension);
+            this.Handler.EnsureFileExisting();
         }
 
         private void GetResolutions(in ScreenResolution designedRes)

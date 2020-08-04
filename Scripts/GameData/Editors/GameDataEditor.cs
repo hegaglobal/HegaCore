@@ -9,7 +9,7 @@ namespace HegaCore.Editor
 {
     public abstract class GameDataEditor<TPlayerData, TGameData, THandler, TPlayerDataEditor> : MonoBehaviour
         where TPlayerData : PlayerData<TPlayerData>, new()
-        where TGameData : GameData<TPlayerData>, new()
+        where TGameData : GameData<TPlayerData>
         where THandler : GameDataHandler<TPlayerData, TGameData>, new()
         where TPlayerDataEditor : PlayerDataEditor<TPlayerData>
     {
@@ -23,7 +23,11 @@ namespace HegaCore.Editor
 
         [PropertyOrder(0), BoxGroup(GroupID = "Save Data")]
         [SerializeField, InlineButton(nameof(RevealFile), "Open")]
-        private string filePath = string.Empty;
+        private string fileName = string.Empty;
+
+        [PropertyOrder(0), BoxGroup(GroupID = "Save Data")]
+        [SerializeField]
+        private string extension = string.Empty;
 
         [SerializeField, HideInInspector]
         private THandler handler = new THandler();
@@ -41,22 +45,22 @@ namespace HegaCore.Editor
         [SerializeField]
         private TPlayerDataEditor[] players = null;
 
-        private void OnValidate()
+        public string FilePath => Path.Combine(this.folderPath, $"{this.fileName}.{this.extension}");
+
+        private void Initialize()
         {
             if (this.config)
             {
                 this.folderPath = this.config.SaveData.FolderFullPathEditor;
-                this.filePath = this.config.SaveData.FileFullPathEditor;
             }
             else
             {
                 this.folderPath = string.Empty;
-                this.filePath = string.Empty;
             }
 
             this.settings = GetComponentInChildren<GameSettingsEditor>();
             this.players = GetComponentsInChildren<TPlayerDataEditor>();
-            this.handler.Initialize(this.folderPath, this.filePath, string.Empty);
+            this.handler.Initialize(this.folderPath, this.fileName, this.extension, string.Empty);
         }
 
         [PropertySpace]
@@ -65,6 +69,8 @@ namespace HegaCore.Editor
         [Button]
         public void Load()
         {
+            Initialize();
+
             this.handler.EnsureFileExisting();
             var data = this.handler.Load(false);
 
@@ -88,6 +94,8 @@ namespace HegaCore.Editor
         [Button]
         public void Save()
         {
+            Initialize();
+
             this.handler.EnsureFileExisting();
             var data = this.handler.Load(false);
 
@@ -111,7 +119,7 @@ namespace HegaCore.Editor
             => EditorUtility.RevealInFinder(this.folderPath);
 
         private void RevealFile()
-            => EditorUtility.RevealInFinder(this.filePath);
+            => EditorUtility.RevealInFinder(this.FilePath);
     }
 }
 

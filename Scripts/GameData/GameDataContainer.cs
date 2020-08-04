@@ -6,12 +6,12 @@ namespace HegaCore
 {
     public abstract class GameDataContainer<TPlayerData, TGameData, THandler>
         where TPlayerData : PlayerData<TPlayerData>, new()
-        where TGameData : GameData<TPlayerData>, new()
+        where TGameData : GameData<TPlayerData>
         where THandler : GameDataHandler<TPlayerData, TGameData>, new()
     {
-        public TGameData Data { get; }
-
         public THandler Handler { get; }
+
+        public TGameData Data { get; }
 
         public TPlayerData CurrentPlayer
             => this.Data.Players[this.CurrentPlayerIndex];
@@ -35,8 +35,8 @@ namespace HegaCore
 
         public GameDataContainer()
         {
-            this.Data = new TGameData();
             this.Handler = new THandler();
+            this.Data = this.Handler.New();
 
             this.LastPlayerIndex = this.Data.Players.Length - 1;
             this.CurrentPlayerIndex = 0;
@@ -208,8 +208,8 @@ namespace HegaCore
             return this.CurrentPlayer.BadPoint > this.CurrentPlayer.GoodPoint;
         }
 
-        public void Load(bool shouldBackup = false)
-            => this.Data.Copy(this.Handler.Load(shouldBackup));
+        public void Load(bool shouldBackUp = false)
+            => this.Data.Copy(this.Handler.Load(shouldBackUp));
 
         public void Save()
             => this.Handler.Save(this.Data);
