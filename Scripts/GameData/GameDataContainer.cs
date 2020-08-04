@@ -23,6 +23,8 @@ namespace HegaCore
 
         public bool Daemon { get; set; }
 
+        public bool DarkLord { get; set; }
+
         public int CurrentPlayerIndex { get; private set; }
 
         public int LastPlayerIndex { get; }
@@ -69,9 +71,6 @@ namespace HegaCore
             return result;
         }
 
-        public bool WillDoBattleTutorial()
-            => this.BattleTutorial || !this.CurrentPlayer.DoneBattleTutorial;
-
         public bool IsValidPlayerIndex(int index)
             => index >= 0 && index <= this.LastPlayerIndex;
 
@@ -86,6 +85,14 @@ namespace HegaCore
             return true;
         }
 
+        public bool WillPlayerDoBattleTutorial()
+        {
+            if (!Validate())
+                return false;
+
+            return this.BattleTutorial || !this.CurrentPlayer.DoneBattleTutorial;
+        }
+
         public void DeletePlayer(int index)
         {
             if (!IsValidPlayerIndex(index))
@@ -94,7 +101,7 @@ namespace HegaCore
             this.Data.Players[index].Reset();
         }
 
-        public void SetBattleTutorial(bool value = true)
+        public void SetPlayerBattleTutorial(bool value = true)
         {
             if (!Validate())
                 return;
@@ -102,7 +109,7 @@ namespace HegaCore
             this.CurrentPlayer.DoneBattleTutorial = value;
         }
 
-        public void SetLobbyTutorial(bool value = true)
+        public void SetPlayerLobbyTutorial(bool value = true)
         {
             if (!Validate())
                 return;
@@ -110,7 +117,7 @@ namespace HegaCore
             this.CurrentPlayer.DoneLobbyTutorial = value;
         }
 
-        public bool ToggleTutorial()
+        public bool TogglePlayerBattleTutorial()
         {
             if (!Validate())
                 return false;
@@ -119,26 +126,35 @@ namespace HegaCore
             return this.CurrentPlayer.DoneBattleTutorial;
         }
 
-        public int ChangePlayerGold(int amount)
+        public bool TogglePlayerLobbyTutorial()
         {
             if (!Validate())
-                return 0;
+                return false;
 
-            if (amount != 0)
-                this.CurrentPlayer.Gold += amount;
-
-            return this.CurrentPlayer.Gold;
+            this.CurrentPlayer.DoneLobbyTutorial = !this.CurrentPlayer.DoneLobbyTutorial;
+            return this.CurrentPlayer.DoneLobbyTutorial;
         }
 
-        public int ChangePlayerPoint(int amount)
+        public int ChangePlayerWealth(int amount)
         {
             if (!Validate())
                 return 0;
 
             if (amount != 0)
-                this.CurrentPlayer.Point += amount;
+                this.CurrentPlayer.Wealth += amount;
 
-            return this.CurrentPlayer.Point;
+            return this.CurrentPlayer.Wealth;
+        }
+
+        public int ChangePlayerProgressPoint(int amount)
+        {
+            if (!Validate())
+                return 0;
+
+            if (amount != 0)
+                this.CurrentPlayer.ProgressPoint += amount;
+
+            return this.CurrentPlayer.ProgressPoint;
         }
 
         public int ChangePlayerGoodPoint(int amount)
@@ -184,11 +200,16 @@ namespace HegaCore
             this.CurrentPlayer.LastTime = lastTime;
         }
 
-        public bool IsBad()
-            => this.CurrentPlayer.BadPoint > this.CurrentPlayer.GoodPoint;
+        public bool IsPlayerBad()
+        {
+            if (!Validate())
+                return false;
 
-        public void Load()
-            => this.Data.Copy(this.Handler.Load());
+            return this.CurrentPlayer.BadPoint > this.CurrentPlayer.GoodPoint;
+        }
+
+        public void Load(bool shouldBackup = false)
+            => this.Data.Copy(this.Handler.Load(shouldBackup));
 
         public void Save()
             => this.Handler.Save(this.Data);
@@ -213,7 +234,7 @@ namespace HegaCore
             this.Handler.Save(this.Data);
         }
 
-        private bool Validate()
+        protected bool Validate()
         {
             if (!this.CurrentPlayerInitialized)
             {

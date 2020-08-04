@@ -15,9 +15,9 @@ namespace HegaCore
 
         public bool DoneLobbyTutorial;
 
-        public int Gold;
+        public int Wealth;
 
-        public int Point;
+        public int ProgressPoint;
 
         public int GoodPoint;
 
@@ -36,8 +36,8 @@ namespace HegaCore
             this.Existed = false;
             this.DoneBattleTutorial = false;
             this.DoneLobbyTutorial = false;
-            this.Gold = 0;
-            this.Point = 0;
+            this.Wealth = 0;
+            this.ProgressPoint = 0;
             this.GoodPoint = 0;
             this.BadPoint = 0;
             this.LastTime = string.Empty;
@@ -62,8 +62,8 @@ namespace HegaCore
                 this.DoneLobbyTutorial = data.DoneLobbyTutorial;
             }
 
-            this.Gold = data.Gold;
-            this.Point = data.Point;
+            this.Wealth = data.Wealth;
+            this.ProgressPoint = data.ProgressPoint;
             this.GoodPoint = data.GoodPoint;
             this.BadPoint = data.BadPoint;
             this.LastTime = data.LastTime ?? string.Empty;

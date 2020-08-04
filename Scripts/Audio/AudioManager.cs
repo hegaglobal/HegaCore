@@ -51,25 +51,30 @@ namespace HegaCore
             this.Player = new AudioPlayer(this, this.audioMixer, this.musicSource, this.soundSource, this.voiceSource);
         }
 
-        public async UniTask Initialize(float musicFadeTime, float musicVolume, float soundVolume, float voiceVolume)
+        public async UniTask InitializeAsync(float musicFadeTime, float musicVolume, float soundVolume, float voiceVolume)
         {
-            await this.musicRegisterer.Register(this);
-            await this.soundRegisterer.Register(this);
-            await this.voiceRegisterer.Register(this);
+            UnuLogger.Log("Initializing music...");
+            await this.musicRegisterer.RegisterAsync(this);
+
+            UnuLogger.Log("Initializing sound...");
+            await this.soundRegisterer.RegisterAsync(this);
+
+            UnuLogger.Log("Initializing voice...");
+            await this.voiceRegisterer.RegisterAsync(this);
 
             this.Player.Initialize(musicFadeTime, musicVolume, soundVolume, voiceVolume);
         }
 
-        public async UniTask PrepareMusic(params AssetReferenceAudioClip[] references)
-            => await Prepare(this.musicMap, references);
+        public async UniTask PrepareMusicAsync(params AssetReferenceAudioClip[] references)
+            => await PrepareAsync(this.musicMap, references);
 
-        public async UniTask PrepareSound(params AssetReferenceAudioClip[] references)
-            => await Prepare(this.soundMap, references);
+        public async UniTask PrepareSoundAsync(params AssetReferenceAudioClip[] references)
+            => await PrepareAsync(this.soundMap, references);
 
-        public async UniTask PrepareVoice(params AssetReferenceAudioClip[] references)
-            => await Prepare(this.voiceMap, references);
+        public async UniTask PrepareVoiceAsync(params AssetReferenceAudioClip[] references)
+            => await PrepareAsync(this.voiceMap, references);
 
-        private async UniTask Prepare(AudioMap map, params AssetReferenceAudioClip[] references)
+        private async UniTask PrepareAsync(AudioMap map, params AssetReferenceAudioClip[] references)
         {
             foreach (var reference in references)
             {
@@ -85,16 +90,16 @@ namespace HegaCore
             }
         }
 
-        public async UniTask PrepareMusic(params string[] keys)
-            => await Prepare(this.musicMap, keys);
+        public async UniTask PrepareMusicAsync(params string[] keys)
+            => await PrepareAsync(this.musicMap, keys);
 
-        public async UniTask PrepareSound(params string[] keys)
-            => await Prepare(this.soundMap, keys);
+        public async UniTask PrepareSoundAsync(params string[] keys)
+            => await PrepareAsync(this.soundMap, keys);
 
-        public async UniTask PrepareVoice(params string[] keys)
-            => await Prepare(this.voiceMap, keys);
+        public async UniTask PrepareVoiceAsync(params string[] keys)
+            => await PrepareAsync(this.voiceMap, keys);
 
-        private async UniTask Prepare(AudioMap map, params string[] keys)
+        private async UniTask PrepareAsync(AudioMap map, params string[] keys)
         {
             foreach (var key in keys)
             {

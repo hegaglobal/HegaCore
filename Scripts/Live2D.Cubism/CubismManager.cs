@@ -26,13 +26,17 @@ namespace HegaCore
         private readonly Dictionary<string, Tweener> hideTweens
             = new Dictionary<string, Tweener>();
 
-        public async UniTask InitializeAsync(CharacterData data)
+        private bool darkLord;
+
+        public async UniTask InitializeAsync(CharacterData data, bool darkLord)
         {
-            await this.spawner.InitializeAsync(data);
+            this.darkLord = darkLord;
+
+            await this.spawner.InitializeAsync(data, darkLord);
 
             foreach (var character in data.Characters.Values)
             {
-                var key = character?.Model ?? string.Empty;
+                var key = character?.P1.OrDarkLord(this.darkLord);
 
                 if (string.IsNullOrEmpty(key))
                     continue;
@@ -43,12 +47,13 @@ namespace HegaCore
                     continue;
                 }
 
+                UnuLogger.Log($"Initializing {character.P1}...");
                 var model = this.spawner.Get(key);
 
                 if (!model)
                     continue;
 
-                await UniTask.Delay(System.TimeSpan.FromSeconds(0.05f));
+                await UniTask.Delay(System.TimeSpan.FromSeconds(0.1f));
 
                 model.Hide();
                 this.models.Add(key, model);
@@ -73,7 +78,7 @@ namespace HegaCore
 
         public void Hide(string id)
         {
-            if (!this.models.TryGetValue(id, out var model))
+            if (!this.models.TryGetValue(id.OrDarkLord(this.darkLord), out var model))
                 return;
 
             model.Hide();
@@ -81,6 +86,7 @@ namespace HegaCore
 
         public void Hide(string id, float? duration)
         {
+            id = id.OrDarkLord(this.darkLord);
             var dur = GetDuration(duration, this.hideDuration);
 
             KillTweens(id);
@@ -95,6 +101,7 @@ namespace HegaCore
 
         public void Hide(string id, Vector3 to, float? duration = null)
         {
+            id = id.OrDarkLord(this.darkLord);
             var dur = GetDuration(duration, this.hideDuration);
 
             KillTweens(id);
@@ -109,7 +116,7 @@ namespace HegaCore
 
         public CubismController Show(string id)
         {
-            if (!this.models.TryGetValue(id, out var model))
+            if (!this.models.TryGetValue(id.OrDarkLord(this.darkLord), out var model))
                 return null;
 
             model.Show();
@@ -118,6 +125,7 @@ namespace HegaCore
 
         public CubismController Show(string id, Vector3 position, float? duration = null)
         {
+            id = id.OrDarkLord(this.darkLord);
             var dur = GetDuration(duration, this.showDuration);
 
             KillTweens(id);
@@ -133,6 +141,7 @@ namespace HegaCore
 
         public CubismController Show(string id, Vector3 from, Vector3 to, float? duration = null)
         {
+            id = id.OrDarkLord(this.darkLord);
             var dur = GetDuration(duration, this.showDuration);
 
             KillTweens(id);
@@ -148,7 +157,7 @@ namespace HegaCore
 
         public void PlayAnimation(string modelId, int animId)
         {
-            if (!this.models.TryGetValue(modelId, out var model))
+            if (!this.models.TryGetValue(modelId.OrDarkLord(this.darkLord), out var model))
                 return;
 
             if (model.gameObject.activeSelf)
@@ -157,7 +166,7 @@ namespace HegaCore
 
         public void SetColor(string modelId, Color color)
         {
-            if (!this.models.TryGetValue(modelId, out var model))
+            if (!this.models.TryGetValue(modelId.OrDarkLord(this.darkLord), out var model))
                 return;
 
             if (model.gameObject.activeSelf)
@@ -166,6 +175,8 @@ namespace HegaCore
 
         public void SetColor(string modelId, Color modelColor, Color otherColor)
         {
+            modelId = modelId.OrDarkLord(this.darkLord);
+
             foreach (var kv in this.models)
             {
                 if (!kv.Value.gameObject.activeSelf)

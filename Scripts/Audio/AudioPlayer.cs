@@ -137,9 +137,16 @@ namespace HegaCore
             }
         }
 
-        public async void PlayMusicAsync(string key)
+        public async UniTask PlayMusicAsync(string key)
         {
-            await this.manager.PrepareMusic(key);
+            await this.manager.PrepareMusicAsync(key);
+
+            PlayMusic(key);
+        }
+
+        public async UniTask PlayMusicAsync(AssetReferenceAudioClip key)
+        {
+            await this.manager.PrepareMusicAsync(key);
 
             PlayMusic(key);
         }
@@ -148,6 +155,20 @@ namespace HegaCore
         {
             if (this.manager.TryGetSound(key, out var clip))
                 this.sound.PlayOneShot(clip);
+        }
+
+        public async UniTask PlaySoundAsync(string key)
+        {
+            await this.manager.PrepareSoundAsync(key);
+
+            PlaySound(key);
+        }
+
+        public async UniTask PlaySoundAsync(AssetReferenceAudioClip key)
+        {
+            await this.manager.PrepareSoundAsync(key);
+
+            PlaySound(key);
         }
 
         public void PlayVoice(string key)
@@ -172,9 +193,16 @@ namespace HegaCore
             }
         }
 
-        public async void PlayVoiceAsync(string key)
+        public async UniTask PlayVoiceAsync(string key)
         {
-            await this.manager.PrepareVoice(key);
+            await this.manager.PrepareVoiceAsync(key);
+
+            PlayVoice(key);
+        }
+
+        public async UniTask PlayVoiceAsync(AssetReferenceAudioClip key)
+        {
+            await this.manager.PrepareVoiceAsync(key);
 
             PlayVoice(key);
         }

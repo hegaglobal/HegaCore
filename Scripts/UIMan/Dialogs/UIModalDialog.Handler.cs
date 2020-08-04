@@ -20,7 +20,7 @@ namespace HegaCore
 
         public static void Hide()
         {
-            UIMan.Instance.DestroyUI<UIModalDialog>();
+            UIMan.Instance.HideDialog<UIModalDialog>(true);
         }
 
         [SerializeField]

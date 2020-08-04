@@ -12,7 +12,7 @@ namespace HegaCore
 
         public static void Hide()
         {
-            UIMan.Instance.HideDialog<UIPauseDialog>(inactiveWhenHidden: true);
+            UIMan.Instance.HideDialog<UIPauseDialog>(true);
         }
 
         private bool resume;

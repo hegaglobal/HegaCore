@@ -1,6 +1,8 @@
 ﻿using System.Collections.Generic;
+using System.IO;
 using System.Table;
 using UnityEngine;
+using UnityEngine.AddressableAssets;
 using Cysharp.Threading.Tasks;
 using TinyCsvParser.Mapping;
 using VisualNovelData.Data;
@@ -23,6 +25,10 @@ namespace HegaCore
         public bool Initialized { get; private set; }
 
         public bool Daemon { get; private set; }
+
+        public bool Overlord { get; private set; }
+
+        public bool DarkLord { get; private set; }
 
         public TTables Tables { get; }
 
@@ -53,15 +59,18 @@ namespace HegaCore
             this.Initialized = true;
         }
 
-        public UniTask Load()
+        public async UniTask LoadAsync()
         {
             if (!this.Initialized)
             {
                 UnuLogger.LogError($"{GetType().Name} is not initialized");
-                return UniTask.FromResult(false);
+                return;
             }
 
-            this.Daemon = this.config.CheckDaemon();
+            await CheckDarkLordAsync();
+
+            CheckDaemon();
+            CheckOverlord();
 
             Load<LanguageEntry, LanguageEntry.Mapping>
                  (this.Tables.Language, nameof(this.Tables.Language), true);
@@ -80,21 +89,49 @@ namespace HegaCore
             Load<QuestData, QuestParser>
                  (this.Tables.QuestData, nameof(this.Tables.QuestData), this.Languages);
 
-            OnLoad();
-
-            return UniTask.FromResult(true);
+            ContinueLoad();
         }
 
-        protected abstract void OnLoad();
+        protected abstract void ContinueLoad();
 
         protected void Unload()
         {
             this.Tables.Clear();
 
-            OnUnload();
+            ContinueUnload();
         }
 
-        protected abstract void OnUnload();
+        protected abstract void ContinueUnload();
+
+        private async UniTask CheckDarkLordAsync()
+        {
+            var result = await AddressablesManager.LoadAssetAsync<TextAsset>(this.config.DarkLordFile);
+            this.DarkLord = result.Succeeded;
+        }
+
+        private void CheckDaemon()
+        {
+            try
+            {
+                this.Daemon = FileSystem.FileExists(this.config.DaemonFileFullPath);
+            }
+            catch
+            {
+                this.Daemon = false;
+            }
+        }
+
+        private void CheckOverlord()
+        {
+            try
+            {
+                this.Overlord = FileSystem.FileExists(this.config.OverlordFileFullPath);
+            }
+            catch
+            {
+                this.Overlord = false;
+            }
+        }
 
         private void PrepareLanguages()
         {

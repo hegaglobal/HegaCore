@@ -36,9 +36,9 @@ namespace HegaCore.Editor
         public static void DeleteUserDataFile()
         {
             var config = ScriptableObjectHelper.GetOrCreate<DatabaseConfig>(false, "Assets/Game/Resources");
-            var filePath = config.SaveDataEditorFileFullPath;
+            var filePath = config.SaveData.FileFullPathEditor;
 
-            if (Directory.Exists(config.SaveDataEditorFolderFullPath) &&
+            if (Directory.Exists(config.SaveData.FolderFullPathEditor) &&
                 File.Exists(filePath))
                 File.Delete(filePath);
         }

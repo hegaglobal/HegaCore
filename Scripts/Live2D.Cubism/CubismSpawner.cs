@@ -7,11 +7,11 @@ namespace HegaCore
 {
     public sealed class CubismSpawner : ComponentSpawner<CubismController>
     {
-        public async UniTask InitializeAsync(CharacterData data)
+        public async UniTask InitializeAsync(CharacterData data, bool darkLord)
         {
             foreach (var character in data.Characters.Values)
             {
-                var key = character?.Model ?? string.Empty;
+                var key = character?.P1.OrDarkLord(darkLord);
 
                 if (string.IsNullOrEmpty(key))
                     continue;

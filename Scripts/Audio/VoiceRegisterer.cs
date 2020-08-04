@@ -8,7 +8,7 @@ namespace HegaCore
         [SerializeField]
         private AssetReferenceAudioClip[] clips = null;
 
-        public async UniTask Register(AudioManager manager)
-            => await manager.PrepareVoice(this.clips);
+        public async UniTask RegisterAsync(AudioManager manager)
+            => await manager.PrepareVoiceAsync(this.clips);
     }
 }

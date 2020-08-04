@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.IO;
 using UnityEngine;
 using Sirenix.OdinInspector;
@@ -9,41 +10,39 @@ namespace HegaCore
     public sealed partial class DatabaseConfig : ScriptableObject
     {
         [BoxGroup("Save Data")]
-        [SerializeField, LabelText("Folder")]
-        private string saveDataFolder = string.Empty;
-
-        [BoxGroup("Save Data")]
-        [SerializeField, LabelText("Folder (Editor Mode)")]
-        private string saveDataEditorFolder = string.Empty;
-
-        [BoxGroup("Save Data")]
-        [SerializeField, LabelText("File")]
-        private string saveDataFile = string.Empty;
+        [SerializeField, HideLabel]
+        private SaveDataConfig saveDataConfig = new SaveDataConfig();
 
         [BoxGroup("Csv Files")]
-        [SerializeField]
+        [SerializeField, LabelText("Internal Folder")]
         private string internalCsvFolder = "Database";
 
         [BoxGroup("Csv Files")]
-        [SerializeField]
+        [SerializeField, LabelText("External Folder")]
         private string externalCsvFolder = "Database";
 
         [BoxGroup("Csv Files")]
-        [SerializeField, DictionaryDrawerSettings(KeyLabel = "Name", ValueLabel = "File"), PropertySpace]
+        [DictionaryDrawerSettings(KeyLabel = "Name", ValueLabel = "File"), PropertySpace]
+        [SerializeField, LabelText("Files")]
         private CsvFileMap csvFiles = new CsvFileMap();
 
-        [SerializeField, ReadOnly, BoxGroup("Csv Files")]
+        [BoxGroup("Csv Files")]
+        [SerializeField, ReadOnly, LabelText("Internal Path")]
         private string internalCsvPath = string.Empty;
 
         [BoxGroup("Other Files")]
         [SerializeField, LabelText("Daemon")]
         private string daemonFile = null;
 
-        public string SaveDataFolder => this.saveDataFolder;
+        [BoxGroup("Other Files")]
+        [SerializeField, LabelText("Overlord")]
+        private string overlordFile = null;
 
-        public string SaveDataEditorFolder => this.saveDataEditorFolder;
+        [BoxGroup("Other Files")]
+        [SerializeField, LabelText("DarkLord")]
+        private string darkLordFile = null;
 
-        public string SaveDataFile => this.saveDataFile;
+        public SaveDataConfig SaveData => this.saveDataConfig;
 
         public string InternalCsvFolder => this.internalCsvFolder;
 
@@ -53,29 +52,62 @@ namespace HegaCore
 
         public string DaemonFile => this.daemonFile;
 
-        public string SaveDataFolderFullPath => Path.Combine(Application.dataPath, this.saveDataFolder);
+        public string OverlordFile => this.overlordFile;
 
-        public string SaveDataEditorFolderFullPath => Path.Combine(Application.dataPath, this.saveDataEditorFolder);
-
-        public string SaveDataFileFullPath => Path.Combine(this.SaveDataFolderFullPath, this.saveDataFile);
-
-        public string SaveDataEditorFileFullPath => Path.Combine(this.SaveDataEditorFolderFullPath, this.saveDataFile);
+        public string DarkLordFile => this.darkLordFile;
 
         public string InternalCsvFolderFullPath => Path.Combine(Application.dataPath, this.internalCsvFolder);
 
         public string ExternalCsvFolderFullPath => Path.Combine(Application.dataPath, this.externalCsvFolder);
 
-        public string DaemonFileFullPath => Path.Combine(this.ExternalCsvFolderFullPath, this.daemonFile);
+        public string DaemonFileFullPath => Path.Combine(Application.dataPath, this.externalCsvFolder, this.daemonFile);
 
-        private void OnValidate()
-        {
-            this.internalCsvPath = $"Assets/{this.internalCsvFolder}";
-        }
-
-        public bool CheckDaemon()
-            => File.Exists(this.DaemonFileFullPath);
+        public string OverlordFileFullPath => Path.Combine(Application.dataPath, this.externalCsvFolder, this.overlordFile);
 
         public string GetExternalCsvFileFullPath(string file)
             => Path.Combine(this.ExternalCsvFolderFullPath, file);
+
+        [Serializable, InlineProperty]
+        public sealed class SaveDataConfig
+        {
+            [SerializeField]
+            private string folder = string.Empty;
+
+            [SerializeField]
+            private string folderEditor = string.Empty;
+
+            [SerializeField]
+            private string fileName = string.Empty;
+
+            [SerializeField]
+            private string extension = string.Empty;
+
+            [SerializeField]
+            private string backupExtension = string.Empty;
+
+            public string Folder => this.folder;
+
+            public string FolderEditor => this.folderEditor;
+
+            public string File => $"{this.fileName}.{this.extension}";
+
+            public string BackupFile => $"{this.fileName}.{this.backupExtension}";
+
+            public string Extension => this.extension;
+
+            public string FolderFullPath => Path.Combine(Application.dataPath, this.folder);
+
+            public string FolderFullPathEditor => Path.Combine(Application.dataPath, this.folderEditor);
+
+            public string FileFullPath => Path.Combine(this.FolderFullPath, this.File);
+
+            public string FileFullPathEditor => Path.Combine(this.FolderFullPathEditor, this.File);
+
+            public string GetBackupFileFullPath(string folderPath)
+                => Path.Combine(folderPath, $"{this.fileName}.{this.backupExtension}");
+
+            public string GetBackupFileFullPath(string folderPath, string suffix)
+                => Path.Combine(folderPath, $"{this.fileName}.{suffix}.{this.backupExtension}");
+        }
     }
 }

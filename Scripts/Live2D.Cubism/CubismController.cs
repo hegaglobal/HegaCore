@@ -7,28 +7,18 @@ namespace HegaCore
     public sealed class CubismController : MonoBehaviour
     {
         [SerializeField]
-        private GameObject model = null;
-
-        [SerializeField]
         private Animator animator = null;
 
         [SerializeField]
         private CubismRenderController cubismRenderer = null;
 
-        [SerializeField]
-        private CubismRenderer[] renderers = null;
-
         public float TempAlpha { get; set; }
 
-        [ContextMenu("Refresh")]
-        private void OnValidate()
+        [ContextMenu("Get Components")]
+        private void GetComponents()
         {
-            if (!this.model)
-                return;
-
-            this.animator = this.model.GetComponent<Animator>();
-            this.cubismRenderer = this.model.GetComponent<CubismRenderController>();
-            this.renderers = this.model.GetComponentsInChildren<CubismRenderer>();
+            this.animator = this.gameObject.GetComponentInChildren<Animator>();
+            this.cubismRenderer = this.gameObject.GetComponentInChildren<CubismRenderController>();
         }
 
         public void Hide()
@@ -73,7 +63,7 @@ namespace HegaCore
 
         public void SetLayer(int layer, int sortingOrder = 0)
         {
-            foreach (var renderer in this.renderers)
+            foreach (var renderer in this.cubismRenderer.Renderers)
             {
                 renderer.gameObject.layer = layer;
             }
@@ -88,7 +78,7 @@ namespace HegaCore
 
         public void SetColor(Color value)
         {
-            foreach (var renderer in this.renderers)
+            foreach (var renderer in this.cubismRenderer.Renderers)
             {
                 renderer.Color = value;
             }
@@ -101,7 +91,7 @@ namespace HegaCore
         {
             this.TempAlpha = value;
 
-            foreach (var renderer in this.renderers)
+            foreach (var renderer in this.cubismRenderer.Renderers)
             {
                 var color = renderer.Color;
                 color.a = Mathf.Clamp(value, 0f, 1f);

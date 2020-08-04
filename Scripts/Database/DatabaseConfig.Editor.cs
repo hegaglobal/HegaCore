@@ -8,6 +8,11 @@ namespace HegaCore
 {
     public sealed partial class DatabaseConfig
     {
+        private void OnValidate()
+        {
+            this.internalCsvPath = $"Assets/{this.internalCsvFolder}";
+        }
+
         [Button("Find All"), BoxGroup("Csv Files")]
         private void FindAllCsvFiles()
         {

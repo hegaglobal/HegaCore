@@ -29,6 +29,10 @@ namespace HegaCore.Editor
         private THandler handler = new THandler();
 
         [PropertySpace]
+        [PropertyOrder(2)]
+        [SerializeField]
+        private bool onceCorrupted = false;
+
         [PropertyOrder(2), InlineEditor]
         [SerializeField]
         private GameSettingsEditor settings = null;
@@ -41,8 +45,8 @@ namespace HegaCore.Editor
         {
             if (this.config)
             {
-                this.folderPath = this.config.SaveDataEditorFolderFullPath;
-                this.filePath = this.config.SaveDataEditorFileFullPath;
+                this.folderPath = this.config.SaveData.FolderFullPathEditor;
+                this.filePath = this.config.SaveData.FileFullPathEditor;
             }
             else
             {
@@ -52,7 +56,7 @@ namespace HegaCore.Editor
 
             this.settings = GetComponentInChildren<GameSettingsEditor>();
             this.players = GetComponentsInChildren<TPlayerDataEditor>();
-            this.handler.Initialize(this.folderPath, this.filePath);
+            this.handler.Initialize(this.folderPath, this.filePath, string.Empty);
         }
 
         [PropertySpace]
@@ -62,11 +66,12 @@ namespace HegaCore.Editor
         public void Load()
         {
             this.handler.EnsureFileExisting();
-            var data = this.handler.Load();
+            var data = this.handler.Load(false);
 
             if (data == null)
                 return;
 
+            this.onceCorrupted = data.OnceCorrupted;
             this.settings.Set(data.Settings);
 
             var length = Mathf.Min(this.players.Length, data.Players.Length);
@@ -84,11 +89,12 @@ namespace HegaCore.Editor
         public void Save()
         {
             this.handler.EnsureFileExisting();
-            var data = this.handler.Load();
+            var data = this.handler.Load(false);
 
             if (data == null)
                 return;
 
+            data.OnceCorrupted = this.onceCorrupted;
             this.settings.CopyTo(data.Settings);
 
             var length = Mathf.Min(this.players.Length, data.Players.Length);

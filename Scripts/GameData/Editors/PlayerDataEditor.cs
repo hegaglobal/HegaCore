@@ -20,10 +20,10 @@ namespace HegaCore.Editor
         private bool DoneLobbyTutorial = default;
 
         [SerializeField]
-        private int Gold = default;
+        private int Wealth = default;
 
         [SerializeField]
-        private int Point = default;
+        private int ProgressPoint = default;
 
         [SerializeField]
         private int GoodPoint = default;
@@ -40,8 +40,8 @@ namespace HegaCore.Editor
             this.Existed = data.Existed;
             this.DoneBattleTutorial = data.DoneBattleTutorial;
             this.DoneLobbyTutorial = data.DoneLobbyTutorial;
-            this.Gold = data.Gold;
-            this.Point = data.Point;
+            this.Wealth = data.Wealth;
+            this.ProgressPoint = data.ProgressPoint;
             this.GoodPoint = data.GoodPoint;
             this.BadPoint = data.BadPoint;
             this.LastTime = data.LastTime;
@@ -53,8 +53,8 @@ namespace HegaCore.Editor
             data.Existed = this.Existed;
             data.DoneBattleTutorial = this.DoneBattleTutorial;
             data.DoneLobbyTutorial = this.DoneLobbyTutorial;
-            data.Gold = this.Gold;
-            data.Point = this.Point;
+            data.Wealth = this.Wealth;
+            data.ProgressPoint = this.ProgressPoint;
             data.GoodPoint = this.GoodPoint;
             data.BadPoint = this.BadPoint;
             data.LastTime = this.LastTime;
