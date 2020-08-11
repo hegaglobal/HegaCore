@@ -1,7 +1,7 @@
 ﻿using UnityEngine;
-using TMPro;
+using HegaCore;
 
-namespace HegaCore
+namespace TMPro
 {
     [RequireComponent(typeof(TMP_Text))]
     public class TMP_L10n : MonoBehaviour, IL10n
@@ -39,7 +39,7 @@ namespace HegaCore
         }
 
         public void Localize()
-            => this.text.text = L10n.Localize(this.key, this.silent);
+            => this.text.SetText(L10n.Localize(this.key, this.silent));
 
         public void SetKey(string value)
         {

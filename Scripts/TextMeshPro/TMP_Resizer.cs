@@ -1,8 +1,7 @@
 ﻿using UnityEngine.EventSystems;
-using TMPro;
 using UnityEngine;
 
-namespace HegaCore
+namespace TMPro
 {
     [ExecuteInEditMode]
     [RequireComponent(typeof(TMP_Text))]

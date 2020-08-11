@@ -20,6 +20,6 @@ MonoBehaviour:
   modelScriptFolder: /Game/Scripts/UI/Models
   dialogScriptFolder: /Game/Scripts/UI/Dialogs
   screenScriptFolder: /Game/Scripts/UI/Screens
-  selectedType: UIBattleSettingsDialog
+  selectedType: UIBattleScreen
   generatingType: 
   generatingTypeIsDialog: 1

@@ -10,9 +10,9 @@ namespace HegaCore
             UIMan.Instance.ShowDialog<UIPauseDialog>(onHideCompleted);
         }
 
-        public static void Hide()
+        public static void Hide(bool deactive = true)
         {
-            UIMan.Instance.HideDialog<UIPauseDialog>(true);
+            UIMan.Instance.HideDialog<UIPauseDialog>(deactive);
         }
 
         private bool resume;

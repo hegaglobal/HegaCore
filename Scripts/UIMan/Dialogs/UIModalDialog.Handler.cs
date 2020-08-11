@@ -18,9 +18,9 @@ namespace HegaCore
                                                      onProceed, onCancel);
         }
 
-        public static void Hide()
+        public static void Hide(bool deactive = true)
         {
-            UIMan.Instance.HideDialog<UIModalDialog>(true);
+            UIMan.Instance.HideDialog<UIModalDialog>(deactive);
         }
 
         [SerializeField]

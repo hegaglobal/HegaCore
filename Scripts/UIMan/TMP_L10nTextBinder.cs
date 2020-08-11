@@ -17,13 +17,19 @@ namespace UnuGames.MVVM
         public BindingField colorField = new BindingField("Color", true);
 
         [HideInInspector]
+        public BindingField formatKeyField = new BindingField("Format Key");
+
+        [HideInInspector]
         public StringConverter textConverter = new StringConverter("Text");
 
         [HideInInspector]
         public ColorConverter colorConverter = new ColorConverter("Color");
 
-        public bool localizeText;
+        [HideInInspector]
+        public StringConverter formatKeyConverter = new StringConverter("Format Key");
+
         public string formatKey;
+        public bool shouldLocalizeText;
         public bool silent;
 
         public string Key
@@ -51,6 +57,7 @@ namespace UnuGames.MVVM
 
             SubscribeOnChangedEvent(this.textField, OnUpdateText);
             SubscribeOnChangedEvent(this.colorField, OnUpdateColor);
+            SubscribeOnChangedEvent(this.formatKeyField, OnUpdateFormatKey);
         }
 
         public void OnUpdateText(object val)
@@ -64,6 +71,12 @@ namespace UnuGames.MVVM
             this.text.color = this.colorConverter.Convert(val, this);
         }
 
+        public void OnUpdateFormatKey(object val)
+        {
+            var value = this.formatKeyConverter.Convert(val, this);
+            SetKey(value);
+        }
+
         public void SetKey(string value)
         {
             if (string.Equals(this.formatKey, value))
@@ -75,18 +88,22 @@ namespace UnuGames.MVVM
 
         public void Localize()
         {
+            string text;
+
             if (string.IsNullOrEmpty(this.formatKey))
             {
-                this.text.text = GetValue();
+                text = GetValue();
             }
             else
             {
                 var format = L10n.Localize(this.formatKey, this.silent, keyAsDefault: true);
-                this.text.text = string.Format(format, GetValue());
+                text = string.Format(format, GetValue());
             }
+
+            this.text.SetText(text);
         }
 
         private string GetValue()
-            => this.localizeText ? L10n.Localize(this.value, this.silent, keyAsDefault: true) : this.value;
+            => this.shouldLocalizeText ? L10n.Localize(this.value, this.silent, keyAsDefault: true) : this.value;
     }
 }

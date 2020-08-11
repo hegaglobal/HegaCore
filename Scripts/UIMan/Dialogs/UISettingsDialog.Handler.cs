@@ -35,9 +35,9 @@ namespace HegaCore
             UIMan.Instance.ShowDialog<UISettingsDialog>();
         }
 
-        public static void Hide()
+        public static void Hide(bool deactive = true)
         {
-            UIMan.Instance.DestroyUI<UISettingsDialog>();
+            UIMan.Instance.HideDialog<UISettingsDialog>(deactive);
         }
 
         [UIManProperty]
@@ -156,6 +156,12 @@ namespace HegaCore
             Settings.AudioPlayer.ChangeVoiceVolume(this.Voice);
         }
 
+        private void SelectedLanguage_OnChanged(object value)
+        {
+            Settings.Data.Language = this.Languages[this.SelectedLanguage].Key;
+            L10n.Relocalize();
+        }
+
         private void SelectedResolution_OnChanged(object value)
         {
             Settings.Data.Resolution = this.Resolutions[this.SelectedResolution];
@@ -166,12 +172,6 @@ namespace HegaCore
         {
             Settings.Data.Fullscreen = this.Fullscreen;
             ApplyResolution();
-        }
-
-        private void SelectedLanguage_OnChanged(object value)
-        {
-            Settings.Data.Language = this.Languages[this.SelectedLanguage].Key;
-            L10n.Relocalize();
         }
 
         private void ApplyResolution()
