@@ -21,6 +21,11 @@ namespace HegaCore
             this.cubismRenderer = this.gameObject.GetComponentInChildren<CubismRenderController>();
         }
 
+        private void Awake()
+        {
+            GetComponents();
+        }
+
         public void Hide()
         {
             SetLayer(0);

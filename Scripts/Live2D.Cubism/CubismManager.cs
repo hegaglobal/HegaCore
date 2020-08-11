@@ -17,16 +17,18 @@ namespace HegaCore
         [SerializeField]
         private float hideDuration = 0f;
 
-        private readonly Dictionary<string, CubismController> models
-            = new Dictionary<string, CubismController>();
-
-        private readonly Dictionary<string, Tweener> showTweens
-            = new Dictionary<string, Tweener>();
-
-        private readonly Dictionary<string, Tweener> hideTweens
-            = new Dictionary<string, Tweener>();
+        private readonly Dictionary<string, CubismController> models;
+        private readonly Dictionary<string, Tweener> showTweens;
+        private readonly Dictionary<string, Tweener> hideTweens;
 
         private bool darkLord;
+
+        public CubismManager()
+        {
+            this.models = new Dictionary<string, CubismController>();
+            this.showTweens = new Dictionary<string, Tweener>();
+            this.hideTweens = new Dictionary<string, Tweener>();
+        }
 
         public async UniTask InitializeAsync(CharacterData data, bool darkLord)
         {

@@ -30,7 +30,8 @@ namespace HegaCore
             this.Container = new TContainer();
         }
 
-        public void Initialize(DatabaseConfig config, in ListSegment<string> languages, in SizeInt resolution, bool daemon, bool darkLord)
+        public void Initialize(DatabaseConfig config, in ListSegment<string> languages, in SizeInt resolution,
+                               bool daemon, bool darkLord, bool shouldBackup)
         {
             this.Languages = languages;
 
@@ -42,7 +43,7 @@ namespace HegaCore
 
             this.Container.Daemon = daemon;
             this.Container.DarkLord = darkLord;
-            this.Container.Load();
+            this.Container.Load(shouldBackup);
 
             EnsureResolution();
         }

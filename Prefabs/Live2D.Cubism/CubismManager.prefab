@@ -9,8 +9,6 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 8554910060932565903}
-  - component: {fileID: 7123139228683769811}
-  - component: {fileID: 5509264889495858248}
   - component: {fileID: 8524985028195591074}
   m_Layer: 0
   m_Name: CubismSpawner
@@ -33,34 +31,6 @@ Transform:
   m_Father: {fileID: 4643344425799880458}
   m_RootOrder: 0
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
---- !u!114 &7123139228683769811
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 977722014387118490}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 98b2e7317ae011e4f939b02176ce05c5, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  poolersRoot: {fileID: 977722014387118490}
-  initializeOnAwake: 1
---- !u!114 &5509264889495858248
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 977722014387118490}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 451ae00e3b94dc842a743c9a6d3f6be2, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  poolRoot: {fileID: 0}
-  items: []
 --- !u!114 &8524985028195591074
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -73,8 +43,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 04a528d0850d44f479594e7de78a5e27, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  manager: {fileID: 7123139228683769811}
-  pooler: {fileID: 5509264889495858248}
+  root: {fileID: 8554910060932565903}
 --- !u!1 &8980392371338317122
 GameObject:
   m_ObjectHideFlags: 0

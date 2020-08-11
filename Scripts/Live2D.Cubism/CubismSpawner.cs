@@ -1,12 +1,18 @@
-﻿using UnityEngine;
+﻿using System.Collections.Generic;
+using UnityEngine;
 using UnityEngine.AddressableAssets;
 using Cysharp.Threading.Tasks;
 using VisualNovelData.Data;
 
 namespace HegaCore
 {
-    public sealed class CubismSpawner : ComponentSpawner<CubismController>
+    public sealed class CubismSpawner : MonoBehaviour, IPool<CubismController>
     {
+        [SerializeField]
+        private Transform root = null;
+
+        private readonly Dictionary<string, CubismController> map = new Dictionary<string, CubismController>();
+
         public async UniTask InitializeAsync(CharacterData data, bool darkLord)
         {
             foreach (var character in data.Characters.Values)
@@ -22,12 +28,81 @@ namespace HegaCore
                     continue;
                 }
 
-                var result = await AddressablesManager.LoadAssetAsync<GameObject>(key);
+                if (this.map.ContainsKey(key))
+                    continue;
 
-                RegisterPoolItem(key, result.Value, 1);
+                try
+                {
+                    var result = await AddressablesManager.InstantiateAsync(key, GetRoot());
+
+                    if (!result.Succeeded)
+                    {
+                        UnuLogger.LogError($"Cannot instantiate asset with key={key}");
+                        continue;
+                    }
+
+                    var go = result.Value;
+                    var component = go.GetComponent<CubismController>();
+                    this.map[key] = component;
+                }
+                catch (System.Exception ex)
+                {
+                    UnuLogger.LogException(ex, this);
+                }
+            }
+        }
+
+        private Transform GetRoot()
+            => this.root ? this.root : this.transform;
+
+        public CubismController Get(string key = null)
+        {
+            if (string.IsNullOrEmpty(key))
+            {
+                UnuLogger.LogWarning("Key is empty", this);
+                return null;
             }
 
-            Initialize();
+            if (!this.map.TryGetValue(key, out var item))
+            {
+                UnuLogger.LogWarning($"Asset with key={key} does not exist");
+                return null;
+            }
+
+            if (item && !item.gameObject.activeSelf)
+                item.gameObject.SetActive(true);
+
+            return item;
+        }
+
+        public void Return(CubismController item)
+        {
+            if (item)
+                item.gameObject.SetActive(false);
+        }
+
+        public void Return(params CubismController[] items)
+        {
+            foreach (var item in items)
+            {
+                Return(item);
+            }
+        }
+
+        public void Return(IEnumerable<CubismController> items)
+        {
+            foreach (var item in items)
+            {
+                Return(item);
+            }
+        }
+
+        public void ReturnAll()
+        {
+            foreach (var item in this.map.Values)
+            {
+                Return(item);
+            }
         }
     }
 }

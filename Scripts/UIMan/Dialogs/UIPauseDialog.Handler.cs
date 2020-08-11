@@ -1,4 +1,5 @@
 using System;
+using UnityEngine;
 using UnuGames;
 
 namespace HegaCore
@@ -14,6 +15,9 @@ namespace HegaCore
         {
             UIMan.Instance.HideDialog<UIPauseDialog>(deactive);
         }
+
+        [SerializeField]
+        private bool deactiveOnHide = false;
 
         private bool resume;
         private Action<bool> onHideCompleted;
@@ -36,19 +40,19 @@ namespace HegaCore
         public void UI_Button_Resume()
         {
             this.resume = true;
-            HideMe();
+            Hide(this.deactiveOnHide);
         }
 
         public void UI_Button_Quit()
         {
             this.resume = false;
-            HideMe();
+            Hide(this.deactiveOnHide);
         }
 
         public void UI_Button_Replay()
         {
             this.resume = false;
-            HideMe();
+            Hide(this.deactiveOnHide);
         }
 
         public override void OnHideComplete()
