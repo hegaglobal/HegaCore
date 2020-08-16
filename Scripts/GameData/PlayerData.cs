@@ -3,7 +3,7 @@
 namespace HegaCore
 {
     [Serializable]
-    public abstract class PlayerData<T> where T : PlayerData<T>
+    public abstract class BasePlayerData
     {
         public const int CurrentRevision = 1;
 
@@ -25,7 +25,7 @@ namespace HegaCore
 
         public string LastTime;
 
-        public PlayerData()
+        public BasePlayerData()
         {
             this.Revision = 1;
         }
@@ -43,7 +43,7 @@ namespace HegaCore
             this.LastTime = string.Empty;
         }
 
-        public virtual void CopyFrom(T data)
+        protected void CopyFrom(BasePlayerData data)
         {
             if (data == null)
                 return;
@@ -67,6 +67,15 @@ namespace HegaCore
             this.GoodPoint = data.GoodPoint;
             this.BadPoint = data.BadPoint;
             this.LastTime = data.LastTime ?? string.Empty;
+        }
+    }
+
+    [Serializable]
+    public abstract class PlayerData<T> : BasePlayerData where T : PlayerData<T>
+    {
+        public virtual void CopyFrom(T data)
+        {
+            base.CopyFrom(data);
         }
     }
 }

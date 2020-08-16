@@ -4,43 +4,25 @@ using Newtonsoft.Json;
 
 namespace HegaCore
 {
-    public abstract class GameDataContainer<TPlayerData, TGameData, THandler>
-        where TPlayerData : PlayerData<TPlayerData>, new()
-        where TGameData : GameData<TPlayerData>
-        where THandler : GameDataHandler<TPlayerData, TGameData>, new()
+    public abstract class BaseGameDataContainer
     {
-        public THandler Handler { get; }
-
-        public TGameData Data { get; }
-
-        public TPlayerData CurrentPlayer
-            => this.Data.Players[this.CurrentPlayerIndex];
-
-        public GameSettings Settings
-            => this.Data.Settings;
-
-        public bool CurrentPlayerInitialized { get; private set; }
+        public bool CurrentPlayerInitialized { get; protected set; }
 
         public bool Daemon { get; set; }
 
         public bool DarkLord { get; set; }
 
-        public int CurrentPlayerIndex { get; private set; }
+        public int CurrentPlayerIndex { get; protected set; }
 
-        public int LastPlayerIndex { get; }
+        public int LastPlayerIndex { get; protected set; }
 
         public bool ShowConversation { get; set; }
 
         public bool BattleTutorial { get; set; }
 
-        public GameDataContainer()
-        {
-            this.Handler = new THandler();
-            this.Data = this.Handler.New();
+        public abstract BasePlayerData BasePlayer { get; }
 
-            this.LastPlayerIndex = this.Data.Players.Length - 1;
-            this.CurrentPlayerIndex = 0;
-        }
+        public abstract GameSettings Settings { get; }
 
         public virtual void InitializeCurrentPlayer(int playerIndex)
         {
@@ -55,50 +37,15 @@ namespace HegaCore
             this.BattleTutorial = false;
         }
 
-        public bool HasAnyPlayer()
-        {
-            var result = false;
-
-            foreach (var save in this.Data.Players)
-            {
-                if (save.Existed)
-                {
-                    result = true;
-                    break;
-                }
-            }
-
-            return result;
-        }
-
         public bool IsValidPlayerIndex(int index)
             => index >= 0 && index <= this.LastPlayerIndex;
-
-        public bool TryGetPlayer(int index, out TPlayerData data)
-        {
-            data = default;
-
-            if (!IsValidPlayerIndex(index))
-                return false;
-
-            data = this.Data.Players[index];
-            return true;
-        }
 
         public bool WillPlayerDoBattleTutorial()
         {
             if (!Validate())
                 return false;
 
-            return this.BattleTutorial || !this.CurrentPlayer.DoneBattleTutorial;
-        }
-
-        public void DeletePlayer(int index)
-        {
-            if (!IsValidPlayerIndex(index))
-                return;
-
-            this.Data.Players[index].Reset();
+            return this.BattleTutorial || !this.BasePlayer.DoneBattleTutorial;
         }
 
         public void SetPlayerBattleTutorial(bool value = true)
@@ -106,7 +53,7 @@ namespace HegaCore
             if (!Validate())
                 return;
 
-            this.CurrentPlayer.DoneBattleTutorial = value;
+            this.BasePlayer.DoneBattleTutorial = value;
         }
 
         public void SetPlayerLobbyTutorial(bool value = true)
@@ -114,7 +61,7 @@ namespace HegaCore
             if (!Validate())
                 return;
 
-            this.CurrentPlayer.DoneLobbyTutorial = value;
+            this.BasePlayer.DoneLobbyTutorial = value;
         }
 
         public bool TogglePlayerBattleTutorial()
@@ -122,8 +69,8 @@ namespace HegaCore
             if (!Validate())
                 return false;
 
-            this.CurrentPlayer.DoneBattleTutorial = !this.CurrentPlayer.DoneBattleTutorial;
-            return this.CurrentPlayer.DoneBattleTutorial;
+            this.BasePlayer.DoneBattleTutorial = !this.BasePlayer.DoneBattleTutorial;
+            return this.BasePlayer.DoneBattleTutorial;
         }
 
         public bool TogglePlayerLobbyTutorial()
@@ -131,8 +78,8 @@ namespace HegaCore
             if (!Validate())
                 return false;
 
-            this.CurrentPlayer.DoneLobbyTutorial = !this.CurrentPlayer.DoneLobbyTutorial;
-            return this.CurrentPlayer.DoneLobbyTutorial;
+            this.BasePlayer.DoneLobbyTutorial = !this.BasePlayer.DoneLobbyTutorial;
+            return this.BasePlayer.DoneLobbyTutorial;
         }
 
         public int ChangePlayerWealth(int amount)
@@ -141,9 +88,9 @@ namespace HegaCore
                 return 0;
 
             if (amount != 0)
-                this.CurrentPlayer.Wealth += amount;
+                this.BasePlayer.Wealth += amount;
 
-            return this.CurrentPlayer.Wealth;
+            return this.BasePlayer.Wealth;
         }
 
         public int ChangePlayerProgressPoint(int amount)
@@ -152,9 +99,9 @@ namespace HegaCore
                 return 0;
 
             if (amount != 0)
-                this.CurrentPlayer.ProgressPoint += amount;
+                this.BasePlayer.ProgressPoint += amount;
 
-            return this.CurrentPlayer.ProgressPoint;
+            return this.BasePlayer.ProgressPoint;
         }
 
         public int ChangePlayerGoodPoint(int amount)
@@ -163,9 +110,9 @@ namespace HegaCore
                 return 0;
 
             if (amount != 0)
-                this.CurrentPlayer.GoodPoint += amount;
+                this.BasePlayer.GoodPoint += amount;
 
-            return this.CurrentPlayer.GoodPoint;
+            return this.BasePlayer.GoodPoint;
         }
 
         public int ChangePlayerBadPoint(int amount)
@@ -174,9 +121,9 @@ namespace HegaCore
                 return 0;
 
             if (amount != 0)
-                this.CurrentPlayer.BadPoint += amount;
+                this.BasePlayer.BadPoint += amount;
 
-            return this.CurrentPlayer.BadPoint;
+            return this.BasePlayer.BadPoint;
         }
 
         public void ChangePlayerLastTime()
@@ -196,8 +143,8 @@ namespace HegaCore
                 lastTime = "2020-01-01\n00:00:00";
             }
 
-            this.CurrentPlayer.Existed = true;
-            this.CurrentPlayer.LastTime = lastTime;
+            this.BasePlayer.Existed = true;
+            this.BasePlayer.LastTime = lastTime;
         }
 
         public bool IsPlayerBad()
@@ -205,34 +152,22 @@ namespace HegaCore
             if (!Validate())
                 return false;
 
-            return this.CurrentPlayer.BadPoint > this.CurrentPlayer.GoodPoint;
+            return this.BasePlayer.BadPoint > this.BasePlayer.GoodPoint;
         }
 
-        public void Load(bool shouldBackUp = false)
-            => this.Data.Copy(this.Handler.Load(shouldBackUp));
+        public abstract bool TryGetPlayer(int index, out BasePlayerData data);
 
-        public void Save()
-            => this.Handler.Save(this.Data);
+        public abstract bool HasAnyPlayer();
 
-        public void SaveSettings()
-        {
-            if (this.Daemon)
-                UnuLogger.Log(JsonConvert.SerializeObject(this.Settings));
+        public abstract void DeletePlayer(int index);
 
-            this.Handler.Save(this.Data);
-        }
+        public abstract void Load(bool shouldBackUp = false);
 
-        public void SavePlayer()
-        {
-            if (!Validate())
-                return;
+        public abstract void Save();
 
-            if (this.Daemon)
-                UnuLogger.Log(JsonConvert.SerializeObject(this.CurrentPlayer));
+        public abstract void SaveSettings();
 
-            ChangePlayerLastTime();
-            this.Handler.Save(this.Data);
-        }
+        public abstract void SavePlayer();
 
         protected bool Validate()
         {
@@ -243,6 +178,103 @@ namespace HegaCore
             }
 
             return true;
+        }
+    }
+
+    public abstract class GameDataContainer<TPlayerData, TGameData, THandler> : BaseGameDataContainer
+        where TPlayerData : PlayerData<TPlayerData>, new()
+        where TGameData : GameData<TPlayerData>
+        where THandler : GameDataHandler<TPlayerData, TGameData>, new()
+    {
+        public THandler Handler { get; }
+
+        public TGameData Data { get; }
+
+        public TPlayerData CurrentPlayer
+            => this.Data.Players[this.CurrentPlayerIndex];
+
+        public override BasePlayerData BasePlayer
+            => this.CurrentPlayer;
+
+        public override GameSettings Settings
+            => this.Data.Settings;
+
+        public GameDataContainer()
+        {
+            this.Handler = new THandler();
+            this.Data = this.Handler.New();
+
+            this.LastPlayerIndex = this.Data.Players.Length - 1;
+            this.CurrentPlayerIndex = 0;
+        }
+
+        public override bool HasAnyPlayer()
+        {
+            var result = false;
+
+            foreach (var save in this.Data.Players)
+            {
+                if (save.Existed)
+                {
+                    result = true;
+                    break;
+                }
+            }
+
+            return result;
+        }
+
+        public override bool TryGetPlayer(int index, out BasePlayerData data)
+        {
+            var result = TryGetPlayer(index, out TPlayerData dataT);
+            data = dataT;
+
+            return result;
+        }
+
+        public bool TryGetPlayer(int index, out TPlayerData data)
+        {
+            data = default;
+
+            if (!IsValidPlayerIndex(index))
+                return false;
+
+            data = this.Data.Players[index];
+            return true;
+        }
+
+        public override void DeletePlayer(int index)
+        {
+            if (!IsValidPlayerIndex(index))
+                return;
+
+            this.Data.Players[index].Reset();
+        }
+
+        public override void Load(bool shouldBackUp = false)
+            => this.Data.Copy(this.Handler.Load(shouldBackUp));
+
+        public override void Save()
+            => this.Handler.Save(this.Data);
+
+        public override void SaveSettings()
+        {
+            if (this.Daemon)
+                UnuLogger.Log(JsonConvert.SerializeObject(this.Settings));
+
+            this.Handler.Save(this.Data);
+        }
+
+        public override void SavePlayer()
+        {
+            if (!Validate())
+                return;
+
+            if (this.Daemon)
+                UnuLogger.Log(JsonConvert.SerializeObject(this.CurrentPlayer));
+
+            ChangePlayerLastTime();
+            this.Handler.Save(this.Data);
         }
     }
 }
