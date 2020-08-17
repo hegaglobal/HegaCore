@@ -181,7 +181,7 @@ namespace HegaCore
 
         protected void Load<TData, TParser>(TData data, string file, in Segment<string> languages)
             where TData : class
-            where TParser : VisualNovelData.Parser.ICsvParser<TData>, new()
+            where TParser : ICsvParser<TData>, new()
         {
             this.csvLoader.Load<TData, TParser>(data, GetCsv(file), languages);
         }
