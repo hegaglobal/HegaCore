@@ -176,7 +176,7 @@ namespace HegaCore
             where TMapping : CsvMapping<TEntity>, new()
             where TIdGetter : IGetId<TEntity>, new()
         {
-            this.csvLoader.Load<TEntity, TMapping>(table, GetCsv(file));
+            this.csvLoader.Load<TEntity, TMapping, TIdGetter>(table, GetCsv(file));
         }
 
         protected void Load<TData, TParser>(TData data, string file, in Segment<string> languages)

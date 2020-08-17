@@ -34,18 +34,18 @@ namespace HegaCore.Commands
 
         protected void Log()
         {
-            UnuLogger.Log($"<color=#4a148c>Invoke UI Command:</color> {this.key}", this);
+            UnuLogger.Log($"Invoke UI Command: {this.key}", this);
         }
 
         protected void Log(object value)
         {
-            UnuLogger.Log($"<color=#4a148c>Invoke UI Command:</color> {this.key}::{value}", this);
+            UnuLogger.Log($"Invoke UI Command: {this.key}::{value}", this);
         }
 
         protected void Log(params object[] values)
         {
             this.sb.Clear();
-            this.sb.Append($"<color=#0d47a1>Invoke UI Command:</color> {this.key}::");
+            this.sb.Append($"Invoke UI Command: {this.key}::");
 
             var last = values.Length - 1;
 

@@ -22,13 +22,13 @@ namespace HegaCore
 
         public void Invoke(string @event)
         {
-            UnuLogger.Log($"<color=#b71c1c>Invoke Event:</color> {@event}");
+            UnuLogger.Log($"Invoke Event: {@event}");
             this.EventCommandSystem.Invoke(@event, this.BaseDataContainer.GetPlayerProgressPoint());
         }
 
         public void Invoke(string @event, int stage)
         {
-            UnuLogger.Log($"<color=#b71c1c>Invoke Event:</color> {@event}");
+            UnuLogger.Log($"Invoke Event: {@event}");
             this.EventCommandSystem.Invoke(@event, stage);
         }
     }
