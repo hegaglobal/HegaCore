@@ -15,7 +15,7 @@ namespace HegaCore
 
         public CharacterData CharacterData { get; }
 
-        public QuestData QuestData { get; }
+        public EventData EventData { get; }
 
         public Tables()
         {
@@ -23,7 +23,7 @@ namespace HegaCore
             this.L10nData = new L10nData();
             this.NovelData = new NovelData();
             this.CharacterData = new CharacterData();
-            this.QuestData = new QuestData();
+            this.EventData = new EventData();
         }
 
         public virtual void Clear()
@@ -32,7 +32,7 @@ namespace HegaCore
             this.L10nData.Clear();
             this.NovelData.Clear();
             this.CharacterData.Clear();
-            this.QuestData.Clear();
+            this.EventData.Clear();
         }
     }
 }

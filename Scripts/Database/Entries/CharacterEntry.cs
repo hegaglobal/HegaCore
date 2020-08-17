@@ -1,4 +1,4 @@
-﻿namespace HegaCore
+﻿namespace HegaCore.Database
 {
     public sealed class CharacterEntry
     {

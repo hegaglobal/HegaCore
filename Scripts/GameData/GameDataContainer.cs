@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using UnityEngine;
 using Newtonsoft.Json;
 
@@ -23,6 +24,11 @@ namespace HegaCore
         public abstract BasePlayerData BasePlayer { get; }
 
         public abstract GameSettings Settings { get; }
+
+        public ReadList<int> Missions
+            => this.missions;
+
+        private readonly List<int> missions = new List<int>();
 
         public virtual void InitializeCurrentPlayer(int playerIndex)
         {
@@ -93,6 +99,14 @@ namespace HegaCore
             return this.BasePlayer.Wealth;
         }
 
+        public int GetPlayerProgressPoint()
+        {
+            if (!Validate())
+                return 0;
+
+            return this.BasePlayer.ProgressPoint;
+        }
+
         public int ChangePlayerProgressPoint(int amount)
         {
             if (!Validate())
@@ -154,6 +168,15 @@ namespace HegaCore
 
             return this.BasePlayer.BadPoint > this.BasePlayer.GoodPoint;
         }
+
+        public void UnlockMission(int id)
+        {
+            if (!this.missions.Contains(id))
+                this.missions.Add(id);
+        }
+
+        public void ClearMissions()
+            => this.missions.Clear();
 
         public abstract bool TryGetPlayer(int index, out BasePlayerData data);
 

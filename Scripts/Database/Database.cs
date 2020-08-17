@@ -87,8 +87,8 @@ namespace HegaCore
             Load<CharacterData, CharacterParser>
                  (this.Tables.CharacterData, nameof(this.Tables.CharacterData), this.Languages);
 
-            Load<QuestData, QuestParser>
-                 (this.Tables.QuestData, nameof(this.Tables.QuestData), this.Languages);
+            Load<EventData, EventParser>
+                 (this.Tables.EventData, nameof(this.Tables.EventData), this.Languages);
 
             ContinueLoad();
         }
