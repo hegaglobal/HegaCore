@@ -1,12 +1,11 @@
 ﻿using System.Collections.Concurrent;
 using UnityEngine;
 
-namespace HegaCore
+namespace HegaCore.UI
 {
     public static class RectTransformExtensions
     {
-        private static readonly ConcurrentQueue<Vector3[]> _pool
-            = new ConcurrentQueue<Vector3[]>();
+        private static readonly ConcurrentQueue<Vector3[]> _pool = new ConcurrentQueue<Vector3[]>();
 
         private static Vector3[] GetVector3Array1x4()
         {
@@ -28,7 +27,7 @@ namespace HegaCore
         /// <param name="self"></param>
         /// <param name="viewport">If viewport is screen, then keep it as 'null'</param>
         /// <returns></returns>
-        public static bool Overlap(this RectTransform self, Camera camera, RectTransform viewport = null)
+        public static bool IsOverlapped(this RectTransform self, Camera camera, RectTransform viewport = null)
         {
             Vector2 viewportMinCorner;
             Vector2 viewportMaxCorner;
@@ -90,7 +89,7 @@ namespace HegaCore
         /// <param name="self"></param>
         /// <param name="viewport">If viewport is screen, then keep it as 'null'</param>
         /// <returns></returns>
-        public static Vector2 OutsideOffset(this RectTransform self, Camera camera, RectTransform viewport = null)
+        public static Vector2 CalcOutsideOffset(this RectTransform self, Camera camera, RectTransform viewport = null)
         {
             Vector2 viewportMinCorner;
             Vector2 viewportMaxCorner;

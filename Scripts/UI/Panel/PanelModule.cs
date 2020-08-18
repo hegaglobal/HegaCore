@@ -2,7 +2,7 @@
 using UnityEngine.Events;
 using UnuGames;
 
-namespace HegaCore
+namespace HegaCore.UI
 {
     [DisallowMultipleComponent]
     [RequireComponent(typeof(Panel))]

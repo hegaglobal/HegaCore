@@ -2,7 +2,7 @@
 using UnuGames;
 using UnuGames.MVVM;
 
-namespace HegaCore
+namespace HegaCore.UI.MVVM
 {
     [RequireComponent(typeof(UIGrayscaleEffect))]
     [DisallowMultipleComponent]

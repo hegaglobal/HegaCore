@@ -1,7 +1,7 @@
 ﻿using UnityEngine;
 using UnityEngine.EventSystems;
 
-namespace HegaCore
+namespace HegaCore.UI
 {
     public sealed class PanelOnHover : MonoBehaviour, IPointerEnterHandler, IPointerExitHandler
     {

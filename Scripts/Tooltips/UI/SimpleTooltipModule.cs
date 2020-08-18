@@ -1,4 +1,4 @@
-﻿namespace HegaCore
+﻿namespace HegaCore.UI
 {
     public sealed class SimpleTooltipModule : TooltipModule
     {

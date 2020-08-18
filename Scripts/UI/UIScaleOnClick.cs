@@ -2,7 +2,7 @@
 using UnityEngine.EventSystems;
 using UnuGames;
 
-namespace HegaCore
+namespace HegaCore.UI
 {
     public sealed class UIScaleOnClick : UIBehaviour, IPointerDownHandler, IPointerUpHandler
     {

@@ -1,4 +1,6 @@
-﻿namespace QuaStateMachine
+﻿using QuaStateMachine;
+
+namespace HegaCore
 {
     public static class StateMachineExtensions
     {

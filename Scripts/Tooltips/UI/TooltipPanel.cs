@@ -3,7 +3,7 @@ using UnityEngine;
 using Sirenix.OdinInspector;
 using Cysharp.Threading.Tasks;
 
-namespace HegaCore
+namespace HegaCore.UI
 {
     [RequireComponent(typeof(Panel))]
     public sealed class TooltipPanel : SingletonBehaviour<TooltipPanel>
@@ -144,7 +144,7 @@ namespace HegaCore
         private void AdjustPosition()
         {
             var target = this.tooltip.rectTransform;
-            var offset = target.OutsideOffset(this.rootCanvas.worldCamera);
+            var offset = target.CalcOutsideOffset(this.rootCanvas.worldCamera);
 
             var position = target.localPosition;
             position.x -= offset.x;

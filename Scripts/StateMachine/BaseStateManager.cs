@@ -1,6 +1,7 @@
 ﻿using UnityEngine;
+using QuaStateMachine;
 
-namespace QuaStateMachine
+namespace HegaCore
 {
     using State = State<string, StateDirection<string>, string>;
 

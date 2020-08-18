@@ -4,7 +4,7 @@ using UnityEngine.UI;
 using UnityEngine.Events;
 using DG.Tweening;
 
-namespace HegaCore
+namespace HegaCore.UI
 {
     [DisallowMultipleComponent]
     [RequireComponent(typeof(CanvasGroup))]

@@ -2,7 +2,7 @@ using System;
 using UnityEngine;
 using UnuGames;
 
-namespace HegaCore
+namespace HegaCore.UI
 {
     public partial class UIModalDialog : UIManDialog
     {

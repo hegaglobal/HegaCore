@@ -1,7 +1,7 @@
 ﻿using UnityEngine;
 using Cysharp.Threading.Tasks;
 
-namespace HegaCore
+namespace HegaCore.UI
 {
     [RequireComponent(typeof(Panel))]
     public sealed class AutoHidePanel : MonoBehaviour

@@ -2,7 +2,7 @@
 using UnityEngine.UI;
 using Sirenix.OdinInspector;
 
-namespace HegaCore
+namespace HegaCore.UI
 {
     [DisallowMultipleComponent]
     [RequireComponent(typeof(Graphic))]

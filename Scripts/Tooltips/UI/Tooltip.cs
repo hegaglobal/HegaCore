@@ -1,7 +1,7 @@
 ﻿using UnityEngine;
 using UnityEngine.EventSystems;
 
-namespace HegaCore
+namespace HegaCore.UI
 {
     [DisallowMultipleComponent]
     public sealed class Tooltip : UIBehaviour, ITooltip,

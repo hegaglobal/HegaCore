@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using UnuGames;
 using UnuGames.MVVM;
 
-namespace HegaCore
+namespace HegaCore.UI
 {
     public partial class UISettingsDialog : UIManDialog
     {

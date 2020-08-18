@@ -1,7 +1,7 @@
 ﻿using UnityEngine;
-using HegaCore;
+using TMPro;
 
-namespace TMPro
+namespace HegaCore
 {
     [RequireComponent(typeof(TMP_Text))]
     public class TMP_L10n : MonoBehaviour, IL10n

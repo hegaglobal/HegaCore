@@ -1,6 +1,7 @@
 ﻿using UnityEngine;
+using TMPro;
 
-namespace TMPro
+namespace HegaCore
 {
     public static class TMP_TextExtensions
     {

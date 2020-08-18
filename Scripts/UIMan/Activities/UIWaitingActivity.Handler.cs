@@ -1,6 +1,6 @@
 using UnuGames;
 
-namespace Game.UI
+namespace HegaCore.UI
 {
     public partial class UIWaitingActivity : UIActivity
     {

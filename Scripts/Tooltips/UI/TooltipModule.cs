@@ -2,10 +2,8 @@
 using UnuGames;
 using TMPro;
 
-namespace HegaCore
+namespace HegaCore.UI
 {
-    using Model;
-
     [RequireComponent(typeof(CanvasGroup))]
     public abstract class TooltipModule : UIManModule<TooltipModel>
     {

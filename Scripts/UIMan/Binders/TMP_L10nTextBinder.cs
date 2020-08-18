@@ -1,8 +1,8 @@
 ﻿using UnityEngine;
 using TMPro;
-using HegaCore;
+using UnuGames.MVVM;
 
-namespace UnuGames.MVVM
+namespace HegaCore.UI.MVVM
 {
     [RequireComponent(typeof(TMP_Text))]
     [DisallowMultipleComponent]

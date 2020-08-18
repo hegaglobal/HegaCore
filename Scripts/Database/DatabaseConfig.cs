@@ -48,7 +48,7 @@ namespace HegaCore
 
         public string ExternalCsvFolder => this.externalCsvFolder;
 
-        public IReadOnlyDictionary<string, TextAsset> CsvFiles => this.csvFiles;
+        public ReadDictionary<string, TextAsset> CsvFiles => this.csvFiles;
 
         public string DaemonFile => this.daemonFile;
 

@@ -3,7 +3,7 @@ using UnityEngine;
 using UnityEngine.UI;
 using Cysharp.Threading.Tasks;
 
-namespace HegaCore
+namespace HegaCore.UI
 {
     [RequireComponent(typeof(Panel))]
     [RequireComponent(typeof(Canvas))]
