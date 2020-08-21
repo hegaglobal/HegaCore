@@ -4,6 +4,6 @@
     {
         Stopped,
         Running,
-        Pausing
+        Paused
     }
 }

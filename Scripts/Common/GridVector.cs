@@ -46,6 +46,9 @@ namespace HegaCore
         public bool Equals(GridVector other)
             => this.row == other.row && this.column == other.column;
 
+        public bool Equals(in GridVector other)
+            => this.row == other.row && this.column == other.column;
+
         public override int GetHashCode()
         {
             var hashCode = -1663278630;

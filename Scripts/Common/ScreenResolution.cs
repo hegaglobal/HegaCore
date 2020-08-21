@@ -4,7 +4,7 @@ using UnityEngine;
 namespace HegaCore
 {
     [Serializable]
-    public readonly struct ScreenResolution : IEquatable<ScreenResolution>
+    public readonly struct ScreenResolution : IEquatable<ScreenResolution>, IEquatableReadOnlyStruct<ScreenResolution>
     {
         public readonly int Width;
         public readonly int Height;
@@ -17,10 +17,12 @@ namespace HegaCore
 
         public override bool Equals(object obj)
             => obj is ScreenResolution other &&
-               this.Width == other.Width &&
-               this.Height == other.Height;
+               this.Width == other.Width && this.Height == other.Height;
 
         public bool Equals(ScreenResolution other)
+            => this.Width == other.Width && this.Height == other.Height;
+
+        public bool Equals(in ScreenResolution other)
             => this.Width == other.Width && this.Height == other.Height;
 
         public override int GetHashCode()

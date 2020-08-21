@@ -33,6 +33,10 @@ namespace HegaCore
             => this.Horizontal == other.Horizontal &&
                this.Vertical == other.Vertical;
 
+        public bool Equals(in Direction other)
+            => this.Horizontal == other.Horizontal &&
+               this.Vertical == other.Vertical;
+
         public override int GetHashCode()
         {
             var hashCode = 1238135884;
