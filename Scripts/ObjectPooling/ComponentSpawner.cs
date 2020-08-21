@@ -17,17 +17,20 @@ namespace HegaCore
 
         public ComponentSpawner()
         {
-            this.instantiator = new AsyncComponentInstantiator<T>(this.prefabReference);
+            this.instantiator = new AsyncComponentInstantiator<T>();
             this.pool = new ComponentPool<T>(this.instantiator);
         }
 
         public async UniTask PrepareAsync(int amount)
         {
-            this.instantiator.Initialize(this.root ? this.root : this.transform);
+            this.instantiator.Initialize(this.root ? this.root : this.transform, this.prefabReference);
             await this.pool.PrepoolAsync(amount);
         }
 
         public void ReturnAll()
             => this.pool.ReturnAll();
+
+        public T Get()
+            => this.pool.Get();
     }
 }

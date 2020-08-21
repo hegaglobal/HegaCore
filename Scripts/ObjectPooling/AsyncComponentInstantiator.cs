@@ -6,17 +6,13 @@ namespace HegaCore
 {
     public class AsyncComponentInstantiator<T> : AsyncInstantiator<T> where T : Component
     {
-        private readonly AssetReferenceGameObject prefabReference;
+        private AssetReferenceGameObject prefabReference;
         private Transform root;
 
-        public AsyncComponentInstantiator(AssetReferenceGameObject prefabReference)
-        {
-            this.prefabReference = prefabReference;
-        }
-
-        public void Initialize(Transform root)
+        public void Initialize(Transform root, AssetReferenceGameObject prefabReference)
         {
             this.root = root;
+            this.prefabReference = prefabReference;
         }
 
         public sealed override async UniTask<T> InstantiateAsync()

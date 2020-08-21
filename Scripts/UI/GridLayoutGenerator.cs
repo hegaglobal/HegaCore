@@ -7,7 +7,7 @@ using Sirenix.OdinInspector;
 namespace HegaCore.UI
 {
     [RequireComponent(typeof(GridLayoutGroup))]
-    public sealed class GridLayoutGenerator : MonoBehaviour
+    public sealed class GridLayoutGenerator : MonoBehaviour, IGetCellPosition
     {
         [SerializeField]
         private GridVector size = default;
