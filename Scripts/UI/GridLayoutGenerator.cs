@@ -10,7 +10,7 @@ namespace HegaCore.UI
     public sealed class GridLayoutGenerator : MonoBehaviour
     {
         [SerializeField]
-        private int cellCount = 0;
+        private GridVector size = default;
 
         [HideInInspector]
         [SerializeField]
@@ -20,43 +20,42 @@ namespace HegaCore.UI
         [SerializeField]
         private CellMap map = new CellMap();
 
-        public int CellCount
+        public GridVector Size
         {
-            get => this.cellCount;
-            set => this.cellCount = Mathf.Max(value, 0);
+            get => this.size;
+            set => this.size = value;
         }
 
-        public ReadDictionary<GridIndex, RectTransform> Map => this.map;
+        public ReadDictionary<GridVector, RectTransform> Map => this.map;
+
+        private void EnsureGridLayout()
+        {
+            if (!this.gridLayout)
+                this.gridLayout = GetComponent<GridLayoutGroup>();
+
+            if (!this.gridLayout)
+                this.gridLayout = this.gameObject.AddComponent<GridLayoutGroup>();
+        }
 
         [Button]
         public void Generate()
         {
             Clear();
+            EnsureGridLayout();
 
-            if (!this.gridLayout)
-                this.gridLayout = GetComponent<GridLayoutGroup>();
+            this.gridLayout.constraint = GridLayoutGroup.Constraint.FixedColumnCount;
+            this.gridLayout.constraintCount = this.size.Column;
 
-            switch (this.gridLayout.constraint)
+            for (var r = 0; r < this.size.Row; r++)
             {
-                case GridLayoutGroup.Constraint.FixedColumnCount:
+                for (var c = 0; c < this.size.Column; c++)
                 {
-                    var column = Mathf.Max(this.gridLayout.constraintCount, 1);
-                    var row = this.cellCount / column;
-                    Generate(row, column);
+                    var index = new GridVector(r, c);
+                    var go = new GameObject($"{index}");
+                    var rect = go.AddComponent<RectTransform>();
+                    rect.SetParent(this.transform, false);
+                    this.map.Add(index, rect);
                 }
-                    break;
-
-                case GridLayoutGroup.Constraint.FixedRowCount:
-                {
-                    var row = Mathf.Max(this.gridLayout.constraintCount, 1);
-                    var column = this.cellCount / row;
-                    Generate(row, column);
-                }
-                    break;
-
-                default:
-                    Debug.LogError("Cannot generate grid with flexible constraint");
-                    break;
             }
         }
 
@@ -78,22 +77,28 @@ namespace HegaCore.UI
             this.map.Clear();
         }
 
-        private void Generate(int row, int column)
+        public RectTransform GetCell(in GridVector index)
+            => this.map.ContainsKey(index) ? this.map[index] : null;
+
+        public bool TryGetCell(in GridVector index, out RectTransform cell)
+            => this.map.TryGetValue(index, out cell);
+
+        public Vector3 GetCellPosition(in GridVector index)
+            => this.map.ContainsKey(index) ? this.map[index].position : this.transform.position;
+
+        public bool TryGetCellPosition(in GridVector index, out Vector3 position)
         {
-            for (var r = 0; r < row; r++)
+            if (!this.map.TryGetValue(index, out var cell))
             {
-                for (var c = 0; c < column; c++)
-                {
-                    var index = new GridIndex(r, c);
-                    var go = new GameObject($"{index}");
-                    var rect = go.AddComponent<RectTransform>();
-                    rect.SetParent(this.transform, false);
-                    this.map.Add(index, rect);
-                }
+                position = this.transform.position;
+                return false;
             }
+
+            position = cell.position;
+            return true;
         }
 
         [Serializable]
-        private sealed class CellMap : SerializableDictionary<GridIndex, RectTransform> { }
+        private sealed class CellMap : SerializableDictionary<GridVector, RectTransform> { }
     }
 }

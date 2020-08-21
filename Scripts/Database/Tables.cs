@@ -7,24 +7,15 @@ namespace HegaCore
 
     public abstract class Tables
     {
-        public Table<LanguageEntry> Language { get; }
+        public Table<LanguageEntry> Language { get; } = new Table<LanguageEntry>();
 
-        public L10nData L10nData { get; }
+        public L10nData L10nData { get; } = new L10nData();
 
-        public NovelData NovelData { get; }
+        public NovelData NovelData { get; } = new NovelData();
 
-        public CharacterData CharacterData { get; }
+        public CharacterData CharacterData { get; } = new CharacterData();
 
-        public EventData EventData { get; }
-
-        public Tables()
-        {
-            this.Language = new Table<LanguageEntry>();
-            this.L10nData = new L10nData();
-            this.NovelData = new NovelData();
-            this.CharacterData = new CharacterData();
-            this.EventData = new EventData();
-        }
+        public EventData EventData { get; } = new EventData();
 
         public virtual void Clear()
         {

@@ -6,7 +6,7 @@ namespace HegaCore
 {
     [InlineProperty]
     [Serializable]
-    public struct GridIndex : IEquatable<GridIndex>
+    public struct GridVector : IEquatable<GridVector>
     {
         [HorizontalGroup, LabelText("R"), LabelWidth(12), Tooltip(nameof(Row)), MinValue(0)]
         [SerializeField, Min(0)]
@@ -28,7 +28,7 @@ namespace HegaCore
             set => this.column = Mathf.Max(value, 0);
         }
 
-        public GridIndex(int row, int column)
+        public GridVector(int row, int column)
         {
             this.row = Mathf.Max(row, 0);
             this.column = Mathf.Max(column, 0);
@@ -41,9 +41,9 @@ namespace HegaCore
         }
 
         public override bool Equals(object obj)
-            => obj is GridIndex other && this.row == other.row && this.column == other.column;
+            => obj is GridVector other && this.row == other.row && this.column == other.column;
 
-        public bool Equals(GridIndex other)
+        public bool Equals(GridVector other)
             => this.row == other.row && this.column == other.column;
 
         public override int GetHashCode()
@@ -57,10 +57,13 @@ namespace HegaCore
         public override string ToString()
             => $"({this.row}, {this.column})";
 
-        public static bool operator ==(in GridIndex lhs, in GridIndex rhs)
+        public static implicit operator GridVector(in (int row, int column) value)
+            => new GridVector(value.row, value.column);
+
+        public static bool operator ==(in GridVector lhs, in GridVector rhs)
             => lhs.row == rhs.row && lhs.column == rhs.column;
 
-        public static bool operator !=(in GridIndex lhs, in GridIndex rhs)
+        public static bool operator !=(in GridVector lhs, in GridVector rhs)
             => lhs.row != rhs.row || lhs.column != rhs.column;
     }
 }

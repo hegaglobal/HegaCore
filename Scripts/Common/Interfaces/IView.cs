@@ -1,4 +1,4 @@
-﻿namespace HegaCore.Views
+﻿namespace HegaCore
 {
     public interface IView { }
 }

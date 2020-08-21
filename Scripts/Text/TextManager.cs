@@ -2,7 +2,7 @@
 
 namespace HegaCore
 {
-    public sealed class TextManager : SingletonBehaviour<TextManager>, IShowText
+    public sealed class TextManager : SingletonBehaviour<TextManager>, ITextEmitter
     {
         [SerializeField]
         private TextEmitter textEmitter = null;
@@ -15,7 +15,7 @@ namespace HegaCore
         public void Deinitialize()
             => this.textEmitter.Deinitialize();
 
-        public void Show(string value, Vector3 position, Color color, float? size = null)
+        public void Emit(string value, Vector3 position, Color color, float? size = null)
             => this.textEmitter.Emit(value, position, color, size);
     }
 }
