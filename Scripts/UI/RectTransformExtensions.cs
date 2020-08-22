@@ -171,5 +171,20 @@ namespace HegaCore.UI
 
             return offset;
         }
+
+        public static void GetWorldSize(this RectTransform self, out Vector2 size, out Vector2 origin)
+        {
+            // Convert the rectangle to world corners and grab the top left
+            var corners = GetVector3Array1x4();
+            self.GetWorldCorners(corners);
+
+            var bl = corners[0];
+            var tr = corners[2];
+
+            size = new Vector2(Mathf.Abs(tr.x - bl.x), Mathf.Abs(tr.y - bl.y));
+            origin = Vector2.Lerp(bl, tr, 0.5f);
+
+            ReturnVector3Array1x4(corners);
+        }
     }
 }

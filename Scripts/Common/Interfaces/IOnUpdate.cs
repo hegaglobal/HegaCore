@@ -1,6 +1,6 @@
 ﻿namespace HegaCore
 {
-    public interface IUpdatable
+    public interface IOnUpdate
     {
         void OnUpdate(float deltaTime);
     }
