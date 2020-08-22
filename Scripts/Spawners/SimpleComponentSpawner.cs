@@ -56,7 +56,7 @@ namespace HegaCore
         public async UniTask PrepoolAsync(int amount)
         {
             ValidateAsync(nameof(Prepool));
-            this.asyncInstantiator.Initialize(this.root ? this.root : this.transform, this.prefabReference);
+            this.asyncInstantiator.Initialize(GetRoot(), this.prefabReference);
             await this.asyncPool.PrepoolAsync(amount);
         }
 
@@ -128,7 +128,10 @@ namespace HegaCore
                 this.pool.Return(items);
         }
 
+        private Transform GetRoot()
+            => this.root ? this.root : this.transform;
+
         T IInstantiator<T>.Instantiate()
-            => Instantiate(this.prefab, Vector3.zero, Quaternion.identity, this.root);
+            => Instantiate(this.prefab, Vector3.zero, Quaternion.identity, GetRoot());
     }
 }
