@@ -22,6 +22,8 @@ namespace HegaCore
         [SerializeField, ShowIf(nameof(useAddressables))]
         private AssetReferenceGameObject prefabReference = null;
 
+        public bool IsAsync => this.useAddressables;
+
         private readonly AsyncComponentInstantiator<T> asyncInstantiator;
         private readonly ComponentPool<T> asyncPool;
         private readonly ComponentPool<T> pool;

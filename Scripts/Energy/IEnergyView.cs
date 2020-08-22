@@ -1,6 +1,6 @@
 ﻿namespace HegaCore
 {
-    public interface IEnergyView : IView
+    public interface IEnergyView : IComponentView
     {
         int Value { get; }
 

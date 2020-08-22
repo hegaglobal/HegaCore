@@ -4,57 +4,82 @@ using TMPro;
 
 namespace HegaCore
 {
-    public sealed class TextEmitter : MonoBehaviour, IInstantiator<TMP_Text>
+    public sealed partial class TextEmitter : SimpleComponentSpawner<TextModule>, ITextEmitter
     {
-        [SerializeField]
-        private Transform poolRoot = null;
+        [SerializeField, Min(0f)]
+        private float displayDuration = 1f;
 
-        [SerializeField]
-        private TMP_Text textPrefab = null;
+        public void Emit(object value, in Vector3 position, in Vector3 offset, in Color color, float? size = null)
+            => Emit(value, position, new TextEmitterParams(offset, color, size));
 
-        [SerializeField]
-        private float displayDuration = 2f;
+        public void Emit(object value, in Vector3 position, in TextEmitterParams @params)
+            => Emit(value.ToString(), position, @params);
 
-        private readonly ComponentPool<TMP_Text> pool;
+        public void Emit(string value, in Vector3 position, in Vector3 offset, in Color color, float? size = null)
+            => Emit(value, position, new TextEmitterParams(offset, color, size));
 
-        public TextEmitter()
-        {
-            this.pool = new ComponentPool<TMP_Text>(this);
-        }
-
-        public void Initialize(int prepoolAmount)
-        {
-            this.pool.Prepool(prepoolAmount);
-        }
-
-        public void Deinitialize()
-        {
-            this.pool.ReturnAll();
-        }
-
-        public void Emit(string value, Vector3 position, Color color, float? size = null)
+        public void Emit(string value, in Vector3 position, in TextEmitterParams @params)
         {
             if (!this)
                 return;
 
-            position.z = 0f;
-            var text = this.pool.Get();
+            if (this.IsAsync)
+                EmitAsync(value, position, @params).Forget();
+            else
+                EmitDirect(value, position, @params);
+        }
 
-            text.Set(value ?? string.Empty, color, size);
-            text.transform.position = position;
-            text.transform.localScale = Vector3.one;
-
+        private void EmitDirect(string value, in Vector3 position, in TextEmitterParams @params)
+        {
+            var text = Get();
+            Initialize(text, value, position, @params);
             Show(text, this.displayDuration).Forget();
         }
 
-        private async UniTaskVoid Show(TMP_Text tmpro, float duration)
+        private async UniTaskVoid EmitAsync(string value, Vector3 position, TextEmitterParams @params)
+        {
+            var text = await GetAsync();
+            Initialize(text, value, position, @params);
+            Show(text, this.displayDuration).Forget();
+        }
+
+        private void Initialize(TextModule module, string value, in Vector3 position, in TextEmitterParams @params)
+        {
+            if (module.Text)
+            {
+                module.Text.SetText(value);
+                module.Text.color = @params.Color;
+
+                if (@params.Size.Custom)
+                    module.Text.fontSize = @params.Size.Value;
+            }
+
+            module.transform.position = OffsetPosition(position, @params.OffsetPosition);
+            module.transform.localScale = Vector3.one;
+        }
+
+        private async UniTaskVoid Show(TextModule module, float duration)
         {
             await UniTask.Delay(System.TimeSpan.FromSeconds(duration));
 
-            this.pool.Return(tmpro);
+            Return(module);
         }
 
-        TMP_Text IInstantiator<TMP_Text>.Instantiate()
-            => Instantiate(this.textPrefab, Vector3.zero, Quaternion.identity, this.poolRoot);
+        private Vector3 OffsetPosition(Vector3 position, in Vector3 offset)
+        {
+            var min = position.x - offset.x;
+            var max = position.x + offset.x;
+            position.x = Random.Range(min, max);
+
+            min = position.y - offset.y;
+            max = position.y + offset.y;
+            position.y = Random.Range(min, max);
+
+            min = position.z - offset.z;
+            max = position.z + offset.z;
+            position.z = Random.Range(min, max);
+
+            return position;
+        }
     }
 }
