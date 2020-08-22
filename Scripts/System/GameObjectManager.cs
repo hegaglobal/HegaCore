@@ -11,9 +11,14 @@ namespace HegaCore
         private readonly Dictionary<string, GameObject> map
             = new Dictionary<string, GameObject>();
 
-        public async UniTask LoadAsync(string id)
+        public async UniTask LoadAsync(string id, Transform root = null)
         {
             var result = await AddressablesManager.InstantiateAsync(id);
+            result.Value.name = id;
+
+            if (root)
+                result.Value.transform.SetParent(root, false);
+
             Add(id, result.Value);
         }
 
@@ -25,6 +30,25 @@ namespace HegaCore
             foreach (var id in ids)
             {
                 var result = await AddressablesManager.InstantiateAsync(id);
+                result.Value.name = id;
+
+                Add(id, result.Value);
+            }
+        }
+
+        public async UniTask LoadAsync(Transform root, params string[] ids)
+        {
+            if (ids == null)
+                return;
+
+            foreach (var id in ids)
+            {
+                var result = await AddressablesManager.InstantiateAsync(id);
+                result.Value.name = id;
+
+                if (root)
+                    result.Value.transform.SetParent(root, false);
+
                 Add(id, result.Value);
             }
         }
