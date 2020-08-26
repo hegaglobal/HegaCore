@@ -6,7 +6,7 @@ using VisualNovelData.Data;
 
 namespace HegaCore
 {
-    public sealed class CubismSpawner : MonoBehaviour, IPool<CubismController>
+    public sealed class CubismSpawner : MonoBehaviour, IKeyedPool<CubismController>
     {
         [SerializeField]
         private Transform root = null;

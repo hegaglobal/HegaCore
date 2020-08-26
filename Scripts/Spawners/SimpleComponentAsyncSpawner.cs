@@ -1,34 +1,36 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.AddressableAssets;
+using Cysharp.Threading.Tasks;
 
 namespace HegaCore
 {
-    public abstract class SimpleComponentSpawner<T> : MonoBehaviour, IPool<T>, IInstantiator<T>, IReturnInactiveItem
+    public abstract class SimpleComponentAsyncSpawner<T> : MonoBehaviour, IAsyncPool<T>, IReturnInactiveItem
         where T : Component
     {
         [SerializeField]
         private Transform root = null;
 
         [SerializeField]
-        private T prefab = null;
+        private AssetReferenceGameObject prefabReference = null;
 
-        private readonly ComponentPool<T> pool;
+        private readonly ComponentAsyncInstantiator<T> instantiator;
+        private readonly AsyncComponentPool<T> pool;
 
-        public SimpleComponentSpawner()
+        public SimpleComponentAsyncSpawner()
         {
-            this.pool = new ComponentPool<T>(this);
+            this.instantiator = new ComponentAsyncInstantiator<T>();
+            this.pool = new AsyncComponentPool<T>(this.instantiator);
         }
 
-        public void Prepool(int amount)
+        public async UniTask PrepoolAsync(int amount)
         {
-            this.pool.Prepool(amount);
+            this.instantiator.Initialize(GetRoot(), this.prefabReference);
+            await this.pool.PrepoolAsync(amount);
         }
 
-        public T Get()
-        {
-            return this.pool.Get();
-        }
+        public async UniTask<T> GetAsync()
+            => await this.pool.GetAsync();
 
         public void ReturnInactiveItems()
         {
@@ -61,8 +63,5 @@ namespace HegaCore
 
         private Transform GetRoot()
             => this.root ? this.root : this.transform;
-
-        T IInstantiator<T>.Instantiate()
-            => Instantiate(this.prefab, Vector3.zero, Quaternion.identity, GetRoot());
     }
 }

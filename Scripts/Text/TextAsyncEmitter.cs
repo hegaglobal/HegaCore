@@ -3,7 +3,7 @@ using Cysharp.Threading.Tasks;
 
 namespace HegaCore
 {
-    public sealed partial class TextEmitter : SimpleComponentSpawner<TextModule>, ITextEmitter
+    public sealed partial class TextAsyncEmitter : SimpleComponentAsyncSpawner<TextModule>, ITextEmitter
     {
         [SerializeField, Min(0f)]
         private float displayDuration = 1f;
@@ -22,7 +22,12 @@ namespace HegaCore
             if (!this)
                 return;
 
-            var text = Get();
+            EmitAsync(value, position, @params).Forget();
+        }
+
+        private async UniTaskVoid EmitAsync(string value, Vector3 position, TextEmitterParams @params)
+        {
+            var text = await GetAsync();
             Initialize(text, value, position, @params);
             Show(text, this.displayDuration).Forget();
         }

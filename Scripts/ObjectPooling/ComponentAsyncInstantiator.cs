@@ -4,7 +4,7 @@ using Cysharp.Threading.Tasks;
 
 namespace HegaCore
 {
-    public class AsyncComponentInstantiator<T> : AsyncInstantiator<T> where T : Component
+    public class ComponentAsyncInstantiator<T> : AsyncInstantiator<T> where T : Component
     {
         private AssetReferenceGameObject prefabReference;
         private Transform root;
