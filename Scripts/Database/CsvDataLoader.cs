@@ -34,8 +34,12 @@ namespace HegaCore
             where TMapping : CsvMapping<TEntity>, new()
         {
             var csvData = GetCsvData(file);
-            var rawData = Parse<TEntity, TMapping>(csvData);
-            table.AddRange(rawData, autoIncrement);
+            var entries = ListPool<TEntity>.Get();
+
+            Parse<TEntity, TMapping>(csvData, entries);
+            table.AddRange(entries, autoIncrement);
+
+            ListPool<TEntity>.Return(entries);
         }
 
         public void Load<TEntity, TMapping>(ITable<TEntity> table, TextAsset file, IGetId<TEntity> idGetter)
@@ -43,8 +47,12 @@ namespace HegaCore
             where TMapping : CsvMapping<TEntity>, new()
         {
             var csvData = GetCsvData(file);
-            var rawData = Parse<TEntity, TMapping>(csvData);
-            table.AddRange(rawData, idGetter);
+            var entries = ListPool<TEntity>.Get();
+
+            Parse<TEntity, TMapping>(csvData, entries);
+            table.AddRange(entries, idGetter);
+
+            ListPool<TEntity>.Return(entries);
         }
 
         public void Load<TEntity, TMapping, TIdGetter>(ITable<TEntity> table, TextAsset file)
@@ -53,26 +61,27 @@ namespace HegaCore
             where TIdGetter : IGetId<TEntity>, new()
         {
             var csvData = GetCsvData(file);
-            var rawData = Parse<TEntity, TMapping>(csvData);
-            table.AddRange(rawData, new TIdGetter());
+            var entries = ListPool<TEntity>.Get();
+
+            Parse<TEntity, TMapping>(csvData, entries);
+            table.AddRange(entries, new TIdGetter());
+
+            ListPool<TEntity>.Return(entries);
         }
 
-        private IList<TEntity> Parse<TEntity, TMapping>(string csvData)
+        private void Parse<TEntity, TMapping>(string csvData, List<TEntity> output)
             where TEntity : class, new()
             where TMapping : CsvMapping<TEntity>, new()
         {
             var mapper = new TMapping();
             var parser = new CsvParser<TEntity>(this.parserOptions, mapper);
             var entries = parser.ReadFromString(this.readerOptions, csvData);
-            var result = new List<TEntity>();
 
             foreach (var entry in entries)
             {
                 if (entry.IsValid)
-                    result.Add(entry.Result);
+                    output.Add(entry.Result);
             }
-
-            return result;
         }
 
         private string GetCsvData(TextAsset file)
