@@ -6,6 +6,8 @@ using Sirenix.OdinInspector;
 
 namespace HegaCore
 {
+    using Database;
+
     [CreateAssetMenu(fileName = nameof(DatabaseConfig), menuName = "Database Config")]
     public sealed partial class DatabaseConfig : ScriptableObject
     {

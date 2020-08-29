@@ -11,6 +11,7 @@ using VisualNovelData.Parser;
 namespace HegaCore
 {
     using Database;
+    using Database.Csv;
 
     public abstract partial class Database<TDatabase, TTables> : SingletonBehaviour<TDatabase>
         where TDatabase : Database<TDatabase, TTables>

@@ -4,15 +4,18 @@ using System.IO;
 using System.Table;
 using UnityEngine;
 using TinyCsvParser;
+using TinyCsvParser.Advanced;
 using TinyCsvParser.Mapping;
 using TinyCsvParser.Tokenizer.RFC4180;
+using System.Linq;
 
-namespace HegaCore
+namespace HegaCore.Database.Csv
 {
     public sealed class CsvDataLoader
     {
-        private readonly CsvParserOptions parserOptions;
         private readonly CsvReaderOptions readerOptions;
+        private readonly CsvParserOptions parserOptions;
+        private readonly AdvancedCsvParserOptions advancedParserOptions;
 
         private DatabaseConfig config;
 
@@ -20,8 +23,9 @@ namespace HegaCore
         {
             var options = new Options('"', '\\', ',');
             var tokenizer = new RFC4180Tokenizer(options);
-            this.parserOptions = new CsvParserOptions(true, "//", tokenizer);
             this.readerOptions = new CsvReaderOptions(new[] { "\r\n", "\n" });
+            this.parserOptions = new CsvParserOptions(true, "//", tokenizer);
+            this.advancedParserOptions = new AdvancedCsvParserOptions(tokenizer, "//", 0, 2, true, true, true);
         }
 
         public void Initialize(DatabaseConfig config)
@@ -74,7 +78,40 @@ namespace HegaCore
             where TMapping : CsvMapping<TEntity>, new()
         {
             var mapper = new TMapping();
+
+            if (IsAdvanced<TEntity, TMapping>())
+                AdvancedParse(csvData, mapper, output);
+            else
+                BasicParse(csvData, mapper, output);
+        }
+
+        private bool IsAdvanced<TEntity, TMapping>()
+            where TEntity : class, new()
+            where TMapping : CsvMapping<TEntity>
+        {
+            var attributes = typeof(TMapping).CustomAttributes;
+            return attributes.Any(x => x.AttributeType.IsAssignableFrom(typeof(RowAsColumnAttribute)));
+        }
+
+        private void BasicParse<TEntity, TMapping>(string csvData, TMapping mapper, List<TEntity> output)
+            where TEntity : class, new()
+            where TMapping : CsvMapping<TEntity>
+        {
             var parser = new CsvParser<TEntity>(this.parserOptions, mapper);
+            var entries = parser.ReadFromString(this.readerOptions, csvData);
+
+            foreach (var entry in entries)
+            {
+                if (entry.IsValid)
+                    output.Add(entry.Result);
+            }
+        }
+
+        private void AdvancedParse<TEntity, TMapping>(string csvData, TMapping mapper, List<TEntity> output)
+            where TEntity : class, new()
+            where TMapping : CsvMapping<TEntity>
+        {
+            var parser = new AdvancedCsvParser<TEntity>(this.advancedParserOptions, mapper);
             var entries = parser.ReadFromString(this.readerOptions, csvData);
 
             foreach (var entry in entries)
