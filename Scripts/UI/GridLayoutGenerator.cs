@@ -67,7 +67,10 @@ namespace HegaCore.UI
                 for (var i = this.transform.childCount - 1; i >= 0; i--)
                 {
 #if UNITY_EDITOR
-                    DestroyImmediate(this.transform.GetChild(i).gameObject);
+                    if (Application.isPlaying)
+                        Destroy(this.transform.GetChild(i).gameObject);
+                    else
+                        DestroyImmediate(this.transform.GetChild(i).gameObject);
 #else
                     Destroy(this.transform.GetChild(i).gameObject);
 #endif
