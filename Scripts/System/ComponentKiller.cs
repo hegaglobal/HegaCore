@@ -3,7 +3,7 @@ using UnityEngine;
 
 namespace HegaCore
 {
-    public class ComponentDeactivator<T> where T : Component, IAlive
+    public class ComponentKiller<T> where T : Component, IAlive
     {
         private readonly List<T> temp = new List<T>();
         private readonly List<T> items = new List<T>();
@@ -20,7 +20,7 @@ namespace HegaCore
         public bool Contains(T item)
             => this.temp.Contains(item) && this.items.Contains(item);
 
-        public void TryDeactivate()
+        public void TryKill()
         {
             if (this.cache.Count > 0)
             {
