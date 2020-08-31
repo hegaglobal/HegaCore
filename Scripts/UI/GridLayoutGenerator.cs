@@ -10,7 +10,7 @@ namespace HegaCore.UI
     public sealed class GridLayoutGenerator : MonoBehaviour, IGetCellPosition
     {
         [SerializeField]
-        private GridVector size = default;
+        private GridVector gridSize = default;
 
         [HideInInspector]
         [SerializeField]
@@ -20,10 +20,16 @@ namespace HegaCore.UI
         [SerializeField]
         private CellMap map = new CellMap();
 
-        public GridVector Size
+        public GridVector GridSize
         {
-            get => this.size;
-            set => this.size = value;
+            get => this.gridSize;
+            set => this.gridSize = value;
+        }
+
+        public Vector2 CellSize
+        {
+            get => this.gridLayout.cellSize;
+            set => this.gridLayout.cellSize = value;
         }
 
         public ReadDictionary<GridVector, RectTransform> Map => this.map;
@@ -44,11 +50,11 @@ namespace HegaCore.UI
             EnsureGridLayout();
 
             this.gridLayout.constraint = GridLayoutGroup.Constraint.FixedColumnCount;
-            this.gridLayout.constraintCount = this.size.Column;
+            this.gridLayout.constraintCount = this.gridSize.Column;
 
-            for (var r = 0; r < this.size.Row; r++)
+            for (var r = 0; r < this.gridSize.Row; r++)
             {
-                for (var c = 0; c < this.size.Column; c++)
+                for (var c = 0; c < this.gridSize.Column; c++)
                 {
                     var index = new GridVector(r, c);
                     var go = new GameObject($"{index}");
