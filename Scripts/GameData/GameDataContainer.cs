@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Linq;
 using UnityEngine;
 using Newtonsoft.Json;
 
@@ -25,8 +26,9 @@ namespace HegaCore
 
         public abstract GameSettings Settings { get; }
 
-        public ReadList<int> Missions
-            => this.missions;
+        public ReadList<int> Missions => this.missions;
+
+        public int CurrentMission { get; set; }
 
         private readonly List<int> missions = new List<int>();
 
@@ -114,6 +116,23 @@ namespace HegaCore
 
             if (amount != 0)
                 this.BasePlayer.ProgressPoint += amount;
+
+            return this.BasePlayer.ProgressPoint;
+        }
+
+        public int ChangePlayerProgressPoint(int missionId, int amount)
+        {
+            if (!Validate())
+                return 0;
+
+            if (this.CurrentMission == missionId &&
+                this.missions.Contains(missionId))
+            {
+                var latest = this.missions.Max();
+
+                if (this.CurrentMission == latest && amount != 0)
+                    this.BasePlayer.ProgressPoint += amount;
+            }
 
             return this.BasePlayer.ProgressPoint;
         }

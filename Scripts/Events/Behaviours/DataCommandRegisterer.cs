@@ -23,6 +23,7 @@ namespace HegaCore.Commands
             yield return new MusicPlayAsync();
             yield return new MusicStop();
             yield return new PointAdd();
+            yield return new PointMissionAdd();
             yield return new PointBadAdd();
             yield return new PointGoodAdd();
             yield return new SoundPlay();
