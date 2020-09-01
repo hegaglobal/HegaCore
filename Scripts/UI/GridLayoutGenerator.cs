@@ -32,6 +32,12 @@ namespace HegaCore.UI
             set => this.gridLayout.cellSize = value;
         }
 
+        public Vector2 CellSpacing
+        {
+            get => this.gridLayout.spacing;
+            set => this.gridLayout.spacing = value;
+        }
+
         public ReadDictionary<GridVector, RectTransform> Map => this.map;
 
         private void EnsureGridLayout()
