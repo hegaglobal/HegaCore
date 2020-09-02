@@ -26,7 +26,7 @@ namespace HegaCore.UI
         }
 
         private bool HasPanel()
-            => GetComponent<Panel>();
+            => this.panel = GetComponent<Panel>();
 
         public void Initialize(string name, Color? color = null, float? duration = null)
         {
