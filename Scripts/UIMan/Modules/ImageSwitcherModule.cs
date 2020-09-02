@@ -1,10 +1,14 @@
 ﻿using UnityEngine;
 using UnuGames;
+using Sirenix.OdinInspector;
 
 namespace HegaCore.UI
 {
     public sealed class ImageSwitcherModule : UIManModule<ImageSwitcherViewModel>
     {
+        [SerializeField, ReadOnly, ShowIf(nameof(HasPanel))]
+        private Panel panel;
+
         [SerializeField]
         private Panel image1 = null;
 
@@ -16,9 +20,13 @@ namespace HegaCore.UI
 
         private void Awake()
         {
+            this.panel = GetComponent<Panel>();
             this.showPanel = this.image1;
             this.hidePanel = this.image2;
         }
+
+        private bool HasPanel()
+            => GetComponent<Panel>();
 
         public void Initialize(string name, Color? color = null, float? duration = null)
         {
@@ -35,6 +43,38 @@ namespace HegaCore.UI
                 this.showPanel.Show();
                 this.hidePanel.Hide();
             }
+        }
+
+        public void Show(bool instant = false)
+        {
+            if (this.panel)
+                this.panel.Show(instant);
+            else
+                this.showPanel.Show(instant);
+        }
+
+        public void Show(float duration)
+        {
+            if (this.panel)
+                this.panel.Show(duration);
+            else
+                this.showPanel.Show(duration);
+        }
+
+        public void Hide(bool instant = false)
+        {
+            if (this.panel)
+                this.panel.Hide(instant);
+            else
+                this.showPanel.Hide(instant);
+        }
+
+        public void Hide(float duration)
+        {
+            if (this.panel)
+                this.panel.Hide(duration);
+            else
+                this.showPanel.Hide(duration);
         }
 
         private void SwitchPanel()

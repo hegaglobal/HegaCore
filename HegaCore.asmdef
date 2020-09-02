@@ -21,7 +21,8 @@
         "Unity.QuaStateMachine",
         "Unity.TextMeshPro",
         "UnityEngine.UI",
-        "VisualNovelData"
+        "VisualNovelData",
+        "RedBlueGames.TextTyper"
     ],
     "includePlatforms": [],
     "excludePlatforms": [],
