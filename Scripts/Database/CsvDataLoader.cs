@@ -24,8 +24,8 @@ namespace HegaCore.Database.Csv
             var options = new Options('"', '\\', ',');
             var tokenizer = new RFC4180Tokenizer(options);
             this.readerOptions = new CsvReaderOptions(new[] { "\r\n", "\n" });
-            this.parserOptions = new CsvParserOptions(true, "//", tokenizer);
-            this.advancedParserOptions = new AdvancedCsvParserOptions(tokenizer, "//", 0, 2, true, true, true);
+            this.parserOptions = new CsvParserOptions(true, true, "//", tokenizer, 1, true);
+            this.advancedParserOptions = new AdvancedCsvParserOptions(tokenizer, "//", 0, 2, true, true, true, true, 1);
         }
 
         public void Initialize(DatabaseConfig config)
