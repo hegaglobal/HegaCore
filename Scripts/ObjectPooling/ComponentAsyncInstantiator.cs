@@ -20,14 +20,12 @@ namespace HegaCore
             var result = await AddressablesManager.InstantiateAsync(this.prefabReference, this.root);
             var go = result.Value;
             go.transform.localScale = Vector3.one;
-            var component = go.GetComponent<T>();
 
-            if (!component)
-            {
-                AddressablesManager.ReleaseInstance(this.prefabReference, go);
-            }
+            if (go.TryGetComponent<T>(out var component))
+                return component;
 
-            return component;
+            AddressablesManager.ReleaseInstance(this.prefabReference, go);
+            return null;
         }
     }
 }

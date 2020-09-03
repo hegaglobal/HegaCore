@@ -7,32 +7,33 @@ namespace HegaCore.Editor
 {
     public sealed class ColliderEditor : MonoBehaviour
     {
-        [MenuItem("Tools/Edit Collider %_e")] // CTRL/CMD + E
-        public static void EditCollider()
+        [MenuItem("Tools/Edit Collider2D %_e")] // CTRL/CMD + E
+        public static void EditCollider2D()
         {
-            var sel = Selection.activeGameObject;
-
-            if (!sel)
+            if (!Selection.activeGameObject)
                 return;
 
-            var col = sel.GetComponent<Collider2D>();
-
-            if (!col)
+            if (!Selection.activeGameObject.TryGetComponent<Collider2D>(out var collider))
                 return;
 
             if (EditMode.editMode == EditMode.SceneViewEditMode.Collider)
             {
                 EditMode.ChangeEditMode(EditMode.SceneViewEditMode.None, new Bounds(), null);
+                return;
             }
-            else
+
+            var colliderEditorBase = Type.GetType("UnityEditor.ColliderEditorBase,UnityEditor.dll");
+
+            if (!(Resources.FindObjectsOfTypeAll(colliderEditorBase) is UnityEditor.Editor[] colliderEditors))
+                return;
+
+            foreach (var editor in colliderEditors)
             {
-                var colliderEditorBase = Type.GetType("UnityEditor.ColliderEditorBase,UnityEditor.dll");
-
-                if (!(Resources.FindObjectsOfTypeAll(colliderEditorBase) is UnityEditor.Editor[] colliderEditors) ||
-                    colliderEditors.Length <= 0)
+                if (editor.target == collider)
+                {
+                    EditMode.ChangeEditMode(EditMode.SceneViewEditMode.Collider, collider.bounds, editor);
                     return;
-
-                EditMode.ChangeEditMode(EditMode.SceneViewEditMode.Collider, col.bounds, colliderEditors[0]);
+                }
             }
         }
     }
