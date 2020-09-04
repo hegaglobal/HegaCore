@@ -28,6 +28,7 @@ namespace HegaCore
                 if (item == null || !item.Validate() || ContainsKey(item.Key))
                     continue;
 
+                RegisterEmission(item.Key);
                 var result = await AddressablesManager.LoadAssetAsync(item.Reference);
 
                 RegisterPoolItem(item.Key, result.Value, item.PrepoolAmount);
@@ -43,12 +44,23 @@ namespace HegaCore
                 if (string.IsNullOrEmpty(key) || ContainsKey(key))
                     continue;
 
+                RegisterEmission(key);
                 var result = await AddressablesManager.LoadAssetAsync<GameObject>(key);
 
                 RegisterPoolItem(key, result.Value, prepoolAmount);
             }
 
             Initialize(silent);
+        }
+
+        private void RegisterEmission(string key)
+        {
+            if (this.emissionMap.ContainsKey(key))
+                return;
+
+            var emission = new TextEmission();
+            emission.Initialize(this, key);
+            this.emissionMap.Add(key, emission);
         }
 
         public TextEmission GetEmission(string key = null)

@@ -27,16 +27,21 @@ namespace HegaCore
                 if (item == null || !item.Validate() || ContainsKey(item.Key))
                     continue;
 
-                if (!this.emissionMap.ContainsKey(item.Key))
-                {
-                    var emission = new TextEmission();
-                    emission.Initialize(this, item.Key);
-                }
-
+                RegisterEmission(item.Key);
                 RegisterPoolItem(item.Key, item.Prefab.gameObject, item.PrepoolAmount);
             }
 
             Initialize(silent);
+        }
+
+        private void RegisterEmission(string key)
+        {
+            if (this.emissionMap.ContainsKey(key))
+                return;
+
+            var emission = new TextEmission();
+            emission.Initialize(this, key);
+            this.emissionMap.Add(key, emission);
         }
 
         public TextEmission GetEmission(string key)
