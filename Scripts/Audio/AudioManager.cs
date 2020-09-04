@@ -7,7 +7,6 @@ using Cysharp.Threading.Tasks;
 
 namespace HegaCore
 {
-    using AudioClipOp = AsyncOperationHandle<AudioClip>;
     using AudioMap = Dictionary<string, AsyncOperationHandle<AudioClip>>;
 
     public sealed class AudioManager : SingletonBehaviour<AudioManager>
