@@ -1,6 +1,4 @@
-﻿using Cysharp.Threading.Tasks;
-
-namespace HegaCore
+﻿namespace HegaCore
 {
     public interface ITextEmitter
     {
