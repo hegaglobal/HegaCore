@@ -1,17 +1,22 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using UnityEngine;
 
 namespace HegaCore
 {
-    public abstract class SimpleComponentSpawner<T> : MonoBehaviour, IPool<T>, IInstantiator<T>, IReturnInactiveItem
+    public abstract class SimpleComponentSpawner<T> : MonoBehaviour, IPool<T>, IInstantiator<T>, IReturnInactive
         where T : Component
     {
         [SerializeField]
-        private Transform root = null;
+        private Transform poolRoot = null;
 
         [SerializeField]
         private T prefab = null;
+
+        [SerializeField, Min(0)]
+        private int prepoolAmount = 0;
+
+        [SerializeField]
+        private bool initializeOnAwake = true;
 
         private readonly ComponentPool<T> pool;
 
@@ -20,32 +25,48 @@ namespace HegaCore
             this.pool = new ComponentPool<T>(this);
         }
 
-        public void Prepool(int amount)
+        protected virtual void Awake()
         {
-            this.pool.Prepool(amount);
+            if (this.initializeOnAwake)
+                Initialize();
+        }
+
+        private Transform GetPoolRoot()
+            => this.poolRoot ? this.poolRoot : this.transform;
+
+        public void Initialize(int prepoolAmount)
+        {
+            this.prepoolAmount = prepoolAmount;
+            Initialize();
+        }
+
+        public void Initialize()
+        {
+            this.pool.Prepool(this.prepoolAmount);
+            OnInitialize();
+        }
+
+        public void Deinitialize()
+        {
+            this.pool.DestroyAll();
+            OnDeinitialize();
+        }
+
+        protected virtual void OnInitialize() { }
+
+        protected virtual void OnDeinitialize() { }
+
+        public void RegisterPoolItem(T prefab, int prepoolAmount)
+        {
+            this.prefab = prefab;
+            this.prepoolAmount = Mathf.Max(prepoolAmount, 0);
         }
 
         public T Get()
-        {
-            return this.pool.Get();
-        }
+            => this.pool.Get();
 
-        public void ReturnInactiveItems()
-        {
-            var objects = this.pool.ActiveObjects;
-            var cache = ListPool<T>.Get();
-
-            for (var i = 0; i < objects.Count; i++)
-            {
-                if (objects[i] && objects[i].gameObject && !objects[i].gameObject.activeSelf)
-                    cache.Add(objects[i]);
-            }
-
-            this.pool.Return(cache);
-            cache.Clear();
-
-            ListPool<T>.Return(cache);
-        }
+        public void ReturnInactive()
+            => this.pool.ReturnInactive();
 
         public void ReturnAll()
             => this.pool.ReturnAll();
@@ -59,10 +80,7 @@ namespace HegaCore
         public void Return(IEnumerable<T> items)
             => this.pool.Return(items);
 
-        private Transform GetRoot()
-            => this.root ? this.root : this.transform;
-
         T IInstantiator<T>.Instantiate()
-            => Instantiate(this.prefab, Vector3.zero, Quaternion.identity, GetRoot());
+            => Instantiate(this.prefab, Vector3.zero, Quaternion.identity, GetPoolRoot());
     }
 }

@@ -19,5 +19,8 @@
 
             return component;
         }
+
+        public static bool Validate(this Component self)
+            => self && self.gameObject;
     }
 }
