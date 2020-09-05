@@ -1,6 +1,7 @@
 ﻿using System.Collections;
 using UnityEngine;
 using Live2D.Cubism.Rendering;
+using System.Fluent;
 
 namespace HegaCore
 {
@@ -74,6 +75,16 @@ namespace HegaCore
             }
 
             this.cubismRenderer.SortingOrder = sortingOrder;
+        }
+
+        public void SetLayer(in SingleOrderLayer orderLayer)
+        {
+            foreach (var renderer in this.cubismRenderer.Renderers)
+            {
+                renderer.gameObject.layer = orderLayer.Layer.value;
+            }
+
+            this.cubismRenderer.SortingOrder = orderLayer.Order;
         }
 
         public void PlayAnimation(int id)

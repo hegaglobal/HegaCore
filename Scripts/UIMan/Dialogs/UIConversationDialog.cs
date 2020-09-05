@@ -8,13 +8,13 @@ namespace HegaCore.UI
 {
     public sealed partial class UIConversationDialog
     {
-        private string m_avatar = default;
+        private string m_speakerAvatar = default;
 
         [UIManAutoProperty]
-        public string Avatar
+        public string SpeakerAvatar
         {
-            get { return this.m_avatar; }
-            set { this.m_avatar = value; OnPropertyChanged(nameof(this.Avatar), value); }
+            get { return this.m_speakerAvatar; }
+            set { this.m_speakerAvatar = value; OnPropertyChanged(nameof(this.SpeakerAvatar), value); }
         }
 
         private string m_avatarAtlas = default;
@@ -26,22 +26,22 @@ namespace HegaCore.UI
             set { this.m_avatarAtlas = value; OnPropertyChanged(nameof(this.AvatarAtlas), value); }
         }
 
-        private bool m_hasCharacterName = default;
+        private bool m_hasSpeakerName = default;
 
         [UIManAutoProperty]
-        public bool HasCharacterName
+        public bool HasSpeakerName
         {
-            get { return this.m_hasCharacterName; }
-            set { this.m_hasCharacterName = value; OnPropertyChanged(nameof(this.HasCharacterName), value); }
+            get { return this.m_hasSpeakerName; }
+            set { this.m_hasSpeakerName = value; OnPropertyChanged(nameof(this.HasSpeakerName), value); }
         }
 
-        private string m_characterName = default;
+        private string m_speakerName = default;
 
         [UIManAutoProperty]
-        public string CharacterName
+        public string SpeakerName
         {
-            get { return this.m_characterName; }
-            set { this.m_characterName = value; OnPropertyChanged(nameof(this.CharacterName), value); }
+            get { return this.m_speakerName; }
+            set { this.m_speakerName = value; OnPropertyChanged(nameof(this.SpeakerName), value); }
         }
 
         private bool m_isTyping = default;

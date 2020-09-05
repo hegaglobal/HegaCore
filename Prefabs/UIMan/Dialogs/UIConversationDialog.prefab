@@ -469,7 +469,7 @@ GameObject:
   m_Component:
   - component: {fileID: 3288085275481372651}
   m_Layer: 5
-  m_Name: Actor
+  m_Name: SpeakerName
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -584,6 +584,48 @@ MonoBehaviour:
   animShowTime: 0.5
   animHideTime: 0.5
   useCover: 0
+  canvases:
+  - {fileID: 8809219678283863424}
+  - {fileID: 3400295138577906933}
+  - {fileID: 3668773935472158758}
+  raycasters:
+  - {fileID: 4151783896482953498}
+  - {fileID: 1785090287142344790}
+  - {fileID: 1478902572412906518}
+  panelCover: {fileID: 6540335942490534378}
+  panelBackground: {fileID: 3430815239897862872}
+  panelConversation: {fileID: 5350837777051161517}
+  contentText: {fileID: 3536707534992412007}
+  contentTyper: {fileID: 5747556956525845899}
+  speedTyperConfig: {fileID: 11400000, guid: b3e9e602a964d8543b327b90fb1cf358, type: 2}
+  avatarDefault: 
+  actorViews:
+  - Position: {fileID: 4856759408574409036}
+    Layer:
+      Layer:
+        value: 5
+      Order: 50
+  - Position: {fileID: 4450320780967741801}
+    Layer:
+      Layer:
+        value: 5
+      Order: 50
+  - Position: {fileID: 7426244063111336773}
+    Layer:
+      Layer:
+        value: 5
+      Order: 50
+  - Position: {fileID: 7839625600732530645}
+    Layer:
+      Layer:
+        value: 5
+      Order: 50
+  positionLeft: {fileID: 8621282038250335601}
+  positionRight: {fileID: 3971190365227308399}
+  colorHighlight: {r: 1, g: 1, b: 1, a: 1}
+  colorDim: {r: 0.43137255, g: 0.43137255, b: 0.43137255, a: 1}
+  daemons: []
+  actors: []
 --- !u!1 &1937752361090782860
 GameObject:
   m_ObjectHideFlags: 0
@@ -618,6 +660,8 @@ RectTransform:
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children:
   - {fileID: 4934346342921404891}
+  - {fileID: 8621282038250335601}
+  - {fileID: 3971190365227308399}
   - {fileID: 6930278090113753137}
   - {fileID: 1615336435632272217}
   m_Father: {fileID: 2921177579700582885}
@@ -728,7 +772,7 @@ MonoBehaviour:
   inactiveOnTrue: []
   valueField:
     label: bool
-    member: HasCharacterName
+    member: HasSpeakerName
     isNullable: 0
   valueConverter:
     label: bool
@@ -922,6 +966,41 @@ RectTransform:
   m_AnchoredPosition: {x: 0, y: 0}
   m_SizeDelta: {x: 50, y: 50}
   m_Pivot: {x: 0.5, y: 0.5}
+--- !u!1 &2630265535864794052
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 8621282038250335601}
+  m_Layer: 5
+  m_Name: PositionLeft
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!224 &8621282038250335601
+RectTransform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2630265535864794052}
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_Children: []
+  m_Father: {fileID: 8708653372566197085}
+  m_RootOrder: 1
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+  m_AnchorMin: {x: 0, y: 0.5}
+  m_AnchorMax: {x: 0, y: 0.5}
+  m_AnchoredPosition: {x: -200, y: 0}
+  m_SizeDelta: {x: 100, y: 100}
+  m_Pivot: {x: 1, y: 0.5}
 --- !u!1 &3182656204370249780
 GameObject:
   m_ObjectHideFlags: 0
@@ -1026,7 +1105,7 @@ RectTransform:
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children: []
   m_Father: {fileID: 8708653372566197085}
-  m_RootOrder: 1
+  m_RootOrder: 3
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 0}
   m_AnchorMax: {x: 1, y: 1}
@@ -1048,7 +1127,7 @@ MonoBehaviour:
   dataContext: {fileID: 1290054665073721222}
   observableList:
     label: Data Source
-    member: 
+    member: Choices
     isNullable: 0
   contentPrefab: {fileID: 6448110348380160541, guid: ba07c272c386b7242a52c063f5a28e9e,
     type: 3}
@@ -1080,6 +1159,41 @@ MonoBehaviour:
   m_ChildControlHeight: 0
   m_ChildScaleWidth: 0
   m_ChildScaleHeight: 0
+--- !u!1 &3916397986090510451
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 3971190365227308399}
+  m_Layer: 5
+  m_Name: PositionRight
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!224 &3971190365227308399
+RectTransform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 3916397986090510451}
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_Children: []
+  m_Father: {fileID: 8708653372566197085}
+  m_RootOrder: 2
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+  m_AnchorMin: {x: 1, y: 0.5}
+  m_AnchorMax: {x: 1, y: 0.5}
+  m_AnchoredPosition: {x: 200, y: 0}
+  m_SizeDelta: {x: 100, y: 100}
+  m_Pivot: {x: 0, y: 0.5}
 --- !u!1 &3920508153017504742
 GameObject:
   m_ObjectHideFlags: 0
@@ -1276,7 +1390,7 @@ GameObject:
   - component: {fileID: 3377064917043434888}
   - component: {fileID: 5095077790964277540}
   m_Layer: 0
-  m_Name: Name
+  m_Name: Text
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -1363,9 +1477,9 @@ MonoBehaviour:
   m_fontSizeMin: 20
   m_fontSizeMax: 40
   m_fontStyle: 0
-  m_HorizontalAlignment: 1
+  m_HorizontalAlignment: 2
   m_VerticalAlignment: 512
-  m_textAlignment: 514
+  m_textAlignment: 65535
   m_characterSpacing: -2
   m_wordSpacing: 0
   m_lineSpacing: 0
@@ -1413,7 +1527,7 @@ MonoBehaviour:
   dataContext: {fileID: 1290054665073721222}
   textField:
     label: Text
-    member: CharacterName
+    member: SpeakerName
     isNullable: 0
   colorField:
     label: Color
@@ -1707,9 +1821,9 @@ MonoBehaviour:
   m_fontSizeMin: 26
   m_fontSizeMax: 28
   m_fontStyle: 0
-  m_HorizontalAlignment: 1
-  m_VerticalAlignment: 256
-  m_textAlignment: 514
+  m_HorizontalAlignment: 2
+  m_VerticalAlignment: 512
+  m_textAlignment: 65535
   m_characterSpacing: -2
   m_wordSpacing: 0
   m_lineSpacing: 0
@@ -1775,7 +1889,7 @@ RectTransform:
   - {fileID: 5313905158473360499}
   - {fileID: 8284774233521178784}
   m_Father: {fileID: 8708653372566197085}
-  m_RootOrder: 2
+  m_RootOrder: 4
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 0}
   m_AnchorMax: {x: 1, y: 0}
@@ -2188,7 +2302,7 @@ MonoBehaviour:
   m_fontStyle: 16
   m_HorizontalAlignment: 2
   m_VerticalAlignment: 512
-  m_textAlignment: 514
+  m_textAlignment: 65535
   m_characterSpacing: -2
   m_wordSpacing: 0
   m_lineSpacing: 0
@@ -2426,7 +2540,7 @@ GameObject:
   - component: {fileID: 4934346342921404891}
   - component: {fileID: 5452368661465622109}
   m_Layer: 5
-  m_Name: Actors
+  m_Name: PositionActors
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -2493,7 +2607,7 @@ GameObject:
   - component: {fileID: 8039764970925640374}
   - component: {fileID: 8362139308064540748}
   m_Layer: 5
-  m_Name: Avatar
+  m_Name: SpeakerAvatar
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -2574,7 +2688,7 @@ MonoBehaviour:
     isNullable: 0
   valueField:
     label: Image
-    member: Avatar
+    member: SpeakerAvatar
     isNullable: 0
   colorField:
     label: Color
