@@ -74,23 +74,6 @@ namespace HegaCore
             CheckDaemon();
             CheckOverlord();
 
-            Load<LanguageEntry, LanguageEntry.Mapping>
-                 (this.Tables.Language, nameof(this.Tables.Language), true);
-
-            PrepareLanguages();
-
-            Load<L10nData, L10nParser>
-                 (this.Tables.L10nData, nameof(this.Tables.L10nData), this.Languages);
-
-            Load<NovelData, NovelParser>
-                 (this.Tables.NovelData, nameof(this.Tables.NovelData), this.Languages);
-
-            Load<CharacterData, CharacterParser>
-                 (this.Tables.CharacterData, nameof(this.Tables.CharacterData), this.Languages);
-
-            Load<EventData, EventParser>
-                 (this.Tables.EventData, nameof(this.Tables.EventData), this.Languages);
-
             ContinueLoad();
         }
 
@@ -141,18 +124,22 @@ namespace HegaCore
             }
         }
 
-        private void PrepareLanguages()
+        protected void ClearLanguages()
         {
             this.languages.Clear();
             this.usedLanguages.Clear();
+        }
 
-            foreach (var entry in this.Tables.Language.Entries)
-            {
-                this.languages.Add(entry.Key);
+        protected void AddLanguage(string language, bool isUsed)
+        {
+            if (string.IsNullOrEmpty(language))
+                return;
 
-                if (entry.IsUsed)
-                    this.usedLanguages.Add(entry.Key);
-            }
+            if (!this.languages.Contains(language))
+                this.languages.Add(language);
+
+            if (isUsed && !this.usedLanguages.Contains(language))
+                this.usedLanguages.Add(language);
         }
 
         private TextAsset GetCsv(string key)
