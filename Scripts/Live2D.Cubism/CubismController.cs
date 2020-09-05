@@ -1,7 +1,6 @@
 ﻿using System.Collections;
 using UnityEngine;
 using Live2D.Cubism.Rendering;
-using System.Fluent;
 
 namespace HegaCore
 {
@@ -14,6 +13,8 @@ namespace HegaCore
         private CubismRenderController cubismRenderer = null;
 
         public float TempAlpha { get; set; }
+
+        private Color color;
 
         [ContextMenu("Get Components")]
         private void GetComponents()
@@ -31,9 +32,10 @@ namespace HegaCore
         {
             SetLayer(0);
 
-            var color = Color.white;
-            color.a = 0f;
-            SetColor(color);
+            this.color = Color.white;
+            this.color.a = 0f;
+
+            SetColor(in this.color);
 
             if (this.gameObject.activeSelf)
                 StartCoroutine(HideInternal());
@@ -47,7 +49,7 @@ namespace HegaCore
                 this.gameObject.SetActive(false);
         }
 
-        public void Hide(Vector3 position)
+        public void Hide(in Vector3 position)
         {
             this.transform.position = position;
             Hide();
@@ -61,7 +63,7 @@ namespace HegaCore
             SetAlpha(alpha);
         }
 
-        public void Show(Vector3 position, float alpha = 1f)
+        public void Show(in Vector3 position, float alpha = 1f)
         {
             this.transform.position = position;
             Show(alpha);
@@ -92,13 +94,21 @@ namespace HegaCore
             this.animator.SetInteger(Params.ID, id);
         }
 
-        public void SetColor(Color value)
+        public Color GetColor()
+            => this.color;
+
+        public void SetColor(in Color value)
         {
+            this.color = value;
+
             foreach (var renderer in this.cubismRenderer.Renderers)
             {
                 renderer.Color = value;
             }
         }
+
+        public void SetColor(Color value)
+            => SetColor(in value);
 
         public float GetAlpha()
             => this.TempAlpha;

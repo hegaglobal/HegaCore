@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using System.Runtime.CompilerServices;
 using UnityEngine;
 using UnityEngine.EventSystems;
 using UnityEngine.UI;
@@ -10,6 +11,7 @@ using RedBlueGames.Tools.TextTyper;
 using VisualNovelData.Data;
 using Cysharp.Threading.Tasks;
 using Sirenix.OdinInspector;
+using HegaCore.Commands.Data;
 
 namespace HegaCore.UI
 {
@@ -87,6 +89,14 @@ namespace HegaCore.UI
         private DialogueRow goodDialogue;
         private ChoiceRow defaultChoice;
 
+        private bool areChoicesOnly = false;
+        private bool showChoicesOnly = false;
+        private bool canTrySkipNext = true;
+        private SpeedType speedType = SpeedType.Normal;
+        private bool isEnd = true;
+        private bool isHiding = true;
+        private bool daemon;
+
         private void FindAllCanvases()
             => this.canvases = GetComponentsInChildren<Canvas>();
 
@@ -95,6 +105,9 @@ namespace HegaCore.UI
 
         public override void OnShow(params object[] args)
         {
+            this.isEnd = true;
+            this.isHiding = true;
+
             base.OnShow(args);
 
             var index = 0;
@@ -102,8 +115,8 @@ namespace HegaCore.UI
             args.GetThenMoveNext(ref index, out this.conversationId)
                 .GetThenMoveNext(ref index, out this.onHideCompleted);
 
-            //this.panelCover.OnHideComplete.AddListener(BeginShow);
-            //this.contentTyper.PrintCompleted.AddListener(ContentTyper_OnPrintCompleted);
+            this.panelCover.OnHideComplete.AddListener(ShowFirstDialogue);
+            this.contentTyper.PrintCompleted.AddListener(ContentTyper_OnPrintCompleted);
 
             ToggleCanvases(true);
             Initialize();
@@ -117,18 +130,16 @@ namespace HegaCore.UI
         {
             base.OnShowComplete();
 
-            PrepareUI().Forget();
-
-            this.Choices.Clear();
+            ResetUI().Forget();
             this.panelCover.Hide();
         }
 
         public override void OnHide()
         {
-            //this.isEnd = true;
-            //this.isHiding = true;
+            this.isEnd = true;
+            this.isHiding = true;
 
-            //HideAllActors();
+            ForceHideAllActors();
             base.OnHide();
         }
 
@@ -138,17 +149,16 @@ namespace HegaCore.UI
 
             base.OnHideComplete();
 
-            //Deinitialize();
+            Deinitialize();
             this.onHideCompleted?.Invoke();
         }
 
         private void HideOnEnd()
         {
-            //if (this.isHiding)
-            //    return;
+            if (this.isHiding)
+                return;
 
-            //this.isHiding = true;
-
+            this.isHiding = true;
             //BlackScreen.Instance.Show(Hide, autoHideDuration: 0.5f);
         }
 
@@ -169,7 +179,7 @@ namespace HegaCore.UI
         {
             UnuLogger.Log($"Conversation: {this.conversationId}");
 
-            InitializeDarkLord(Settings.DataContainer.DarkLord);
+            InitializeDaemon(this.daemon = Settings.DataContainer.DarkLord);
 
             this.conversation = Settings.Novel.GetConversation(this.conversationId);
 
@@ -178,17 +188,19 @@ namespace HegaCore.UI
 
             foreach (var actor in this.actors)
             {
-                actor.Id = string.Empty;
+                actor.Model = string.Empty;
                 actor.Controller = null;
             }
 
-            //this.areChoicesOnly = false;
-            //this.showChoicesOnly = false;
-            //this.canTrySkipNext = true;
-            //this.speedUpState = SpeedUpState.None;
+            this.AvatarAtlas = Settings.AvatarAtlasName;
             this.IsTyping = false;
 
-            if (this.conversation == null)
+            this.areChoicesOnly = false;
+            this.showChoicesOnly = false;
+            this.canTrySkipNext = true;
+            this.speedType = SpeedType.Normal;
+
+            if (this.conversation.IsNullOrNone())
             {
                 UnuLogger.LogError($"Cannot find any conversation by id={this.conversationId}");
                 return;
@@ -228,7 +240,7 @@ namespace HegaCore.UI
             this.panelConversation.Hide(true);
         }
 
-        private void InitializeDarkLord(bool value)
+        private void InitializeDaemon(bool value)
         {
             foreach (var daemon in this.daemons)
             {
@@ -236,11 +248,12 @@ namespace HegaCore.UI
             }
         }
 
-        public void SetBackground(string value)
+        private void SetBackground(string value)
             => this.panelBackground.Initialize(value);
 
-        private async UniTaskVoid PrepareUI()
+        private async UniTaskVoid ResetUI()
         {
+            this.Choices.Clear();
             this.panelBackground.Show(true);
 
             Invoke(this.defaultDialogue.CommandsOnStart);
@@ -255,13 +268,13 @@ namespace HegaCore.UI
             HighlightActors();
         }
 
-        private void BeginShow()
+        private void ShowFirstDialogue()
         {
             if (this.conversation.IsNullOrNone())
                 return;
 
-            //this.isEnd = false;
-            //this.isHiding = false;
+            this.isEnd = false;
+            this.isHiding = false;
 
             ShowDialogue(out var canShowActors);
 
@@ -276,8 +289,141 @@ namespace HegaCore.UI
             }
         }
 
+        private void Update()
+        {
+            if (this.isEnd && this.isHiding)
+                return;
+
+            if (this.CanvasGroup.interactable)
+            {
+                if (Input.GetKeyUp(KeyCode.Return) ||
+                    Input.GetKeyUp(KeyCode.KeypadEnter) ||
+                    Input.GetKeyUp(KeyCode.Space))
+                {
+                    TrySkipNextOrEnd();
+                }
+            }
+
+            if (Input.GetKey(KeyCode.LeftControl) ||
+                Input.GetKey(KeyCode.RightControl))
+            {
+                SpeedUp();
+            }
+            else
+            {
+                StopSpeedUp();
+            }
+        }
+
         void IPointerClickHandler.OnPointerClick(PointerEventData eventData)
         {
+            if (this.isEnd && this.isHiding)
+                return;
+
+            if (!this.CanvasGroup.interactable)
+                return;
+
+            TrySkipNextOrEnd();
+        }
+
+        public void TrySkipNextOrEnd()
+        {
+            if (!this.isEnd)
+                TrySkipNext();
+
+            if (this.isEnd)
+                HideOnEnd();
+        }
+
+        public void SkipNext()
+        {
+            if (this.contentTyper.IsTyping)
+            {
+                this.contentTyper.Skip();
+                return;
+            }
+
+            if (this.dialogue.IsNullOrNone())
+            {
+                UnuLogger.LogError("Cannot skip null dialogue");
+                return;
+            }
+
+            if (this.areChoicesOnly)
+                return;
+
+            if (this.dialogue.Choices.Count <= 1)
+                Next();
+        }
+
+        private void TrySkipNext()
+        {
+            if (!this.canTrySkipNext)
+                return;
+
+            this.canTrySkipNext = false;
+
+            SkipNext();
+            LockTrySkipNext(0.1f).Forget();
+        }
+
+        private void SpeedUp()
+        {
+            if (this.isEnd && this.isHiding)
+                return;
+
+            if (this.speedType != SpeedType.Normal)
+                return;
+
+            var state = this.speedType;
+            this.speedType = SpeedType.SpeedUp;
+
+            if (this.isEnd)
+            {
+                if (state == SpeedType.Normal)
+                    HideOnEnd();
+
+                return;
+            }
+
+            if (this.contentTyper.IsTyping)
+            {
+                this.contentTyper.Pause();
+                this.contentTyper.Resume(this.speedTyperConfig);
+            }
+            else
+            {
+                TrySkipNext();
+            }
+        }
+
+        private void StopSpeedUp()
+        {
+            if (this.isEnd && this.isHiding)
+                return;
+
+            if (this.speedType == SpeedType.Normal)
+                return;
+
+            this.speedType = SpeedType.Normal;
+
+            if (this.isEnd)
+                return;
+
+            if (this.contentTyper.IsTyping)
+            {
+                this.contentTyper.Pause();
+                this.contentTyper.Resume();
+            }
+        }
+
+        private async UniTaskVoid LockTrySkipNext(float seconds)
+        {
+            this.canTrySkipNext = false;
+
+            await UniTask.Delay(TimeSpan.FromSeconds(seconds));
+
+            this.canTrySkipNext = true;
         }
 
         private void ShowDialogue(out bool canShowActors)
@@ -298,8 +444,6 @@ namespace HegaCore.UI
                 Invoke(this.dialogue.CommandsOnEnd);
 
                 ForceHideAllActors();
-
-                //this.isEnd = true;
                 HideOnEnd();
 
                 return;
@@ -316,20 +460,166 @@ namespace HegaCore.UI
             canShowActors = true;
 
             if (this.dialogue.Choices.Count > 1)
-                this.defaultChoice = null;
+                this.defaultChoice = ChoiceRow.None;
             else
                 this.defaultChoice = this.dialogue.GetChoice(0);
 
             Invoke(this.dialogue.CommandsOnStart);
 
-            if (this.defaultChoice == null)
+            if (this.defaultChoice.IsNullOrNone())
             {
-                //PrintNonDefaultDialogue(false);
+                PrintNonDefaultDialogue(false);
             }
             else
             {
-                //PrintDefaultChoiceDialogue();
+                PrintDefaultChoiceDialogue();
             }
+        }
+
+        private void ContentTyper_OnPrintCompleted()
+        {
+            this.IsTyping = false;
+            PrintNonDefaultDialogue(true);
+
+            if (this.speedType != SpeedType.Normal)
+            {
+                this.speedType = SpeedType.RenewSpeedUp;
+                this.canTrySkipNext = true;
+            }
+        }
+
+        private void PrintNonDefaultDialogue(bool invokeCommandsOnEnd)
+        {
+            if (invokeCommandsOnEnd)
+                Invoke(this.dialogue.CommandsOnEnd);
+
+            RefreshChoices(this.dialogue.Choices);
+            TryShowNextDialogueImmediately();
+        }
+
+        private void PrintDefaultChoiceDialogue()
+        {
+            Clear();
+            CheckNextDialogueAreChoicesOnly();
+
+            var content = GetContent(this.defaultChoice);
+
+            if (string.IsNullOrEmpty(content))
+            {
+                UnuLogger.LogWarning("Default choice content is empty");
+                content = " ";
+            }
+
+            this.IsTyping = true;
+
+            if (this.speedType != SpeedType.Normal)
+            {
+                this.contentTyper.TypeText(content, this.speedTyperConfig);
+            }
+            else
+                this.contentTyper.TypeText(content);
+        }
+
+        private void Clear()
+        {
+            this.Choices.Clear();
+            this.contentText.SetText(string.Empty);
+        }
+
+        private void RefreshChoices(IChoiceDictionary choices)
+        {
+            if (choices.Count <= 1)
+                return;
+
+            foreach (var choice in choices.Values)
+            {
+                if (choice.Id <= 0)
+                    continue;
+
+                this.Choices.Add(new DialogueChoiceViewModel {
+                    Id = choice.Id,
+                    Content = GetContent(choice),
+                    OnSelect = OnSelectChoice
+                });
+            }
+        }
+
+        private void OnSelectChoice(int id)
+        {
+            var choice = this.dialogue.GetChoice(id);
+            Invoke(this.dialogue.CommandsOnEnd);
+
+            if (choice.IsNullOrNone())
+            {
+                UnuLogger.LogError($"Cannot find any choice by id={id} in the dialogue {this.dialogue.Id} of the conversation {this.conversation.Id}");
+                return;
+            }
+
+            UnuLogger.Log($"Select: {id}");
+            this.areChoicesOnly = false;
+            NextDialogue(choice.GoTo);
+        }
+
+        private void NextDialogue(string id)
+        {
+            this.dialogue = this.conversation.GetDialogue(id);
+
+            ShowDialogue(out var canShowActors);
+
+            if (!canShowActors)
+            {
+                this.HasSpeakerName = false;
+                return;
+            }
+
+            ShowSpeaker();
+            HighlightActors();
+            InvokeActors();
+        }
+
+        private void CheckNextDialogueAreChoicesOnly()
+        {
+            this.areChoicesOnly = false;
+            this.showChoicesOnly = false;
+
+            if (this.defaultChoice.IsNullOrNone())
+                return;
+
+            var nextDialogue = this.conversation.GetDialogue(this.defaultChoice.GoTo);
+
+            if (nextDialogue.IsNullOrNone() || nextDialogue.IsEnd())
+                return;
+
+            this.areChoicesOnly = nextDialogue.Choices.Count > 1;
+            this.showChoicesOnly = this.areChoicesOnly;
+        }
+
+        private void TryShowNextDialogueImmediately()
+        {
+            if (!this.areChoicesOnly)
+            {
+                if (this.speedType != SpeedType.Normal)
+                    Next();
+
+                return;
+            }
+
+            if (!this.showChoicesOnly)
+                return;
+
+            Next();
+            this.showChoicesOnly = false;
+        }
+
+        private void Next()
+        {
+            if (this.defaultChoice.IsNullOrNone())
+            {
+                UnuLogger.LogError($"Cannot go next from dialogue id={this.dialogue.Id}");
+                return;
+            }
+
+            NextDialogue(this.defaultChoice.GoTo);
         }
 
         private void ForceHideAllActors()
@@ -343,39 +633,56 @@ namespace HegaCore.UI
                     actor.Controller.Hide();
 
                 actor.Controller = null;
-                actor.Id = string.Empty;
+                actor.Model = string.Empty;
             }
         }
 
         private void HighlightActors()
         {
-            var highlight = this.dialogue?.Highlight ?? DialogueRow.None.Highlight;
+            if (this.dialogue.IsNullOrNone())
+                return;
 
-            foreach (var item in highlight)
+            foreach (var item in this.dialogue.Highlight)
             {
                 var isDim = item < 0;
                 var index = Mathf.Abs(item) - 1;
 
-                if (this.actors.ValidateIndex(index))
-                {
-                    if (isDim)
-                        Highlight(this.actors[index].Controller);
-                    else
-                        Dim(this.actors[index].Controller);
-                }
+                if (!this.actors.ValidateIndex(index))
+                    continue;
+
+                var actor = this.actors[index];
+
+                if (actor == null || !actor.Controller)
+                    continue;
+
+                var color = isDim ? this.colorDim : this.colorHighlight;
+                CubismManager.Instance.SetColor(actor.Model, color, Settings.ActorDuration.Color);
+            }
+        }
+
+        private void InvokeActors()
+        {
+            if (this.dialogue.IsNullOrNone())
+                return;
+
+            const int length = 4;
+            var actors = Array1Pool<string>.Get(length);
+            var actions = Array1Pool<IActorCommandList>.Get(length);
+
+            var x = this.dialogue;
+            actors.Set(x.Actor1, x.Actor2, x.Actor3, x.Actor4);
+            actions.Set(x.Actions1, x.Actions2, x.Actions3, x.Actions4);
+
+            for (var i = 0; i < length; i++)
+            {
+                if (string.IsNullOrEmpty(actors[i]))
+                    continue;
+
+                Invoke(actions[i]);
             }
 
-            void Highlight(CubismController model)
-            {
-                if (model && model.gameObject.activeSelf)
-                    model.SetColor(this.colorHighlight);
-            }
-
-            void Dim(CubismController model)
-            {
-                if (model && model.gameObject.activeSelf)
-                    model.SetColor(this.colorDim);
-            }
+            Array1Pool<string>.Return(actors);
+            Array1Pool<IActorCommandList>.Return(actions);
         }
 
         private void ShowSpeaker()
@@ -408,7 +715,7 @@ namespace HegaCore.UI
         private string GetContent(CharacterRow character)
             => Settings.Character.GetContent(character.ContentId).GetLocalization(Settings.DataContainer.Settings.Language);
 
-        private void Invoke(ICommandList commands)
+        private void Invoke(IReadOnlyList<Command> commands)
         {
             if (commands == null)
                 return;
@@ -433,18 +740,257 @@ namespace HegaCore.UI
             if (actor.Controller)
                 actor.Controller.SetLayer(view.Layer);
         }
+
+        public void UI_Button_EndConversation()
+        {
+            this.badDialogue = null;
+            this.goodDialogue = null;
+
+            var pointBadAdd = new PointBadAdd();
+            var pointGoodAdd = new PointGoodAdd();
+
+            bool Contains(ICommandList commands, string key)
+            {
+                foreach (var command in commands)
+                {
+                    if (!string.IsNullOrEmpty(command.Key) &&
+                        command.Key.Equals(key))
+                        return true;
+                }
+
+                return false;
+            }
+
+            foreach (var dialog in this.conversation.Dialogues.Values)
+            {
+                if (Contains(dialog.CommandsOnStart, pointBadAdd.Key) ||
+                    Contains(dialog.CommandsOnEnd, pointBadAdd.Key))
+                {
+                    this.badDialogue = dialog;
+                }
+                else
+                if (Contains(dialog.CommandsOnStart, pointGoodAdd.Key) ||
+                    Contains(dialog.CommandsOnEnd, pointGoodAdd.Key))
+                {
+                    this.goodDialogue = dialog;
+                }
+            }
+
+            if (this.badDialogue == null || this.goodDialogue == null)
+            {
+                EndConversationInternal();
+            }
+            else
+            {
+                ShowGoodBadPanel();
+            }
+        }
+
+        private void ShowGoodBadPanel()
+        {
+        }
+
+        public void UI_Button_EndBad()
+        {
+            if (this.badDialogue != null)
+            {
+                Invoke(this.badDialogue.CommandsOnStart);
+                Invoke(this.badDialogue.CommandsOnEnd);
+            }
+
+            EndConversationInternal();
+        }
+
+        public void UI_Button_EndGood()
+        {
+            if (this.goodDialogue != null)
+            {
+                Invoke(this.goodDialogue.CommandsOnStart);
+                Invoke(this.goodDialogue.CommandsOnEnd);
+            }
+
+            EndConversationInternal();
+        }
+
+        private void EndConversationInternal()
+        {
+            if (this.contentTyper.IsTyping)
+                this.contentTyper.Skip();
+
+            var endDialogue = this.conversation.GetDialogue(EndDialogueRow.Keyword);
+
+            if (endDialogue == null)
+            {
+                UnuLogger.LogError("END dialogue is missing");
+                return;
+            }
+
+            Invoke(endDialogue.CommandsOnStart);
+            Invoke(endDialogue.CommandsOnEnd);
+            this.isEnd = true;
+        }
+
+        private string GetActorId(int actorNumber)
+        {
+            switch (actorNumber)
+            {
+                case 1: return this.dialogue?.Actor1 ?? string.Empty;
+                case 2: return this.dialogue?.Actor2 ?? string.Empty;
+                case 3: return this.dialogue?.Actor3 ?? string.Empty;
+                case 4: return this.dialogue?.Actor4 ?? string.Empty;
+                default: return string.Empty;
+            }
+        }
+
+        private ActorView GetActorView(int actorNumber)
+        {
+            var index = actorNumber - 1;
+
+            if (this.actorViews.ValidateIndex(index))
+                return this.actorViews[index];
+
+            return null;
+        }
+
+        private Actor GetActor(int actorNumber)
+        {
+            var index = actorNumber - 1;
+
+            if (this.actors.ValidateIndex(index))
+                return this.actors[index];
+
+            return null;
+        }
+
+        public void UI_Event_Actor_Show(int actorNumber)
+        {
+            var id = GetActorId(actorNumber);
+            var character = Settings.Character.GetCharacter(id);
+            var model = character?.P1 ?? string.Empty;
+
+            if (string.IsNullOrEmpty(model))
+                return;
+
+            var view = GetActorView(actorNumber);
+            var actor = GetActor(actorNumber);
+
+            if (view == null || actor == null)
+                return;
+
+            actor.Model = model;
+            actor.Controller = CubismManager.Instance.Show(model, view.Position.position, Settings.ActorDuration.Show);
+
+            if (!this.isHiding)
+                ApplyLayerToActor(actor, view);
+        }
+
+        public void UI_Event_Actor_Show_FromLeft(int actorNumber)
+            => ShowActorMove(actorNumber, this.positionLeft);
+
+        public void UI_Event_Actor_Show_FromRight(int actorNumber)
+            => ShowActorMove(actorNumber, this.positionRight);
+
+        private void ShowActorMove(int actorNumber, Transform fromPosition)
+        {
+            var id = GetActorId(actorNumber);
+            var character = Settings.Character.GetCharacter(id);
+            var model = character?.P1 ?? string.Empty;
+
+            if (string.IsNullOrEmpty(model))
+                return;
+
+            var view = GetActorView(actorNumber);
+            var actor = GetActor(actorNumber);
+
+            if (view == null || actor == null)
+                return;
+
+            var from = fromPosition.position;
+            var to = view.Position.position;
+
+            actor.Model = model;
+            actor.Controller = CubismManager.Instance.Show(model, from, to, Settings.ActorDuration.Show);
+
+            if (!this.isHiding)
+                ApplyLayerToActor(actor, view);
+        }
+
+        public void UI_Event_Actor_Hide(int actorNumber)
+        {
+            var actor = GetActor(actorNumber);
+
+            if (actor == null || !actor.Controller)
+                return;
+
+            CubismManager.Instance.Hide(actor.Model, Settings.ActorDuration.Hide);
+
+            actor.Model = string.Empty;
+            actor.Controller = null;
+        }
+
+        public void UI_Event_Actor_Hide_ToLeft(int actorNumber)
+            => HideActorMove(actorNumber, this.positionLeft);
+
+        public void UI_Event_Actor_Hide_ToRight(int actorNumber)
+            => HideActorMove(actorNumber, this.positionRight);
+
+        private void HideActorMove(int actorNumber, Transform toPosition)
+        {
+            var actor = GetActor(actorNumber);
+
+            if (actor == null || !actor.Controller)
+                return;
+
+            CubismManager.Instance.Hide(actor.Model, toPosition.position, Settings.ActorDuration.Hide);
+
+            actor.Model = string.Empty;
+            actor.Controller = null;
+        }
+
+        public void UI_Event_Actor_Hide_All()
+        {
+            for (var i = 0; i < this.actors.Length; i++)
+            {
+                var actor = this.actors[i];
+
+                if (actor == null || !actor.Controller)
+                    continue;
+
+                CubismManager.Instance.Hide(actor.Model, Settings.ActorDuration.Hide);
+
+                actor.Model = string.Empty;
+                actor.Controller = null;
+            }
+        }
+
+        public void UI_Event_Background_Set(string value)
+            => SetBackground(value);
+
         [Serializable]
         private class ActorView
         {
-            public Transform Position;
-            public SingleOrderLayer Layer;
+            public Transform Position = null;
+            public SingleOrderLayer Layer = default;
         }
 
         [Serializable]
         private class Actor
         {
-            public string Id;
-            public CubismController Controller;
+            [SerializeField]
+            private string model = string.Empty;
+
+            public string Model
+            {
+                get => this.model;
+                set => this.model = value ?? string.Empty;
+            }
+
+            public CubismController Controller = null;
+        }
+
+        private enum SpeedType
+        {
+            Normal, SpeedUp, RenewSpeedUp
         }
     }
 }
