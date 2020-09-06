@@ -671,7 +671,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 528936b100c1e81468ec694136b6784a, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  key: show
+  key: <actor>show
   actorNumberEvent:
     m_PersistentCalls:
       m_Calls:
@@ -698,7 +698,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 528936b100c1e81468ec694136b6784a, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  key: show_left
+  key: <actor>show_left
   actorNumberEvent:
     m_PersistentCalls:
       m_Calls:
@@ -725,7 +725,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 528936b100c1e81468ec694136b6784a, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  key: show_right
+  key: <actor>show_right
   actorNumberEvent:
     m_PersistentCalls:
       m_Calls:
@@ -830,7 +830,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 528936b100c1e81468ec694136b6784a, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  key: hide
+  key: <actor>hide
   actorNumberEvent:
     m_PersistentCalls:
       m_Calls:
@@ -857,7 +857,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 528936b100c1e81468ec694136b6784a, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  key: hide_left
+  key: <actor>hide_left
   actorNumberEvent:
     m_PersistentCalls:
       m_Calls:
@@ -884,7 +884,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 528936b100c1e81468ec694136b6784a, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  key: hide_right
+  key: <actor>hide_right
   actorNumberEvent:
     m_PersistentCalls:
       m_Calls:
@@ -1121,7 +1121,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 53df53c22ca507245bf19c9d29bf1391, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  key: hide_all
+  key: <actor>hide_all
   actorEvent:
     m_PersistentCalls:
       m_Calls:
