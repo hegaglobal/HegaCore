@@ -248,8 +248,8 @@ namespace HegaCore.UI
             }
         }
 
-        private void SetBackground(string value)
-            => this.panelBackground.Initialize(value);
+        private void SetBackground(string name, float? duration = null)
+            => this.panelBackground.Switch(name, duration: duration);
 
         private async UniTaskVoid ResetUI()
         {
@@ -963,8 +963,11 @@ namespace HegaCore.UI
             }
         }
 
-        public void UI_Event_Background_Set(string value)
-            => SetBackground(value);
+        public void UI_Event_Background_Set(string name)
+            => SetBackground(name);
+
+        public void UI_Event_Background_Change(string name, float duration)
+            => SetBackground(name, duration);
 
         [Serializable]
         private class ActorView

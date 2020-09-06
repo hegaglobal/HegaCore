@@ -750,6 +750,7 @@ GameObject:
   m_Component:
   - component: {fileID: 3183278058056407656}
   - component: {fileID: 4366601132782113913}
+  - component: {fileID: 5779266986032324231}
   m_Layer: 0
   m_Name: ConversationBackground
   m_TagString: Untagged
@@ -783,7 +784,21 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 0e3002daca78c4c42ad3621171b06cd7, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  key: conv_background_set
+  key: conv_bg_set
+  dialog: {fileID: 6427901828950974001}
+--- !u!114 &5779266986032324231
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1720527501942036164}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: dd32524aab129b14a9668043043afcd5, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  key: conv_bg_change
   dialog: {fileID: 6427901828950974001}
 --- !u!1 &1871885385025219605
 GameObject:

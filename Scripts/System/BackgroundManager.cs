@@ -42,9 +42,9 @@ namespace HegaCore
         }
 
         public void SetBackground(string name, Color? color = null, float? duration = null)
-            => this.background.Initialize(name, color, duration);
+            => this.background.Switch(name, color, duration);
 
         public void SetForeground(string name, Color? color = null, float? duration = null)
-            => this.foreground.Initialize(name, color, duration);
+            => this.foreground.Switch(name, color, duration);
     }
 }
