@@ -12,20 +12,33 @@ namespace HegaCore.Commands.UI
 
         public override void Invoke(in Segment<object> parameters)
         {
-            if (!ValidateParams(parameters, 2, nameof(ConversationBackgroundChange)))
-                return;
-
             if (!this.dialog)
             {
                 UnuLogger.LogWarning($"No target {nameof(UIConversationDialog)}", this);
                 return;
             }
 
-            if (this.converter.TryConvert(parameters[0], out string name) &&
-                this.converter.TryConvert(parameters[1], out float duration))
+            string name;
+
+            if (ValidateParams(parameters, 2, nameof(ConversationBackgroundChange), true))
             {
-                this.dialog.UI_Event_Background_Change(name, duration);
-                Log(name, duration);
+                if (this.converter.TryConvert(parameters[0], out name) &&
+                    this.converter.TryConvert(parameters[1], out float duration))
+                {
+                    this.dialog.UI_Event_Background_Change(name, duration);
+                    Log(name, duration);
+                }
+
+                return;
+            }
+
+            if (!ValidateParams(parameters, 1, nameof(ConversationBackgroundChange)))
+                return;
+
+            if (this.converter.TryConvert(parameters[0], out name))
+            {
+                this.dialog.UI_Event_Background_Change(name);
+                Log(name);
             }
         }
     }

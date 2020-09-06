@@ -11,6 +11,8 @@ namespace HegaCore.UI
 
             public static ActorDuration ActorDuration { get; private set; }
 
+            public static float BackgroundDurationChange { get; private set; }
+
             public static BaseGameDataContainer DataContainer { get; private set; }
 
             public static CharacterData Character { get; private set; }
@@ -19,7 +21,7 @@ namespace HegaCore.UI
 
             public static CommandSystem CommandSystem { get; private set; }
 
-            public static void Initialize(string avatarAtlasName, in ActorDuration actorDuration,
+            public static void Initialize(string avatarAtlasName, in ActorDuration actorDuration, float backgroundDurationChange,
                                           BaseGameDataContainer dataContainer, CharacterData character, NovelData novel,
                                           CommandSystem commandSystem)
             {

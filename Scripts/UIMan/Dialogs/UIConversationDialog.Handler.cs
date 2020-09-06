@@ -1,6 +1,5 @@
 using System;
 using System.Collections.Generic;
-using System.Runtime.CompilerServices;
 using UnityEngine;
 using UnityEngine.EventSystems;
 using UnityEngine.UI;
@@ -159,7 +158,13 @@ namespace HegaCore.UI
                 return;
 
             this.isHiding = true;
-            //BlackScreen.Instance.Show(Hide, autoHideDuration: 0.5f);
+            var settings = UIActivity.Settings.Default.With(alphaOnShow: 0f);
+            UIMan.Instance.ShowActivity(0.5f, 0.5f, settings, OnActivityShowComplete);
+        }
+
+        private void OnActivityShowComplete(UIActivity sender, params object[] args)
+        {
+            Hide();
         }
 
         private void ToggleCanvases(bool value)
@@ -828,6 +833,9 @@ namespace HegaCore.UI
             Invoke(endDialogue.CommandsOnStart);
             Invoke(endDialogue.CommandsOnEnd);
             this.isEnd = true;
+
+            var settings = UIActivity.Settings.Default.With(alphaOnShow: 0f);
+            UIMan.Instance.ShowActivity(0.5f, 0.5f, settings, OnActivityShowComplete);
         }
 
         private string GetActorId(int actorNumber)
@@ -965,6 +973,9 @@ namespace HegaCore.UI
 
         public void UI_Event_Background_Set(string name)
             => SetBackground(name);
+
+        public void UI_Event_Background_Change(string name)
+            => SetBackground(name, Settings.BackgroundDurationChange);
 
         public void UI_Event_Background_Change(string name, float duration)
             => SetBackground(name, duration);
