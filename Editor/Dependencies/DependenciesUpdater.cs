@@ -22,7 +22,11 @@ namespace HegaCore.Editor
         {
             var d = manifest.dependencies;
 
-            d["com.hegaglobal.visual-novel-data"] = "https://hegaglobal:HentaiG%40mes123456@github.com/d[hegaglobal;VisualNovelData.git#1.4.6";
+            d["com.unity.addressables"] = "1.15.1";
+            d["com.unity.scriptablebuildpipeline"] = "1.7.3";
+            d["jillejr.newtonsoft.json-for-unity"] = "12.0.301";
+
+            d["com.hegaglobal.visual-novel-data"] = "https://hegaglobal:HentaiG%40mes123456@github.com/hegaglobal/VisualNovelData.git#1.4.6";
 
             d["com.cysharp.unitask"] = "2.0.31";
             d["com.live2d.cubism-cubismloader"] = "4.0.106";
