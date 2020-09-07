@@ -1,9 +1,11 @@
 ﻿using System.Collections.Generic;
+using System.Table;
 using UnityEngine;
 using UnityEngine.Audio;
 using UnityEngine.AddressableAssets;
 using UnityEngine.ResourceManagement.AsyncOperations;
 using Cysharp.Threading.Tasks;
+using HegaCore.Database;
 
 namespace HegaCore
 {
@@ -64,6 +66,72 @@ namespace HegaCore
             this.Player.Initialize(musicFadeTime, musicVolume, soundVolume, voiceVolume);
         }
 
+        public async UniTask PrepareAudioAsync(ReadTable<AudioEntry> table, AudioType filterType)
+        {
+            foreach (var entry in table.Entries)
+            {
+                if (entry == null || entry.Type != filterType)
+                    return;
+
+                await PrepareAudioAsync(entry);
+            }
+        }
+
+        public async UniTask PrepareAudioAsync(ReadTable<AudioEntry> table)
+        {
+            foreach (var entry in table.Entries)
+            {
+                if (entry == null)
+                    return;
+
+                await PrepareAudioAsync(entry);
+            }
+        }
+
+        private async UniTask PrepareAudioAsync(AudioEntry entry)
+        {
+            var key = entry.Key;
+            var assetKey = entry.Key;
+
+            if (string.IsNullOrEmpty(assetKey) || !AddressablesManager.ContainsKey(assetKey))
+            {
+                assetKey = entry.SecondKey;
+
+                if (string.IsNullOrEmpty(assetKey) || !AddressablesManager.ContainsKey(assetKey))
+                {
+                    UnuLogger.LogError($"Cannot find any {entry.Type} with either key={entry.Key} or key={entry.SecondKey}");
+                    return;
+                }
+            }
+
+            var map = GetMap(entry.Type);
+
+            if (map == null)
+                return;
+
+            if (map.ContainsKey(key))
+            {
+                UnuLogger.LogWarning($"Duplicate {entry.Type} key={key}");
+                return;
+            }
+
+            var handle = Addressables.LoadAssetAsync<AudioClip>(key);
+            await handle.Task;
+
+            map.Add(key, handle);
+        }
+
+        private AudioMap GetMap(AudioType type)
+        {
+            switch (type)
+            {
+                case AudioType.Music: return this.musicMap;
+                case AudioType.Sound: return this.soundMap;
+                case AudioType.Voice: return this.voiceMap;
+                default: return null;
+            }
+        }
+
         public async UniTask PrepareMusicAsync(params AssetReferenceAudioClip[] references)
             => await PrepareAsync(this.musicMap, references);
 
@@ -90,23 +158,29 @@ namespace HegaCore
         }
 
         public async UniTask PrepareMusicAsync(params string[] keys)
-            => await PrepareAsync(this.musicMap, keys);
+            => await PrepareAsync(this.musicMap, AudioType.Music, keys);
 
         public async UniTask PrepareSoundAsync(params string[] keys)
-            => await PrepareAsync(this.soundMap, keys);
+            => await PrepareAsync(this.soundMap, AudioType.Sound, keys);
 
         public async UniTask PrepareVoiceAsync(params string[] keys)
-            => await PrepareAsync(this.voiceMap, keys);
+            => await PrepareAsync(this.voiceMap, AudioType.Voice, keys);
 
-        private async UniTask PrepareAsync(AudioMap map, params string[] keys)
+        private async UniTask PrepareAsync(AudioMap map, AudioType type, params string[] keys)
         {
             foreach (var key in keys)
             {
-                if (string.IsNullOrEmpty(key))
+                if (string.IsNullOrEmpty(key) || !AddressablesManager.ContainsKey(key))
+                {
+                    UnuLogger.LogError($"Cannot find any audio with key={key}");
                     continue;
+                }
 
                 if (map.ContainsKey(key))
+                {
+                    UnuLogger.LogWarning($"Duplicate {type} key={key}");
                     continue;
+                }
 
                 var handle = Addressables.LoadAssetAsync<AudioClip>(key);
                 await handle.Task;
@@ -116,22 +190,25 @@ namespace HegaCore
         }
 
         public void ReleaseMusic(params AssetReferenceAudioClip[] references)
-            => Release(this.musicMap, references);
+            => Release(this.musicMap, AudioType.Music, references);
 
         public void ReleaseSound(params AssetReferenceAudioClip[] references)
-            => Release(this.soundMap, references);
+            => Release(this.soundMap, AudioType.Sound, references);
 
         public void ReleaseVoice(params AssetReferenceAudioClip[] references)
-            => Release(this.voiceMap, references);
+            => Release(this.voiceMap, AudioType.Voice, references);
 
-        private void Release(AudioMap map, params AssetReferenceAudioClip[] references)
+        private void Release(AudioMap map, AudioType type, params AssetReferenceAudioClip[] references)
         {
             foreach (var reference in references)
             {
                 var key = reference.RuntimeKey.ToString();
 
                 if (!map.ContainsKey(key))
+                {
+                    UnuLogger.LogWarning($"Duplicate {type} key={key}");
                     continue;
+                }
 
                 map.Remove(key);
                 reference.ReleaseAsset();

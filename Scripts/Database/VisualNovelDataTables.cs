@@ -9,6 +9,8 @@ namespace HegaCore
     {
         public Table<LanguageEntry> Language { get; } = new Table<LanguageEntry>();
 
+        public Table<AudioEntry> Audio { get; } = new Table<AudioEntry>();
+
         public L10nData L10nData { get; } = new L10nData();
 
         public NovelData NovelData { get; } = new NovelData();
@@ -20,6 +22,7 @@ namespace HegaCore
         public override void Clear()
         {
             this.Language.Clear();
+            this.Audio.Clear();
             this.L10nData.Clear();
             this.NovelData.Clear();
             this.CharacterData.Clear();
