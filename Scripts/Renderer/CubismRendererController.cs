@@ -10,6 +10,11 @@ namespace HegaCore
         [SerializeField, LabelText("Render Controller"), InlineButton(nameof(FindCubismRenderController), "Find")]
         private CubismRenderController cubismRenderController = null;
 
+        private void Awake()
+        {
+            FindCubismRenderController();
+        }
+
         private void FindCubismRenderController()
             => this.cubismRenderController = GetComponentInChildren<CubismRenderController>();
 

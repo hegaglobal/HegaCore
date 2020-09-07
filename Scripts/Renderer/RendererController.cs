@@ -16,6 +16,12 @@ namespace HegaCore
         private float alpha = 0f;
         private Tweener fadeTween;
 
+        private void Awake()
+        {
+            FindSortingGroup();
+            FindAllSpriteRenderers();
+        }
+
         private void FindSortingGroup()
             => this.sortingGroup = GetComponent<SortingGroup>();
 
