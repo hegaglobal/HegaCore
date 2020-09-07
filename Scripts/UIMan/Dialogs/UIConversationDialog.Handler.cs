@@ -584,6 +584,9 @@ namespace HegaCore.UI
 
             ShowDialogue(out var canShowActors);
 
+            if (this.dialogue.IsEnd())
+                return;
+
             if (!canShowActors)
             {
                 this.HasSpeakerName = false;

@@ -10,6 +10,9 @@ namespace HegaCore.UI
         [SerializeField]
         private Panel panel = null;
 
+        [SerializeField]
+        private float showingTime = 0f;
+
         private float autoHideAfter;
 
         private void OnValidate()
@@ -21,6 +24,9 @@ namespace HegaCore.UI
         {
             this.panel.OnShowComplete.AddListener(OnPanelShowComplete);
         }
+
+        public void Show()
+            => Show(this.showingTime);
 
         public void Show(float autoHideAfter)
         {
