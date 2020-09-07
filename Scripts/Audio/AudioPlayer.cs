@@ -13,7 +13,7 @@ namespace HegaCore
         private const string SoundVolume = nameof(SoundVolume);
         private const string VoiceVolume = nameof(VoiceVolume);
 
-        private const float SoundBufferClearDelay = 0.02f;
+        private const float SoundBufferClearDelay = 0.04f;
 
         private readonly AudioManager manager;
         private readonly AudioMixer mixer;
