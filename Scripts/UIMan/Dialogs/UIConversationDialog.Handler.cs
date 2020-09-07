@@ -16,9 +16,9 @@ namespace HegaCore.UI
 {
     public partial class UIConversationDialog : UIManDialog, IPointerClickHandler
     {
-        public static void Show(string id, Action onHideCompleted)
+        public static void Show(string id, Action onShowCompleted = null, Action onHide = null, Action onHideCompleted = null)
         {
-            UIMan.Instance.ShowDialog<UIConversationDialog>(id, onHideCompleted);
+            UIMan.Instance.ShowDialog<UIConversationDialog>(id, onShowCompleted, onHide, onHideCompleted);
         }
 
         public static void Hide()
@@ -79,6 +79,8 @@ namespace HegaCore.UI
             = new ObservableList<DialogueChoiceViewModel>();
 
         private string conversationId;
+        private Action onShowCompleted;
+        private Action onHide;
         private Action onHideCompleted;
 
         private ConversationRow conversation;
@@ -112,6 +114,8 @@ namespace HegaCore.UI
             var index = 0;
 
             args.GetThenMoveNext(ref index, out this.conversationId)
+                .GetThenMoveNext(ref index, out this.onShowCompleted)
+                .GetThenMoveNext(ref index, out this.onHide)
                 .GetThenMoveNext(ref index, out this.onHideCompleted);
 
             this.panelCover.OnHideComplete.AddListener(ShowFirstDialogue);
@@ -131,10 +135,13 @@ namespace HegaCore.UI
 
             ResetUI().Forget();
             this.panelCover.Hide();
+            this.onShowCompleted?.Invoke();
         }
 
         public override void OnHide()
         {
+            this.onHide?.Invoke();
+
             this.isEnd = true;
             this.isHiding = true;
 
