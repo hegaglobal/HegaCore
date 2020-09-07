@@ -4,7 +4,7 @@ using HegaCore.UI;
 
 namespace HegaCore.Commands.UI
 {
-    public sealed class ConversationBackgroundChange : UICommand
+    public sealed class UICommandConversationBackgroundChange : UICommand
     {
         [Space]
         [SerializeField]
@@ -20,7 +20,7 @@ namespace HegaCore.Commands.UI
 
             string name;
 
-            if (ValidateParams(parameters, 2, nameof(ConversationBackgroundChange), true))
+            if (ValidateParams(parameters, 2, nameof(UICommandConversationBackgroundChange), true))
             {
                 if (this.converter.TryConvert(parameters[0], out name) &&
                     this.converter.TryConvert(parameters[1], out float duration))
@@ -32,7 +32,7 @@ namespace HegaCore.Commands.UI
                 return;
             }
 
-            if (!ValidateParams(parameters, 1, nameof(ConversationBackgroundChange)))
+            if (!ValidateParams(parameters, 1, nameof(UICommandConversationBackgroundChange)))
                 return;
 
             if (this.converter.TryConvert(parameters[0], out name))

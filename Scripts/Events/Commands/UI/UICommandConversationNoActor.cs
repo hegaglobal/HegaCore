@@ -4,7 +4,7 @@ using UnityEngine.Events;
 
 namespace HegaCore.Commands.UI
 {
-    public sealed class ConversationNoActorCommand : UICommand
+    public sealed class UICommandConversationNoActor : UICommand
     {
         [Space]
         [SerializeField]

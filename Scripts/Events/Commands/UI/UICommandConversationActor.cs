@@ -5,7 +5,7 @@ using VisualNovelData;
 
 namespace HegaCore.Commands.UI
 {
-    public sealed class ConversationActorCommand : UICommand
+    public sealed class UICommandConversationActor : UICommand
     {
         [Space]
         [SerializeField]

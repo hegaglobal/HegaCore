@@ -4,7 +4,7 @@ using HegaCore.UI;
 
 namespace HegaCore.Commands.UI
 {
-    public sealed class ConversationBackgroundSet : UICommand
+    public sealed class UICommandConversationBackgroundSet : UICommand
     {
         [Space]
         [SerializeField]
@@ -12,7 +12,7 @@ namespace HegaCore.Commands.UI
 
         public override void Invoke(in Segment<object> parameters)
         {
-            if (!ValidateParams(parameters, 1, nameof(ConversationBackgroundSet)))
+            if (!ValidateParams(parameters, 1, nameof(UICommandConversationBackgroundSet)))
                 return;
 
             if (!this.dialog)
