@@ -155,14 +155,14 @@ namespace HegaCore
 
         public async UniTaskVoid PlayMusicAsync(string key)
         {
-            await this.manager.PrepareMusicAsync(key);
+            await this.manager.PrepareMusicAsync(true, key);
 
             PlayMusic(key);
         }
 
         public async UniTaskVoid PlayMusicAsync(AssetReferenceAudioClip key)
         {
-            await this.manager.PrepareMusicAsync(key);
+            await this.manager.PrepareMusicAsync(true, key);
 
             PlayMusic(key);
         }
@@ -184,14 +184,14 @@ namespace HegaCore
 
         public async UniTaskVoid PlaySoundAsync(string key)
         {
-            await this.manager.PrepareSoundAsync(key);
+            await this.manager.PrepareSoundAsync(true, key);
 
             PlaySound(key);
         }
 
         public async UniTaskVoid PlaySoundAsync(AssetReferenceAudioClip key)
         {
-            await this.manager.PrepareSoundAsync(key);
+            await this.manager.PrepareSoundAsync(true, key);
 
             PlaySound(key);
         }
@@ -220,14 +220,14 @@ namespace HegaCore
 
         public async UniTaskVoid PlayVoiceAsync(string key)
         {
-            await this.manager.PrepareVoiceAsync(key);
+            await this.manager.PrepareVoiceAsync(true, key);
 
             PlayVoice(key);
         }
 
         public async UniTaskVoid PlayVoiceAsync(AssetReferenceAudioClip key)
         {
-            await this.manager.PrepareVoiceAsync(key);
+            await this.manager.PrepareVoiceAsync(true, key);
 
             PlayVoice(key);
         }

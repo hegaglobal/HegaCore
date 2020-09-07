@@ -132,23 +132,28 @@ namespace HegaCore
             }
         }
 
-        public async UniTask PrepareMusicAsync(params AssetReferenceAudioClip[] references)
-            => await PrepareAsync(this.musicMap, references);
+        public async UniTask PrepareMusicAsync(bool silent, params AssetReferenceAudioClip[] references)
+            => await PrepareAsync(this.musicMap, AudioType.Music, silent, references);
 
-        public async UniTask PrepareSoundAsync(params AssetReferenceAudioClip[] references)
-            => await PrepareAsync(this.soundMap, references);
+        public async UniTask PrepareSoundAsync(bool silent, params AssetReferenceAudioClip[] references)
+            => await PrepareAsync(this.soundMap, AudioType.Sound, silent, references);
 
-        public async UniTask PrepareVoiceAsync(params AssetReferenceAudioClip[] references)
-            => await PrepareAsync(this.voiceMap, references);
+        public async UniTask PrepareVoiceAsync(bool silent, params AssetReferenceAudioClip[] references)
+            => await PrepareAsync(this.voiceMap, AudioType.Voice, silent, references);
 
-        private async UniTask PrepareAsync(AudioMap map, params AssetReferenceAudioClip[] references)
+        private async UniTask PrepareAsync(AudioMap map, AudioType type, bool silent, params AssetReferenceAudioClip[] references)
         {
             foreach (var reference in references)
             {
                 var key = reference.RuntimeKey.ToString();
 
                 if (map.ContainsKey(key))
+                {
+                    if (!silent)
+                        UnuLogger.LogWarning($"Duplicate {type} key={key}");
+
                     continue;
+                }
 
                 var handle = reference.LoadAssetAsync();
                 await handle.Task;
@@ -157,28 +162,30 @@ namespace HegaCore
             }
         }
 
-        public async UniTask PrepareMusicAsync(params string[] keys)
-            => await PrepareAsync(this.musicMap, AudioType.Music, keys);
+        public async UniTask PrepareMusicAsync(bool silent, params string[] keys)
+            => await PrepareAsync(this.musicMap, AudioType.Music, silent, keys);
 
-        public async UniTask PrepareSoundAsync(params string[] keys)
-            => await PrepareAsync(this.soundMap, AudioType.Sound, keys);
+        public async UniTask PrepareSoundAsync(bool silent, params string[] keys)
+            => await PrepareAsync(this.soundMap, AudioType.Sound, silent, keys);
 
-        public async UniTask PrepareVoiceAsync(params string[] keys)
-            => await PrepareAsync(this.voiceMap, AudioType.Voice, keys);
+        public async UniTask PrepareVoiceAsync(bool silent, params string[] keys)
+            => await PrepareAsync(this.voiceMap, AudioType.Voice, silent, keys);
 
-        private async UniTask PrepareAsync(AudioMap map, AudioType type, params string[] keys)
+        private async UniTask PrepareAsync(AudioMap map, AudioType type, bool silent, params string[] keys)
         {
             foreach (var key in keys)
             {
                 if (string.IsNullOrEmpty(key) || !AddressablesManager.ContainsKey(key))
                 {
-                    UnuLogger.LogError($"Cannot find any audio with key={key}");
+                    UnuLogger.LogError($"Cannot find any {type} with key={key}");
                     continue;
                 }
 
                 if (map.ContainsKey(key))
                 {
-                    UnuLogger.LogWarning($"Duplicate {type} key={key}");
+                    if (!silent)
+                        UnuLogger.LogWarning($"Duplicate {type} key={key}");
+
                     continue;
                 }
 
@@ -190,25 +197,22 @@ namespace HegaCore
         }
 
         public void ReleaseMusic(params AssetReferenceAudioClip[] references)
-            => Release(this.musicMap, AudioType.Music, references);
+            => Release(this.musicMap, references);
 
         public void ReleaseSound(params AssetReferenceAudioClip[] references)
-            => Release(this.soundMap, AudioType.Sound, references);
+            => Release(this.soundMap, references);
 
         public void ReleaseVoice(params AssetReferenceAudioClip[] references)
-            => Release(this.voiceMap, AudioType.Voice, references);
+            => Release(this.voiceMap, references);
 
-        private void Release(AudioMap map, AudioType type, params AssetReferenceAudioClip[] references)
+        private void Release(AudioMap map, params AssetReferenceAudioClip[] references)
         {
             foreach (var reference in references)
             {
                 var key = reference.RuntimeKey.ToString();
 
                 if (!map.ContainsKey(key))
-                {
-                    UnuLogger.LogWarning($"Duplicate {type} key={key}");
                     continue;
-                }
 
                 map.Remove(key);
                 reference.ReleaseAsset();

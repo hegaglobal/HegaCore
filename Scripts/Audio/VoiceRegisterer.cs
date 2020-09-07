@@ -9,6 +9,6 @@ namespace HegaCore
         private AssetReferenceAudioClip[] clips = null;
 
         public async UniTask RegisterAsync(AudioManager manager)
-            => await manager.PrepareVoiceAsync(this.clips);
+            => await manager.PrepareVoiceAsync(false, this.clips);
     }
 }
