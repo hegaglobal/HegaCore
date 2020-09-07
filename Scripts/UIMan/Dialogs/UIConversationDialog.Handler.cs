@@ -158,14 +158,17 @@ namespace HegaCore.UI
                 return;
 
             this.isHiding = true;
-            var settings = UIActivity.Settings.Default.With(alphaOnShow: 0f);
+            BeginHide();
+        }
+
+        private void BeginHide()
+        {
+            var settings = UIActivity.Settings.Default.With(false, false, alphaOnShow: 0f);
             UIMan.Instance.ShowActivity(0.5f, 0.5f, settings, OnActivityShowComplete);
         }
 
         private void OnActivityShowComplete(UIActivity sender, params object[] args)
-        {
-            Hide();
-        }
+            => Hide();
 
         private void ToggleCanvases(bool value)
         {
@@ -191,14 +194,17 @@ namespace HegaCore.UI
             if (this.actors.Length != this.actorViews.Length)
                 this.actors = new Actor[this.actorViews.Length];
 
-            foreach (var actor in this.actors)
+            for (var i = 0; i < this.actors.Length; i++)
             {
-                actor.Model = string.Empty;
-                actor.Controller = null;
+                if (this.actors[i] == null)
+                    this.actors[i] = new Actor();
+
+                this.actors[i].Model = string.Empty;
+                this.actors[i].Controller = null;
             }
 
             this.AvatarAtlas = Settings.AvatarAtlasName;
-            this.IsTyping = false;
+            this.IsTyping = true;
 
             this.areChoicesOnly = false;
             this.showChoicesOnly = false;
@@ -833,9 +839,7 @@ namespace HegaCore.UI
             Invoke(endDialogue.CommandsOnStart);
             Invoke(endDialogue.CommandsOnEnd);
             this.isEnd = true;
-
-            var settings = UIActivity.Settings.Default.With(alphaOnShow: 0f);
-            UIMan.Instance.ShowActivity(0.5f, 0.5f, settings, OnActivityShowComplete);
+            BeginHide();
         }
 
         private string GetActorId(int actorNumber)

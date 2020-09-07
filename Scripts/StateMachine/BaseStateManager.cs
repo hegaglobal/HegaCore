@@ -1,4 +1,4 @@
-﻿using UnityEngine;
+using UnityEngine;
 using QuaStateMachine;
 
 namespace HegaCore
@@ -49,13 +49,12 @@ namespace HegaCore
             var direction = currentState.To(nextState);
             var signalName = direction.ToString();
 
-            if (!this.machine.SignalMap.ContainsKey(signalName))
+            if (!this.machine.SignalMap.TryGetValue(signalName, out var signal))
             {
                 UnuLogger.LogError($"Cannot find any signal by direction={signalName}", this);
                 return;
             }
 
-            var signal = this.machine.GetSignalByName(signalName);
             signal.Emit();
         }
 

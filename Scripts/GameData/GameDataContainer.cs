@@ -8,27 +8,25 @@ namespace HegaCore
 {
     public abstract class BaseGameDataContainer
     {
+        public abstract BasePlayerData BasePlayer { get; }
+
+        public abstract GameSettings Settings { get; }
+
         public bool CurrentPlayerInitialized { get; protected set; }
-
-        public bool Daemon { get; set; }
-
-        public bool DarkLord { get; set; }
 
         public int CurrentPlayerIndex { get; protected set; }
 
         public int LastPlayerIndex { get; protected set; }
 
-        public bool ShowConversation { get; set; }
+        public bool Daemon { get; set; }
+
+        public bool DarkLord { get; set; }
 
         public bool BattleTutorial { get; set; }
 
-        public abstract BasePlayerData BasePlayer { get; }
-
-        public abstract GameSettings Settings { get; }
+        public int CurrentMission { get; set; }
 
         public ReadList<int> Missions => this.missions;
-
-        public int CurrentMission { get; set; }
 
         private readonly List<int> missions = new List<int>();
 

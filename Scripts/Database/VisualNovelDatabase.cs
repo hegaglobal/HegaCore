@@ -29,6 +29,10 @@ namespace HegaCore
                  (this.Tables.EventData, nameof(this.Tables.EventData), this.Languages);
         }
 
+        protected override void ContinueUnload()
+        {
+        }
+
         private void PrepareLanguages()
         {
             ClearLanguages();

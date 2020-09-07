@@ -21,12 +21,13 @@ namespace HegaCore.UI
 
             public static CommandSystem CommandSystem { get; private set; }
 
-            public static void Initialize(string avatarAtlasName, in ActorDuration actorDuration, float backgroundDurationChange,
+            public static void Initialize(string avatarAtlasName, in ActorDuration actorDuration, float bgDurationChange,
                                           BaseGameDataContainer dataContainer, CharacterData character, NovelData novel,
                                           CommandSystem commandSystem)
             {
                 AvatarAtlasName = avatarAtlasName;
                 ActorDuration = actorDuration;
+                BackgroundDurationChange = bgDurationChange;
                 DataContainer = dataContainer;
                 Character = character;
                 Novel = novel;
