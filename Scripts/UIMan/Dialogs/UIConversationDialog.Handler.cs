@@ -282,8 +282,7 @@ namespace HegaCore.UI
             this.panelConversation.Show(true);
 
             ApplyLayerToAllActors();
-            ShowSpeaker();
-            HighlightActors();
+            ShowActors();
         }
 
         private void ShowFirstDialogue()
@@ -298,8 +297,7 @@ namespace HegaCore.UI
 
             if (canShowActors)
             {
-                ShowSpeaker();
-                HighlightActors();
+                ShowActors();
             }
             else
             {
@@ -593,9 +591,7 @@ namespace HegaCore.UI
                 return;
             }
 
-            ShowSpeaker();
-            HighlightActors();
-            InvokeActors();
+            ShowActors();
         }
 
         private void CheckNextDialogueAreChoicesOnly()
@@ -658,27 +654,35 @@ namespace HegaCore.UI
             }
         }
 
-        private void HighlightActors()
+        private void ShowActors()
         {
-            if (this.dialogue.IsNullOrNone())
-                return;
+            ShowSpeaker();
+            InvokeActors();
+            HighlightActors();
+        }
 
-            foreach (var item in this.dialogue.Highlight)
+        private void ShowSpeaker()
+        {
+            var id = this.dialogue?.Speaker ?? string.Empty;
+            var data = Settings.Character.GetCharacter(id);
+
+            string avatar;
+            string name;
+
+            if (data.IsNullOrNone())
             {
-                var isDim = item < 0;
-                var index = Mathf.Abs(item) - 1;
-
-                if (!this.actors.ValidateIndex(index))
-                    continue;
-
-                var actor = this.actors[index];
-
-                if (actor == null || !actor.Controller)
-                    continue;
-
-                var color = isDim ? this.colorDim : this.colorHighlight;
-                CubismManager.Instance.SetColor(actor.Model, color, Settings.ActorDuration.Color);
+                avatar = this.avatarDefault;
+                name = string.Empty;
             }
+            else
+            {
+                avatar = data.Avatar;
+                name = GetContent(data);
+            }
+
+            this.SpeakerName = name;
+            this.HasSpeakerName = !string.IsNullOrEmpty(name);
+            this.SpeakerAvatar = avatar;
         }
 
         private void InvokeActors()
@@ -706,28 +710,27 @@ namespace HegaCore.UI
             Array1Pool<IActorCommandList>.Return(actions);
         }
 
-        private void ShowSpeaker()
+        private void HighlightActors()
         {
-            var id = this.dialogue?.Speaker ?? string.Empty;
-            var data = Settings.Character.GetCharacter(id);
+            if (this.dialogue.IsNullOrNone())
+                return;
 
-            string avatar;
-            string name;
-
-            if (data.IsNullOrNone())
+            foreach (var item in this.dialogue.Highlight)
             {
-                avatar = this.avatarDefault;
-                name = string.Empty;
-            }
-            else
-            {
-                avatar = data.Avatar;
-                name = GetContent(data);
-            }
+                var isDim = item < 0;
+                var index = Mathf.Abs(item) - 1;
 
-            this.SpeakerName = name;
-            this.HasSpeakerName = !string.IsNullOrEmpty(name);
-            this.SpeakerAvatar = avatar;
+                if (!this.actors.ValidateIndex(index))
+                    continue;
+
+                var actor = this.actors[index];
+
+                if (actor == null || !actor.Controller)
+                    continue;
+
+                var color = isDim ? this.colorDim : this.colorHighlight;
+                CubismManager.Instance.SetColor(actor.Model, color, Settings.ActorDuration.Color);
+            }
         }
 
         private string GetContent(ChoiceRow choice)
@@ -901,7 +904,7 @@ namespace HegaCore.UI
 
             actor.Model = model;
             actor.Controller = CubismManager.Instance.Show(model, view.Position.position, Settings.ActorDuration.Show);
-
+            UnuLogger.Log(actor.Controller);
             if (!this.isHiding)
                 ApplyLayerToActor(actor, view);
         }

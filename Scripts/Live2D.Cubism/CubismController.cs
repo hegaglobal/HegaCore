@@ -12,6 +12,9 @@ namespace HegaCore
         [SerializeField]
         private CubismRenderController cubismRenderer = null;
 
+        [SerializeField]
+        private SpriteRenderer spriteRenderer = null;
+
         public float TempAlpha { get; set; }
 
         private Color color;
@@ -19,8 +22,9 @@ namespace HegaCore
         [ContextMenu("Get Components")]
         private void GetComponents()
         {
-            this.animator = this.gameObject.GetComponentInChildren<Animator>();
-            this.cubismRenderer = this.gameObject.GetComponentInChildren<CubismRenderController>();
+            this.animator = GetComponentInChildren<Animator>();
+            this.cubismRenderer = GetComponentInChildren<CubismRenderController>();
+            this.spriteRenderer = GetComponentInChildren<SpriteRenderer>();
         }
 
         private void Awake()
@@ -71,27 +75,46 @@ namespace HegaCore
 
         public void SetLayer(int layer, int sortingOrder = 0)
         {
-            foreach (var renderer in this.cubismRenderer.Renderers)
+            if (this.cubismRenderer)
             {
-                renderer.gameObject.layer = layer;
+                foreach (var renderer in this.cubismRenderer.Renderers)
+                {
+                    renderer.gameObject.layer = layer;
+                }
+
+                this.cubismRenderer.SortingOrder = sortingOrder;
             }
 
-            this.cubismRenderer.SortingOrder = sortingOrder;
+            if (this.spriteRenderer)
+            {
+                this.spriteRenderer.gameObject.layer = layer;
+                this.spriteRenderer.sortingOrder = sortingOrder;
+            }
         }
 
         public void SetLayer(in SingleOrderLayer orderLayer)
         {
-            foreach (var renderer in this.cubismRenderer.Renderers)
+            if (this.cubismRenderer)
             {
-                renderer.gameObject.layer = orderLayer.Layer.value;
+                foreach (var renderer in this.cubismRenderer.Renderers)
+                {
+                    renderer.gameObject.layer = orderLayer.Layer.value;
+                }
+
+                this.cubismRenderer.SortingOrder = orderLayer.Order;
             }
 
-            this.cubismRenderer.SortingOrder = orderLayer.Order;
+            if (this.spriteRenderer)
+            {
+                this.spriteRenderer.gameObject.layer = orderLayer.Layer.value;
+                this.spriteRenderer.sortingOrder = orderLayer.Order;
+            }
         }
 
         public void PlayAnimation(int id)
         {
-            this.animator.SetInteger(Params.ID, id);
+            if (this.animator)
+                this.animator.SetInteger(Params.ID, id);
         }
 
         public Color GetColor()
@@ -101,9 +124,17 @@ namespace HegaCore
         {
             this.color = value;
 
-            foreach (var renderer in this.cubismRenderer.Renderers)
+            if (this.cubismRenderer)
             {
-                renderer.Color = value;
+                foreach (var renderer in this.cubismRenderer.Renderers)
+                {
+                    renderer.Color = value;
+                }
+            }
+
+            if (this.spriteRenderer)
+            {
+                this.spriteRenderer.color = value;
             }
         }
 
@@ -117,11 +148,21 @@ namespace HegaCore
         {
             this.TempAlpha = value;
 
-            foreach (var renderer in this.cubismRenderer.Renderers)
+            if (this.cubismRenderer)
             {
-                var color = renderer.Color;
+                foreach (var renderer in this.cubismRenderer.Renderers)
+                {
+                    var color = renderer.Color;
+                    color.a = Mathf.Clamp(value, 0f, 1f);
+                    renderer.Color = color;
+                }
+            }
+
+            if (this.spriteRenderer)
+            {
+                var color = this.spriteRenderer.color;
                 color.a = Mathf.Clamp(value, 0f, 1f);
-                renderer.Color = color;
+                this.spriteRenderer.color = color;
             }
         }
 
