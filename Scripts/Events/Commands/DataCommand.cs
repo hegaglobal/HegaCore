@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Text;
+using VisualNovelData;
 using VisualNovelData.Commands;
 
 namespace HegaCore.Commands
@@ -52,5 +53,10 @@ namespace HegaCore.Commands
 
             UnuLogger.Log(this.sb.ToString());
         }
+
+        public override void Invoke(in Metadata metadata, in Segment<object> parameters)
+            => Invoke(parameters);
+
+        public virtual void Invoke(in Segment<object> parameters) { }
     }
 }

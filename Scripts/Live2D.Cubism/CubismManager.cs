@@ -17,9 +17,13 @@ namespace HegaCore
         [SerializeField]
         private float hideDuration = 0f;
 
+        [SerializeField]
+        private float colorDuration = 0f;
+
         private readonly Dictionary<string, CubismController> models;
         private readonly Dictionary<string, Tweener> showTweens;
         private readonly Dictionary<string, Tweener> hideTweens;
+        private readonly Dictionary<string, Tweener> colorTweens;
 
         private bool darkLord;
 
@@ -28,6 +32,7 @@ namespace HegaCore
             this.models = new Dictionary<string, CubismController>();
             this.showTweens = new Dictionary<string, Tweener>();
             this.hideTweens = new Dictionary<string, Tweener>();
+            this.colorTweens = new Dictionary<string, Tweener>();
         }
 
         public async UniTask InitializeAsync(CharacterData data, bool darkLord)
@@ -78,81 +83,81 @@ namespace HegaCore
             }
         }
 
-        public void Hide(string id)
+        public void Hide(string modelId)
         {
-            if (!this.models.TryGetValue(id.OrDarkLord(this.darkLord), out var model))
+            if (!this.models.TryGetValue(modelId.OrDarkLord(this.darkLord), out var model))
                 return;
 
             model.Hide();
         }
 
-        public void Hide(string id, float? duration)
+        public void Hide(string modelId, float? duration)
         {
-            id = id.OrDarkLord(this.darkLord);
+            modelId = modelId.OrDarkLord(this.darkLord);
             var dur = GetDuration(duration, this.hideDuration);
 
-            KillTweens(id);
+            KillTweens(modelId);
 
-            if (!this.models.TryGetValue(id, out var model))
+            if (!this.models.TryGetValue(modelId, out var model))
                 return;
 
-            this.hideTweens[id] = DOTween.To(model.GetAlpha, model.SetAlpha, 0f, dur)
+            this.hideTweens[modelId] = DOTween.To(model.GetAlpha, model.SetAlpha, 0f, dur)
                                          .SetEase(Ease.InOutQuad)
                                          .OnComplete(model.Hide);
         }
 
-        public void Hide(string id, Vector3 to, float? duration = null)
+        public void Hide(string modelId, in Vector3 to, float? duration = null)
         {
-            id = id.OrDarkLord(this.darkLord);
+            modelId = modelId.OrDarkLord(this.darkLord);
             var dur = GetDuration(duration, this.hideDuration);
 
-            KillTweens(id);
+            KillTweens(modelId);
 
-            if (!this.models.TryGetValue(id, out var model))
+            if (!this.models.TryGetValue(modelId, out var model))
                 return;
 
-            this.hideTweens[id] = model.transform.DOMove(to, dur)
+            this.hideTweens[modelId] = model.transform.DOMove(to, dur)
                                                  .SetEase(Ease.InOutQuad)
                                                  .OnComplete(model.Hide);
         }
 
-        public CubismController Show(string id)
+        public CubismController Show(string modelId)
         {
-            if (!this.models.TryGetValue(id.OrDarkLord(this.darkLord), out var model))
+            if (!this.models.TryGetValue(modelId.OrDarkLord(this.darkLord), out var model))
                 return null;
 
             model.Show();
             return model;
         }
 
-        public CubismController Show(string id, Vector3 position, float? duration = null)
+        public CubismController Show(string modelId, in Vector3 position, float? duration = null)
         {
-            id = id.OrDarkLord(this.darkLord);
+            modelId = modelId.OrDarkLord(this.darkLord);
             var dur = GetDuration(duration, this.showDuration);
 
-            KillTweens(id);
+            KillTweens(modelId);
 
-            if (!this.models.TryGetValue(id, out var model))
+            if (!this.models.TryGetValue(modelId, out var model))
                 return null;
 
             model.Show(position, 0f);
-            this.showTweens[id] = DOTween.To(model.GetAlpha, model.SetAlpha, 1f, dur).SetEase(Ease.InOutQuad);
+            this.showTweens[modelId] = DOTween.To(model.GetAlpha, model.SetAlpha, 1f, dur).SetEase(Ease.InOutQuad);
 
             return model;
         }
 
-        public CubismController Show(string id, Vector3 from, Vector3 to, float? duration = null)
+        public CubismController Show(string modelId, in Vector3 from, in Vector3 to, float? duration = null)
         {
-            id = id.OrDarkLord(this.darkLord);
+            modelId = modelId.OrDarkLord(this.darkLord);
             var dur = GetDuration(duration, this.showDuration);
 
-            KillTweens(id);
+            KillTweens(modelId);
 
-            if (!this.models.TryGetValue(id, out var model))
+            if (!this.models.TryGetValue(modelId, out var model))
                 return null;
 
             model.Show(from);
-            this.showTweens[id] = model.transform.DOMove(to, dur).SetEase(Ease.InOutQuad);
+            this.showTweens[modelId] = model.transform.DOMove(to, dur).SetEase(Ease.InOutQuad);
 
             return model;
         }
@@ -166,16 +171,31 @@ namespace HegaCore
                 model.PlayAnimation(animId);
         }
 
-        public void SetColor(string modelId, Color color)
+        public void SetColor(string modelId, in Color color)
         {
             if (!this.models.TryGetValue(modelId.OrDarkLord(this.darkLord), out var model))
                 return;
 
             if (model.gameObject.activeSelf)
-                model.SetColor(color);
+                model.SetColor(in color);
         }
 
-        public void SetColor(string modelId, Color modelColor, Color otherColor)
+        public void SetColor(string modelId, in Color color, float? duration = null)
+        {
+            if (!this.models.TryGetValue(modelId.OrDarkLord(this.darkLord), out var model))
+                return;
+
+            if (!model.gameObject.activeSelf)
+                return;
+
+            if (this.colorTweens.TryGetValue(modelId, out var colorTween))
+                colorTween?.Kill();
+
+            var dur = GetDuration(duration, this.colorDuration);
+            this.colorTweens[modelId] = DOTween.To(model.GetColor, model.SetColor, color, dur).SetEase(Ease.InOutQuad);
+        }
+
+        public void SetColor(string modelId, in Color modelColor, in Color otherColor)
         {
             modelId = modelId.OrDarkLord(this.darkLord);
 
@@ -185,18 +205,18 @@ namespace HegaCore
                     continue;
 
                 if (string.Equals(kv.Key, modelId))
-                    kv.Value.SetColor(modelColor);
+                    kv.Value.SetColor(in modelColor);
                 else
-                    kv.Value.SetColor(otherColor);
+                    kv.Value.SetColor(in otherColor);
             }
         }
 
-        private void KillTweens(string id)
+        private void KillTweens(string modelId)
         {
-            if (this.hideTweens.TryGetValue(id, out var hideTween))
+            if (this.hideTweens.TryGetValue(modelId, out var hideTween))
                 hideTween?.Kill();
 
-            if (this.showTweens.TryGetValue(id, out var showTween))
+            if (this.showTweens.TryGetValue(modelId, out var showTween))
                 showTween?.Kill();
         }
 

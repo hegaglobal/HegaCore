@@ -28,7 +28,7 @@ namespace HegaCore.UI
         private bool HasPanel()
             => this.panel = GetComponent<Panel>();
 
-        public void Initialize(string name, Color? color = null, float? duration = null)
+        public void Switch(string name, Color? color = null, float? duration = null)
         {
             SwitchPanel();
             Set(name ?? string.Empty, color ?? Color.white);

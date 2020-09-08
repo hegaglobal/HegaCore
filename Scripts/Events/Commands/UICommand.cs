@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Text;
 using UnityEngine;
+using VisualNovelData;
 
 namespace HegaCore.Commands
 {
@@ -17,7 +18,10 @@ namespace HegaCore.Commands
 
         private readonly StringBuilder sb = new StringBuilder();
 
-        public abstract void Invoke(in Segment<object> parameters);
+        public virtual void Invoke(in Metadata metadata, in Segment<object> parameters)
+            => Invoke(parameters);
+
+        public virtual void Invoke(in Segment<object> parameters) { }
 
         protected bool ValidateParams(in Segment<object> parameters, int paramCount, string command, bool silent = false)
         {

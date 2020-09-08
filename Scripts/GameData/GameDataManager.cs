@@ -31,7 +31,7 @@ namespace HegaCore
         }
 
         public void Initialize(DatabaseConfig config, in ListSegment<string> languages, in SizeInt resolution,
-                               bool daemon, bool darkLord, bool shouldBackup)
+                               bool shouldBackup, bool daemon = false, bool darkLord = false)
         {
             this.Languages = languages;
 

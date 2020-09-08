@@ -1,7 +1,8 @@
-﻿using UnityEngine;
+﻿using System.Collections.Generic;
+using DG.Tweening;
+using UnityEngine;
 using UnityEngine.Audio;
 using Cysharp.Threading.Tasks;
-using DG.Tweening;
 
 namespace HegaCore
 {
@@ -12,11 +13,14 @@ namespace HegaCore
         private const string SoundVolume = nameof(SoundVolume);
         private const string VoiceVolume = nameof(VoiceVolume);
 
+        private const float SoundBufferClearDelay = 0.04f;
+
         private readonly AudioManager manager;
         private readonly AudioMixer mixer;
         private readonly AudioSource music;
         private readonly AudioSource sound;
         private readonly AudioSource voice;
+        private readonly List<string> soundBuffer;
 
         private float musicFadeTime;
         private string currentMusicKey = string.Empty;
@@ -35,6 +39,7 @@ namespace HegaCore
             this.music = music;
             this.sound = sound;
             this.voice = voice;
+            this.soundBuffer = new List<string>();
         }
 
         public void Initialize(float musicFadeTime, float musicVolume, float soundVolume, float voiceVolume)
@@ -44,6 +49,25 @@ namespace HegaCore
             ChangeMusicVolume(musicVolume);
             ChangeSoundVolume(soundVolume);
             ChangeVoiceVolume(voiceVolume);
+            MixBufferRoutine().Forget();
+        }
+
+        private async UniTaskVoid MixBufferRoutine()
+        {
+            var time = 0f;
+
+            while (true)
+            {
+                time += Time.unscaledDeltaTime;
+
+                await UniTask.DelayFrame(1);
+
+                if (time >= SoundBufferClearDelay)
+                {
+                    this.soundBuffer.Clear();
+                    time = 0f;
+                }
+            }
         }
 
         public void ChangeMusicVolume(float value)
@@ -155,22 +179,28 @@ namespace HegaCore
 
         public async UniTaskVoid PlayMusicAsync(string key)
         {
-            await this.manager.PrepareMusicAsync(key);
+            await this.manager.PrepareMusicAsync(true, key);
 
             PlayMusic(key);
         }
 
         public async UniTaskVoid PlayMusicAsync(AssetReferenceAudioClip key)
         {
-            await this.manager.PrepareMusicAsync(key);
+            await this.manager.PrepareMusicAsync(true, key);
 
             PlayMusic(key);
         }
 
         public void PlaySound(string key)
         {
-            if (this.manager.TryGetSound(key, out var clip))
-                this.sound.PlayOneShot(clip);
+            if (!this.manager.TryGetSound(key, out var clip))
+                return;
+
+            if (this.soundBuffer.Contains(key))
+                return;
+
+            this.soundBuffer.Add(key);
+            this.sound.PlayOneShot(clip);
         }
 
         public void PlaySound(string key, AudioClip clip)
@@ -184,14 +214,14 @@ namespace HegaCore
 
         public async UniTaskVoid PlaySoundAsync(string key)
         {
-            await this.manager.PrepareSoundAsync(key);
+            await this.manager.PrepareSoundAsync(true, key);
 
             PlaySound(key);
         }
 
         public async UniTaskVoid PlaySoundAsync(AssetReferenceAudioClip key)
         {
-            await this.manager.PrepareSoundAsync(key);
+            await this.manager.PrepareSoundAsync(true, key);
 
             PlaySound(key);
         }
@@ -220,14 +250,14 @@ namespace HegaCore
 
         public async UniTaskVoid PlayVoiceAsync(string key)
         {
-            await this.manager.PrepareVoiceAsync(key);
+            await this.manager.PrepareVoiceAsync(true, key);
 
             PlayVoice(key);
         }
 
         public async UniTaskVoid PlayVoiceAsync(AssetReferenceAudioClip key)
         {
-            await this.manager.PrepareVoiceAsync(key);
+            await this.manager.PrepareVoiceAsync(true, key);
 
             PlayVoice(key);
         }
@@ -252,10 +282,16 @@ namespace HegaCore
 
         public void PlaySound(AssetReferenceAudioClip reference)
         {
-            if (this.manager.TryGetSound(reference, out var clip))
-            {
-                this.sound.PlayOneShot(clip);
-            }
+            if (!this.manager.TryGetSound(reference, out var clip))
+                return;
+
+            var key = reference.RuntimeKey.ToString();
+
+            if (this.soundBuffer.Contains(key))
+                return;
+
+            this.soundBuffer.Add(key);
+            this.sound.PlayOneShot(clip);
         }
 
         public void PlayVoice(AssetReferenceAudioClip reference)

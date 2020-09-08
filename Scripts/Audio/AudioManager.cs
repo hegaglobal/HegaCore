@@ -1,9 +1,11 @@
 ﻿using System.Collections.Generic;
+using System.Table;
 using UnityEngine;
 using UnityEngine.Audio;
 using UnityEngine.AddressableAssets;
 using UnityEngine.ResourceManagement.AsyncOperations;
 using Cysharp.Threading.Tasks;
+using HegaCore.Database;
 
 namespace HegaCore
 {
@@ -64,23 +66,94 @@ namespace HegaCore
             this.Player.Initialize(musicFadeTime, musicVolume, soundVolume, voiceVolume);
         }
 
-        public async UniTask PrepareMusicAsync(params AssetReferenceAudioClip[] references)
-            => await PrepareAsync(this.musicMap, references);
+        public async UniTask PrepareAudioAsync(ReadTable<AudioEntry> table, AudioType filterType)
+        {
+            foreach (var entry in table.Entries)
+            {
+                if (entry == null || entry.Type != filterType)
+                    return;
 
-        public async UniTask PrepareSoundAsync(params AssetReferenceAudioClip[] references)
-            => await PrepareAsync(this.soundMap, references);
+                await PrepareAudioAsync(entry);
+            }
+        }
 
-        public async UniTask PrepareVoiceAsync(params AssetReferenceAudioClip[] references)
-            => await PrepareAsync(this.voiceMap, references);
+        public async UniTask PrepareAudioAsync(ReadTable<AudioEntry> table)
+        {
+            foreach (var entry in table.Entries)
+            {
+                if (entry == null)
+                    return;
 
-        private async UniTask PrepareAsync(AudioMap map, params AssetReferenceAudioClip[] references)
+                await PrepareAudioAsync(entry);
+            }
+        }
+
+        private async UniTask PrepareAudioAsync(AudioEntry entry)
+        {
+            var key = entry.Key;
+            var assetKey = entry.Key;
+
+            if (string.IsNullOrEmpty(assetKey) || !AddressablesManager.ContainsKey(assetKey))
+            {
+                assetKey = entry.SecondKey;
+
+                if (string.IsNullOrEmpty(assetKey) || !AddressablesManager.ContainsKey(assetKey))
+                {
+                    UnuLogger.LogError($"Cannot find any {entry.Type} with either key={entry.Key} or key={entry.SecondKey}");
+                    return;
+                }
+            }
+
+            var map = GetMap(entry.Type);
+
+            if (map == null)
+                return;
+
+            if (map.ContainsKey(key))
+            {
+                UnuLogger.LogWarning($"Duplicate {entry.Type} key={key}");
+                return;
+            }
+
+            var handle = Addressables.LoadAssetAsync<AudioClip>(key);
+            await handle.Task;
+
+            map.Add(key, handle);
+        }
+
+        private AudioMap GetMap(AudioType type)
+        {
+            switch (type)
+            {
+                case AudioType.Music: return this.musicMap;
+                case AudioType.Sound: return this.soundMap;
+                case AudioType.Voice: return this.voiceMap;
+                default: return null;
+            }
+        }
+
+        public async UniTask PrepareMusicAsync(bool silent, params AssetReferenceAudioClip[] references)
+            => await PrepareAsync(this.musicMap, AudioType.Music, silent, references);
+
+        public async UniTask PrepareSoundAsync(bool silent, params AssetReferenceAudioClip[] references)
+            => await PrepareAsync(this.soundMap, AudioType.Sound, silent, references);
+
+        public async UniTask PrepareVoiceAsync(bool silent, params AssetReferenceAudioClip[] references)
+            => await PrepareAsync(this.voiceMap, AudioType.Voice, silent, references);
+
+        private async UniTask PrepareAsync(AudioMap map, AudioType type, bool silent, params AssetReferenceAudioClip[] references)
         {
             foreach (var reference in references)
             {
                 var key = reference.RuntimeKey.ToString();
 
                 if (map.ContainsKey(key))
+                {
+                    if (!silent)
+                        UnuLogger.LogWarning($"Duplicate {type} key={key}");
+
                     continue;
+                }
 
                 var handle = reference.LoadAssetAsync();
                 await handle.Task;
@@ -89,24 +162,32 @@ namespace HegaCore
             }
         }
 
-        public async UniTask PrepareMusicAsync(params string[] keys)
-            => await PrepareAsync(this.musicMap, keys);
+        public async UniTask PrepareMusicAsync(bool silent, params string[] keys)
+            => await PrepareAsync(this.musicMap, AudioType.Music, silent, keys);
 
-        public async UniTask PrepareSoundAsync(params string[] keys)
-            => await PrepareAsync(this.soundMap, keys);
+        public async UniTask PrepareSoundAsync(bool silent, params string[] keys)
+            => await PrepareAsync(this.soundMap, AudioType.Sound, silent, keys);
 
-        public async UniTask PrepareVoiceAsync(params string[] keys)
-            => await PrepareAsync(this.voiceMap, keys);
+        public async UniTask PrepareVoiceAsync(bool silent, params string[] keys)
+            => await PrepareAsync(this.voiceMap, AudioType.Voice, silent, keys);
 
-        private async UniTask PrepareAsync(AudioMap map, params string[] keys)
+        private async UniTask PrepareAsync(AudioMap map, AudioType type, bool silent, params string[] keys)
         {
             foreach (var key in keys)
             {
-                if (string.IsNullOrEmpty(key))
+                if (string.IsNullOrEmpty(key) || !AddressablesManager.ContainsKey(key))
+                {
+                    UnuLogger.LogError($"Cannot find any {type} with key={key}");
                     continue;
+                }
 
                 if (map.ContainsKey(key))
+                {
+                    if (!silent)
+                        UnuLogger.LogWarning($"Duplicate {type} key={key}");
+
                     continue;
+                }
 
                 var handle = Addressables.LoadAssetAsync<AudioClip>(key);
                 await handle.Task;
