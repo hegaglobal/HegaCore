@@ -142,7 +142,7 @@ namespace HegaCore
                 this.usedLanguages.Add(language);
         }
 
-        private TextAsset GetCsv(string key)
+        public TextAsset GetCsv(string key)
             => this.config.CsvFiles[key];
 
         protected void Load<TEntity, TMapping>(ITable<TEntity> table, string file, bool autoIncrement = false)
