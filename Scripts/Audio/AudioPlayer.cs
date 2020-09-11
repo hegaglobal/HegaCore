@@ -42,17 +42,18 @@ namespace HegaCore
             this.soundBuffer = new List<string>();
         }
 
-        public void Initialize(float musicFadeTime, float musicVolume, float soundVolume, float voiceVolume)
+        public void Initialize(float musicFadeTime, float musicVolume, float soundVolume, float voiceVolume,
+                               float? bufferClearDelay = null)
         {
             this.musicFadeTime = musicFadeTime;
 
             ChangeMusicVolume(musicVolume);
             ChangeSoundVolume(soundVolume);
             ChangeVoiceVolume(voiceVolume);
-            MixBufferRoutine().Forget();
+            SoundBufferRoutine(bufferClearDelay ?? SoundBufferClearDelay).Forget();
         }
 
-        private async UniTaskVoid MixBufferRoutine()
+        private async UniTaskVoid SoundBufferRoutine(float bufferClearDelay)
         {
             var time = 0f;
 
@@ -62,7 +63,7 @@ namespace HegaCore
 
                 await UniTask.DelayFrame(1);
 
-                if (time >= SoundBufferClearDelay)
+                if (time >= bufferClearDelay)
                 {
                     this.soundBuffer.Clear();
                     time = 0f;
@@ -143,10 +144,13 @@ namespace HegaCore
             }
         }
 
+        private bool CanPlayMusic(string key)
+            => !this.music.isPlaying ||
+               !string.Equals(this.currentMusicKey, key);
+
         public void PlayMusic(string key)
         {
-            if (this.music.isPlaying &&
-                string.Equals(this.currentMusicKey, key))
+            if (!CanPlayMusic(key))
                 return;
 
             if (this.manager.TryGetMusic(key, out this.musicClip))
@@ -163,18 +167,18 @@ namespace HegaCore
 
         public void PlayMusic(string key, AudioClip clip)
         {
-            if (this.music.isPlaying &&
-                string.Equals(this.currentMusicKey, key))
-                return;
-
-            if (clip)
+            if (!clip)
             {
-                this.currentMusicKey = key;
-                this.musicClip = clip;
-                FadeMusicPlay();
-
+                PlayMusic(key);
                 return;
             }
+
+            if (!CanPlayMusic(key))
+                return;
+
+            this.currentMusicKey = key;
+            this.musicClip = clip;
+            FadeMusicPlay();
         }
 
         public async UniTaskVoid PlayMusicAsync(string key)
@@ -182,6 +186,22 @@ namespace HegaCore
             await this.manager.PrepareMusicAsync(true, key);
 
             PlayMusic(key);
+        }
+
+        public void PlayMusicAsync(string key, AudioClip clip)
+        {
+            if (!clip)
+            {
+                PlayMusicAsync(key).Forget();
+                return;
+            }
+
+            if (!CanPlayMusic(key))
+                return;
+
+            this.currentMusicKey = key;
+            this.musicClip = clip;
+            FadeMusicPlay();
         }
 
         public async UniTaskVoid PlayMusicAsync(AssetReferenceAudioClip key)
@@ -210,6 +230,8 @@ namespace HegaCore
                 this.sound.PlayOneShot(clip);
                 return;
             }
+
+            PlaySound(key);
         }
 
         public async UniTaskVoid PlaySoundAsync(string key)
@@ -217,6 +239,17 @@ namespace HegaCore
             await this.manager.PrepareSoundAsync(true, key);
 
             PlaySound(key);
+        }
+
+        public void PlaySoundAsync(string key, AudioClip clip)
+        {
+            if (!clip)
+            {
+                PlaySoundAsync(key).Forget();
+                return;
+            }
+
+            this.sound.PlayOneShot(clip);
         }
 
         public async UniTaskVoid PlaySoundAsync(AssetReferenceAudioClip key)

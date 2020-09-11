@@ -54,5 +54,22 @@ namespace HegaCore.Editor
 
             return asset;
         }
+
+        public static bool TryGet<T>(out T asset, bool autoSelection = true) where T : ScriptableObject
+        {
+            var typeName = typeof(T).Name;
+            var guids = AssetDatabase.FindAssets($"t:{typeName}");
+
+            if (guids == null || guids.Length == 0)
+                return asset = null;
+
+            var file = AssetDatabase.GUIDToAssetPath(guids[0]);
+            asset = AssetDatabase.LoadAssetAtPath<T>(file);
+
+            if (autoSelection)
+                Selection.activeObject = asset;
+
+            return asset;
+        }
     }
 }
