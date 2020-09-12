@@ -20,6 +20,25 @@ namespace HegaCore
             this.Center = center;
         }
 
+        public void Deconstruct(out Vector3 above, out Vector3 below, out Vector3 ahead, out Vector3 behind, out Vector3 center)
+        {
+            above = this.Above;
+            below = this.Below;
+            ahead = this.Ahead;
+            behind = this.Behind;
+            center = this.Center;
+        }
+
+        public Position5 With(in Vector3? Above = null, in Vector3? Below = null, in Vector3? Ahead = null,
+                              in Vector3? Behind = null, in Vector3? Center = null)
+            => new Position5(
+                Above ?? this.Above,
+                Below ?? this.Below,
+                Ahead ?? this.Ahead,
+                Behind ?? this.Behind,
+                Center ?? this.Center
+            );
+
         public override bool Equals(object obj)
             => obj is Position5 other && Equals(in other);
 

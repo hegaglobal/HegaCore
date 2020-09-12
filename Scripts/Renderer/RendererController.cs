@@ -49,6 +49,7 @@ namespace HegaCore
 
         public void SetAlpha(float value)
         {
+            value = Mathf.Clamp(value, 0f, 1f);
             this.alpha = value;
 
             foreach (var renderer in this.spriteRenderers)
@@ -56,9 +57,7 @@ namespace HegaCore
                 if (!renderer)
                     continue;
 
-                var color = renderer.color;
-                color.a = Mathf.Clamp(value, 0f, 1f);
-
+                var color = renderer.color.With(a: value);
                 renderer.color = color;
             }
 

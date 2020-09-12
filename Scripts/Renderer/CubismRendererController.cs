@@ -29,14 +29,14 @@ namespace HegaCore
             if (!this.cubismRenderController)
                 return;
 
+            value = Mathf.Clamp(value, 0f, 1f);
+
             foreach (var renderer in this.cubismRenderController.Renderers)
             {
                 if (!renderer)
                     continue;
 
-                var color = renderer.Color;
-                color.a = Mathf.Clamp(value, 0f, 1f);
-
+                var color = renderer.Color.With(a: value);
                 renderer.Color = color;
             }
         }

@@ -24,6 +24,18 @@ namespace HegaCore
             this.Vertical = vertical;
         }
 
+        public void Deconstruct(out Horizontal horizontal, out Vertical vertical)
+        {
+            horizontal = this.Horizontal;
+            vertical = this.Vertical;
+        }
+
+        public Direction With(Horizontal? Horizontal = null, Vertical? Vertical = null)
+            => new Direction(
+                Horizontal ?? this.Horizontal,
+                Vertical ?? this.Vertical
+            );
+
         public override bool Equals(object obj)
             => obj is Direction other &&
                this.Horizontal == other.Horizontal &&

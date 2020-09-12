@@ -36,9 +36,7 @@ namespace HegaCore
         {
             SetLayer(0);
 
-            this.color = Color.white;
-            this.color.a = 0f;
-
+            this.color = Color.white.With(a: 0f);
             SetColor(in this.color);
 
             if (this.gameObject.activeSelf)
@@ -146,22 +144,21 @@ namespace HegaCore
 
         public void SetAlpha(float value)
         {
+            value = Mathf.Clamp(value, 0f, 1f);
             this.TempAlpha = value;
 
             if (this.cubismRenderer)
             {
                 foreach (var renderer in this.cubismRenderer.Renderers)
                 {
-                    var color = renderer.Color;
-                    color.a = Mathf.Clamp(value, 0f, 1f);
+                    var color = renderer.Color.With(a: value);
                     renderer.Color = color;
                 }
             }
 
             if (this.spriteRenderer)
             {
-                var color = this.spriteRenderer.color;
-                color.a = Mathf.Clamp(value, 0f, 1f);
+                var color = this.spriteRenderer.color.With(a: value);
                 this.spriteRenderer.color = color;
             }
         }

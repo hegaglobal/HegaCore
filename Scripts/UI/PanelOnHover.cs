@@ -15,7 +15,7 @@ namespace HegaCore.UI
         {
             foreach (var panel in this.panels)
             {
-                if (panel.gameObject.activeSelf)
+                if (panel)
                 {
                     if (this.show)
                         panel.Show();
@@ -29,7 +29,7 @@ namespace HegaCore.UI
         {
             foreach (var panel in this.panels)
             {
-                if (panel.gameObject.activeSelf)
+                if (panel)
                 {
                     if (this.show)
                         panel.Hide();

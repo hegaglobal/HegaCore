@@ -7,10 +7,22 @@ using Sirenix.OdinInspector;
 namespace HegaCore.UI
 {
     [RequireComponent(typeof(GridLayoutGroup))]
-    public sealed class GridLayoutGenerator : MonoBehaviour, IGetCellPosition
+    public sealed class GridLayoutGenerator : MonoBehaviour
     {
         [SerializeField]
         private GridVector gridSize = default;
+
+        [SerializeField]
+        private bool useCellPrefab = false;
+
+        [SerializeField, ShowIf(nameof(useCellPrefab)), Required]
+        private GameObject cellPrefab = null;
+
+        [SerializeField]
+        private bool usePool = false;
+
+        [SerializeField, ShowIf(nameof(usePool)), Required]
+        private Transform poolRoot = null;
 
         [HideInInspector]
         [SerializeField]
@@ -18,7 +30,7 @@ namespace HegaCore.UI
 
         [DictionaryDrawerSettings(KeyLabel = "Index", ValueLabel = "Cell")]
         [SerializeField]
-        private CellMap map = new CellMap();
+        private CellMap cells = new CellMap();
 
         public GridVector GridSize
         {
@@ -38,7 +50,7 @@ namespace HegaCore.UI
             set => this.gridLayout.spacing = value;
         }
 
-        public ReadDictionary<GridVector, RectTransform> Map => this.map;
+        public ReadDictionary<GridVector, GridLayoutCell> Cells => this.cells;
 
         private void EnsureGridLayout()
         {
@@ -58,17 +70,79 @@ namespace HegaCore.UI
             this.gridLayout.constraint = GridLayoutGroup.Constraint.FixedColumnCount;
             this.gridLayout.constraintCount = this.gridSize.Column;
 
+            if (this.useCellPrefab && this.cellPrefab)
+                GeneratePrefab();
+            else
+                GenerateDefault();
+        }
+
+        private void GenerateDefault()
+        {
             for (var r = 0; r < this.gridSize.Row; r++)
             {
                 for (var c = 0; c < this.gridSize.Column; c++)
                 {
-                    var index = new GridVector(r, c);
-                    var go = new GameObject($"{index}");
-                    var rect = go.AddComponent<RectTransform>();
-                    rect.SetParent(this.transform, false);
-                    this.map.Add(index, rect);
+                    GenerateDefault(new GridVector(r, c));
                 }
             }
+        }
+
+        private void GeneratePrefab()
+        {
+            for (var r = 0; r < this.gridSize.Row; r++)
+            {
+                for (var c = 0; c < this.gridSize.Column; c++)
+                {
+                    GeneratePrefab(new GridVector(r, c));
+                }
+            }
+        }
+
+        private void GenerateDefault(in GridVector index)
+        {
+            if (!TryGetFromPool(out var go))
+            {
+                go = new GameObject();
+                go.AddComponent<RectTransform>();
+            }
+
+            AddToMap(go, index);
+        }
+
+        private void GeneratePrefab(in GridVector index)
+        {
+            if (!TryGetFromPool(out var go))
+            {
+                go = Instantiate(this.cellPrefab, Vector3.zero, Quaternion.identity);
+            }
+
+            AddToMap(go, index);
+        }
+
+        private void AddToMap(GameObject go, in GridVector index)
+        {
+            go.name = $"{index}";
+            go.transform.SetParent(this.transform, false);
+
+            var cell = go.GetOrAddComponent<GridLayoutCell>();
+            cell.GridIndex = index;
+
+            this.cells.Add(index, cell);
+        }
+
+        private bool TryGetFromPool(out GameObject go)
+        {
+            if (this.usePool && this.poolRoot &&
+                this.poolRoot.childCount > 0)
+            {
+                go = this.poolRoot.GetChild(0).gameObject;
+            }
+            else
+            {
+                go = null;
+            }
+
+            return go;
         }
 
         [Button]
@@ -76,44 +150,37 @@ namespace HegaCore.UI
         {
             if (this.transform.childCount > 0)
             {
+                var pooling = this.usePool && this.poolRoot;
+
                 for (var i = this.transform.childCount - 1; i >= 0; i--)
                 {
-#if UNITY_EDITOR
-                    if (Application.isPlaying)
-                        Destroy(this.transform.GetChild(i).gameObject);
-                    else
-                        DestroyImmediate(this.transform.GetChild(i).gameObject);
-#else
-                    Destroy(this.transform.GetChild(i).gameObject);
-#endif
+                    TryDestroy(this.transform.GetChild(i), pooling);
                 }
             }
 
-            this.map.Clear();
+            this.cells.Clear();
         }
 
-        public RectTransform GetCell(in GridVector index)
-            => this.map.ContainsKey(index) ? this.map[index] : null;
-
-        public bool TryGetCell(in GridVector index, out RectTransform cell)
-            => this.map.TryGetValue(index, out cell);
-
-        public Vector3 GetCellPosition(in GridVector index)
-            => this.map.ContainsKey(index) ? this.map[index].position : this.transform.position;
-
-        public bool TryGetCellPosition(in GridVector index, out Vector3 position)
+        private void TryDestroy(Transform cell, bool pooling)
         {
-            if (!this.map.TryGetValue(index, out var cell))
+            if (pooling)
             {
-                position = this.transform.position;
-                return false;
+                cell.SetParent(this.poolRoot, false);
+                return;
             }
 
-            position = cell.position;
-            return true;
+#if UNITY_EDITOR
+            if (Application.isPlaying)
+                Destroy(cell.gameObject);
+            else
+                DestroyImmediate(cell.gameObject);
+#else
+                Destroy(cell.gameObject);
+#endif
         }
 
+
         [Serializable]
-        private sealed class CellMap : SerializableDictionary<GridVector, RectTransform> { }
+        private sealed class CellMap : SerializableDictionary<GridVector, GridLayoutCell> { }
     }
 }
