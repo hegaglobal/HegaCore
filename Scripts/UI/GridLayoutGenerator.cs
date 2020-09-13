@@ -53,7 +53,7 @@ namespace HegaCore.UI
 
         private Grid<GridLayoutCell> grid;
 
-        public IReadOnlyGrid<GridLayoutCell> Grid
+        public ReadGrid<GridLayoutCell> Grid
         {
             get
             {
