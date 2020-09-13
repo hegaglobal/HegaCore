@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Grid;
 using UnityEngine;
 using UnityEngine.UI;
 using Sirenix.OdinInspector;
@@ -50,7 +51,32 @@ namespace HegaCore.UI
             set => this.gridLayout.spacing = value;
         }
 
-        public ReadDictionary<GridVector, GridLayoutCell> Cells => this.cells;
+        private Grid<GridLayoutCell> grid;
+
+        public IReadOnlyGrid<GridLayoutCell> Grid
+        {
+            get
+            {
+                EnsureGrid();
+                return this.grid;
+            }
+        }
+
+        private void EnsureGrid()
+        {
+            if (this.grid != null)
+                return;
+
+            var cache = ListPool<GridValue<GridLayoutCell>>.Get();
+
+            foreach (var kv in this.cells)
+            {
+                cache.Add(new GridValue<GridLayoutCell>(kv.Key, kv.Value));
+            }
+
+            this.grid = new Grid<GridLayoutCell>(this.gridSize, cache);
+            ListPool<GridValue<GridLayoutCell>>.Return(cache);
+        }
 
         private void EnsureGridLayout()
         {
@@ -74,6 +100,21 @@ namespace HegaCore.UI
                 GeneratePrefab();
             else
                 GenerateDefault();
+
+            InitializeGrid();
+        }
+
+        private void InitializeGrid()
+        {
+            var cache = ListPool<GridValue<GridLayoutCell>>.Get();
+
+            foreach (var kv in this.cells)
+            {
+                cache.Add(new GridValue<GridLayoutCell>(kv.Key, kv.Value));
+            }
+
+            this.grid.Initialize(this.gridSize, cache);
+            ListPool<GridValue<GridLayoutCell>>.Return(cache);
         }
 
         private void GenerateDefault()
@@ -159,6 +200,7 @@ namespace HegaCore.UI
             }
 
             this.cells.Clear();
+            this.grid.Clear();
         }
 
         private void TryDestroy(Transform cell, bool pooling)
