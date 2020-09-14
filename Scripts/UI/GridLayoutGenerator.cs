@@ -51,7 +51,7 @@ namespace HegaCore.UI
             set => this.gridLayout.spacing = value;
         }
 
-        private Grid<GridLayoutCell> grid;
+        private readonly Grid<GridLayoutCell> grid = new Grid<GridLayoutCell>();
 
         public ReadGrid<GridLayoutCell> Grid
         {
@@ -64,7 +64,8 @@ namespace HegaCore.UI
 
         private void EnsureGrid()
         {
-            if (this.grid != null)
+            if (this.grid.Size == this.gridSize &&
+                this.grid.Count == this.cells.Count)
                 return;
 
             var cache = ListPool<GridValue<GridLayoutCell>>.Get();
@@ -74,7 +75,7 @@ namespace HegaCore.UI
                 cache.Add(new GridValue<GridLayoutCell>(kv.Key, kv.Value));
             }
 
-            this.grid = new Grid<GridLayoutCell>(this.gridSize, cache);
+            this.grid.Initialize(this.gridSize, cache);
             ListPool<GridValue<GridLayoutCell>>.Return(cache);
         }
 

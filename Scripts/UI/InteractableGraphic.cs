@@ -1,11 +1,11 @@
-﻿using UnityEngine;
+﻿using System;
+using UnityEngine;
 using UnityEngine.UI;
+using UnityEngine.Events;
 using UnityEngine.EventSystems;
 
 namespace HegaCore.UI
 {
-    public delegate void InteractableGraphicAction(InteractableGraphic sender);
-
     [RequireComponent(typeof(Graphic))]
     public class InteractableGraphic : MonoBehaviour,
         IPointerEnterHandler,  IPointerExitHandler, IPointerClickHandler
@@ -16,6 +16,15 @@ namespace HegaCore.UI
         [SerializeField]
         private bool interactable = true;
 
+        [SerializeField]
+        private Event onHover = new Event();
+
+        [SerializeField]
+        private Event onLeave = new Event();
+
+        [SerializeField]
+        private Event onClick = new Event();
+
         public Graphic Graphic => this.graphic;
 
         public bool Interactable
@@ -24,11 +33,11 @@ namespace HegaCore.UI
             set => this.interactable = value;
         }
 
-        public event InteractableGraphicAction OnHover;
+        public Event OnHover => this.onHover;
 
-        public event InteractableGraphicAction OnLeave;
+        public Event OnLeave => this.onLeave;
 
-        public event InteractableGraphicAction OnClick;
+        public Event OnClick => this.onClick;
 
         private void OnEnable()
         {
@@ -43,19 +52,22 @@ namespace HegaCore.UI
         void IPointerClickHandler.OnPointerClick(PointerEventData eventData)
         {
             if (this.interactable)
-                this.OnClick?.Invoke(this);
+                this.onClick.Invoke(this);
         }
 
         void IPointerEnterHandler.OnPointerEnter(PointerEventData eventData)
         {
             if (this.interactable)
-                this.OnHover?.Invoke(this);
+                this.onHover.Invoke(this);
         }
 
         void IPointerExitHandler.OnPointerExit(PointerEventData eventData)
         {
             if (this.interactable)
-                this.OnLeave?.Invoke(this);
+                this.onLeave.Invoke(this);
         }
+
+        [Serializable]
+        public sealed class Event : UnityEvent<InteractableGraphic> { }
     }
 }
