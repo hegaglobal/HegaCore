@@ -1,6 +1,6 @@
 ﻿using System.Collections.Generic;
 
-namespace HegaCore.Commands
+namespace HegaCore.Events.Commands
 {
     public sealed class UICommandRegisterer : CommandRegisterer
     {

@@ -1,4 +1,4 @@
-﻿namespace HegaCore.Commands
+﻿namespace HegaCore.Events.Commands
 {
     public interface ICommand : VisualNovelData.Commands.ICommand
     {

@@ -10,7 +10,7 @@ using RedBlueGames.Tools.TextTyper;
 using VisualNovelData.Data;
 using Cysharp.Threading.Tasks;
 using Sirenix.OdinInspector;
-using HegaCore.Commands.Data;
+using HegaCore.Events.Commands.Data;
 
 namespace HegaCore.UI
 {
@@ -739,7 +739,7 @@ namespace HegaCore.UI
         private string GetContent(CharacterRow character)
             => Settings.Character.GetContent(character.ContentId).GetLocalization(Settings.DataContainer.Settings.Language);
 
-        private void Invoke(IReadOnlyList<Command> commands)
+        private void Invoke(IReadOnlyList<VisualNovelData.Data.Command> commands)
         {
             if (commands == null)
                 return;

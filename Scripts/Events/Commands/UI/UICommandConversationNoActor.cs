@@ -2,7 +2,7 @@
 using UnityEngine;
 using UnityEngine.Events;
 
-namespace HegaCore.Commands.UI
+namespace HegaCore.Events.Commands.UI
 {
     public sealed class UICommandConversationNoActor : UICommand
     {

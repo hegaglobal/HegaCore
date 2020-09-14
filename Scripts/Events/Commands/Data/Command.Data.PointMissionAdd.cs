@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 
-namespace HegaCore.Commands.Data
+namespace HegaCore.Events.Commands.Data
 {
     [Serializable]
     public sealed class PointMissionAdd : DataCommand

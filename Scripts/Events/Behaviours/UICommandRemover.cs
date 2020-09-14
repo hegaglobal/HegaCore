@@ -1,6 +1,6 @@
 ﻿using UnityEngine;
 
-namespace HegaCore.Commands
+namespace HegaCore.Events.Commands
 {
     public sealed class UICommandRemover : OnDestroyRemover
     {

@@ -4,7 +4,7 @@ using System.Text;
 using VisualNovelData;
 using VisualNovelData.Commands;
 
-namespace HegaCore.Commands
+namespace HegaCore.Events.Commands
 {
     [Serializable]
     public abstract class DataCommand : BaseCommand, ICommand

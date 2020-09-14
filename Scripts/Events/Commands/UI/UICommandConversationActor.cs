@@ -3,7 +3,7 @@ using UnityEngine;
 using UnityEngine.Events;
 using VisualNovelData;
 
-namespace HegaCore.Commands.UI
+namespace HegaCore.Events.Commands.UI
 {
     public sealed class UICommandConversationActor : UICommand
     {

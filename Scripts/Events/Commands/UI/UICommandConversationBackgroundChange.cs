@@ -2,7 +2,7 @@
 using UnityEngine;
 using HegaCore.UI;
 
-namespace HegaCore.Commands.UI
+namespace HegaCore.Events.Commands.UI
 {
     public sealed class UICommandConversationBackgroundChange : UICommand
     {

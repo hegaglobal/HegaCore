@@ -4,7 +4,7 @@ using System.Text;
 using UnityEngine;
 using VisualNovelData;
 
-namespace HegaCore.Commands
+namespace HegaCore.Events.Commands
 {
     public abstract class UICommand : MonoBehaviour, ICommand
     {
