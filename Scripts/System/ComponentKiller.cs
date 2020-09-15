@@ -9,6 +9,10 @@ namespace HegaCore
         private readonly List<T> items = new List<T>();
         private readonly List<T> cache = new List<T>();
 
+        public ReadList<T> Temp => this.temp;
+
+        public ReadList<T> Items => this.items;
+
         public void Add(T item)
         {
             if (Contains(item))

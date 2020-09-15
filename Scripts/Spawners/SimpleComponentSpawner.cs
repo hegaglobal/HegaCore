@@ -31,7 +31,7 @@ namespace HegaCore
                 Initialize();
         }
 
-        private Transform GetPoolRoot()
+        protected Transform GetPoolRoot()
             => this.poolRoot ? this.poolRoot : this.transform;
 
         public void Initialize(int prepoolAmount)
@@ -46,15 +46,10 @@ namespace HegaCore
             OnInitialize();
         }
 
-        public void Deinitialize()
-        {
-            this.pool.DestroyAll();
-            OnDeinitialize();
-        }
-
         protected virtual void OnInitialize() { }
 
-        protected virtual void OnDeinitialize() { }
+        public void DestroyAll()
+            => this.pool.DestroyAll();
 
         public void RegisterPoolItem(T prefab, int prepoolAmount)
         {
