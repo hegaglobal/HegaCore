@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 
 namespace HegaCore
 {
@@ -76,6 +77,49 @@ namespace HegaCore
         public virtual void CopyFrom(T data)
         {
             base.CopyFrom(data);
+        }
+
+        public void Copy<TKey, TValue>(Dictionary<TKey, TValue> dest, Dictionary<TKey, TValue> source)
+        {
+            if (dest == null)
+                return;
+
+            dest.Clear();
+
+            if (source != null)
+                dest.AddRange(source);
+        }
+
+        public void Copy<TValue>(List<TValue> dest, List<TValue> source)
+        {
+            if (dest == null)
+                return;
+
+            dest.Clear();
+
+            if (source != null)
+                dest.AddRange(source);
+        }
+
+        public void Copy<TValue>(TValue[] dest, TValue[] source)
+        {
+            if (dest == null)
+                return;
+
+            for (var i = 0; i < dest.Length; i++)
+            {
+                dest[i] = default;
+            }
+
+            if (source == null)
+                return;
+
+            var length = Math.Min(dest.Length, source.Length);
+
+            for (var i = 0; i < length; i++)
+            {
+                dest[i] = source[i];
+            }
         }
     }
 }
