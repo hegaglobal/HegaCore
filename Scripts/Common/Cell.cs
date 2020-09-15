@@ -34,25 +34,21 @@ namespace HegaCore
         public override bool Equals(object obj)
             => obj is Cell other &&
                this.Id == other.Id &&
-               this.Index.Equals(other.Index) &&
-               this.Position.Equals(other.Position);
+               this.Index.Equals(other.Index);
 
         public bool Equals(in Cell other)
             => this.Id == other.Id &&
-               this.Index.Equals(other.Index) &&
-               this.Position.Equals(other.Position);
+               this.Index.Equals(other.Index);
 
         public bool Equals(Cell other)
             => this.Id == other.Id &&
-               this.Index.Equals(other.Index) &&
-               this.Position.Equals(other.Position);
+               this.Index.Equals(other.Index);
 
         public override int GetHashCode()
         {
             var hashCode = 1230032429;
             hashCode = hashCode * -1521134295 + this.Id.GetHashCode();
             hashCode = hashCode * -1521134295 + this.Index.GetHashCode();
-            hashCode = hashCode * -1521134295 + this.Position.GetHashCode();
             return hashCode;
         }
 
