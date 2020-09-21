@@ -10,8 +10,10 @@ namespace HegaCore
         [SerializeField, LabelText("Render Controller"), InlineButton(nameof(FindCubismRenderController), "Find")]
         private CubismRenderController cubismRenderController = null;
 
-        private void Awake()
+        protected override void Awake()
         {
+            base.Awake();
+
             FindCubismRenderController();
         }
 
