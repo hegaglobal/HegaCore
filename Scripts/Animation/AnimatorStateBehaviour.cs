@@ -81,7 +81,7 @@ namespace HegaCore
                     continue;
 
                 this.events[item] = false;
-                item.Enter(stateInfo);
+                item.Enter(stateInfo.normalizedTime);
             }
 
             ListPool<BaseAnimatorStateEvent>.Return(list);
@@ -97,7 +97,7 @@ namespace HegaCore
                 if (item == null || !this.events.ContainsKey(item))
                     continue;
 
-                item.Exit(stateInfo);
+                item.Exit(stateInfo.normalizedTime);
             }
 
             ListPool<BaseAnimatorStateEvent>.Return(list);
@@ -113,13 +113,13 @@ namespace HegaCore
                 if (item == null || !this.events.TryGetValue(item, out var invoked))
                     continue;
 
-                item.Update(stateInfo);
+                item.Update(stateInfo.normalizedTime);
 
                 if (invoked || stateInfo.normalizedTime < item.InvokeTime)
                     continue;
 
                 this.events[item] = true;
-                item.Invoke(stateInfo);
+                item.Invoke(stateInfo.normalizedTime);
             }
 
             ListPool<BaseAnimatorStateEvent>.Return(list);
