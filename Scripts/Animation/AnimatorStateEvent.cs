@@ -1,5 +1,4 @@
 ﻿using System;
-using UnityEngine;
 
 namespace HegaCore
 {
@@ -15,17 +14,17 @@ namespace HegaCore
 
         public AnimatorStateEvent(float invokeTime) : base(invokeTime) { }
 
-        public override void Enter(in AnimatorStateInfo info)
-            => this.OnEnter?.Invoke(info);
+        public override void Enter(float time)
+            => this.OnEnter?.Invoke(time);
 
-        public override void Update(in AnimatorStateInfo info)
-            => this.OnUpdate?.Invoke(info);
+        public override void Update(float time)
+            => this.OnUpdate?.Invoke(time);
 
-        public override void Exit(in AnimatorStateInfo info)
-            => this.OnExit?.Invoke(info);
+        public override void Exit(float time)
+            => this.OnExit?.Invoke(time);
 
-        public override void Invoke(in AnimatorStateInfo info)
-            => this.OnInvoke?.Invoke(info);
+        public override void Invoke(float time)
+            => this.OnInvoke?.Invoke(time);
 
         public void Clear()
         {
@@ -35,6 +34,6 @@ namespace HegaCore
             this.OnUpdate = null;
         }
 
-        public delegate void StateEvent(in AnimatorStateInfo info);
+        public delegate void StateEvent(float time);
     }
 }

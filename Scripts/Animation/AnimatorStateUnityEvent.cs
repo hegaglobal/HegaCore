@@ -31,17 +31,17 @@ namespace HegaCore
 
         public AnimatorStateUnityEvent(float invokeTime) : base(invokeTime) { }
 
-        public override void Enter(in AnimatorStateInfo info)
-            => this.onEnter.Invoke(info);
+        public override void Enter(float time)
+            => this.onEnter.Invoke(time);
 
-        public override void Update(in AnimatorStateInfo info)
-            => this.onUpdate.Invoke(info);
+        public override void Update(float time)
+            => this.onUpdate.Invoke(time);
 
-        public override void Exit(in AnimatorStateInfo info)
-            => this.onExit.Invoke(info);
+        public override void Exit(float time)
+            => this.onExit.Invoke(time);
 
-        public override void Invoke(in AnimatorStateInfo info)
-            => this.onInvoke.Invoke(info);
+        public override void Invoke(float time)
+            => this.onInvoke.Invoke(time);
 
         public void Clear()
         {
@@ -52,6 +52,6 @@ namespace HegaCore
         }
 
         [Serializable]
-        public sealed class StateEvent : UnityEvent<AnimatorStateInfo> { }
+        public sealed class StateEvent : UnityEvent<float> { }
     }
 }

@@ -25,12 +25,12 @@ namespace HegaCore
             this.InvokeTime = invokeTime;
         }
 
-        public virtual void Enter(in AnimatorStateInfo info) { }
+        public virtual void Enter(float time) { }
 
-        public virtual void Update(in AnimatorStateInfo info) { }
+        public virtual void Update(float time) { }
 
-        public virtual void Exit(in AnimatorStateInfo info) { }
+        public virtual void Exit(float time) { }
 
-        public virtual void Invoke(in AnimatorStateInfo info) { }
+        public virtual void Invoke(float time) { }
     }
 }
