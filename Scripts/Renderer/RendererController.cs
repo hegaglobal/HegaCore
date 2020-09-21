@@ -10,27 +10,34 @@ namespace HegaCore
         [SerializeField, InlineButton(nameof(FindSortingGroup), "Find")]
         private SortingGroup sortingGroup = null;
 
+        [SerializeField, InlineButton(nameof(FindAllRenderers), "Find"), PropertySpace(6)]
+        private Renderer[] renderers = null;
+
         [SerializeField, InlineButton(nameof(FindAllSpriteRenderers), "Find"), PropertySpace(6)]
         private SpriteRenderer[] spriteRenderers = null;
 
         private float alpha = 0f;
         private Tweener fadeTween;
 
-        private void Awake()
+        protected virtual void Awake()
         {
             FindSortingGroup();
+            FindAllRenderers();
             FindAllSpriteRenderers();
         }
 
         private void FindSortingGroup()
             => this.sortingGroup = GetComponent<SortingGroup>();
 
+        private void FindAllRenderers()
+            => this.renderers = GetComponentsInChildren<Renderer>();
+
         private void FindAllSpriteRenderers()
             => this.spriteRenderers = GetComponentsInChildren<SpriteRenderer>();
 
         public void SetLayer(in SortingLayerId layerId)
         {
-            foreach (var renderer in this.spriteRenderers)
+            foreach (var renderer in this.renderers)
             {
                 if (renderer)
                     renderer.sortingLayerID = layerId.id;

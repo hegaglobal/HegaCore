@@ -60,7 +60,7 @@ namespace HegaCore
                 if (!model)
                     continue;
 
-                await UniTask.Delay(System.TimeSpan.FromSeconds(0.1f));
+                await UniTask.DelayFrame(2);
 
                 model.Hide();
                 this.models.Add(key, model);
