@@ -7,6 +7,12 @@ namespace HegaCore
 {
     public class RendererController : MonoBehaviour
     {
+        [SerializeField]
+        private SortingLayerId sortingLayer = default;
+
+        [SerializeField]
+        private int sortingOrder = 0;
+
         [SerializeField, InlineButton(nameof(FindSortingGroup), "Find")]
         private SortingGroup sortingGroup = null;
 
@@ -24,6 +30,7 @@ namespace HegaCore
             FindSortingGroup();
             FindAllRenderers();
             FindAllSpriteRenderers();
+            ResetLayer();
         }
 
         private void FindSortingGroup()
@@ -35,21 +42,49 @@ namespace HegaCore
         private void FindAllSpriteRenderers()
             => this.spriteRenderers = GetComponentsInChildren<SpriteRenderer>();
 
-        public void SetLayer(in SortingLayerId layerId)
+        public void SetDefaultLayer(in SortingLayerId value)
+            => this.sortingLayer = value;
+
+        public void SetDefaultSortingOrder(int value)
+            => this.sortingOrder = value;
+
+        public void ResetLayer()
+        {
+            SetLayer(this.sortingLayer);
+            SetSortingOrder(this.sortingOrder);
+        }
+
+        public void SetLayer(in SortingLayerId value)
         {
             foreach (var renderer in this.renderers)
             {
                 if (renderer)
-                    renderer.sortingLayerID = layerId.id;
+                    renderer.sortingLayerID = value.id;
             }
 
             if (this.sortingGroup)
-                this.sortingGroup.sortingLayerID = layerId.id;
+                this.sortingGroup.sortingLayerID = value.id;
 
-            OnSetLayer(layerId);
+            OnSetLayer(value);
         }
 
-        protected virtual void OnSetLayer(in SortingLayerId layerId) { }
+        public void SetSortingOrder(int value)
+        {
+            foreach (var renderer in this.renderers)
+            {
+                if (renderer)
+                    renderer.sortingOrder = value;
+            }
+
+            if (this.sortingGroup)
+                this.sortingGroup.sortingOrder = value;
+
+            OnSetSortingOrder(value);
+        }
+
+        protected virtual void OnSetLayer(in SortingLayerId value) { }
+
+        protected virtual void OnSetSortingOrder(int value) { }
 
         public float GetAlpha()
             => this.alpha;
