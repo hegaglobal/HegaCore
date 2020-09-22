@@ -16,6 +16,15 @@ namespace HegaCore
         private readonly Dictionary<BaseAnimatorStateEvent, bool> events = new Dictionary<BaseAnimatorStateEvent, bool>();
         private Tweener tween;
 
+        public void Play()
+            => this.tween?.Play();
+
+        public void Pause()
+            => this.tween?.Pause();
+
+        public void Stop()
+            => this.tween?.Kill();
+
         protected void Setup(Tweener value)
         {
             this.tween?.Kill();
