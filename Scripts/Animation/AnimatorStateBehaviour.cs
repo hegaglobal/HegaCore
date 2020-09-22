@@ -77,9 +77,6 @@ namespace HegaCore
 
             foreach (var item in list)
             {
-                if (item == null || !this.events.ContainsKey(item))
-                    continue;
-
                 this.events[item] = false;
                 item.Enter(stateInfo.normalizedTime);
             }
@@ -94,9 +91,6 @@ namespace HegaCore
 
             foreach (var item in list)
             {
-                if (item == null || !this.events.ContainsKey(item))
-                    continue;
-
                 item.Exit(stateInfo.normalizedTime);
             }
 
@@ -110,8 +104,7 @@ namespace HegaCore
 
             foreach (var item in list)
             {
-                if (item == null || !this.events.TryGetValue(item, out var invoked))
-                    continue;
+                var invoked = this.events[item];
 
                 item.Update(stateInfo.normalizedTime);
 
