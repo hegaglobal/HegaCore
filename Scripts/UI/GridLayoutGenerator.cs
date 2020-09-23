@@ -64,7 +64,7 @@ namespace HegaCore.UI
 
         private void EnsureGrid()
         {
-            if (this.grid.Size == this.gridSize &&
+            if (this.grid.Size.Equals(this.gridSize) &&
                 this.grid.Count == this.cells.Count)
                 return;
 
