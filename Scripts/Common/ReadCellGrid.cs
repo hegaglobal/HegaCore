@@ -8,16 +8,17 @@ namespace HegaCore
 
     public class ReadCellGrid
     {
-        private readonly Grid<Cell> data;
-        private readonly IGetOccupiedGridIndex occupiedGetter;
+        public IGridOccupier Occupier { get; }
 
-        public ReadCellGrid(Grid<Cell> data, IGetOccupiedGridIndex occupiedGetter)
+        private readonly Grid<Cell> data;
+
+        public ReadCellGrid(Grid<Cell> data, IGridOccupier occupier)
         {
             this.data = new Grid<Cell>(data);
-            this.occupiedGetter = occupiedGetter ?? throw new ArgumentNullException();
+            this.Occupier = occupier ?? throw new ArgumentNullException();
         }
 
-        public ReadCellGrid(in ReadGrid<Cell> data, IGetOccupiedGridIndex occupiedGetter)
+        public ReadCellGrid(in ReadGrid<Cell> data, IGridOccupier occupier)
         {
             var cache = ListPool<GridValue<Cell>>.Get();
             data.GetIndexedValues(cache);
@@ -25,13 +26,13 @@ namespace HegaCore
             this.data = new Grid<Cell>(data.Size, cache);
             ListPool<GridValue<Cell>>.Return(cache);
 
-            this.occupiedGetter = occupiedGetter ?? throw new ArgumentNullException();
+            this.Occupier = occupier ?? throw new ArgumentNullException();
         }
 
         private void GetUnoccupiedCells(List<Cell> cells, ICollection<Cell> output)
         {
             var occupied = HashSetPool<GridIndex>.Get();
-            this.occupiedGetter.GetOccupiedGridIndex(occupied);
+            this.Occupier.GetOccupied(occupied);
 
             foreach (var cell in cells)
             {
