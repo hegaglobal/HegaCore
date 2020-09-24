@@ -69,17 +69,7 @@ namespace HegaCore
         }
 
         public void GetCells(in GridIndex pivot, int extend, bool allowOccupied, ICollection<Cell> output)
-        {
-            if (allowOccupied)
-            {
-                this.data.GetValues(pivot, extend, output);
-                return;
-            }
-
-            var cells = ListPool<Cell>.Get();
-            this.data.GetValues(pivot, extend, cells);
-            GetUnoccupiedCells(cells, output);
-        }
+            => GetCells(pivot, extend, true, allowOccupied, output);
 
         public void GetCells(in GridIndex pivot, int extend, bool allowDiagonal, bool allowOccupied, ICollection<Cell> output)
         {
@@ -98,16 +88,14 @@ namespace HegaCore
 
         public void GetCells(in GridIndex pivot, int lowerExtend, int upperExtend, bool allowOccupied, ICollection<Cell> output)
         {
-            var range = this.data.IndexRange(pivot, GridIndex.One * lowerExtend, GridIndex.One * upperExtend);
-
             if (allowOccupied)
             {
-                this.data.GetValues(range, output);
+                this.data.GetValues(pivot, lowerExtend, upperExtend, output);
                 return;
             }
 
             var cells = ListPool<Cell>.Get();
-            this.data.GetValues(range, cells);
+            this.data.GetValues(pivot, lowerExtend, upperExtend, cells);
             GetUnoccupiedCells(cells, output);
         }
 

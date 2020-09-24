@@ -75,7 +75,7 @@ namespace HegaCore.UI
                 cache.Add(new GridValue<GridLayoutCell>(kv.Key, kv.Value));
             }
 
-            this.grid.Initialize(this.gridSize, cache);
+            this.grid.Initialize((GridIndex)this.gridSize, cache);
             ListPool<GridValue<GridLayoutCell>>.Return(cache);
         }
 
@@ -114,7 +114,7 @@ namespace HegaCore.UI
                 cache.Add(new GridValue<GridLayoutCell>(kv.Key, kv.Value));
             }
 
-            this.grid.Initialize(this.gridSize, cache);
+            this.grid.Initialize((GridIndex)this.gridSize, cache);
             ListPool<GridValue<GridLayoutCell>>.Return(cache);
         }
 
