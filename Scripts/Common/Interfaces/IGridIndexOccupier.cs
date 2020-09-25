@@ -3,7 +3,7 @@ using System.Grid;
 
 namespace HegaCore
 {
-    public interface IGetOccupied
+    public interface IGridIndexOccupier
     {
         bool IsOccupied(in GridIndex index);
 

@@ -6,18 +6,25 @@ namespace HegaCore
 {
     using UnityRandom = UnityEngine.Random;
 
-    public class ReadCellGrid
+    public partial class ReadCellGrid
     {
-        private readonly Grid<Cell> data;
-        private readonly IGetOccupied occupiedGetter;
+        /// <summary>
+        /// Default params:
+        /// <para>IncludeOccupied = true</para>
+        /// <para>IncludeDiagonal = true</para>
+        /// </summary>
+        public QueryParams Params { get; } = new QueryParams(true, true);
 
-        public ReadCellGrid(Grid<Cell> data, IGetOccupied occupiedGetter)
+        private readonly Grid<Cell> data;
+        private readonly IGridIndexOccupier occupier;
+
+        public ReadCellGrid(Grid<Cell> data, IGridIndexOccupier occupier)
         {
             this.data = new Grid<Cell>(data);
-            this.occupiedGetter = occupiedGetter ?? throw new ArgumentNullException();
+            this.occupier = occupier ?? throw new ArgumentNullException();
         }
 
-        public ReadCellGrid(in ReadGrid<Cell> data, IGetOccupied occupiedGetter)
+        public ReadCellGrid(in ReadGrid<Cell> data, IGridIndexOccupier occupier)
         {
             var cache = ListPool<GridValue<Cell>>.Get();
             data.GetIndexedValues(cache);
@@ -25,13 +32,13 @@ namespace HegaCore
             this.data = new Grid<Cell>(data.Size, cache);
             ListPool<GridValue<Cell>>.Return(cache);
 
-            this.occupiedGetter = occupiedGetter ?? throw new ArgumentNullException();
+            this.occupier = occupier ?? throw new ArgumentNullException();
         }
 
-        private void GetUnoccupiedCells(List<Cell> cells, ICollection<Cell> output)
+        private void RemoveOccupied(List<Cell> cells, ICollection<Cell> output)
         {
             var occupied = HashSetPool<GridIndex>.Get();
-            this.occupiedGetter.GetOccupied(occupied);
+            this.occupier.GetOccupied(occupied);
 
             foreach (var cell in cells)
             {
@@ -40,7 +47,6 @@ namespace HegaCore
             }
 
             HashSetPool<GridIndex>.Return(occupied);
-            ListPool<Cell>.Return(cells);
         }
 
         private void RemoveDiagonal(in GridIndex pivot, List<Cell> cells)
@@ -54,6 +60,18 @@ namespace HegaCore
             }
         }
 
+        private void GetCells(in GridIndex? pivot, List<Cell> cells, ICollection<Cell> output, in QueryParams @params)
+        {
+            if (pivot.HasValue && !@params.IncludeDiagonal)
+                RemoveDiagonal(pivot.Value, cells);
+
+            if (!@params.IncludeOccupied)
+                RemoveOccupied(cells, output);
+
+            output.AddRange(cells, false, true);
+            ListPool<Cell>.Return(cells);
+        }
+
         public void GetCells(bool allowOccupied, ICollection<Cell> output)
         {
             if (allowOccupied)
@@ -64,136 +82,133 @@ namespace HegaCore
 
             var cells = ListPool<Cell>.Get();
             this.data.GetValues(cells);
-            GetUnoccupiedCells(cells, output);
+            RemoveOccupied(cells, output);
         }
 
-        public void GetCells(in GridIndex pivot, int extend, bool allowOccupied, ICollection<Cell> output)
-            => GetCells(pivot, extend, true, allowOccupied, output);
-
-        public void GetCells(in GridIndex pivot, int extend, bool allowDiagonal, bool allowOccupied, ICollection<Cell> output)
+        public void GetCells(in GridIndex pivot, int extend, ICollection<Cell> output, in QueryParams? @params = null)
         {
             var cells = ListPool<Cell>.Get();
             this.data.GetValues(pivot, extend, cells);
 
-            if (!allowDiagonal)
-                RemoveDiagonal(pivot, cells);
-
-            if (!allowOccupied)
-                GetUnoccupiedCells(cells, output);
-
-            output.AddRange(cells, false, false);
-            ListPool<Cell>.Return(cells);
+            GetCells(pivot, cells, output, @params ?? this.Params);
         }
 
-        public void GetCells(in GridIndex pivot, int lowerExtend, int upperExtend, bool allowOccupied, ICollection<Cell> output)
+        public void GetCells(in GridIndex pivot, int lowerExtend, int upperExtend, ICollection<Cell> output, in QueryParams? @params = null)
         {
-            if (allowOccupied)
-            {
-                this.data.GetValues(pivot, lowerExtend, upperExtend, output);
-                return;
-            }
-
             var cells = ListPool<Cell>.Get();
             this.data.GetValues(pivot, lowerExtend, upperExtend, cells);
-            GetUnoccupiedCells(cells, output);
+
+            GetCells(pivot, cells, output, @params ?? this.Params);
         }
 
-        public void GetCells(in GridIndex pivot, bool byRow, bool allowOccupied, ICollection<Cell> output)
+        public void GetCells(in GridIndex pivot, bool byRow, ICollection<Cell> output, in QueryParams? @params = null)
         {
-            if (allowOccupied)
-            {
-                this.data.GetValues(pivot, byRow, output);
-                return;
-            }
-
             var cells = ListPool<Cell>.Get();
             this.data.GetValues(pivot, byRow, cells);
-            GetUnoccupiedCells(cells, output);
+
+            GetCells(pivot, cells, output, @params ?? this.Params);
         }
 
-        public void GetCells(in GridIndex pivot, in GridIndex extend, bool allowOccupied, ICollection<Cell> output)
+        public void GetCells(in GridIndex pivot, in GridIndex extend, ICollection<Cell> output, in QueryParams? @params = null)
         {
-            if (allowOccupied)
-            {
-                this.data.GetValues(pivot, extend, output);
-                return;
-            }
-
             var cells = ListPool<Cell>.Get();
             this.data.GetValues(pivot, extend, cells);
-            GetUnoccupiedCells(cells, output);
+
+            GetCells(pivot, cells, output, @params ?? this.Params);
         }
 
-        public void GetCells(in GridIndex pivot, in GridIndex lowerExtend, in GridIndex upperExtend, bool allowOccupied, ICollection<Cell> output)
+        public void GetCells(in GridIndex pivot, in GridIndex lowerExtend, in GridIndex upperExtend, ICollection<Cell> output, in QueryParams? @params = null)
         {
-            if (allowOccupied)
-            {
-                this.data.GetValues(pivot, lowerExtend, upperExtend, output);
-                return;
-            }
-
             var cells = ListPool<Cell>.Get();
             this.data.GetValues(pivot, lowerExtend, upperExtend, cells);
-            GetUnoccupiedCells(cells, output);
+
+            GetCells(pivot, cells, output, @params ?? this.Params);
         }
 
-        public void GetCells(in GridRange range, bool allowOccupied, ICollection<Cell> output)
+        public void GetCells(in GridIndex pivot, ICollection<Cell> output, in QueryParams? @params = null)
         {
-            if (allowOccupied)
-            {
-                this.data.GetValues(range, output);
-                return;
-            }
-
             var cells = ListPool<Cell>.Get();
-            this.data.GetValues(range, cells);
-            GetUnoccupiedCells(cells, output);
+            this.data.GetValues(output);
+
+            GetCells(pivot, cells, output, @params ?? this.Params);
         }
 
-        public void GetCells(in GridIndexRange range, bool allowOccupied, ICollection<Cell> output)
+        public void GetCells(in GridIndex pivot, in GridRange range, ICollection<Cell> output, in QueryParams? @params = null)
         {
-            if (allowOccupied)
-            {
-                this.data.GetValues(range, output);
-                return;
-            }
-
             var cells = ListPool<Cell>.Get();
-            this.data.GetValues(range, cells);
-            GetUnoccupiedCells(cells, output);
+            this.data.GetValues(range, output);
+
+            GetCells(pivot, cells, output, @params ?? this.Params);
         }
 
-        public void GetCells(IEnumerable<GridIndex> indices, bool allowOccupied, ICollection<Cell> output)
+        public void GetCells(in GridIndex pivot, in GridIndexRange range, ICollection<Cell> output, in QueryParams? @params = null)
         {
-            if (allowOccupied)
-            {
-                this.data.GetValues(indices, output);
-                return;
-            }
-
             var cells = ListPool<Cell>.Get();
-            this.data.GetValues(indices, cells);
-            GetUnoccupiedCells(cells, output);
+            this.data.GetValues(range, output);
+
+            GetCells(pivot, cells, output, @params ?? this.Params);
         }
 
-        public void GetCells(IEnumerator<GridIndex> enumerator, bool allowOccupied, ICollection<Cell> output)
+        public void GetCells(in GridIndex pivot, IEnumerable<GridIndex> indices, ICollection<Cell> output, in QueryParams? @params = null)
         {
-            if (allowOccupied)
-            {
-                this.data.GetValues(enumerator, output);
-                return;
-            }
-
             var cells = ListPool<Cell>.Get();
-            this.data.GetValues(enumerator, cells);
-            GetUnoccupiedCells(cells, output);
+            this.data.GetValues(indices, output);
+
+            GetCells(pivot, cells, output, @params ?? this.Params);
         }
 
-        public bool TryGetRandomCell(bool allowOccupied, out Cell output)
+        public void GetCells(in GridIndex pivot, IEnumerator<GridIndex> enumerator, ICollection<Cell> output, in QueryParams? @params = null)
         {
             var cells = ListPool<Cell>.Get();
+            this.data.GetValues(enumerator, output);
 
-            GetCells(allowOccupied, cells);
+            GetCells(pivot, cells, output, @params ?? this.Params);
+        }
+
+        public void GetCells(ICollection<Cell> output, in QueryParams? @params = null)
+        {
+            var cells = ListPool<Cell>.Get();
+            this.data.GetValues(output);
+
+            GetCells(null, cells, output, @params ?? this.Params);
+        }
+
+        public void GetCells(in GridRange range, ICollection<Cell> output, in QueryParams? @params = null)
+        {
+            var cells = ListPool<Cell>.Get();
+            this.data.GetValues(range, output);
+
+            GetCells(null, cells, output, @params ?? this.Params);
+        }
+
+        public void GetCells(in GridIndexRange range, ICollection<Cell> output, in QueryParams? @params = null)
+        {
+            var cells = ListPool<Cell>.Get();
+            this.data.GetValues(range, output);
+
+            GetCells(null, cells, output, @params ?? this.Params);
+        }
+
+        public void GetCells(IEnumerable<GridIndex> indices, ICollection<Cell> output, in QueryParams? @params = null)
+        {
+            var cells = ListPool<Cell>.Get();
+            this.data.GetValues(indices, output);
+
+            GetCells(null, cells, output, @params ?? this.Params);
+        }
+
+        public void GetCells(IEnumerator<GridIndex> enumerator, ICollection<Cell> output, in QueryParams? @params = null)
+        {
+            var cells = ListPool<Cell>.Get();
+            this.data.GetValues(enumerator, output);
+
+            GetCells(null, cells, output, @params ?? this.Params);
+        }
+
+        public bool TryGetRandomCell(out Cell output, in QueryParams? @params = null)
+        {
+            var cells = ListPool<Cell>.Get();
+            GetCells(cells, @params);
 
             if (cells.Count <= 0)
             {
@@ -212,14 +227,13 @@ namespace HegaCore
             return true;
         }
 
-        public void GetRandomCells(int count, bool allowOccupied, ICollection<Cell> output)
+        public void GetRandomCells(int count, ICollection<Cell> output, in QueryParams? @params = null)
         {
             if (count <= 0)
                 return;
 
             var cells = ListPool<Cell>.Get();
-
-            GetCells(allowOccupied, cells);
+            GetCells(cells, @params);
 
             if (cells.Count > 0)
             {
@@ -241,6 +255,25 @@ namespace HegaCore
             }
 
             ListPool<Cell>.Return(cells);
+        }
+
+        public void GetRandomBlock(int size, ICollection<Cell> output, in QueryParams? @params = null)
+        {
+            if (size < 1)
+                return;
+
+            if (size == 1)
+            {
+                if (TryGetRandomCell(out var cell, @params))
+                    output.Add(cell);
+
+                return;
+            }
+
+            var blockSize = this.data.Size / size;
+            var blocks = ListPool<GridRange>.Get();
+
+            ListPool<GridRange>.Return(blocks);
         }
 
         public static implicit operator ReadGrid<Cell>(ReadCellGrid value)
