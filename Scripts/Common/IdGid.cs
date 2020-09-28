@@ -3,31 +3,31 @@
 namespace HegaCore
 {
     [Serializable]
-    public readonly struct Digid : IEquatableReadOnlyStruct<Digid>
+    public readonly struct IdGid : IEquatableReadOnlyStruct<IdGid>
     {
         public readonly int Id;
         public readonly Gid Gid;
 
-        public Digid(int id)
+        public IdGid(int id)
         {
             this.Id = id;
             this.Gid = Gid.Get();
         }
 
-        public Digid(int id, in Gid gid)
+        internal IdGid(int id, in Gid gid)
         {
             this.Id = id;
             this.Gid = gid;
         }
 
         public override bool Equals(object obj)
-            => obj is Digid other &&
+            => obj is IdGid other &&
                this.Id == other.Id && this.Gid == other.Gid;
 
-        public bool Equals(in Digid other)
+        public bool Equals(in IdGid other)
             => this.Id == other.Id && this.Gid == other.Gid;
 
-        public bool Equals(Digid other)
+        public bool Equals(IdGid other)
             => this.Id == other.Id && this.Gid == other.Gid;
 
         public override int GetHashCode()
@@ -38,12 +38,15 @@ namespace HegaCore
             return hashCode;
         }
 
-        public static Digid None { get; } = new Digid(0, Gid.None);
+        public override string ToString()
+            => $"{this.Id}-{this.Gid}";
 
-        public static bool operator ==(in Digid lhs, in Digid rhs)
+        public static IdGid None { get; } = new IdGid(0, Gid.None);
+
+        public static bool operator ==(in IdGid lhs, in IdGid rhs)
             => lhs.Gid == rhs.Gid && lhs.Id == rhs.Id;
 
-        public static bool operator !=(in Digid lhs, in Digid rhs)
+        public static bool operator !=(in IdGid lhs, in IdGid rhs)
             => lhs.Gid != rhs.Gid || lhs.Id != rhs.Id;
     }
 }

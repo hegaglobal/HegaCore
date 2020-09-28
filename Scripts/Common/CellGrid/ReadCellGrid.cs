@@ -8,12 +8,18 @@ namespace HegaCore
 
     public class ReadCellGrid
     {
+        public GridSize Size => this.data.Size;
+
+        public ClampedGridSize ClampedSize => this.clampedSize;
+
         private readonly Grid<Cell> data;
+        private readonly ClampedGridSize clampedSize;
         private readonly IGridIndexOccupier occupier;
 
         public ReadCellGrid(Grid<Cell> data, IGridIndexOccupier occupier)
         {
             this.data = new Grid<Cell>(data);
+            this.clampedSize = this.data.Size;
             this.occupier = occupier ?? throw new ArgumentNullException();
         }
 
@@ -23,6 +29,7 @@ namespace HegaCore
             data.GetIndexedValues(cache);
 
             this.data = new Grid<Cell>(data.Size, cache);
+            this.clampedSize = this.data.Size;
             ListPool<GridValue<Cell>>.Return(cache);
 
             this.occupier = occupier ?? throw new ArgumentNullException();
@@ -54,7 +61,7 @@ namespace HegaCore
         {
             for (var i = cells.Count - 1; i >= 0; i--)
             {
-                if (occupied.Contains(cells[i]))
+                if (occupied.Contains(cells[i].Index))
                     cells.RemoveAt(i);
             }
         }
@@ -84,6 +91,9 @@ namespace HegaCore
                 }
             }
 
+            if (modes.Occupied == CellMode.Include)
+                return;
+
             var occupied = HashSetPool<GridIndex>.Get();
             this.occupier.GetOccupied(occupied);
 
@@ -103,6 +113,12 @@ namespace HegaCore
             HashSetPool<GridIndex>.Return(occupied);
             ListPool<Cell>.Return(cells);
         }
+
+        public Cell GetCell(in GridIndex index)
+            => this.data[index];
+
+        public bool TryGetCell(in GridIndex index, out Cell cell)
+            => this.data.TryGetValue(index, out cell);
 
         public void GetCells(in GridIndex pivot, int extend, ICollection<Cell> output, in CellModes? modes = null)
         {
@@ -147,7 +163,7 @@ namespace HegaCore
         public void GetCells(in GridIndex pivot, ICollection<Cell> output, in CellModes? modes = null)
         {
             var cells = ListPool<Cell>.Get();
-            this.data.GetValues(output);
+            this.data.GetValues(cells);
 
             Filter(pivot, cells, output, modes ?? CellModes.Include);
         }
@@ -155,7 +171,7 @@ namespace HegaCore
         public void GetCells(in GridIndex pivot, in GridRange range, ICollection<Cell> output, in CellModes? modes = null)
         {
             var cells = ListPool<Cell>.Get();
-            this.data.GetValues(range, output);
+            this.data.GetValues(range, cells);
 
             Filter(pivot, cells, output, modes ?? CellModes.Include);
         }
@@ -163,7 +179,7 @@ namespace HegaCore
         public void GetCells(in GridIndex pivot, in GridIndexRange range, ICollection<Cell> output, in CellModes? modes = null)
         {
             var cells = ListPool<Cell>.Get();
-            this.data.GetValues(range, output);
+            this.data.GetValues(range, cells);
 
             Filter(pivot, cells, output, modes ?? CellModes.Include);
         }
@@ -171,7 +187,7 @@ namespace HegaCore
         public void GetCells(in GridIndex pivot, IEnumerable<GridIndex> indices, ICollection<Cell> output, in CellModes? modes = null)
         {
             var cells = ListPool<Cell>.Get();
-            this.data.GetValues(indices, output);
+            this.data.GetValues(indices, cells);
 
             Filter(pivot, cells, output, modes ?? CellModes.Include);
         }
@@ -179,7 +195,7 @@ namespace HegaCore
         public void GetCells(in GridIndex pivot, IEnumerator<GridIndex> enumerator, ICollection<Cell> output, in CellModes? modes = null)
         {
             var cells = ListPool<Cell>.Get();
-            this.data.GetValues(enumerator, output);
+            this.data.GetValues(enumerator, cells);
 
             Filter(pivot, cells, output, modes ?? CellModes.Include);
         }
@@ -187,7 +203,7 @@ namespace HegaCore
         public void GetCells(ICollection<Cell> output, in CellModes? modes = null)
         {
             var cells = ListPool<Cell>.Get();
-            this.data.GetValues(output);
+            this.data.GetValues(cells);
 
             Filter(null, cells, output, modes ?? CellModes.Include);
         }
@@ -195,7 +211,7 @@ namespace HegaCore
         public void GetCells(in GridRange range, ICollection<Cell> output, in CellModes? modes = null)
         {
             var cells = ListPool<Cell>.Get();
-            this.data.GetValues(range, output);
+            this.data.GetValues(range, cells);
 
             Filter(null, cells, output, modes ?? CellModes.Include);
         }
@@ -203,7 +219,7 @@ namespace HegaCore
         public void GetCells(in GridIndexRange range, ICollection<Cell> output, in CellModes? modes = null)
         {
             var cells = ListPool<Cell>.Get();
-            this.data.GetValues(range, output);
+            this.data.GetValues(range, cells);
 
             Filter(null, cells, output, modes ?? CellModes.Include);
         }
@@ -211,7 +227,7 @@ namespace HegaCore
         public void GetCells(IEnumerable<GridIndex> indices, ICollection<Cell> output, in CellModes? modes = null)
         {
             var cells = ListPool<Cell>.Get();
-            this.data.GetValues(indices, output);
+            this.data.GetValues(indices, cells);
 
             Filter(null, cells, output, modes ?? CellModes.Include);
         }
@@ -219,7 +235,7 @@ namespace HegaCore
         public void GetCells(IEnumerator<GridIndex> enumerator, ICollection<Cell> output, in CellModes? modes = null)
         {
             var cells = ListPool<Cell>.Get();
-            this.data.GetValues(enumerator, output);
+            this.data.GetValues(enumerator, cells);
 
             Filter(null, cells, output, modes ?? CellModes.Include);
         }
@@ -276,33 +292,37 @@ namespace HegaCore
             ListPool<Cell>.Return(cells);
         }
 
-        public void GetRandomBlock(int size, ICollection<Cell> output, in CellModes? modes = null)
-            => GetRandomBlock(size, size, output, modes);
+        public bool TryGetRandomRange(int size, out GridIndexRange range, in CellModes? modes = null)
+            => TryGetRandomRange(size, size, out range, modes);
 
-        public void GetRandomBlock(int size, int step, ICollection<Cell> output, in CellModes? modes = null)
+        public bool TryGetRandomRange(int size, int step, out GridIndexRange range, in CellModes? modes = null)
         {
+            range = default;
+
             if (size < 1)
-                return;
+                return false;
 
             if (size == 1)
             {
                 if (TryGetRandomCell(out var cell, modes))
-                    output.Add(cell);
+                {
+                    range = new GridIndexRange(cell, cell);
+                    return true;
+                }
 
-                return;
+                return false;
             }
 
             var ranges = ListPool<GridIndexRange>.Get();
-            var gridSize = (ClampedGridSize)this.data.Size;
-            gridSize.IndexRanges(size, step, ranges);
+            this.clampedSize.IndexRanges(size, step, ranges);
 
-            if (ranges.Count > 0)
+            var cModes = modes ?? CellModes.Include;
+
+            if (ranges.Count > 0 && cModes.Occupied != CellMode.Include)
             {
                 var occupied = ListPool<GridIndex>.Get();
                 this.occupier.GetOccupied(occupied);
-                occupied.Sort(new Index1Comparer(this.data.Size, true));
-
-                var cModes = modes ?? CellModes.Include;
+                occupied.Sort(new GridIndex1Comparer(this.data.Size, true));
 
                 switch (cModes.Occupied)
                 {
@@ -316,21 +336,20 @@ namespace HegaCore
                 }
 
                 ListPool<GridIndex>.Return(occupied);
-
             }
 
-            if (ranges.Count > 0)
+            if (ranges.Count <= 0)
             {
-                var random = ListPool<GridIndexRange>.Get();
-                random.AddRange(ranges.Randomize());
-
-                var range = random[UnityRandom.Range(0, random.Count)];
-                this.data.GetValues(range, output);
-
-                ListPool<GridIndexRange>.Return(random);
+                ListPool<GridIndexRange>.Return(ranges);
+                return false;
             }
 
-            ListPool<GridIndexRange>.Return(ranges);
+            var random = ListPool<GridIndexRange>.Get();
+            random.AddRange(ranges.Randomize());
+            range = random[UnityRandom.Range(0, random.Count)];
+
+            ListPool<GridIndexRange>.Return(random, ranges);
+            return true;
         }
 
         private void RemoveOccupied(List<GridIndexRange> ranges, List<GridIndex> occupied)
@@ -365,26 +384,5 @@ namespace HegaCore
 
         public static implicit operator ReadGrid<Cell>(ReadCellGrid value)
             => value?.data ?? ReadGrid<Cell>.Empty;
-
-        private readonly struct Index1Comparer : IComparer<GridIndex>
-        {
-            private readonly GridSize size;
-            private readonly bool reversed;
-
-            public Index1Comparer(in GridSize size) : this(size, false)
-            {
-            }
-
-            public Index1Comparer(in GridSize size, bool reversed)
-            {
-                this.size = size;
-                this.reversed = reversed;
-            }
-
-            public int Compare(GridIndex x, GridIndex y)
-                => this.reversed
-                   ? this.size.Index1Of(y).CompareTo(this.size.Index1Of(x))
-                   : this.size.Index1Of(x).CompareTo(this.size.Index1Of(y));
-        }
     }
 }

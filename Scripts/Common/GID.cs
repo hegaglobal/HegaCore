@@ -32,6 +32,9 @@ namespace HegaCore
         public override int GetHashCode()
             => 2108858624 + this.value.GetHashCode();
 
+        public override string ToString()
+            => this.value.ToString();
+
         public int CompareTo(in Gid other)
             => this.value.CompareTo(other.value);
 
