@@ -904,7 +904,7 @@ namespace HegaCore.UI
 
             actor.Model = model;
             actor.Controller = CubismManager.Instance.Show(model, view.Position.position, Settings.ActorDuration.Show);
-            UnuLogger.Log(actor.Controller);
+
             if (!this.isHiding)
                 ApplyLayerToActor(actor, view);
         }
