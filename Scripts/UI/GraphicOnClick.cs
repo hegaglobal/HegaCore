@@ -20,13 +20,9 @@ namespace HegaCore.UI
         }
 
         void IPointerUpHandler.OnPointerUp(PointerEventData eventData)
-        {
-            this.graphic.color = this.backupColor;
-        }
+            => this.graphic.color = this.backupColor;
 
         void IPointerDownHandler.OnPointerDown(PointerEventData eventData)
-        {
-            this.graphic.color = this.color;
-        }
+            => this.graphic.color = this.color;
     }
 }
