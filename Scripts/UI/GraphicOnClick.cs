@@ -10,19 +10,20 @@ namespace HegaCore.UI
         private Graphic graphic = null;
 
         [SerializeField]
-        private Color color = Color.white;
+        private Color defaultColor = Color.white;
 
-        private Color backupColor;
+        [SerializeField]
+        private Color clickColor = Color.white;
 
         private void Awake()
         {
-            this.backupColor = this.graphic.color;
+            this.graphic.color = this.defaultColor;
         }
 
         void IPointerUpHandler.OnPointerUp(PointerEventData eventData)
-            => this.graphic.color = this.backupColor;
+            => this.graphic.color = this.defaultColor;
 
         void IPointerDownHandler.OnPointerDown(PointerEventData eventData)
-            => this.graphic.color = this.color;
+            => this.graphic.color = this.clickColor;
     }
 }
