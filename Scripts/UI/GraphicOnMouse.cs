@@ -5,13 +5,16 @@ using Sirenix.OdinInspector;
 
 namespace HegaCore.UI
 {
-    public class GraphicOnClick : MonoBehaviour, IPointerDownHandler, IPointerUpHandler
+    public class GraphicOnMouse : MonoBehaviour, IPointerDownHandler, IPointerUpHandler, IPointerEnterHandler, IPointerExitHandler
     {
         [SerializeField]
         private Graphic graphic = null;
 
         [SerializeField, BoxGroup("Colors"), LabelText("Default")]
         private Color defaultColor = Color.white;
+
+        [SerializeField, BoxGroup("Colors"), LabelText("Hover")]
+        private Color hoverColor = Color.white;
 
         [SerializeField, BoxGroup("Colors"), LabelText("Click")]
         private Color clickColor = Color.white;
@@ -21,11 +24,17 @@ namespace HegaCore.UI
             SetColor(this.defaultColor);
         }
 
-        void IPointerUpHandler.OnPointerUp(PointerEventData eventData)
-            => SetColor(this.defaultColor);
-
         void IPointerDownHandler.OnPointerDown(PointerEventData eventData)
             => SetColor(this.clickColor);
+
+        void IPointerUpHandler.OnPointerUp(PointerEventData eventData)
+            => SetColor(this.hoverColor);
+
+        void IPointerEnterHandler.OnPointerEnter(PointerEventData eventData)
+            => SetColor(this.hoverColor);
+
+        void IPointerExitHandler.OnPointerExit(PointerEventData eventData)
+            => SetColor(this.defaultColor);
 
         private void SetColor(in Color color)
         {
