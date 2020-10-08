@@ -2,7 +2,7 @@
 using TMPro;
 using UnuGames.MVVM;
 
-namespace HegaCore.UI.MVVM
+namespace HegaCore.MVVM
 {
     [RequireComponent(typeof(TMP_Text))]
     [DisallowMultipleComponent]

@@ -2,8 +2,10 @@
 using UnuGames;
 using UnuGames.MVVM;
 
-namespace HegaCore.UI.MVVM
+namespace HegaCore.MVVM
 {
+    using UI;
+
     [RequireComponent(typeof(UIGrayscaleEffect))]
     [DisallowMultipleComponent]
     public class UIGrayscaleEffectBinder : BinderBase
