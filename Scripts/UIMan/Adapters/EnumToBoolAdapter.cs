@@ -14,6 +14,9 @@ namespace HegaCore.MVVM
         public override bool Convert(object value, UnityObject context)
             => Convert(value, this.trueValue, context);
 
+        public override object Convert(bool value, UnityObject context)
+            => Convert(value, this.trueValue);
+
         public static bool Convert(object value, T trueValue, UnityObject context)
         {
             if (!(value is T val))
@@ -27,5 +30,8 @@ namespace HegaCore.MVVM
 
             return trueValue.Equals(val);
         }
+
+        public static object Convert(bool value, T trueValue)
+            => value ? trueValue : default;
     }
 }
