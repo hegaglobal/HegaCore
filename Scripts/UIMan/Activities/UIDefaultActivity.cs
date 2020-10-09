@@ -20,7 +20,7 @@ namespace HegaCore.UI
         }
 
         public static void Preload()
-            => UIMan.Instance.Preload<UIActivity>();
+            => UIMan.Instance.Preload<UIActivity>(true);
 
         public static void Show(Action onCompleted = null)
             => Show(true, onCompleted);
