@@ -28,7 +28,13 @@ namespace HegaCore
 
         public ReadList<int> Missions => this.missions;
 
+        public ReadList<CharacterId> CharacterImages => this.characterImages;
+
+        public ReadList<CharacterId> CharacterClips => this.characterClips;
+
         private readonly List<int> missions = new List<int>();
+        private readonly List<CharacterId> characterImages = new List<CharacterId>();
+        private readonly List<CharacterId> characterClips = new List<CharacterId>();
 
         public virtual void InitializeCurrentPlayer(int playerIndex)
         {
@@ -194,6 +200,73 @@ namespace HegaCore
 
         public void ClearMissions()
             => this.missions.Clear();
+
+        public void ClearCharacterImages()
+            => this.characterImages.Clear();
+
+        public void UnlockCharacterImage(in CharacterId id)
+        {
+            if (this.characterImages.Contains(id))
+                return;
+
+            this.characterImages.Add(id);
+        }
+
+        public void ClearCharacterClips()
+            => this.characterClips.Clear();
+
+        public void UnlockCharacterClip(in CharacterId id)
+        {
+            if (this.characterClips.Contains(id))
+                return;
+
+            this.characterClips.Add(id);
+        }
+
+        public void SetPlayerCharacter(int value)
+        {
+            if (!Validate())
+                return;
+
+            this.BasePlayer.CharacterId = value;
+        }
+
+        public int GetPlayerCharacterProgress(int characterId, bool silent = false)
+        {
+            if (!Validate())
+                return 0;
+
+            if (!this.BasePlayer.CharacterProgressMap.ContainsKey(characterId))
+            {
+                if (!silent)
+                    UnuLogger.LogError($"Cannot found any progress record for character={characterId}");
+
+                return 0;
+            }
+
+            return this.BasePlayer.CharacterProgressMap[characterId];
+        }
+
+        public int ChangePlayerCharacterProgress(int characterId, int amount)
+        {
+            if (!Validate())
+                return 0;
+
+            var afterChanged = this.BasePlayer.CharacterProgressMap.ContainsKey(characterId)
+                ? (this.BasePlayer.CharacterProgressMap[characterId] += amount)
+                : (this.BasePlayer.CharacterProgressMap[characterId] = amount);
+
+            return afterChanged;
+        }
+
+        public int SetPlayerCharacterProgress(int characterId, int value)
+        {
+            if (!Validate())
+                return 0;
+
+            this.BasePlayer.CharacterProgressMap[characterId] = value;
+            return value;
+        }
 
         public abstract bool TryGetPlayer(int index, out BasePlayerData data);
 

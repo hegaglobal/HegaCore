@@ -6,7 +6,7 @@ using UnuGames.MVVM;
 
 namespace HegaCore.UI
 {
-    public sealed partial class UIPauseDialog
+    public partial class UIPauseDialog
     {
 
     }

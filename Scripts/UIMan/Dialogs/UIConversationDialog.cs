@@ -6,7 +6,7 @@ using UnuGames.MVVM;
 
 namespace HegaCore.UI
 {
-    public sealed partial class UIConversationDialog
+    public partial class UIConversationDialog
     {
         private string m_speakerAvatar = default;
 

@@ -1564,7 +1564,7 @@ MonoBehaviour:
   animTime: 0.25
   animShowTime: 0.25
   animHideTime: 0.25
-  useCover: 1
+  useCover: 0
   deactiveOnHide: 1
 --- !u!1 &8189152103416941128
 GameObject:

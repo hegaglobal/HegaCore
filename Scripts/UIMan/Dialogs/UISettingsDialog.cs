@@ -6,7 +6,7 @@ using UnuGames.MVVM;
 
 namespace HegaCore.UI
 {
-    public sealed partial class UISettingsDialog
+    public partial class UISettingsDialog
     {
         private float m_music = default;
 

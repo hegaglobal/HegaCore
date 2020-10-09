@@ -6,7 +6,7 @@ using UnuGames.MVVM;
 
 namespace HegaCore.UI
 {
-    public sealed partial class UIModalDialog
+    public partial class UIModalDialog
     {
         private string m_title = default;
 

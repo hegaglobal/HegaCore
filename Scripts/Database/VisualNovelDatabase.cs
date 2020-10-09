@@ -30,6 +30,11 @@ namespace HegaCore
 
             Load<EventData, EventParser>
                  (this.Tables.EventData, nameof(this.Tables.EventData), this.Languages);
+
+            Load<CharacterEntry, CharacterEntry.Mapping, CharacterEntry.IdGetter>
+                (this.Tables.Character, nameof(this.Tables.Character));
+
+            this.Tables.PrepareCharacterMap();
         }
 
         protected override void ContinueUnload()

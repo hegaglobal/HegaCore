@@ -7,6 +7,9 @@ namespace HegaCore
     public sealed class CubismController : MonoBehaviour
     {
         [SerializeField]
+        private bool useScaleOne = true;
+
+        [SerializeField]
         private Animator animator = null;
 
         [SerializeField]
@@ -16,6 +19,8 @@ namespace HegaCore
         private SpriteRenderer spriteRenderer = null;
 
         public float TempAlpha { get; set; }
+
+        public Vector3 LocalScale { get; private set; }
 
         private Color color;
 
@@ -30,6 +35,8 @@ namespace HegaCore
         private void Awake()
         {
             GetComponents();
+
+            this.LocalScale = this.useScaleOne ? Vector3.one : this.transform.localScale;
         }
 
         public void Hide()
@@ -38,6 +45,8 @@ namespace HegaCore
 
             this.color = Color.white.With(a: 0f);
             SetColor(in this.color);
+
+            this.transform.localScale = this.LocalScale;
 
             if (this.gameObject.activeSelf)
                 StartCoroutine(HideInternal());
@@ -70,6 +79,9 @@ namespace HegaCore
             this.transform.position = position;
             Show(alpha);
         }
+
+        public void SetScale(float value)
+            => this.transform.localScale = this.LocalScale * value;
 
         public void SetLayer(int layer, int sortingOrder = 0)
         {
@@ -113,6 +125,18 @@ namespace HegaCore
         {
             if (this.animator)
                 this.animator.SetInteger(Params.ID, id);
+        }
+
+        public void PlayBodyAnimation(int id)
+        {
+            if (this.animator)
+                this.animator.SetInteger(Params.Body, id);
+        }
+
+        public void PlayEmoAnimation(int id)
+        {
+            if (this.animator)
+                this.animator.SetInteger(Params.Emo, id);
         }
 
         public Color GetColor()
@@ -166,6 +190,8 @@ namespace HegaCore
         private static class Params
         {
             public const string ID = nameof(ID);
+            public const string Body = nameof(Body);
+            public const string Emo = nameof(Emo);
         }
     }
 }

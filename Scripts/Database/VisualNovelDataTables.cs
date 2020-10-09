@@ -1,4 +1,5 @@
-﻿using System.Table;
+﻿using System.Collections.Generic;
+using System.Table;
 using VisualNovelData.Data;
 
 namespace HegaCore
@@ -19,6 +20,17 @@ namespace HegaCore
 
         public EventData EventData { get; } = new EventData();
 
+        public Table<CharacterEntry> Character { get; } = new Table<CharacterEntry>();
+
+        public ReadDictionary<string, int> CharacterMap => this.characterMap;
+
+        private readonly Dictionary<string, int> characterMap;
+
+        public VisualNovelDataTables()
+        {
+            this.characterMap = new Dictionary<string, int>();
+        }
+
         public override void Clear()
         {
             this.Language.Clear();
@@ -27,6 +39,20 @@ namespace HegaCore
             this.NovelData.Clear();
             this.CharacterData.Clear();
             this.EventData.Clear();
+            this.Character.Clear();
+        }
+
+        public void PrepareCharacterMap()
+        {
+            this.characterMap.Clear();
+
+            foreach (var entry in this.Character.Entries)
+            {
+                if (this.characterMap.ContainsKey(entry.Name))
+                    continue;
+
+                this.characterMap[entry.Name] = entry.Id;
+            }
         }
     }
 }

@@ -26,6 +26,10 @@ namespace HegaCore
 
         public string LastTime;
 
+        public int CharacterId;
+
+        public Dictionary<int, int> CharacterProgressMap = new Dictionary<int, int>();
+
         public BasePlayerData()
         {
             this.Revision = 1;
@@ -42,6 +46,8 @@ namespace HegaCore
             this.GoodPoint = 0;
             this.BadPoint = 0;
             this.LastTime = string.Empty;
+            this.CharacterId = 0;
+            this.CharacterProgressMap.Clear();
         }
 
         protected void CopyFrom(BasePlayerData data)
@@ -68,15 +74,9 @@ namespace HegaCore
             this.GoodPoint = data.GoodPoint;
             this.BadPoint = data.BadPoint;
             this.LastTime = data.LastTime ?? string.Empty;
-        }
-    }
+            this.CharacterId = data.CharacterId;
 
-    [Serializable]
-    public abstract class PlayerData<T> : BasePlayerData where T : PlayerData<T>
-    {
-        public virtual void CopyFrom(T data)
-        {
-            base.CopyFrom(data);
+            Copy(this.CharacterProgressMap, data.CharacterProgressMap);
         }
 
         public void Copy<TKey, TValue>(Dictionary<TKey, TValue> dest, Dictionary<TKey, TValue> source)
@@ -120,6 +120,15 @@ namespace HegaCore
             {
                 dest[i] = source[i];
             }
+        }
+    }
+
+    [Serializable]
+    public abstract class PlayerData<T> : BasePlayerData where T : PlayerData<T>
+    {
+        public virtual void CopyFrom(T data)
+        {
+            base.CopyFrom(data);
         }
     }
 }
