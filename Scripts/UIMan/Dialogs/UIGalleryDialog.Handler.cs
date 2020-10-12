@@ -5,6 +5,7 @@ using UnityEngine.UI;
 using VisualNovelData.Data;
 using UnuGames;
 using DG.Tweening;
+using Cysharp.Threading.Tasks;
 
 namespace HegaCore.UI
 {
@@ -53,6 +54,7 @@ namespace HegaCore.UI
         private ReadCharacterData characterData;
         private ReadTable<CharacterEntry> table;
         private GalleryClipAction showClip;
+        private bool isHidden;
 
         private CubismController characterModel;
         private float modelScale;
@@ -84,6 +86,7 @@ namespace HegaCore.UI
             var placeholderHeight = this.placeholderSize.rect.height;
             var fullHeight = UIMan.Instance.GetComponent<CanvasScaler>().referenceResolution.y;
             this.modelScale = placeholderHeight / fullHeight;
+            this.isHidden = false;
 
             Initialize();
         }
@@ -111,6 +114,8 @@ namespace HegaCore.UI
 
             if (this.manualHide)
                 this.onHideCompleted?.Invoke();
+
+            this.isHidden = true;
         }
 
         private void Initialize()
@@ -128,6 +133,7 @@ namespace HegaCore.UI
         private void Deinitialize()
         {
             this.characterList.Deinitialize();
+            HideCharacterModel();
         }
 
         private void SelectCharacter(int characterId)
@@ -291,14 +297,16 @@ namespace HegaCore.UI
 
         public void UI_Button_Close()
         {
-            HideCharacterModel();
-            UIDefaultActivity.Show(OnClose);
+            UIDefaultActivity.Show(HideGallery, true);
         }
 
-        private void OnClose()
+        private async UniTask HideGallery()
         {
+            HideCharacterModel();
             this.manualHide = true;
             Hide();
+
+            await UniTask.WaitUntil(() => this.isHidden);
         }
 
         public void UI_Button_ShowFull()
