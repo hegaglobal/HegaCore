@@ -241,7 +241,7 @@ namespace HegaCore
         private void KillTweens(string modelId)
         {
             if (this.hideTweens.TryGetValue(modelId, out var hideTween))
-                hideTween?.Kill(true);
+                hideTween?.Kill();
 
             if (this.showTweens.TryGetValue(modelId, out var showTween))
                 showTween?.Kill();
