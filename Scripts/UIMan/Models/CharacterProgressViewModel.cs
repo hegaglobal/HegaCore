@@ -43,6 +43,15 @@ namespace HegaCore.UI
             set { this.m_milestone_2 = value; OnPropertyChanged(nameof(this.Milestone_2), value); }
         }
 
+        private bool m_interactable = default;
+
+        [UIManAutoProperty]
+        public bool Interactable
+        {
+            get { return this.m_interactable; }
+            set { this.m_interactable = value; OnPropertyChanged(nameof(this.Interactable), value); }
+        }
+
         private bool m_interactable_1 = default;
 
         [UIManAutoProperty]

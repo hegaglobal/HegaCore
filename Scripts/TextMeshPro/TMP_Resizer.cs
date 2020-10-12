@@ -13,7 +13,7 @@ namespace HegaCore
         private TMP_Text text = null;
 
         [SerializeField]
-        private bool autoResize = false;
+        private bool auto = false;
 
 #if UNITY_EDITOR
         protected override void OnValidate()
@@ -33,7 +33,7 @@ namespace HegaCore
 
         private void Update()
         {
-            if (this.autoResize)
+            if (this.auto)
                 Resize();
         }
 

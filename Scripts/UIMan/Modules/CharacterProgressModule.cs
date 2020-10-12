@@ -20,15 +20,16 @@ namespace HegaCore.UI
         private int characterId;
         private Tweener valueTween;
 
-        public void Initialize(in ReadTable<CharacterEntry> table)
+        public void Initialize(in ReadTable<CharacterEntry> table, bool interactable)
         {
             this.table = table;
             ResetData();
+
+            this.DataInstance.Interactable = interactable;
         }
 
-        public void InitializeProgress(in ReadTable<CharacterEntry> table, int characterId, int value)
+        public void SetProgress(int characterId, int value)
         {
-            this.table = table;
             this.characterId = characterId;
 
             if (!this.table.TryGetEntry(characterId, out var data))
@@ -40,6 +41,9 @@ namespace HegaCore.UI
             this.DataInstance.Interactable_1 = value >= data.Milestone_1;
             this.DataInstance.Interactable_2 = value >= data.Milestone_2;
         }
+
+        public void SetInteractable(bool value)
+            => this.DataInstance.Interactable = value;
 
         public void UpdateProgress(int characterId, int value)
         {
@@ -76,13 +80,14 @@ namespace HegaCore.UI
             this.DataInstance.Value = 0f;
             this.DataInstance.Milestone_1 = 0f;
             this.DataInstance.Milestone_2 = 0f;
+            this.DataInstance.Interactable = false;
             this.DataInstance.Interactable_1 = false;
             this.DataInstance.Interactable_2 = false;
         }
 
         private void SetData(CharacterEntry data)
         {
-            this.DataInstance.Max = data.Max;
+            this.DataInstance.Max = data.MaxProgress;
             this.DataInstance.Milestone_1 = data.Milestone_1;
             this.DataInstance.Milestone_2 = data.Milestone_2;
         }

@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using UnityEngine;
 
 namespace HegaCore
 {
@@ -28,7 +29,7 @@ namespace HegaCore
 
         public int CharacterId;
 
-        public Dictionary<int, int> CharacterProgressMap = new Dictionary<int, int>();
+        public CharacterProgressMap CharacterProgressMap = new CharacterProgressMap();
 
         public BasePlayerData()
         {
@@ -131,4 +132,7 @@ namespace HegaCore
             base.CopyFrom(data);
         }
     }
+
+    [Serializable]
+    public sealed class CharacterProgressMap : SerializableDictionary<int, int> { }
 }

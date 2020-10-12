@@ -12,9 +12,9 @@ namespace HegaCore.UI
 
     public partial class UIGalleryDialog : UIManDialog
     {
-        public static void Show(Action onShowCompleted = null, Action onHide = null, Action onHideCompleted = null)
+        public static void Show(Action onShow = null, Action onShowCompleted = null, Action onHide = null, Action onHideCompleted = null)
         {
-            UIMan.Instance.ShowDialog<UIGalleryDialog>(onShowCompleted, onHide, onHideCompleted);
+            UIMan.Instance.ShowDialog<UIGalleryDialog>(onShow, onShowCompleted, onHide, onHideCompleted);
         }
 
         public static void Hide()
@@ -41,11 +41,9 @@ namespace HegaCore.UI
         private GalleryCharacterItemModule[] clips = null;
 
         [SerializeField]
-        private SingleLayer characterLayer = default;
+        private SingleOrderLayer characterLayer = default;
 
-        [SerializeField]
-        private int sortingOrder = 0;
-
+        private Action onShow;
         private Action onShowCompleted;
         private Action onHide;
         private Action onHideCompleted;
@@ -74,19 +72,18 @@ namespace HegaCore.UI
         {
             base.OnShow(args);
 
-            var placeholderHeight = this.placeholderSize.rect.height;
-            var fullHeight = UIMan.Instance.GetComponent<CanvasScaler>().referenceResolution.y;
-            this.modelScale = placeholderHeight / fullHeight;
-
-            this.onShowCompleted = null;
-            this.onHide = null;
-            this.onHideCompleted = null;
-            this.manualHide = false;
-
             var index = 0;
+
+            args.GetThenMoveNext(ref index, out this.onShow);
             args.GetThenMoveNext(ref index, out this.onShowCompleted);
             args.GetThenMoveNext(ref index, out this.onHide);
             args.GetThenMoveNext(ref index, out this.onHideCompleted);
+
+            this.onShow?.Invoke();
+
+            var placeholderHeight = this.placeholderSize.rect.height;
+            var fullHeight = UIMan.Instance.GetComponent<CanvasScaler>().referenceResolution.y;
+            this.modelScale = placeholderHeight / fullHeight;
 
             Initialize();
         }
@@ -154,7 +151,7 @@ namespace HegaCore.UI
                     this.maxImageIndex = i;
             }
 
-            var progress = this.dataContainer.GetPlayerCharacterProgress(this.currentCharacter);
+            var progress = this.dataContainer.GetPlayerCharacterProgress(this.currentCharacter, true);
             var data = this.table.GetEntry(this.currentCharacter);
 
             foreach (var clip in this.clips)
@@ -261,7 +258,7 @@ namespace HegaCore.UI
                 return;
 
             this.characterModel.SetScale(scale);
-            this.characterModel.SetLayer(this.characterLayer.value, this.sortingOrder);
+            this.characterModel.SetLayer(this.characterLayer);
             this.characterModel.PlayBodyAnimation(this.currentImageId);
         }
 
@@ -366,18 +363,18 @@ namespace HegaCore.UI
             else
                 this.currentImageIndex = -1;
 
-            var girlIndex = this.characterList.CurrentIndex + 1;
+            var characterIndex = this.characterList.CurrentIndex + 1;
 
-            if (girlIndex >= this.characterList.Count)
-                girlIndex = 0;
+            if (characterIndex >= this.characterList.Count)
+                characterIndex = 0;
 
-            for (; girlIndex < this.characterList.Count; girlIndex++)
+            for (; characterIndex < this.characterList.Count; characterIndex++)
             {
-                if (this.characterList.IsUnlock(girlIndex))
+                if (this.characterList.IsUnlock(characterIndex))
                     break;
             }
 
-            SelectCharacter(this.characterList.GetCharacterId(girlIndex));
+            SelectCharacter(this.characterList.GetCharacterId(characterIndex));
         }
 
         public void UI_Button_Minimal_Previous()
@@ -392,18 +389,18 @@ namespace HegaCore.UI
 
             this.currentImageIndex = this.maxImageIndex;
 
-            var girlIndex = this.characterList.CurrentIndex - 1;
+            var characterIndex = this.characterList.CurrentIndex - 1;
 
-            if (girlIndex < 0)
-                girlIndex = this.characterList.Count - 1;
+            if (characterIndex < 0)
+                characterIndex = this.characterList.Count - 1;
 
-            for (; girlIndex >= 0; girlIndex--)
+            for (; characterIndex >= 0; characterIndex--)
             {
-                if (this.characterList.IsUnlock(girlIndex))
+                if (this.characterList.IsUnlock(characterIndex))
                     break;
             }
 
-            SelectCharacter(this.characterList.GetCharacterId(girlIndex));
+            SelectCharacter(this.characterList.GetCharacterId(characterIndex));
         }
     }
 }
