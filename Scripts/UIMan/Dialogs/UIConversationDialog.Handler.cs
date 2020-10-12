@@ -83,6 +83,9 @@ namespace HegaCore.UI
         private Action onHide;
         private Action onHideCompleted;
 
+        private ReadNovelData novelData;
+        private ReadCharacterData characterData;
+
         private ConversationRow conversation;
         private DialogueRow defaultDialogue;
         private DialogueRow dialogue;
@@ -192,11 +195,14 @@ namespace HegaCore.UI
 
         private void Initialize()
         {
+            this.novelData = VisualNovelDataset.Novel;
+            this.characterData = VisualNovelDataset.Character;
+
             UnuLogger.Log($"Conversation: {this.conversationId}");
 
             InitializeDaemon(this.daemon = Settings.DataContainer.DarkLord);
 
-            this.conversation = Settings.Novel.GetConversation(this.conversationId);
+            this.conversation = this.novelData.GetConversation(this.conversationId);
 
             if (this.actors.Length != this.actorViews.Length)
                 this.actors = new Actor[this.actorViews.Length];
@@ -664,7 +670,7 @@ namespace HegaCore.UI
         private void ShowSpeaker()
         {
             var id = this.dialogue?.Speaker ?? string.Empty;
-            var data = Settings.Character.GetCharacter(id);
+            var data = this.characterData.GetCharacter(id);
 
             string avatar;
             string name;
@@ -737,7 +743,7 @@ namespace HegaCore.UI
             => this.conversation.GetContent(choice.ContentId).GetLocalization(Settings.DataContainer.Settings.Language);
 
         private string GetContent(CharacterRow character)
-            => Settings.Character.GetContent(character.ContentId).GetLocalization(Settings.DataContainer.Settings.Language);
+            => this.characterData.GetContent(character.ContentId).GetLocalization(Settings.DataContainer.Settings.Language);
 
         private void Invoke(IReadOnlyList<VisualNovelData.Data.Command> commands)
         {
@@ -890,7 +896,7 @@ namespace HegaCore.UI
         public void UI_Event_Actor_Show(int actorNumber)
         {
             var id = GetActorId(actorNumber);
-            var character = Settings.Character.GetCharacter(id);
+            var character = this.characterData.GetCharacter(id);
             var model = character?.P1 ?? string.Empty;
 
             if (string.IsNullOrEmpty(model))
@@ -918,7 +924,7 @@ namespace HegaCore.UI
         private void ShowActorMove(int actorNumber, Transform fromPosition)
         {
             var id = GetActorId(actorNumber);
-            var character = Settings.Character.GetCharacter(id);
+            var character = this.characterData.GetCharacter(id);
             var model = character?.P1 ?? string.Empty;
 
             if (string.IsNullOrEmpty(model))

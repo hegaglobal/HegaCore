@@ -121,11 +121,11 @@ namespace HegaCore.UI
         private void Initialize()
         {
             this.dataContainer = Settings.DataContainer;
-            this.characterData = Settings.CharacterData;
-            this.table = Settings.CharacterTable;
+            this.characterData = CharacterDataset.Data;
+            this.table = CharacterDataset.Table;
             this.showClip = Settings.ShowClip;
 
-            this.characterList.Initialize(this.dataContainer, Settings.CharacterMap);
+            this.characterList.Initialize(CharacterDataset.Map, this.dataContainer.CharacterImages);
             this.currentImageId = -1;
             this.currentImageIndex = -1;
         }
@@ -238,8 +238,14 @@ namespace HegaCore.UI
 
         private void ShowCurrentImage()
         {
-            var character = this.characterData.GetCharacter(this.currentCharacter.ToString().ToLower());
+            if (!this.table.TryGetEntry(this.currentCharacter, out var data))
+                return;
+
+            var character = this.characterData.GetCharacter(data.Name.ToLower());
             var model = character?.P1 ?? string.Empty;
+
+            this.CharacterKey = data.NameKey;
+            this.CharacterIconKey = data.IconKey;
 
             if (string.IsNullOrEmpty(model))
                 return;
@@ -247,7 +253,7 @@ namespace HegaCore.UI
             Vector3 position;
             float scale;
 
-            if (this.fullPanel.IsHidden)
+            if (this.minimalPanel.IsHidden)
             {
                 position = this.placeholderSize.position;
                 scale = this.modelScale;

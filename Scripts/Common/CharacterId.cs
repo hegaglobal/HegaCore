@@ -36,6 +36,9 @@ namespace HegaCore
             return hashCode;
         }
 
+        public override string ToString()
+            => $"({this.Character}, {this.Variant})";
+
         public static int CharacterCount { get; set; } = 0;
 
         public static implicit operator int(in CharacterId value)

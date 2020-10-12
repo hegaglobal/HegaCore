@@ -17,6 +17,10 @@ namespace HegaCore.Events.Commands
 
         private IEnumerable<DataCommand> GetCoreCommands()
         {
+            yield return new CharacterClipClear();
+            yield return new CharacterClipUnlock();
+            yield return new CharacterImageClear();
+            yield return new CharacterImageUnlock();
             yield return new MissionClear();
             yield return new MissionUnlock();
             yield return new MusicPlay();

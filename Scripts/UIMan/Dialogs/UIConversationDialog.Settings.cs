@@ -1,5 +1,4 @@
-﻿using VisualNovelData.Data;
-using VisualNovelData.Commands;
+﻿using VisualNovelData.Commands;
 
 namespace HegaCore.UI
 {
@@ -15,22 +14,15 @@ namespace HegaCore.UI
 
             public static BaseGameDataContainer DataContainer { get; private set; }
 
-            public static CharacterData Character { get; private set; }
-
-            public static NovelData Novel { get; private set; }
-
             public static CommandSystem CommandSystem { get; private set; }
 
             public static void Initialize(string avatarAtlasName, in ActorDuration actorDuration, float bgDurationChange,
-                                          BaseGameDataContainer dataContainer, CharacterData character, NovelData novel,
-                                          CommandSystem commandSystem)
+                                          BaseGameDataContainer dataContainer, CommandSystem commandSystem)
             {
                 AvatarAtlasName = avatarAtlasName;
                 ActorDuration = actorDuration;
                 BackgroundDurationChange = bgDurationChange;
                 DataContainer = dataContainer;
-                Character = character;
-                Novel = novel;
                 CommandSystem = commandSystem;
             }
         }

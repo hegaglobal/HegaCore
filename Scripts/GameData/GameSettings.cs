@@ -4,7 +4,7 @@ using UnityEngine;
 namespace HegaCore
 {
     [Serializable]
-    public sealed class GameSettings : ILanguage
+    public class GameSettings : ILanguage
     {
         public const int CurrentRevision = 1;
 

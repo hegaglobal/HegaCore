@@ -35,6 +35,9 @@ namespace HegaCore
                 (this.Tables.Character, nameof(this.Tables.Character));
 
             this.Tables.PrepareCharacterMap();
+
+            VisualNovelDataset.Initialize(this.Tables.CharacterData, this.Tables.NovelData);
+            CharacterDataset.Initialize(this.Tables.CharacterData, this.Tables.Character, this.Tables.CharacterMap);
         }
 
         protected override void ContinueUnload()

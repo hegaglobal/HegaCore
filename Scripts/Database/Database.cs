@@ -5,12 +5,10 @@ using UnityEngine;
 using UnityEngine.AddressableAssets;
 using Cysharp.Threading.Tasks;
 using TinyCsvParser.Mapping;
-using VisualNovelData.Data;
 using VisualNovelData.Parser;
 
 namespace HegaCore
 {
-    using Database;
     using Database.Csv;
 
     public abstract partial class Database<TDatabase, TTables> : SingletonBehaviour<TDatabase>

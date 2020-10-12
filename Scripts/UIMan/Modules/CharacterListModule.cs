@@ -15,13 +15,13 @@ namespace HegaCore.UI
 
         public int CurrentIndex { get; private set; }
 
-        private BaseGameDataContainer dataContainer;
         private ReadDictionary<string, int> characterMap;
+        private ReadList<CharacterId> availableIds;
 
-        public void Initialize(BaseGameDataContainer dataContainer, in ReadDictionary<string, int> characterMap)
+        public void Initialize(in ReadDictionary<string, int> characterMap, in ReadList<CharacterId> availableIds)
         {
-            this.dataContainer = dataContainer;
             this.characterMap = characterMap;
+            this.availableIds = availableIds;
 
             foreach (var character in this.characters)
             {
@@ -43,12 +43,10 @@ namespace HegaCore.UI
 
         private void TryUnlockCharacters()
         {
-            var images = this.dataContainer.CharacterImages;
-
             foreach (var character in this.characters)
             {
                 var id = this.characterMap[character.Character];
-                var unlocked = images.Contains(new CharacterId(id, 0));
+                var unlocked = this.availableIds.Contains(new CharacterId(id, 0));
                 character.Initialize(unlocked);
             }
         }
