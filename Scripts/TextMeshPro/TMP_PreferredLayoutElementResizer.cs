@@ -53,10 +53,10 @@ namespace HegaCore
             if (!this.tween.Enabled)
             {
                 if (this.width)
-                    this.layoutElement.preferredWidth = width + this.width.Min;
+                    SetWidth(CalcNewWidth(width));
 
                 if (this.height)
-                    this.layoutElement.preferredHeight = height + this.height.Min;
+                    SetHeight(CalcNewHeight(height));
 
                 return;
             }
@@ -68,7 +68,7 @@ namespace HegaCore
             {
                 EnsureTween();
 
-                var tween = DOTween.To(GetWidth, SetWidth, width + this.width.Min, this.tween.Duration).SetEase(this.tween.Ease);
+                var tween = DOTween.To(GetWidth, SetWidth, CalcNewWidth(width), this.tween.Duration).SetEase(this.tween.Ease);
                 this.tweenSequence.Insert(0f, tween);
             }
 
@@ -76,10 +76,21 @@ namespace HegaCore
             {
                 EnsureTween();
 
-                var tween = DOTween.To(GetHeight, SetHeight, height + this.height.Min, this.tween.Duration).SetEase(this.tween.Ease);
+                var tween = DOTween.To(GetHeight, SetHeight, CalcNewHeight(height), this.tween.Duration).SetEase(this.tween.Ease);
                 this.tweenSequence.Insert(0f, tween);
             }
         }
+
+        private float CalcNewWidth(float value)
+            => CalcNewSize(this.width, value);
+
+        private float CalcNewHeight(float value)
+            => CalcNewSize(this.height, value);
+
+        private float CalcNewSize(in SizeComponent size, float value)
+            => string.IsNullOrEmpty(this.textVal)
+               ? size.Min + size.Empty
+               : value + size.Min + size.Offset;
 
         private float GetWidth()
             => this.layoutElement.preferredWidth;
@@ -108,10 +119,18 @@ namespace HegaCore
             [HorizontalGroup, ShowIf(nameof(Enable)), LabelWidth(25)]
             public float Min;
 
-            public SizeComponent(bool enabled, float min)
+            [HorizontalGroup, ShowIf(nameof(Enable)), LabelWidth(40)]
+            public float Offset;
+
+            [HorizontalGroup, ShowIf(nameof(Enable)), LabelWidth(40)]
+            public float Empty;
+
+            public SizeComponent(bool enabled, float min, float empty, float offset)
             {
                 this.Enable = enabled;
                 this.Min = min;
+                this.Empty = empty;
+                this.Offset = offset;
             }
 
             public static implicit operator bool(in SizeComponent value)

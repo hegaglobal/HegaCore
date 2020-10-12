@@ -126,6 +126,12 @@ namespace HegaCore.UI
             OnAwake();
         }
 
+        private void EnsureCanvasGroup()
+        {
+            if (!this.canvasGroup)
+                this.canvasGroup = GetComponent<CanvasGroup>();
+        }
+
         private void OnAwakeBehavior()
         {
             switch (this.BehaviourAtAwake)
@@ -182,6 +188,8 @@ namespace HegaCore.UI
 
         public void Show(bool instant = false)
         {
+            EnsureCanvasGroup();
+
             this.hideTween?.Kill();
             this.showTween?.Kill();
 
@@ -212,6 +220,8 @@ namespace HegaCore.UI
 
         public void Show(float duration)
         {
+            EnsureCanvasGroup();
+
             this.hideTween?.Kill();
             this.showTween?.Kill();
 
@@ -242,6 +252,8 @@ namespace HegaCore.UI
 
         public void Hide(bool instant = false)
         {
+            EnsureCanvasGroup();
+
             this.showTween?.Kill();
             this.hideTween?.Kill();
 
@@ -266,6 +278,8 @@ namespace HegaCore.UI
 
         public void Hide(float duration)
         {
+            EnsureCanvasGroup();
+
             this.showTween?.Kill();
             this.hideTween?.Kill();
 
