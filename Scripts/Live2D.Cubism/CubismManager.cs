@@ -20,6 +20,9 @@ namespace HegaCore
         [SerializeField]
         private float colorDuration = 0f;
 
+        [SerializeField]
+        private SingleOrderLayer spawnLayer = default;
+
         private readonly Dictionary<string, CubismController> models;
         private readonly Dictionary<string, Tweener> showTweens;
         private readonly Dictionary<string, Tweener> hideTweens;
@@ -60,11 +63,14 @@ namespace HegaCore
                 if (!model)
                     continue;
 
-                await UniTask.Delay(System.TimeSpan.FromSeconds(0.5f));
-
-                model.Hide();
+                model.SetLayer(this.spawnLayer);
+                model.SetAlpha(1f);
                 this.models.Add(key, model);
             }
+
+            HideAll(this.hideDuration);
+
+            await UniTask.Delay(System.TimeSpan.FromSeconds(this.hideDuration));
         }
 
         public void HideAll(bool instant = false)
@@ -109,8 +115,8 @@ namespace HegaCore
                 return;
 
             this.hideTweens[modelId] = DOTween.To(model.GetAlpha, model.SetAlpha, 0f, dur)
-                                         .SetEase(Ease.InOutQuad)
-                                         .OnComplete(model.Hide);
+                                              .SetEase(Ease.InOutQuad)
+                                              .OnComplete(model.Hide);
         }
 
         public void Hide(string modelId, in Vector3 to, float? duration = null)
@@ -124,8 +130,8 @@ namespace HegaCore
                 return;
 
             this.hideTweens[modelId] = model.transform.DOMove(to, dur)
-                                                 .SetEase(Ease.InOutQuad)
-                                                 .OnComplete(model.Hide);
+                                                      .SetEase(Ease.InOutQuad)
+                                                      .OnComplete(model.Hide);
         }
 
         public CubismController Show(string modelId, in SingleOrderLayer? orderLayer = null, float? scale = null)
