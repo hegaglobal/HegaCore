@@ -49,14 +49,6 @@ namespace HegaCore
             this.transform.localScale = this.LocalScale;
 
             if (this.gameObject.activeSelf)
-                StartCoroutine(HideInternal());
-        }
-
-        private IEnumerator HideInternal()
-        {
-            yield return new WaitForSeconds(0.02f);
-
-            if (this.gameObject.activeSelf)
                 this.gameObject.SetActive(false);
         }
 

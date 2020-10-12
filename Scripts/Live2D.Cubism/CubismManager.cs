@@ -60,19 +60,26 @@ namespace HegaCore
                 if (!model)
                     continue;
 
-                await UniTask.DelayFrame(2);
+                await UniTask.Delay(System.TimeSpan.FromSeconds(0.5f));
 
                 model.Hide();
                 this.models.Add(key, model);
             }
         }
 
-        public void HideAll()
+        public void HideAll(bool instant = false)
         {
-            foreach (var model in this.models.Values)
+            if (instant)
             {
-                model.Hide();
+                foreach (var model in this.models.Values)
+                {
+                    model.Hide();
+                }
+
+                return;
             }
+
+            HideAll(this.hideDuration);
         }
 
         public void HideAll(float? duration)
@@ -121,16 +128,22 @@ namespace HegaCore
                                                  .OnComplete(model.Hide);
         }
 
-        public CubismController Show(string modelId)
+        public CubismController Show(string modelId, in SingleOrderLayer? orderLayer = null, float? scale = null)
         {
             if (!this.models.TryGetValue(modelId.OrDarkLord(this.darkLord), out var model))
                 return null;
+
+            if (orderLayer.HasValue)
+                model.SetLayer(orderLayer.Value);
+
+            if (scale.HasValue)
+                model.SetScale(scale.Value);
 
             model.Show();
             return model;
         }
 
-        public CubismController Show(string modelId, in Vector3 position, float? duration = null)
+        public CubismController Show(string modelId, in Vector3 position, float? duration = null, in SingleOrderLayer? orderLayer = null, float? scale = null)
         {
             modelId = modelId.OrDarkLord(this.darkLord);
             var dur = GetDuration(duration, this.showDuration);
@@ -141,12 +154,19 @@ namespace HegaCore
                 return null;
 
             model.Show(position, 0f);
-            this.showTweens[modelId] = DOTween.To(model.GetAlpha, model.SetAlpha, 1f, dur).SetEase(Ease.InOutQuad);
+
+            if (orderLayer.HasValue)
+                model.SetLayer(orderLayer.Value);
+
+            if (scale.HasValue)
+                model.SetScale(scale.Value);
+
+            this.showTweens[modelId] = DOTween.To(model.GetAlpha, model.SetAlpha, 1f, dur).SetEase(Ease.InOutQuad).SetDelay(0.02f);
 
             return model;
         }
 
-        public CubismController Show(string modelId, in Vector3 from, in Vector3 to, float? duration = null)
+        public CubismController Show(string modelId, in Vector3 from, in Vector3 to, float? duration = null, in SingleOrderLayer? orderLayer = null, float? scale = null)
         {
             modelId = modelId.OrDarkLord(this.darkLord);
             var dur = GetDuration(duration, this.showDuration);
@@ -157,6 +177,13 @@ namespace HegaCore
                 return null;
 
             model.Show(from);
+
+            if (orderLayer.HasValue)
+                model.SetLayer(orderLayer.Value);
+
+            if (scale.HasValue)
+                model.SetScale(scale.Value);
+
             this.showTweens[modelId] = model.transform.DOMove(to, dur).SetEase(Ease.InOutQuad);
 
             return model;
@@ -214,7 +241,7 @@ namespace HegaCore
         private void KillTweens(string modelId)
         {
             if (this.hideTweens.TryGetValue(modelId, out var hideTween))
-                hideTween?.Kill();
+                hideTween?.Kill(true);
 
             if (this.showTweens.TryGetValue(modelId, out var showTween))
                 showTween?.Kill();
