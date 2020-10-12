@@ -24,6 +24,8 @@ namespace HegaCore.UI
         private void Awake()
         {
             this.toggle = GetComponent<Toggle>();
+            this.currentIsOn = this.toggle.isOn;
+
             OnToggleChanged(this.toggle.isOn);
 
             if (!this.onUpdate)
