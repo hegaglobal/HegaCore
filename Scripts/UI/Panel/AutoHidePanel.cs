@@ -14,6 +14,9 @@ namespace HegaCore.UI
         private float showingTime = 0f;
 
         private float autoHideAfter;
+        private bool isShowing;
+        private bool isAutoHiding;
+        private float elapsed;
 
         private void OnValidate()
         {
@@ -30,17 +33,35 @@ namespace HegaCore.UI
 
         public void Show(float autoHideAfter)
         {
+            this.elapsed = 0f;
             this.autoHideAfter = autoHideAfter;
+
+            if (this.isShowing)
+                return;
+
+            this.isShowing = true;
+            this.isAutoHiding = false;
             this.panel.Show();
         }
 
         private void OnPanelShowComplete()
-            => AutoHide().Forget();
-
-        private async UniTaskVoid AutoHide()
         {
-            await UniTask.Delay(System.TimeSpan.FromSeconds(this.autoHideAfter));
+            this.isAutoHiding = true;
+        }
 
+        private void Update()
+        {
+            if (!this.isAutoHiding)
+                return;
+
+            this.elapsed += Time.smoothDeltaTime;
+
+            if (this.elapsed < this.autoHideAfter)
+                return;
+
+            this.isAutoHiding = false;
+            this.isShowing = false;
+            this.elapsed = 0f;
             this.panel.Hide();
         }
     }
