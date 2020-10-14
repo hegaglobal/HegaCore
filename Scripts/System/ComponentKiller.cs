@@ -22,7 +22,7 @@ namespace HegaCore
         }
 
         public bool Contains(T item)
-            => this.temp.Contains(item) && this.items.Contains(item);
+            => this.temp.Contains(item) || this.items.Contains(item);
 
         public void TryKill()
         {
