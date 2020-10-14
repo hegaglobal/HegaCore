@@ -10,14 +10,8 @@ namespace HegaCore.Events.Commands.Data
 
         public override void Invoke(in Segment<object> parameters)
         {
-            if (!ValidateParameters(parameters, 1, nameof(SoundStop)))
-                return;
-
-            if (this.converter.TryConvert(parameters[0], out string value))
-            {
-                AudioManager.Instance.Player.StopSound();
-                Log();
-            }
+            AudioManager.Instance.Player.StopSound();
+            Log();
         }
     }
 }
