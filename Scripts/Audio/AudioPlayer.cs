@@ -20,11 +20,13 @@ namespace HegaCore
         private readonly AudioSource music;
         private readonly AudioSource sound;
         private readonly AudioSource voice;
+        private readonly AudioSource voiceBG;
         private readonly List<string> soundBuffer;
 
         private float musicFadeTime;
         private string currentMusicKey = string.Empty;
         private string currentVoiceKey = string.Empty;
+        private string currentVoiceBGKey = string.Empty;
         private AssetReferenceAudioClip currentMusicRef = null;
         private AssetReferenceAudioClip currentVoiceRef = null;
 
@@ -32,13 +34,14 @@ namespace HegaCore
         private Tweener musicFadeOut;
         private Tweener musicFadeIn;
 
-        public AudioPlayer(AudioManager manager, AudioMixer mixer, AudioSource music, AudioSource sound, AudioSource voice)
+        public AudioPlayer(AudioManager manager, AudioMixer mixer, AudioSource music, AudioSource sound, AudioSource voice, AudioSource voiceBg)
         {
             this.manager = manager;
             this.mixer = mixer;
             this.music = music;
             this.sound = sound;
             this.voice = voice;
+            this.voiceBG = voiceBg;
             this.soundBuffer = new List<string>();
         }
 
@@ -50,6 +53,7 @@ namespace HegaCore
             ChangeMusicVolume(musicVolume);
             ChangeSoundVolume(soundVolume);
             ChangeVoiceVolume(voiceVolume);
+            ChangeVoiceBGVolume(voiceVolume);
             SoundBufferRoutine(bufferClearDelay ?? SoundBufferClearDelay).Forget();
         }
 
@@ -80,6 +84,9 @@ namespace HegaCore
         public void ChangeVoiceVolume(float value)
             => this.mixer.SetFloat(VoiceVolume, ToVolume(value));
 
+        public void ChangeVoiceBGVolume(float value)
+            => this.mixer.SetFloat(VoiceVolume, ToVolume(value));
+        
         private static float ToVolume(float value)
         {
             const float min = -80f;
@@ -140,6 +147,7 @@ namespace HegaCore
 
                 case AudioType.Voice:
                     StopVoice();
+                    StopVoiceBG();
                     break;
             }
         }
@@ -259,7 +267,7 @@ namespace HegaCore
             PlaySound(key);
         }
 
-        public void PlayVoice(string key)
+        public void PlayVoice(string key, bool loop = false)
         {
             if (this.voice.isPlaying &&
                 string.Equals(this.currentVoiceKey, key))
@@ -272,12 +280,36 @@ namespace HegaCore
             {
                 this.currentVoiceKey = key;
                 this.voice.clip = voiceClip;
+                this.voice.loop = loop;
                 this.voice.Play();
             }
             else
             {
                 this.currentVoiceKey = string.Empty;
                 this.voice.Stop();
+            }
+        }
+        
+        public void PlayVoiceBG(string key, bool loop = false)
+        {
+            if (this.voiceBG.isPlaying &&
+                string.Equals(this.currentVoiceBGKey, key))
+                return;
+
+            this.voiceBG.Stop();
+            this.voiceBG.clip = null;
+
+            if (this.manager.TryGetVoice(key, out var voiceClip))
+            {
+                this.currentVoiceKey = key;
+                this.voiceBG.clip = voiceClip;
+                this.voiceBG.loop = loop;
+                this.voiceBG.Play();
+            }
+            else
+            {
+                this.currentVoiceBGKey = string.Empty;
+                this.voiceBG.Stop();
             }
         }
 
@@ -355,6 +387,9 @@ namespace HegaCore
         public void StopVoice()
             => this.voice.Stop();
 
+        public void StopVoiceBG()
+            => this.voiceBG.Stop();
+        
         private void FadeMusicPlay()
         {
             this.musicFadeIn?.Kill();

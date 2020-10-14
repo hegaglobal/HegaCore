@@ -24,6 +24,9 @@ namespace HegaCore
 
         [SerializeField]
         private AudioSource voiceSource = null;
+        
+        [SerializeField]
+        private AudioSource voiceBGSource = null;
 
         [SerializeField]
         private MusicRegisterer musicRegisterer = null;
@@ -49,7 +52,7 @@ namespace HegaCore
 
         private void Awake()
         {
-            this.Player = new AudioPlayer(this, this.audioMixer, this.musicSource, this.soundSource, this.voiceSource);
+            this.Player = new AudioPlayer(this, this.audioMixer, this.musicSource, this.soundSource, this.voiceSource,this.voiceBGSource);
         }
 
         public async UniTask InitializeAsync(float musicFadeTime, float musicVolume, float soundVolume, float voiceVolume)
