@@ -28,10 +28,17 @@ namespace HegaCore
                 if (item == null || !item.Validate() || ContainsKey(item.Key))
                     continue;
 
-                RegisterEmission(item.Key);
-                var result = await AddressablesManager.LoadAssetAsync(item.Reference);
+                try
+                {
+                    var result = await AddressablesManager.LoadAssetAsync(item.Reference);
 
-                RegisterPoolItem(item.Key, result.Value, item.PrepoolAmount);
+                    RegisterEmission(item.Key);
+                    RegisterPoolItem(item.Key, result.Value, item.PrepoolAmount);
+                }
+                catch (Exception ex)
+                {
+                    UnuLogger.LogException(ex, this);
+                }
             }
 
             Initialize(silent);
@@ -44,10 +51,17 @@ namespace HegaCore
                 if (string.IsNullOrEmpty(key) || ContainsKey(key))
                     continue;
 
-                RegisterEmission(key);
-                var result = await AddressablesManager.LoadAssetAsync<GameObject>(key);
+                try
+                {
+                    var result = await AddressablesManager.LoadAssetAsync<GameObject>(key);
 
-                RegisterPoolItem(key, result.Value, prepoolAmount);
+                    RegisterEmission(key);
+                    RegisterPoolItem(key, result.Value, prepoolAmount);
+                }
+                catch (Exception ex)
+                {
+                    UnuLogger.LogException(ex, this);
+                }
             }
 
             Initialize(silent);

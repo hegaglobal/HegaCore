@@ -36,10 +36,18 @@ namespace HegaCore
 
             OperationResult<GameObject> result;
 
-            if (this.useReference)
-                result = await AddressablesManager.InstantiateAsync(this.reference, this.root);
-            else
-                result = await AddressablesManager.InstantiateAsync(this.key, this.root);
+            try
+            {
+                if (this.useReference)
+                    result = await AddressablesManager.InstantiateAsync(this.reference, this.root);
+                else
+                    result = await AddressablesManager.InstantiateAsync(this.key, this.root);
+            }
+            catch (Exception ex)
+            {
+                UnuLogger.LogException(ex);
+                return null;
+            }
 
             var go = result.Value;
             go.transform.localScale = Vector3.one;

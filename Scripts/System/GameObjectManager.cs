@@ -13,13 +13,20 @@ namespace HegaCore
 
         public async UniTask LoadAsync(string id, Transform root = null)
         {
-            var result = await AddressablesManager.InstantiateAsync(id);
-            result.Value.name = id;
+            try
+            {
+                var result = await AddressablesManager.InstantiateAsync(id);
+                result.Value.name = id;
 
-            if (root)
-                result.Value.transform.SetParent(root, false);
+                if (root)
+                    result.Value.transform.SetParent(root, false);
 
-            Add(id, result.Value);
+                Add(id, result.Value);
+            }
+            catch (Exception ex)
+            {
+                UnuLogger.LogException(ex);
+            }
         }
 
         public async UniTask LoadAsync(params string[] ids)
@@ -29,10 +36,17 @@ namespace HegaCore
 
             foreach (var id in ids)
             {
-                var result = await AddressablesManager.InstantiateAsync(id);
-                result.Value.name = id;
+                try
+                {
+                    var result = await AddressablesManager.InstantiateAsync(id);
+                    result.Value.name = id;
 
-                Add(id, result.Value);
+                    Add(id, result.Value);
+                }
+                catch (Exception ex)
+                {
+                    UnuLogger.LogException(ex);
+                }
             }
         }
 
@@ -43,13 +57,20 @@ namespace HegaCore
 
             foreach (var id in ids)
             {
-                var result = await AddressablesManager.InstantiateAsync(id);
-                result.Value.name = id;
+                try
+                {
+                    var result = await AddressablesManager.InstantiateAsync(id);
+                    result.Value.name = id;
 
-                if (root)
-                    result.Value.transform.SetParent(root, false);
+                    if (root)
+                        result.Value.transform.SetParent(root, false);
 
-                Add(id, result.Value);
+                    Add(id, result.Value);
+                }
+                catch (Exception ex)
+                {
+                    UnuLogger.LogException(ex);
+                }
             }
         }
 
@@ -84,7 +105,15 @@ namespace HegaCore
                 return;
 
             this.map.Remove(id);
-            AddressablesManager.ReleaseInstances(id);
+
+            try
+            {
+                AddressablesManager.ReleaseInstances(id);
+            }
+            catch (Exception ex)
+            {
+                UnuLogger.LogException(ex);
+            }
         }
 
         public void Release(params string[] ids)

@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Table;
 using UnityEngine;
 using UnityEngine.Audio;
@@ -115,10 +116,17 @@ namespace HegaCore
                 return;
             }
 
-            var handle = Addressables.LoadAssetAsync<AudioClip>(key);
-            await handle.Task;
+            try
+            {
+                var handle = Addressables.LoadAssetAsync<AudioClip>(key);
+                await handle.Task;
 
-            map.Add(key, handle);
+                map.Add(key, handle);
+            }
+            catch (Exception ex)
+            {
+                UnuLogger.LogException(ex);
+            }
         }
 
         private AudioMap GetMap(AudioType type)
@@ -189,10 +197,17 @@ namespace HegaCore
                     continue;
                 }
 
-                var handle = Addressables.LoadAssetAsync<AudioClip>(key);
-                await handle.Task;
+                try
+                {
+                    var handle = Addressables.LoadAssetAsync<AudioClip>(key);
+                    await handle.Task;
 
-                map.Add(key, handle);
+                    map.Add(key, handle);
+                }
+                catch (Exception ex)
+                {
+                    UnuLogger.LogException(ex, this);
+                }
             }
         }
 
