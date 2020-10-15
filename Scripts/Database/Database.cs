@@ -66,9 +66,8 @@ namespace HegaCore
                 return;
             }
 
-            await UniTask.DelayFrame(1);
+            await CheckDarkLordAsync();
 
-            CheckDarkLord();
             CheckDaemon();
             CheckOverlord();
 
@@ -86,11 +85,13 @@ namespace HegaCore
 
         protected abstract void ContinueUnload();
 
-        private void CheckDarkLord()
+        private async UniTask CheckDarkLordAsync()
         {
             try
             {
-                this.DarkLord = AddressablesManager.ContainsKey(this.config.DarkLordFile);
+                var (isCanceled, result) = await AddressablesManager.LoadAssetAsync<TextAsset>(this.config.DarkLordFile)
+                                                                    .SuppressCancellationThrow();
+                this.DarkLord = !isCanceled && result.Succeeded;
             }
             catch
             {
