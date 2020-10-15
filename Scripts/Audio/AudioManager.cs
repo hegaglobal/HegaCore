@@ -125,7 +125,7 @@ namespace HegaCore
             }
             catch (Exception ex)
             {
-                UnuLogger.LogException(ex);
+                UnuLogger.LogException(ex, this);
             }
         }
 

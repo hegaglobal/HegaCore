@@ -200,7 +200,7 @@ namespace HegaCore.UI
 
             UnuLogger.Log($"Conversation: {this.conversationId}");
 
-            InitializeDaemon(this.daemon = Settings.DataContainer.DarkLord);
+            InitializeDaemon(this.daemon = Settings.DataContainer.Daemon);
 
             this.conversation = this.novelData.GetConversation(this.conversationId);
 
