@@ -59,7 +59,7 @@ namespace HegaCore
 
             while (true)
             {
-                time += Time.unscaledDeltaTime;
+                time += GameTime.Provider.UnscaledDeltaTime;
 
                 await UniTask.DelayFrame(1);
 

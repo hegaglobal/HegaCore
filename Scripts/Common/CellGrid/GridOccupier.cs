@@ -1,0 +1,218 @@
+﻿using System;
+using System.Collections.Generic;
+using System.Grid;
+using System.Linq;
+
+namespace HegaCore
+{
+    public class GridOccupier<T> : IGridOccupier<T>
+    {
+        private readonly Dictionary<GridIndex, T> map;
+        private readonly T defaultValue;
+
+        public GridOccupier(T defaultValue)
+        {
+            this.map = new Dictionary<GridIndex, T>();
+            this.defaultValue = defaultValue;
+        }
+
+        public GridOccupier(IDictionary<GridIndex, T> map, T defaultValue)
+        {
+            if (map == null)
+                throw new ArgumentNullException(nameof(map));
+
+            this.map = new Dictionary<GridIndex, T>(map);
+            this.defaultValue = defaultValue;
+        }
+
+        public GridOccupier(IReadOnlyDictionary<GridIndex, T> map, T defaultValue)
+        {
+            if (map == null)
+                throw new ArgumentNullException(nameof(map));
+
+            this.map = new Dictionary<GridIndex, T>();
+            this.defaultValue = defaultValue;
+
+            this.map.AddRange(map);
+        }
+
+        public GridOccupier(Dictionary<GridIndex, T> map, T defaultValue, bool useMapReference = false)
+        {
+            if (map == null)
+                throw new ArgumentNullException(nameof(map));
+
+            if (useMapReference)
+                this.map = map;
+            else
+                this.map = new Dictionary<GridIndex, T>(map);
+
+            this.defaultValue = defaultValue;
+        }
+
+        public bool IsOccupied(in GridIndex index)
+            => this.map.ContainsKey(index);
+
+        public void GetIndices(ICollection<GridIndex> output)
+            => output?.AddRange(this.map.Keys);
+
+        public void GetValues(ICollection<T> output)
+            => output?.AddRange(this.map.Keys);
+
+        public void Mark(in GridIndex index)
+        {
+            this.map[index] = this.defaultValue;
+        }
+
+        public void Mark(in GridIndexRange range)
+        {
+            foreach (var index in range)
+            {
+                this.map[index] = this.defaultValue;
+            }
+        }
+
+        public void Mark(IEnumerable<GridIndex> indices)
+        {
+            foreach (var index in indices)
+            {
+                this.map[index] = this.defaultValue;
+            }
+        }
+
+        public void Mark(in GridIndex index, in GridIndex valueIndex)
+        {
+            if (!this.map.TryGetValue(valueIndex, out var value))
+                value = this.defaultValue;
+
+            this.map[index] = value;
+        }
+
+        public void Mark(in GridIndexRange range, in GridIndex valueIndex)
+        {
+            if (!this.map.TryGetValue(valueIndex, out var value))
+                value = this.defaultValue;
+
+            foreach (var index in range)
+            {
+                this.map[index] = value;
+            }
+        }
+
+        public void Mark(IEnumerable<GridIndex> indices, in GridIndex valueIndex)
+        {
+            if (!this.map.TryGetValue(valueIndex, out var value))
+                value = this.defaultValue;
+
+            foreach (var index in indices)
+            {
+                this.map[index] = value;
+            }
+        }
+
+        public void Unmark(in GridIndex index)
+        {
+            this.map.Remove(index);
+        }
+
+        public void Unmark(in GridIndexRange range)
+        {
+            foreach (var index in range)
+            {
+                this.map.Remove(index);
+            }
+        }
+
+        public void Unmark(IEnumerable<GridIndex> indices)
+        {
+            foreach (var index in indices)
+            {
+                this.map.Remove(index);
+            }
+        }
+
+        public void Mark(in GridIndex index, T value)
+        {
+            this.map[index] = value;
+        }
+
+        public void Mark(in GridIndexRange range, T value)
+        {
+            foreach (var index in range)
+            {
+                this.map[index] = value;
+            }
+        }
+
+        public void Mark(IEnumerable<GridIndex> indices, T value)
+        {
+            foreach (var index in indices)
+            {
+                this.map[index] = value;
+            }
+        }
+
+        public void Unmark(T value)
+        {
+            if (value == null)
+                return;
+
+            var query = this.map.Where(x => value.Equals(x.Value))
+                                .Select(x => x.Key);
+
+            var keys = ListPool<GridIndex>.Get();
+            keys.AddRange(query);
+
+            foreach (var key in keys)
+            {
+                this.map.Remove(key);
+            }
+
+            ListPool<GridIndex>.Return(keys);
+        }
+
+        public bool TryGetValue(in GridIndex key, out T value)
+            => this.map.TryGetValue(key, out value);
+
+        public void Clear()
+            => this.map.Clear();
+
+        public Enumerator GetEnumerator()
+            => new Enumerator(this.map);
+
+        IEnumerator<GridValue<T>> IReadGridOccupier<T>.GetEnumerator()
+            => GetEnumerator();
+
+        public struct Enumerator : IEnumerator<GridValue<T>>
+        {
+            private readonly IEnumerator<KeyValuePair<GridIndex, T>> source;
+            private readonly bool hasSource;
+
+            public Enumerator(in ReadDictionary<GridIndex, T> map)
+            {
+                this.source = map.GetEnumerator();
+                this.hasSource = true;
+            }
+
+            public GridValue<T> Current
+            {
+                get
+                {
+                    var current = this.source.Current;
+                    return new GridValue<T>(current.Key, current.Value);
+                }
+            }
+
+            object System.Collections.IEnumerator.Current
+                => this.Current;
+
+            public bool MoveNext()
+                => this.hasSource && this.source.MoveNext();
+
+            public void Reset()
+                => this.source?.Reset();
+
+            public void Dispose()
+                => this.source?.Dispose();
+        }
+    }
+}

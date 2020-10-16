@@ -1,7 +1,6 @@
 ﻿using System.Collections.Generic;
 using System.Grid;
 using System;
-using System.Diagnostics;
 
 namespace HegaCore
 {
@@ -11,26 +10,25 @@ namespace HegaCore
     {
         public GridSize Size => this.data.Size;
 
-        public ClampedGridSize ClampedSize => this.clampedSize;
+        public ClampedGridSize ClampedSize { get; }
 
         private readonly Grid<Cell> data;
-        private readonly ClampedGridSize clampedSize;
-        private readonly IGridIndexOccupier occupier;
+        private readonly IReadGridOccupier occupier;
 
-        public ReadCellGrid(Grid<Cell> data, IGridIndexOccupier occupier)
+        public ReadCellGrid(Grid<Cell> data, IReadGridOccupier occupier)
         {
             this.data = new Grid<Cell>(data);
-            this.clampedSize = this.data.Size;
+            this.ClampedSize = this.data.Size;
             this.occupier = occupier ?? throw new ArgumentNullException();
         }
 
-        public ReadCellGrid(in ReadGrid<Cell> data, IGridIndexOccupier occupier)
+        public ReadCellGrid(in ReadGrid<Cell> data, IReadGridOccupier occupier)
         {
             var cache = ListPool<GridValue<Cell>>.Get();
             data.GetIndexedValues(cache);
 
             this.data = new Grid<Cell>(data.Size, cache);
-            this.clampedSize = this.data.Size;
+            this.ClampedSize = this.data.Size;
             ListPool<GridValue<Cell>>.Return(cache);
 
             this.occupier = occupier ?? throw new ArgumentNullException();
@@ -95,7 +93,7 @@ namespace HegaCore
             if (cells.Count > 0 && modes.Occupied != CellMode.Include)
             {
                 var occupied = HashSetPool<GridIndex>.Get();
-                this.occupier.GetOccupied(occupied);
+                this.occupier.GetIndices(occupied);
 
                 switch (modes.Occupied)
                 {
@@ -228,9 +226,9 @@ namespace HegaCore
         public void GetRanges(in GridIndexRange pivot, int size, int step, ICollection<GridIndexRange> output,
                               in CellModes? modes = null)
         {
-            var slice = this.clampedSize.IndexRange(pivot, size);
+            var slice = this.ClampedSize.IndexRange(pivot, size);
             var ranges = ListPool<GridIndexRange>.Get();
-            this.clampedSize.IndexRanges(slice, size, step, ranges);
+            this.ClampedSize.IndexRanges(slice, size, step, ranges);
 
             Filter(pivot, ranges, modes ?? CellModes.Include);
             output.AddRange(ranges);
@@ -347,7 +345,7 @@ namespace HegaCore
             }
 
             var ranges = ListPool<GridIndexRange>.Get();
-            this.clampedSize.IndexRanges(size, step, ranges);
+            this.ClampedSize.IndexRanges(size, step, ranges);
             Filter(null, ranges, modes ?? CellModes.Include);
 
             return TryGetRandomRange(ref range, ranges);
@@ -355,17 +353,17 @@ namespace HegaCore
 
         public bool TryGetRandomRange(in GridIndex pivot, int extend, int size, int step,
                                       out GridIndexRange range, in CellModes? modes = null)
-            => TryGetRandomRange(pivot, this.clampedSize.IndexRange(pivot, extend), size, step,
+            => TryGetRandomRange(pivot, this.ClampedSize.IndexRange(pivot, extend), size, step,
                                  out range, modes);
 
         public bool TryGetRandomRange(in GridIndex pivot, int lowerExtend, int upperExtend, int size, int step,
                                       out GridIndexRange range, in CellModes? modes = null)
-            => TryGetRandomRange(pivot, this.clampedSize.IndexRange(pivot, lowerExtend, upperExtend), size, step,
+            => TryGetRandomRange(pivot, this.ClampedSize.IndexRange(pivot, lowerExtend, upperExtend), size, step,
                                  out range, modes);
 
         public bool TryGetRandomRange(in GridIndex pivot, in GridIndex lowerExtend, in GridIndex upperExtend, int size, int step,
                                       out GridIndexRange range, in CellModes? modes = null)
-            => TryGetRandomRange(pivot, this.clampedSize.IndexRange(pivot, lowerExtend, upperExtend), size, step,
+            => TryGetRandomRange(pivot, this.ClampedSize.IndexRange(pivot, lowerExtend, upperExtend), size, step,
                                  out range, modes);
 
         public bool TryGetRandomRange(in GridIndex pivot, in GridIndexRange pivotRange, int size, int step,
@@ -378,7 +376,7 @@ namespace HegaCore
 
             if (size == 1)
             {
-                var slice = this.clampedSize.IndexRange(pivotRange, size);
+                var slice = this.ClampedSize.IndexRange(pivotRange, size);
 
                 if (TryGetRandomCell(pivot, slice, out var cell, modes))
                 {
@@ -432,7 +430,7 @@ namespace HegaCore
             if (ranges.Count > 0 && modes.Occupied != CellMode.Include)
             {
                 var occupied = ListPool<GridIndex>.Get();
-                this.occupier.GetOccupied(occupied);
+                this.occupier.GetIndices(occupied);
                 occupied.Sort(new GridIndex1Comparer(this.data.Size, true));
 
                 switch (modes.Occupied)

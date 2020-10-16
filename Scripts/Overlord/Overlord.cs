@@ -53,7 +53,7 @@ namespace HegaCore
             if (!this.canRunTasks)
                 return;
 
-            this.elapsed += Time.smoothDeltaTime;
+            this.elapsed += GameTime.Provider.DeltaTime;
 
             if (this.elapsed < this.runTempo)
                 return;

@@ -30,14 +30,26 @@ namespace HegaCore
 
         public void Copy(GameData<TPlayerData> data)
         {
+            if (data == null)
+                return;
+
             this.OnceCorrupted = data.OnceCorrupted;
 
-            for (var i = 0; i < this.Players.Length; i++)
+            if (this.Players != null && data.Players != null)
             {
-                this.Players[i].CopyFrom(data.Players[i]);
+                for (var i = 0; i < this.Players.Length; i++)
+                {
+                    if (i >= data.Players.Length)
+                        continue;
+
+                    this.Players[i].CopyFrom(data.Players[i]);
+                }
             }
 
-            this.Settings.Copy(data?.Settings);
+            if (this.Settings != null)
+            {
+                this.Settings.Copy(data?.Settings);
+            }
         }
     }
 }

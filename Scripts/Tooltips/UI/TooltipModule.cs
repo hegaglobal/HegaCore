@@ -1,6 +1,5 @@
 ﻿using UnityEngine;
 using UnuGames;
-using TMPro;
 
 namespace HegaCore.UI
 {

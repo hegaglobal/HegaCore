@@ -1,5 +1,4 @@
-﻿using System.Collections;
-using UnityEngine;
+﻿using UnityEngine;
 using Live2D.Cubism.Rendering;
 
 namespace HegaCore

@@ -1,5 +1,4 @@
 ﻿using UnityEngine;
-using Cysharp.Threading.Tasks;
 
 namespace HegaCore.UI
 {
@@ -10,10 +9,10 @@ namespace HegaCore.UI
         [SerializeField]
         private Panel panel = null;
 
-        [SerializeField]
-        private float showingTime = 0f;
+        [SerializeField, UnityEngine.Serialization.FormerlySerializedAs("showingTime")]
+        private float showingDuration = 0f;
 
-        private float autoHideAfter;
+        private float duration;
         private bool isShowing;
         private bool isAutoHiding;
         private float elapsed;
@@ -25,16 +24,19 @@ namespace HegaCore.UI
 
         private void Awake()
         {
+            if (!this.panel)
+                this.panel = GetComponent<Panel>();
+
             this.panel.OnShowComplete.AddListener(OnPanelShowComplete);
         }
 
         public void Show()
-            => Show(this.showingTime);
+            => Show(this.showingDuration);
 
-        public void Show(float autoHideAfter)
+        public void Show(float duration)
         {
             this.elapsed = 0f;
-            this.autoHideAfter = autoHideAfter;
+            this.duration = duration;
 
             if (this.isShowing)
                 return;
@@ -49,20 +51,25 @@ namespace HegaCore.UI
             this.isAutoHiding = true;
         }
 
+        public void Hide()
+        {
+            this.isShowing = false;
+            this.isAutoHiding = false;
+            this.elapsed = 0f;
+            this.panel.Hide();
+        }
+
         private void Update()
         {
             if (!this.isAutoHiding)
                 return;
 
-            this.elapsed += Time.smoothDeltaTime;
+            this.elapsed += GameTime.Provider.DeltaTime;
 
-            if (this.elapsed < this.autoHideAfter)
+            if (this.elapsed < this.duration)
                 return;
 
-            this.isAutoHiding = false;
-            this.isShowing = false;
-            this.elapsed = 0f;
-            this.panel.Hide();
+            Hide();
         }
     }
 }
