@@ -13,16 +13,16 @@ namespace HegaCore
         public ClampedGridSize ClampedSize { get; }
 
         private readonly Grid<Cell> data;
-        private readonly IReadGridOccupier occupier;
+        private readonly IReadGridMarker occupier;
 
-        public ReadCellGrid(Grid<Cell> data, IReadGridOccupier occupier)
+        public ReadCellGrid(Grid<Cell> data, IReadGridMarker occupier)
         {
             this.data = new Grid<Cell>(data);
             this.ClampedSize = this.data.Size;
             this.occupier = occupier ?? throw new ArgumentNullException();
         }
 
-        public ReadCellGrid(in ReadGrid<Cell> data, IReadGridOccupier occupier)
+        public ReadCellGrid(in ReadGrid<Cell> data, IReadGridMarker occupier)
         {
             var cache = ListPool<GridValue<Cell>>.Get();
             data.GetIndexedValues(cache);
@@ -56,20 +56,20 @@ namespace HegaCore
             }
         }
 
-        private void RemoveOccupied(List<Cell> cells, HashSet<GridIndex> occupied)
+        private void RemoveMarked(List<Cell> cells, HashSet<GridIndex> marked)
         {
             for (var i = cells.Count - 1; i >= 0; i--)
             {
-                if (occupied.Contains(cells[i].Index))
+                if (marked.Contains(cells[i].Index))
                     cells.RemoveAt(i);
             }
         }
 
-        private void OnlyOccupied(List<Cell> cells, HashSet<GridIndex> occupied)
+        private void OnlyMarked(List<Cell> cells, HashSet<GridIndex> marked)
         {
             for (var i = cells.Count - 1; i >= 0; i--)
             {
-                if (!occupied.Contains(cells[i]))
+                if (!marked.Contains(cells[i]))
                     cells.RemoveAt(i);
             }
         }
@@ -90,23 +90,23 @@ namespace HegaCore
                 }
             }
 
-            if (cells.Count > 0 && modes.Occupied != CellMode.Include)
+            if (cells.Count > 0 && modes.Marked != CellMode.Include)
             {
-                var occupied = HashSetPool<GridIndex>.Get();
-                this.occupier.GetIndices(occupied);
+                var marked = HashSetPool<GridIndex>.Get();
+                this.occupier.GetIndices(marked);
 
-                switch (modes.Occupied)
+                switch (modes.Marked)
                 {
                     case CellMode.Exclude:
-                        RemoveOccupied(cells, occupied);
+                        RemoveMarked(cells, marked);
                         break;
 
                     case CellMode.Only:
-                        OnlyOccupied(cells, occupied);
+                        OnlyMarked(cells, marked);
                         break;
                 }
 
-                HashSetPool<GridIndex>.Return(occupied);
+                HashSetPool<GridIndex>.Return(marked);
             }
 
             output.AddRange(cells, false, true);
@@ -427,24 +427,24 @@ namespace HegaCore
                 }
             }
 
-            if (ranges.Count > 0 && modes.Occupied != CellMode.Include)
+            if (ranges.Count > 0 && modes.Marked != CellMode.Include)
             {
-                var occupied = ListPool<GridIndex>.Get();
-                this.occupier.GetIndices(occupied);
-                occupied.Sort(new GridIndex1Comparer(this.data.Size, true));
+                var marked = ListPool<GridIndex>.Get();
+                this.occupier.GetIndices(marked);
+                marked.Sort(new GridIndex1Comparer(this.data.Size, true));
 
-                switch (modes.Occupied)
+                switch (modes.Marked)
                 {
                     case CellMode.Exclude:
-                        RemoveOccupied(ranges, occupied);
+                        RemoveMarked(ranges, marked);
                         break;
 
                     case CellMode.Only:
-                        OnlyOccupied(ranges, occupied);
+                        OnlyMarked(ranges, marked);
                         break;
                 }
 
-                ListPool<GridIndex>.Return(occupied);
+                ListPool<GridIndex>.Return(marked);
             }
         }
 
@@ -476,11 +476,11 @@ namespace HegaCore
             }
         }
 
-        private void RemoveOccupied(List<GridIndexRange> ranges, List<GridIndex> occupied)
+        private void RemoveMarked(List<GridIndexRange> ranges, List<GridIndex> marked)
         {
             for (var i = ranges.Count - 1; i >= 0; i--)
             {
-                foreach (var index in occupied)
+                foreach (var index in marked)
                 {
                     if (ranges[i].Contains(index))
                     {
@@ -491,11 +491,11 @@ namespace HegaCore
             }
         }
 
-        private void OnlyOccupied(List<GridIndexRange> ranges, List<GridIndex> occupied)
+        private void OnlyMarked(List<GridIndexRange> ranges, List<GridIndex> marked)
         {
             for (var i = ranges.Count - 1; i >= 0; i--)
             {
-                foreach (var index in occupied)
+                foreach (var index in marked)
                 {
                     if (!ranges[i].Contains(index))
                     {

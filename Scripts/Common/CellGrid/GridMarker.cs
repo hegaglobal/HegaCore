@@ -5,18 +5,18 @@ using System.Linq;
 
 namespace HegaCore
 {
-    public class GridOccupier<T> : IGridOccupier<T>
+    public class GridMarker<T> : IGridMarker<T>
     {
         private readonly Dictionary<GridIndex, T> map;
         private readonly T defaultValue;
 
-        public GridOccupier(T defaultValue)
+        public GridMarker(T defaultValue)
         {
             this.map = new Dictionary<GridIndex, T>();
             this.defaultValue = defaultValue;
         }
 
-        public GridOccupier(IDictionary<GridIndex, T> map, T defaultValue)
+        public GridMarker(IDictionary<GridIndex, T> map, T defaultValue)
         {
             if (map == null)
                 throw new ArgumentNullException(nameof(map));
@@ -25,7 +25,7 @@ namespace HegaCore
             this.defaultValue = defaultValue;
         }
 
-        public GridOccupier(IReadOnlyDictionary<GridIndex, T> map, T defaultValue)
+        public GridMarker(IReadOnlyDictionary<GridIndex, T> map, T defaultValue)
         {
             if (map == null)
                 throw new ArgumentNullException(nameof(map));
@@ -36,7 +36,7 @@ namespace HegaCore
             this.map.AddRange(map);
         }
 
-        public GridOccupier(Dictionary<GridIndex, T> map, T defaultValue, bool useMapReference = false)
+        public GridMarker(Dictionary<GridIndex, T> map, T defaultValue, bool useMapReference = false)
         {
             if (map == null)
                 throw new ArgumentNullException(nameof(map));
@@ -49,7 +49,7 @@ namespace HegaCore
             this.defaultValue = defaultValue;
         }
 
-        public bool IsOccupied(in GridIndex index)
+        public bool IsMarked(in GridIndex index)
             => this.map.ContainsKey(index);
 
         public void GetIndices(ICollection<GridIndex> output)
@@ -109,6 +109,27 @@ namespace HegaCore
             }
         }
 
+        public void Mark(in GridIndex index, T value)
+        {
+            this.map[index] = value;
+        }
+
+        public void Mark(in GridIndexRange range, T value)
+        {
+            foreach (var index in range)
+            {
+                this.map[index] = value;
+            }
+        }
+
+        public void Mark(IEnumerable<GridIndex> indices, T value)
+        {
+            foreach (var index in indices)
+            {
+                this.map[index] = value;
+            }
+        }
+
         public void Unmark(in GridIndex index)
         {
             this.map.Remove(index);
@@ -130,24 +151,47 @@ namespace HegaCore
             }
         }
 
-        public void Mark(in GridIndex index, T value)
-        {
-            this.map[index] = value;
-        }
-
-        public void Mark(in GridIndexRange range, T value)
+        public void Unmark(in GridIndexRange range, in GridIndexRange ignore)
         {
             foreach (var index in range)
             {
-                this.map[index] = value;
+                if (ignore.Contains(index))
+                    continue;
+
+                this.map.Remove(index);
             }
         }
 
-        public void Mark(IEnumerable<GridIndex> indices, T value)
+        public void Unmark(in GridIndexRange range, in ReadCollection<GridIndex> ignore)
+        {
+            foreach (var index in range)
+            {
+                if (ignore.Contains(index))
+                    continue;
+
+                this.map.Remove(index);
+            }
+        }
+
+        public void Unmark(IEnumerable<GridIndex> indices, in GridIndexRange ignore)
         {
             foreach (var index in indices)
             {
-                this.map[index] = value;
+                if (ignore.Contains(index))
+                    continue;
+
+                this.map.Remove(index);
+            }
+        }
+
+        public void Unmark(IEnumerable<GridIndex> indices, in ReadCollection<GridIndex> ignore)
+        {
+            foreach (var index in indices)
+            {
+                if (ignore.Contains(index))
+                    continue;
+
+                this.map.Remove(index);
             }
         }
 
@@ -179,7 +223,7 @@ namespace HegaCore
         public Enumerator GetEnumerator()
             => new Enumerator(this.map);
 
-        IEnumerator<GridValue<T>> IReadGridOccupier<T>.GetEnumerator()
+        IEnumerator<GridValue<T>> IReadGridMarker<T>.GetEnumerator()
             => GetEnumerator();
 
         public struct Enumerator : IEnumerator<GridValue<T>>
