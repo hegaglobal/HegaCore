@@ -2,18 +2,18 @@
 {
     public readonly struct CellModes
     {
-        public readonly CellMode Occupied;
+        public readonly CellMode Marked;
         public readonly CellMode Diagonal;
 
-        public CellModes(CellMode occupied, CellMode diagonal)
+        public CellModes(CellMode marked, CellMode diagonal)
         {
-            this.Occupied = occupied;
+            this.Marked = marked;
             this.Diagonal = diagonal;
         }
 
-        public CellModes With(in CellMode? Occupied = null, in CellMode? Diagonal = null)
+        public CellModes With(in CellMode? Marked = null, in CellMode? Diagonal = null)
             => new CellModes(
-                Occupied ?? this.Occupied,
+                Marked ?? this.Marked,
                 Diagonal ?? this.Diagonal
             );
 

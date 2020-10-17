@@ -3,14 +3,14 @@ using System.Grid;
 
 namespace HegaCore
 {
-    public interface IReadGridOccupier
+    public interface IReadGridMarker
     {
-        bool IsOccupied(in GridIndex index);
+        bool IsMarked(in GridIndex index);
 
         void GetIndices(ICollection<GridIndex> output);
     }
 
-    public interface IReadGridOccupier<T> : IReadGridOccupier
+    public interface IReadGridMarker<T> : IReadGridMarker
     {
         bool TryGetValue(in GridIndex key, out T value);
 

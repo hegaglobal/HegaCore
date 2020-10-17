@@ -3,7 +3,7 @@ using System.Grid;
 
 namespace HegaCore
 {
-    public interface IGridOccupier : IReadGridOccupier
+    public interface IGridMarker : IReadGridMarker
     {
         void Mark(in GridIndex index);
 
@@ -23,10 +23,18 @@ namespace HegaCore
 
         void Unmark(IEnumerable<GridIndex> indices);
 
+        void Unmark(in GridIndexRange range, in GridIndexRange ignore);
+
+        void Unmark(in GridIndexRange range, in ReadCollection<GridIndex> ignore);
+
+        void Unmark(IEnumerable<GridIndex> indices, in GridIndexRange ignore);
+
+        void Unmark(IEnumerable<GridIndex> indices, in ReadCollection<GridIndex> ignore);
+
         void Clear();
     }
 
-    public interface IGridOccupier<T> : IGridOccupier, IReadGridOccupier<T>
+    public interface IGridMarker<T> : IGridMarker, IReadGridMarker<T>
     {
         void Mark(in GridIndex index, T value);
 
