@@ -41,7 +41,7 @@ namespace HegaCore
 
         private void OnPlay()
         {
-            var list = ListPool<BaseAnimatorStateEvent>.Get();
+            var list = PoolProvider.List<BaseAnimatorStateEvent>();
             list.AddRange(this.events.Keys);
 
             var normalizedTime = this.tween.ElapsedPercentage(false);
@@ -52,12 +52,12 @@ namespace HegaCore
                 item.Enter(normalizedTime);
             }
 
-            ListPool<BaseAnimatorStateEvent>.Return(list);
+            PoolProvider.Return(list);
         }
 
         private void OnUpdate()
         {
-            var list = ListPool<BaseAnimatorStateEvent>.Get();
+            var list = PoolProvider.List<BaseAnimatorStateEvent>();
             list.AddRange(this.events.Keys);
 
             var normalizedTime = this.tween.ElapsedPercentage(false);
@@ -76,12 +76,12 @@ namespace HegaCore
                 item.Invoke(normalizedTime);
             }
 
-            ListPool<BaseAnimatorStateEvent>.Return(list);
+            PoolProvider.Return(list);
         }
 
         private void OnComplete()
         {
-            var list = ListPool<BaseAnimatorStateEvent>.Get();
+            var list = PoolProvider.List<BaseAnimatorStateEvent>();
             list.AddRange(this.events.Keys);
 
             var normalizedTime = this.tween.ElapsedPercentage(false);
@@ -91,7 +91,7 @@ namespace HegaCore
                 item.Exit(normalizedTime);
             }
 
-            ListPool<BaseAnimatorStateEvent>.Return(list);
+            PoolProvider.Return(list);
         }
 
         public void Register(BaseAnimatorStateEvent @event)

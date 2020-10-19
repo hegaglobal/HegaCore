@@ -203,7 +203,7 @@ namespace HegaCore
             var query = this.map.Where(x => value.Equals(x.Value))
                                 .Select(x => x.Key);
 
-            var keys = ListPool<GridIndex>.Get();
+            var keys = PoolProvider.List<GridIndex>();
             keys.AddRange(query);
 
             foreach (var key in keys)
@@ -211,7 +211,7 @@ namespace HegaCore
                 this.map.Remove(key);
             }
 
-            ListPool<GridIndex>.Return(keys);
+            PoolProvider.Return(keys);
         }
 
         public bool TryGetValue(in GridIndex key, out T value)

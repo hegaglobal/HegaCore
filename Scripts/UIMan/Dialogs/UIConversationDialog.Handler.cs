@@ -697,8 +697,8 @@ namespace HegaCore.UI
                 return;
 
             const int length = 4;
-            var actors = Array1Pool<string>.Get(length);
-            var actions = Array1Pool<IActorCommandList>.Get(length);
+            var actors = PoolProvider.Array1<string>(length);
+            var actions = PoolProvider.Array1<IActorCommandList>(length);
 
             var x = this.dialogue;
             actors.Set(x.Actor1, x.Actor2, x.Actor3, x.Actor4);
@@ -712,8 +712,8 @@ namespace HegaCore.UI
                 Invoke(actions[i]);
             }
 
-            Array1Pool<string>.Return(actors);
-            Array1Pool<IActorCommandList>.Return(actions);
+            PoolProvider.Return(actors);
+            PoolProvider.Return(actions);
         }
 
         private void HighlightActors()
