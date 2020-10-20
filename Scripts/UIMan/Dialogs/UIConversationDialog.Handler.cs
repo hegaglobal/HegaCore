@@ -735,7 +735,7 @@ namespace HegaCore.UI
                     continue;
 
                 var color = isDim ? this.colorDim : this.colorHighlight;
-                CubismManager.Instance.SetColor(actor.Model, color, Settings.ActorDuration.Color);
+                CubismManager.Instance.SetColor(actor.Model, color, Settings.Durations.Color);
             }
         }
 
@@ -909,7 +909,7 @@ namespace HegaCore.UI
                 return;
 
             actor.Model = model;
-            actor.Controller = CubismManager.Instance.Show(model, view.Position.position, Settings.ActorDuration.Show);
+            actor.Controller = CubismManager.Instance.Show(model, view.Position.position, Settings.Durations.Show);
 
             if (!this.isHiding)
                 ApplyLayerToActor(actor, view);
@@ -940,7 +940,7 @@ namespace HegaCore.UI
             var to = view.Position.position;
 
             actor.Model = model;
-            actor.Controller = CubismManager.Instance.Show(model, from, to, Settings.ActorDuration.Show);
+            actor.Controller = CubismManager.Instance.Show(model, from, to, Settings.Durations.Show);
 
             if (!this.isHiding)
                 ApplyLayerToActor(actor, view);
@@ -953,7 +953,7 @@ namespace HegaCore.UI
             if (actor == null || !actor.Controller)
                 return;
 
-            CubismManager.Instance.Hide(actor.Model, Settings.ActorDuration.Hide);
+            CubismManager.Instance.Hide(actor.Model, Settings.Durations.Hide);
 
             actor.Model = string.Empty;
             actor.Controller = null;
@@ -972,7 +972,7 @@ namespace HegaCore.UI
             if (actor == null || !actor.Controller)
                 return;
 
-            CubismManager.Instance.Hide(actor.Model, toPosition.position, Settings.ActorDuration.Hide);
+            CubismManager.Instance.Hide(actor.Model, toPosition.position, Settings.Durations.Hide);
 
             actor.Model = string.Empty;
             actor.Controller = null;
@@ -987,7 +987,7 @@ namespace HegaCore.UI
                 if (actor == null || !actor.Controller)
                     continue;
 
-                CubismManager.Instance.Hide(actor.Model, Settings.ActorDuration.Hide);
+                CubismManager.Instance.Hide(actor.Model, Settings.Durations.Hide);
 
                 actor.Model = string.Empty;
                 actor.Controller = null;

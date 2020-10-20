@@ -13,16 +13,16 @@ namespace HegaCore
         public ClampedGridSize ClampedSize { get; }
 
         private readonly Grid<Cell> data;
-        private readonly IReadGridMarker occupier;
+        private readonly IReadGridMarker marker;
 
-        public ReadCellGrid(Grid<Cell> data, IReadGridMarker occupier)
+        public ReadCellGrid(Grid<Cell> data, IReadGridMarker marker)
         {
             this.data = new Grid<Cell>(data);
             this.ClampedSize = this.data.Size;
-            this.occupier = occupier ?? throw new ArgumentNullException();
+            this.marker = marker ?? throw new ArgumentNullException();
         }
 
-        public ReadCellGrid(in ReadGrid<Cell> data, IReadGridMarker occupier)
+        public ReadCellGrid(in ReadGrid<Cell> data, IReadGridMarker marker)
         {
             var cache = PoolProvider.List<GridValue<Cell>>();
             data.GetIndexedValues(cache);
@@ -31,7 +31,7 @@ namespace HegaCore
             this.ClampedSize = this.data.Size;
             PoolProvider.Return(cache);
 
-            this.occupier = occupier ?? throw new ArgumentNullException();
+            this.marker = marker ?? throw new ArgumentNullException();
         }
 
         private void RemoveDiagonal(in GridIndex pivot, List<Cell> cells)
@@ -93,7 +93,7 @@ namespace HegaCore
             if (cells.Count > 0 && modes.Marked != CellMode.Include)
             {
                 var marked = PoolProvider.HashSet<GridIndex>();
-                this.occupier.GetIndices(marked);
+                this.marker.GetIndices(marked);
 
                 switch (modes.Marked)
                 {
@@ -430,7 +430,7 @@ namespace HegaCore
             if (ranges.Count > 0 && modes.Marked != CellMode.Include)
             {
                 var marked = PoolProvider.List<GridIndex>();
-                this.occupier.GetIndices(marked);
+                this.marker.GetIndices(marked);
                 marked.Sort(new GridIndex1Comparer(this.data.Size, true));
 
                 switch (modes.Marked)
