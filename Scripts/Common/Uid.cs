@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Threading;
 
 namespace HegaCore
 {
@@ -44,17 +45,21 @@ namespace HegaCore
         public int CompareTo(uint other)
             => this.value.CompareTo(other);
 
-        private const uint _None = 0;
-        private const uint _First = 1;
-        private static uint _Gid = _First;
+        private const int _None = 0;
+        private const int _First = 1;
+        private static int _Uid = _First;
 
         public static Uid None { get; } = new Uid(_None);
 
-        public static Uid Get()
-            => new Uid(_Gid++);
+        public static Uid New()
+        {
+            var intVal = Interlocked.Increment(ref _Uid);
+            var uintVal = unchecked((uint)intVal);
+            return new Uid(uintVal);
+        }
 
         public static void Reset()
-            => _Gid = _First;
+            => _Uid = _First;
 
         public static implicit operator uint(in Uid value)
             => value.value;

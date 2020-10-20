@@ -11,7 +11,7 @@ namespace HegaCore
         public Luid(int id)
         {
             this.Id = id;
-            this.Uid = Uid.Get();
+            this.Uid = Uid.New();
         }
 
         internal Luid(int id, in Uid gid)
