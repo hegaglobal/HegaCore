@@ -2,19 +2,19 @@
 
 namespace HegaCore
 {
-    public readonly struct Gid : IEquatableReadOnlyStruct<Gid>, IComparableReadOnlyStruct<Gid>,
+    public readonly struct Uid : IEquatableReadOnlyStruct<Uid>, IComparableReadOnlyStruct<Uid>,
                                  IEquatable<uint>, IComparable<uint>
     {
         private readonly uint value;
 
-        private Gid(uint id)
+        private Uid(uint id)
             => this.value = id;
 
         public override bool Equals(object obj)
         {
             switch (obj)
             {
-                case Gid gid: return this.value == gid.value;
+                case Uid gid: return this.value == gid.value;
                 case uint @uint: return this.value == @uint;
                 default: return false;
             }
@@ -23,10 +23,10 @@ namespace HegaCore
         public bool Equals(uint other)
             => this.value == other;
 
-        public bool Equals(in Gid other)
+        public bool Equals(in Uid other)
             => this.value == other.value;
 
-        public bool Equals(Gid other)
+        public bool Equals(Uid other)
             => this.value == other.value;
 
         public override int GetHashCode()
@@ -35,10 +35,10 @@ namespace HegaCore
         public override string ToString()
             => this.value.ToString();
 
-        public int CompareTo(in Gid other)
+        public int CompareTo(in Uid other)
             => this.value.CompareTo(other.value);
 
-        public int CompareTo(Gid other)
+        public int CompareTo(Uid other)
             => this.value.CompareTo(other.value);
 
         public int CompareTo(uint other)
@@ -48,54 +48,54 @@ namespace HegaCore
         private const uint _First = 1;
         private static uint _Gid = _First;
 
-        public static Gid None { get; } = new Gid(_None);
+        public static Uid None { get; } = new Uid(_None);
 
-        public static Gid Get()
-            => new Gid(_Gid++);
+        public static Uid Get()
+            => new Uid(_Gid++);
 
         public static void Reset()
             => _Gid = _First;
 
-        public static implicit operator uint(in Gid value)
+        public static implicit operator uint(in Uid value)
             => value.value;
 
-        public static explicit operator Gid(uint value)
-            => new Gid(value);
+        public static explicit operator Uid(uint value)
+            => new Uid(value);
 
-        public static bool operator ==(in Gid lhs, in Gid rhs)
+        public static bool operator ==(in Uid lhs, in Uid rhs)
             => lhs.value == rhs.value;
 
-        public static bool operator !=(in Gid lhs, in Gid rhs)
+        public static bool operator !=(in Uid lhs, in Uid rhs)
             => lhs.value != rhs.value;
 
-        public static bool operator >(in Gid lhs, in Gid rhs)
+        public static bool operator >(in Uid lhs, in Uid rhs)
             => lhs.value > rhs.value;
 
-        public static bool operator <(in Gid lhs, in Gid rhs)
+        public static bool operator <(in Uid lhs, in Uid rhs)
             => lhs.value < rhs.value;
 
-        public static bool operator ==(in Gid lhs, uint rhs)
+        public static bool operator ==(in Uid lhs, uint rhs)
             => lhs.value == rhs;
 
-        public static bool operator !=(in Gid lhs, uint rhs)
+        public static bool operator !=(in Uid lhs, uint rhs)
             => lhs.value != rhs;
 
-        public static bool operator >(in Gid lhs, uint rhs)
+        public static bool operator >(in Uid lhs, uint rhs)
             => lhs.value > rhs;
 
-        public static bool operator <(in Gid lhs, uint rhs)
+        public static bool operator <(in Uid lhs, uint rhs)
             => lhs.value < rhs;
 
-        public static bool operator ==(uint lhs, in Gid rhs)
+        public static bool operator ==(uint lhs, in Uid rhs)
             => lhs == rhs.value;
 
-        public static bool operator !=(uint lhs, in Gid rhs)
+        public static bool operator !=(uint lhs, in Uid rhs)
             => lhs != rhs.value;
 
-        public static bool operator >(uint lhs, in Gid rhs)
+        public static bool operator >(uint lhs, in Uid rhs)
             => lhs > rhs.value;
 
-        public static bool operator <(uint lhs, in Gid rhs)
+        public static bool operator <(uint lhs, in Uid rhs)
             => lhs < rhs.value;
     }
 }

@@ -1,9 +1,9 @@
 ﻿namespace HegaCore
 {
-    public interface IGetByIdGid<T>
+    public interface IGetByLuid<T>
     {
-        T Get(in IdGid id);
+        T Get(in Luid id);
 
-        bool TryGet(in IdGid id, out T value);
+        bool TryGet(in Luid id, out T value);
     }
 }
