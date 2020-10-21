@@ -1,4 +1,4 @@
-﻿using System.Collections.Generic;
+using System.Collections.Generic;
 using System.Grid;
 using System;
 
@@ -223,12 +223,24 @@ namespace HegaCore
             Filter(null, cells, output, modes ?? CellModes.Include);
         }
 
+        public void GetRanges(int size, int step, ICollection<GridIndexRange> output,
+                              in CellModes? modes = null, bool fromEnd = false, GridDirection direction = default)
+        {
+            var ranges = PoolProvider.List<GridIndexRange>();
+            this.ClampedSize.Partitioner(fromEnd, direction).Partition(size, step, ranges);
+
+            Filter(null, ranges, modes ?? CellModes.Include);
+            output.AddRange(ranges);
+
+            PoolProvider.Return(ranges);
+        }
+
         public void GetRanges(in GridIndexRange pivot, int size, int step, ICollection<GridIndexRange> output,
-                              in CellModes? modes = null)
+                              in CellModes? modes = null, bool fromEnd = false, GridDirection direction = default)
         {
             var slice = this.ClampedSize.IndexRange(pivot, size);
             var ranges = PoolProvider.List<GridIndexRange>();
-            this.ClampedSize.IndexRanges(slice, size, step, ranges);
+            this.ClampedSize.Partitioner(fromEnd, direction).Partition(slice, size, step, ranges);
 
             Filter(pivot, ranges, modes ?? CellModes.Include);
             output.AddRange(ranges);
@@ -323,10 +335,12 @@ namespace HegaCore
             PoolProvider.Return(cells);
         }
 
-        public bool TryGetRandomRange(int size, out GridIndexRange range, in CellModes? modes = null)
-            => TryGetRandomRange(size, size, out range, modes);
+        public bool TryGetRandomRange(int size, out GridIndexRange range, in CellModes? modes = null,
+                                      GridDirection direction = default)
+            => TryGetRandomRange(size, size, out range, modes, direction);
 
-        public bool TryGetRandomRange(int size, int step, out GridIndexRange range, in CellModes? modes = null)
+        public bool TryGetRandomRange(int size, int step, out GridIndexRange range, in CellModes? modes = null,
+                                      GridDirection direction = default)
         {
             range = default;
 
@@ -344,30 +358,38 @@ namespace HegaCore
                 return false;
             }
 
-            var ranges = PoolProvider.List<GridIndexRange>();
-            this.ClampedSize.IndexRanges(size, step, ranges);
-            Filter(null, ranges, modes ?? CellModes.Include);
+            var cache = PoolProvider.HashSet<GridIndexRange>();
+            this.ClampedSize.Partitioner(false, direction).Partition(size, step, cache);
+            this.ClampedSize.Partitioner(true, direction).Partition(size, step, cache);
 
+            var ranges = PoolProvider.List<GridIndexRange>();
+            ranges.AddRange(cache);
+            PoolProvider.Return(cache);
+
+            Filter(null, ranges, modes ?? CellModes.Include);
             return TryGetRandomRange(ref range, ranges);
         }
 
         public bool TryGetRandomRange(in GridIndex pivot, int extend, int size, int step,
-                                      out GridIndexRange range, in CellModes? modes = null)
+                                      out GridIndexRange range, in CellModes? modes = null,
+                                      GridDirection direction = default)
             => TryGetRandomRange(pivot, this.ClampedSize.IndexRange(pivot, extend), size, step,
-                                 out range, modes);
+                                 out range, modes, direction);
 
         public bool TryGetRandomRange(in GridIndex pivot, int lowerExtend, int upperExtend, int size, int step,
-                                      out GridIndexRange range, in CellModes? modes = null)
+                                      out GridIndexRange range, in CellModes? modes = null,
+                                      GridDirection direction = default)
             => TryGetRandomRange(pivot, this.ClampedSize.IndexRange(pivot, lowerExtend, upperExtend), size, step,
-                                 out range, modes);
+                                 out range, modes, direction);
 
         public bool TryGetRandomRange(in GridIndex pivot, in GridIndex lowerExtend, in GridIndex upperExtend, int size, int step,
-                                      out GridIndexRange range, in CellModes? modes = null)
+                                      out GridIndexRange range, in CellModes? modes = null,
+                                      GridDirection direction = default)
             => TryGetRandomRange(pivot, this.ClampedSize.IndexRange(pivot, lowerExtend, upperExtend), size, step,
-                                 out range, modes);
+                                 out range, modes, direction);
 
         public bool TryGetRandomRange(in GridIndex pivot, in GridIndexRange pivotRange, int size, int step,
-                                      out GridIndexRange range, in CellModes? modes = null)
+                                      out GridIndexRange range, in CellModes? modes = null, GridDirection direction = default)
         {
             range = default;
 
@@ -387,8 +409,13 @@ namespace HegaCore
                 return false;
             }
 
+            var cache = PoolProvider.HashSet<GridIndexRange>();
+            GetRanges(pivotRange, size, step, cache, modes, false, direction);
+            GetRanges(pivotRange, size, step, cache, modes, true, direction);
+
             var ranges = PoolProvider.List<GridIndexRange>();
-            GetRanges(pivotRange, size, step, ranges, modes);
+            ranges.AddRange(cache);
+            PoolProvider.Return(cache);
 
             return TryGetRandomRange(ref range, ranges);
         }
