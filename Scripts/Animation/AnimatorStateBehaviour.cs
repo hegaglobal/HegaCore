@@ -72,7 +72,7 @@ namespace HegaCore
 
         public override void OnStateEnter(Animator animator, AnimatorStateInfo stateInfo, int layerIndex)
         {
-            var list = PoolProvider.List<BaseAnimatorStateEvent>();
+            var list = Pool.Provider.List<BaseAnimatorStateEvent>();
             list.AddRange(this.events.Keys);
 
             foreach (var item in list)
@@ -81,12 +81,12 @@ namespace HegaCore
                 item.Enter(stateInfo.normalizedTime);
             }
 
-            PoolProvider.Return(list);
+            Pool.Provider.Return(list);
         }
 
         public override void OnStateExit(Animator animator, AnimatorStateInfo stateInfo, int layerIndex)
         {
-            var list = PoolProvider.List<BaseAnimatorStateEvent>();
+            var list = Pool.Provider.List<BaseAnimatorStateEvent>();
             list.AddRange(this.events.Keys);
 
             foreach (var item in list)
@@ -94,12 +94,12 @@ namespace HegaCore
                 item.Exit(stateInfo.normalizedTime);
             }
 
-            PoolProvider.Return(list);
+            Pool.Provider.Return(list);
         }
 
         public override void OnStateUpdate(Animator animator, AnimatorStateInfo stateInfo, int layerIndex)
         {
-            var list = PoolProvider.List<BaseAnimatorStateEvent>();
+            var list = Pool.Provider.List<BaseAnimatorStateEvent>();
             list.AddRange(this.events.Keys);
 
             foreach (var item in list)
@@ -115,7 +115,7 @@ namespace HegaCore
                 item.Invoke(stateInfo.normalizedTime);
             }
 
-            PoolProvider.Return(list);
+            Pool.Provider.Return(list);
         }
     }
 }

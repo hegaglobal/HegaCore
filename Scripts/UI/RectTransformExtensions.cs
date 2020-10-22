@@ -1,4 +1,4 @@
-﻿using System;
+﻿using System.Collections.Generic;
 using UnityEngine;
 
 namespace HegaCore.UI
@@ -22,14 +22,14 @@ namespace HegaCore.UI
                 // so that we don't have to traverse the entire parent hierarchy (just to get screen coords relative to screen),
                 // ask the camera to do it for us.
                 // first get world corners of our rect:
-                var corners = PoolProvider.Array1<Vector3>(4);
+                var corners = Pool.Provider.Array1<Vector3>(4);
                 viewport.GetWorldCorners(corners); // bottom left, top left, top right, bottom right
 
                 // or shove it back into screen space. Now the rect is relative to the bottom left corner of screen:
                 viewportMinCorner = camera.WorldToScreenPoint(corners[0]);
                 viewportMaxCorner = camera.WorldToScreenPoint(corners[2]);
 
-                PoolProvider.Return(corners);
+                Pool.Provider.Return(corners);
             }
             else
             {
@@ -43,13 +43,13 @@ namespace HegaCore.UI
             viewportMaxCorner += Vector2.one;
 
             // do a similar procedure, to get the "element's" corners relative to screen:
-            var selfCorners = PoolProvider.Array1<Vector3>(4);
+            var selfCorners = Pool.Provider.Array1<Vector3>(4);
             self.GetWorldCorners(selfCorners);
 
             Vector2 selfMinCorner = camera.WorldToScreenPoint(selfCorners[0]);
             Vector2 selfMaxCorner = camera.WorldToScreenPoint(selfCorners[2]);
 
-            PoolProvider.Return(selfCorners);
+            Pool.Provider.Return(selfCorners);
 
             if (selfMinCorner.x > viewportMaxCorner.x) { return false; } // completelly outside to the right
             if (selfMinCorner.y > viewportMaxCorner.y) { return false; } // completelly above
@@ -84,14 +84,14 @@ namespace HegaCore.UI
                 // so that we don't have to traverse the entire parent hierarchy (just to get screen coords relative to screen),
                 // ask the camera to do it for us.
                 // first get world corners of our rect:
-                var corners = PoolProvider.Array1<Vector3>(4);
+                var corners = Pool.Provider.Array1<Vector3>(4);
                 viewport.GetWorldCorners(corners); // bottom left, top left, top right, bottom right
 
                 // or shove it back into screen space. Now the rect is relative to the bottom left corner of screen:
                 viewportMinCorner = camera.WorldToScreenPoint(corners[0]);
                 viewportMaxCorner = camera.WorldToScreenPoint(corners[2]);
 
-                PoolProvider.Return(corners);
+                Pool.Provider.Return(corners);
             }
             else
             {
@@ -105,13 +105,13 @@ namespace HegaCore.UI
             viewportMaxCorner += Vector2.one;
 
             // do a similar procedure, to get the "element's" corners relative to screen:
-            var selfCorners = PoolProvider.Array1<Vector3>(4);
+            var selfCorners = Pool.Provider.Array1<Vector3>(4);
             self.GetWorldCorners(selfCorners);
 
             Vector2 selfMinCorner = camera.WorldToScreenPoint(selfCorners[0]);
             Vector2 selfMaxCorner = camera.WorldToScreenPoint(selfCorners[2]);
 
-            PoolProvider.Return(selfCorners);
+            Pool.Provider.Return(selfCorners);
 
             var size = selfMaxCorner - selfMinCorner;
             var minDif = viewportMinCorner - selfMinCorner;
@@ -160,7 +160,7 @@ namespace HegaCore.UI
         public static void GetWorldSize(this RectTransform self, out Vector2 size, out Vector2 origin)
         {
             // Convert the rectangle to world corners and grab the top left
-            var corners = PoolProvider.Array1<Vector3>(4);
+            var corners = Pool.Provider.Array1<Vector3>(4);
             self.GetWorldCorners(corners);
 
             var bl = corners[0];
@@ -169,7 +169,7 @@ namespace HegaCore.UI
             size = new Vector2(Mathf.Abs(tr.x - bl.x), Mathf.Abs(tr.y - bl.y));
             origin = Vector2.Lerp(bl, tr, 0.5f);
 
-            PoolProvider.Return(corners);
+            Pool.Provider.Return(corners);
         }
     }
 }
