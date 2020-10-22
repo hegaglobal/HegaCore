@@ -113,6 +113,32 @@ namespace HegaCore
             Pool.Provider.Return(cells);
         }
 
+        public void Filter(ICollection<Cell> cells, in CellModes modes)
+        {
+            var cache = Pool.Provider.List<Cell>();
+            cache.AddRange(cells);
+            cells.Clear();
+
+            Filter(null, cache, cells, modes);
+            cells.Clear();
+            cells.AddRange(cache);
+
+            Pool.Provider.Return(cache);
+        }
+
+        public void Filter(ICollection<Cell> cells, in GridIndex pivot, in CellModes modes)
+        {
+            var cache = Pool.Provider.List<Cell>();
+            cache.AddRange(cells);
+            cells.Clear();
+
+            Filter(pivot, cache, cells, modes);
+            cells.Clear();
+            cells.AddRange(cache);
+
+            Pool.Provider.Return(cache);
+        }
+
         public Cell GetCell(in GridIndex index)
             => this.data[index];
 
@@ -436,6 +462,30 @@ namespace HegaCore
 
             Pool.Provider.Return(ranges);
             return result;
+        }
+
+        public void Filter(ICollection<GridIndexRange> ranges, in CellModes modes)
+        {
+            var cache = Pool.Provider.List<GridIndexRange>();
+            cache.AddRange(ranges);
+            ranges.Clear();
+
+            Filter(null, cache, modes);
+            ranges.AddRange(cache);
+
+            Pool.Provider.Return(cache);
+        }
+
+        public void Filter(ICollection<GridIndexRange> ranges, in GridIndexRange pivot, in CellModes modes)
+        {
+            var cache = Pool.Provider.List<GridIndexRange>();
+            cache.AddRange(ranges);
+            ranges.Clear();
+
+            Filter(pivot, cache, modes);
+            ranges.AddRange(cache);
+
+            Pool.Provider.Return(cache);
         }
 
         private void Filter(in GridIndexRange? pivot, List<GridIndexRange> ranges, in CellModes modes)
