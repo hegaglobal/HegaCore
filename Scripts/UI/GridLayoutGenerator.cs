@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Grid;
 using UnityEngine;
 using UnityEngine.UI;
@@ -67,7 +68,7 @@ namespace HegaCore.UI
                 this.grid.Count == this.cells.Count)
                 return;
 
-            var cache = PoolProvider.List<GridValue<GridLayoutCell>>();
+            var cache = Pool.Provider.List<GridValue<GridLayoutCell>>();
 
             foreach (var kv in this.cells)
             {
@@ -75,7 +76,7 @@ namespace HegaCore.UI
             }
 
             this.grid.Initialize((GridIndex)this.gridSize, cache);
-            PoolProvider.Return(cache);
+            Pool.Provider.Return(cache);
         }
 
         private void EnsureGridLayout()
@@ -106,7 +107,7 @@ namespace HegaCore.UI
 
         private void InitializeGrid()
         {
-            var cache = PoolProvider.List<GridValue<GridLayoutCell>>();
+            var cache = Pool.Provider.List<GridValue<GridLayoutCell>>();
 
             foreach (var kv in this.cells)
             {
@@ -114,7 +115,7 @@ namespace HegaCore.UI
             }
 
             this.grid.Initialize((GridIndex)this.gridSize, cache);
-            PoolProvider.Return(cache);
+            Pool.Provider.Return(cache);
         }
 
         private void GenerateDefault()

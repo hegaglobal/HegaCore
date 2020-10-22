@@ -38,12 +38,12 @@ namespace HegaCore.Database.Csv
             where TMapping : CsvMapping<TEntity>, new()
         {
             var csvData = GetCsvData(file);
-            var entries = PoolProvider.List<TEntity>();
+            var entries = Pool.Provider.List<TEntity>();
 
             Parse<TEntity, TMapping>(csvData, entries);
             table.AddRange(entries, autoIncrement);
 
-            PoolProvider.Return(entries);
+            Pool.Provider.Return(entries);
         }
 
         public void Load<TEntity, TMapping>(ITable<TEntity> table, TextAsset file, IGetId<TEntity> idGetter)
@@ -51,12 +51,12 @@ namespace HegaCore.Database.Csv
             where TMapping : CsvMapping<TEntity>, new()
         {
             var csvData = GetCsvData(file);
-            var entries = PoolProvider.List<TEntity>();
+            var entries = Pool.Provider.List<TEntity>();
 
             Parse<TEntity, TMapping>(csvData, entries);
             table.AddRange(entries, idGetter);
 
-            PoolProvider.Return(entries);
+            Pool.Provider.Return(entries);
         }
 
         public void Load<TEntity, TMapping, TIdGetter>(ITable<TEntity> table, TextAsset file)
@@ -65,12 +65,12 @@ namespace HegaCore.Database.Csv
             where TIdGetter : IGetId<TEntity>, new()
         {
             var csvData = GetCsvData(file);
-            var entries = PoolProvider.List<TEntity>();
+            var entries = Pool.Provider.List<TEntity>();
 
             Parse<TEntity, TMapping>(csvData, entries);
             table.AddRange(entries, new TIdGetter());
 
-            PoolProvider.Return(entries);
+            Pool.Provider.Return(entries);
         }
 
         private void Parse<TEntity, TMapping>(string csvData, List<TEntity> output)
