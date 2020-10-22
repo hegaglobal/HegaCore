@@ -7,11 +7,8 @@ namespace HegaCore
         where TId : unmanaged
         where TComponent : Component, IAlive
     {
-        private readonly Dictionary<TId, TComponent> temp = new Dictionary<TId, TComponent>();
         private readonly Dictionary<TId, TComponent> items = new Dictionary<TId, TComponent>();
-        private readonly List<TId> cache = new List<TId>();
-
-        public ReadDictionary<TId, TComponent> Temp => this.temp;
+        private readonly HashSet<TId> cache = new HashSet<TId>();
 
         public ReadDictionary<TId, TComponent> Items => this.items;
 
@@ -20,11 +17,14 @@ namespace HegaCore
             if (Contains(id))
                 return;
 
-            this.temp[id] = item;
+            this.items[id] = item;
         }
 
+        public bool TryGet(in TId id, out TComponent component)
+            => this.items.TryGetValue(id, out component);
+
         public bool Contains(in TId id)
-            => this.temp.ContainsKey(id) || this.items.ContainsKey(id);
+            => this.items.ContainsKey(id);
 
         public void Kill(in TId id)
         {
@@ -50,21 +50,19 @@ namespace HegaCore
                 this.cache.Clear();
             }
 
-            if (this.temp.Count > 0)
-            {
-                foreach (var kv in this.temp)
-                {
-                    this.items.Add(kv.Key, kv.Value);
+            var keys = Pool.Provider.List<TId>();
+            keys.AddRange(this.items.Keys);
 
-                }
-                this.temp.Clear();
+            foreach (var key in keys)
+            {
+                if (!this.items.TryGetValue(key, out var item))
+                    continue;
+
+                if (!item.Alive)
+                    this.cache.Add(key);
             }
 
-            foreach (var kv in this.items)
-            {
-                if (!kv.Value.Alive)
-                    this.cache.Add(kv.Key);
-            }
+            Pool.Provider.Return(keys);
         }
     }
 }

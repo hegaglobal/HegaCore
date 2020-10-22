@@ -10,6 +10,16 @@ namespace HegaCore
         public readonly GridIndex Index;
         public readonly Vector3 Position;
 
+        public int Row => this.Index.Row;
+
+        public int Column => this.Index.Column;
+
+        public float X => this.Position.x;
+
+        public float Y => this.Position.y;
+
+        public float Z => this.Position.z;
+
         public Cell(int id, in GridIndex index, in Vector3 position)
         {
             this.Id = id;
@@ -31,18 +41,25 @@ namespace HegaCore
                 Position ?? this.Position
             );
 
+        public Cell With(in int? Id = null, in int? Row = null, in int? Column = null, in float? X = null, in float? Y = null, in float? Z = null)
+            => new Cell(
+                Id ?? this.Id,
+                this.Index.With(Row, Column),
+                this.Position.With(X, Y, Z)
+            );
+
         public override bool Equals(object obj)
             => obj is Cell other &&
                this.Id == other.Id &&
-               this.Index.Equals(other.Index);
+               this.Index.Equals(in other.Index);
 
         public bool Equals(in Cell other)
             => this.Id == other.Id &&
-               this.Index.Equals(other.Index);
+               this.Index.Equals(in other.Index);
 
         public bool Equals(Cell other)
             => this.Id == other.Id &&
-               this.Index.Equals(other.Index);
+               this.Index.Equals(in other.Index);
 
         public override int GetHashCode()
         {
@@ -68,5 +85,11 @@ namespace HegaCore
 
         public static implicit operator Vector3(in Cell value)
             => value.Position;
+
+        public static bool operator ==(in Cell lhs, in Cell rhs)
+            => lhs.Equals(in rhs);
+
+        public static bool operator !=(in Cell lhs, in Cell rhs)
+            => !lhs.Equals(in rhs);
     }
 }

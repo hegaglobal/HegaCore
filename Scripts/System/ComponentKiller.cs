@@ -5,11 +5,8 @@ namespace HegaCore
 {
     public class ComponentKiller<T> where T : Component, IAlive
     {
-        private readonly List<T> temp = new List<T>();
         private readonly List<T> items = new List<T>();
         private readonly List<T> cache = new List<T>();
-
-        public ReadList<T> Temp => this.temp;
 
         public ReadList<T> Items => this.items;
 
@@ -18,11 +15,11 @@ namespace HegaCore
             if (Contains(item))
                 return;
 
-            this.temp.Add(item);
+            this.items.Add(item);
         }
 
         public bool Contains(T item)
-            => this.temp.Contains(item) || this.items.Contains(item);
+            => this.items.Contains(item);
 
         public void TryKill()
         {
@@ -35,12 +32,6 @@ namespace HegaCore
                 }
 
                 this.cache.Clear();
-            }
-
-            if (this.temp.Count > 0)
-            {
-                this.items.AddRange(this.temp);
-                this.temp.Clear();
             }
 
             foreach (var item in this.items)
