@@ -10,7 +10,7 @@ namespace HegaCore.Events.Commands.Data
 
         public override void Invoke(in Segment<object> parameters)
         {
-            if (!ValidateParameters(parameters, 1, nameof(CharacterClipUnlock)))
+            if (!ValidateParameters(parameters, 2, nameof(CharacterClipUnlock)))
                 return;
 
             if (!this.converter.TryConvert(parameters[0], out string character))
@@ -27,7 +27,7 @@ namespace HegaCore.Events.Commands.Data
 
             var data = EventManager.Instance.BaseDataContainer;
             data.UnlockCharacterClip(new CharacterId(id, variant));
-            Log(variant);
+            Log(id, variant);
         }
     }
 }

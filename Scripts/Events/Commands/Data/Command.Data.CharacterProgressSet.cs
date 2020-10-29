@@ -4,19 +4,19 @@ using System.Collections.Generic;
 namespace HegaCore.Events.Commands.Data
 {
     [Serializable]
-    public sealed class CharacterImageUnlock : DataCommand
+    public sealed class CharacterProgressSet : DataCommand
     {
-        public override string Key => "character_image_unlock";
+        public override string Key => "character_progress_set";
 
         public override void Invoke(in Segment<object> parameters)
         {
-            if (!ValidateParameters(parameters, 2, nameof(CharacterImageUnlock)))
+            if (!ValidateParameters(parameters, 2, nameof(CharacterProgressSet)))
                 return;
 
             if (!this.converter.TryConvert(parameters[0], out string character))
                 return;
 
-            if (!this.converter.TryConvert(parameters[1], out int variant))
+            if (!this.converter.TryConvert(parameters[1], out int value))
                 return;
 
             if (!CharacterDataset.Map.TryGetValue(character, out var id))
@@ -26,8 +26,8 @@ namespace HegaCore.Events.Commands.Data
             }
 
             var data = EventManager.Instance.BaseDataContainer;
-            data.UnlockCharacterImage(new CharacterId(id, variant));
-            Log(id, variant);
+            data.SetPlayerCharacterProgress(id, value);
+            Log(id, value);
         }
     }
 }
