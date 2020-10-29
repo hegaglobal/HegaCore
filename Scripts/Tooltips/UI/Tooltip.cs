@@ -36,7 +36,7 @@ namespace HegaCore.UI
 
         public bool IsShowing { get; private set; }
 
-        private IData data = Data.None;
+        private IToTemplatedString template = TooltipData.None;
         private bool locked = false;
 
         protected override void Awake()
@@ -45,20 +45,20 @@ namespace HegaCore.UI
                 this.rectTransform = GetComponent<RectTransform>();
         }
 
-        public void SetData(IData data)
+        public void Set(IToTemplatedString template)
         {
             this.l10nKey = string.Empty;
-            this.data = data ?? Data.None;
+            this.template = template ?? TooltipData.None;
         }
 
-        public void SetData(string l10nKey, IData data = null)
+        public void Set(string l10nKey, IToTemplatedString template = null)
         {
             this.l10nKey = l10nKey ?? string.Empty;
-            this.data = data ?? Data.None;
+            this.template = template ?? TooltipData.None;
         }
 
-        public void ResetData()
-            => TooltipPanel.Instance.Set(this.type, this.l10nKey, this.data);
+        public void Unset()
+            => TooltipPanel.Instance.Set(this.type, this.l10nKey, this.template);
 
         void IPointerEnterHandler.OnPointerEnter(PointerEventData eventData)
         {
@@ -70,7 +70,7 @@ namespace HegaCore.UI
                 return;
             }
 
-            TooltipPanel.Instance.Set(this.type, this.l10nKey, this.data)
+            TooltipPanel.Instance.Set(this.type, this.l10nKey, this.template)
                                  .Show(this.type, this.rectTransform, this.direction, this.offset);
             this.IsShowing = true;
         }

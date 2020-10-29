@@ -33,14 +33,14 @@ namespace HegaCore.UI
         public void Show()
             => this.canvasGroup.alpha = 1f;
 
-        public abstract void Set(string l10nKey, IData data = null);
+        public abstract void Set(string l10nKey, IToTemplatedString template = null);
 
-        protected bool TrySetDefaultData(IData data)
+        protected bool TrySetDefault(IToTemplatedString template)
         {
-            if (data is TooltipData tooltipData)
+            if (template is TooltipData tooltipTemplate)
             {
-                SetTitle(tooltipData.Title);
-                SetContent(tooltipData.Content);
+                SetTitle(tooltipTemplate.Title);
+                SetContent(tooltipTemplate.Content);
                 return true;
             }
 

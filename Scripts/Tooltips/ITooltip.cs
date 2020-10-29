@@ -2,8 +2,8 @@
 {
     public interface ITooltip
     {
-        void SetData(string l10nKey, IData data = null);
+        void Set(string l10nKey, IToTemplatedString template = null);
 
-        void ResetData();
+        void Unset();
     }
 }

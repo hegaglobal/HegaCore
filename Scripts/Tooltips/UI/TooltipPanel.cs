@@ -64,9 +64,9 @@ namespace HegaCore.UI
             return null;
         }
 
-        public TooltipPanel Set(TooltipType type, string l10nKey, IData data = null)
+        public TooltipPanel Set(TooltipType type, string l10nKey, IToTemplatedString template = null)
         {
-            this.tooltips[type].Set(l10nKey, data);
+            this.tooltips[type].Set(l10nKey, template);
             return this;
         }
 

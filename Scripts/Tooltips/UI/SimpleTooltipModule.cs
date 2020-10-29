@@ -2,12 +2,12 @@
 {
     public sealed class SimpleTooltipModule : TooltipModule
     {
-        public override void Set(string l10nKey, IData data = null)
+        public override void Set(string l10nKey, IToTemplatedString template = null)
         {
-            if (TrySetDefaultData(data))
+            if (TrySetDefault(template))
                 return;
 
-            var content = (data ?? Data.None).ToString(L10n.Localize(l10nKey));
+            var content = (template ?? TooltipData.None).ToTemplatedString(L10n.Localize(l10nKey));
             SetContent(content);
         }
     }
