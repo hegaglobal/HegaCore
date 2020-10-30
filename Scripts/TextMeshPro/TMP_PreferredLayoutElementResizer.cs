@@ -17,6 +17,9 @@ namespace HegaCore
         private bool auto = false;
 
         [SerializeField]
+        private bool ignoreTextSize = false;
+
+        [SerializeField]
         private SizeComponent width = default;
 
         [SerializeField]
@@ -47,8 +50,16 @@ namespace HegaCore
                 return;
 
             this.textVal = this.text.text;
-            var width = this.text.preferredWidth;
-            var height = this.text.preferredHeight;
+
+            float width, height;
+
+            if (this.ignoreTextSize)
+                width = height = 0f;
+            else
+            {
+                width = this.text.preferredWidth;
+                height = this.text.preferredHeight;
+            }
 
             if (!this.tween.Enabled)
             {
