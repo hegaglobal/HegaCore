@@ -17,8 +17,9 @@ namespace HegaCore.Events.Commands.Data
                 return;
 
             var data = EventManager.Instance.BaseDataContainer;
-            data.PassMission(value);
-            Log(value);
+
+            if (data.PassMission(value))
+                Log(value);
         }
     }
 }

@@ -18,9 +18,12 @@ namespace HegaCore.Events.Commands.Data
                 return;
 
             var data = EventManager.Instance.BaseDataContainer;
-            data.ChangePlayerProgressPoint(missionId, value);
-            data.SavePlayer();
-            Log(missionId, value);
+
+            if (data.ChangePlayerProgressPoint(missionId, value))
+            {
+                data.SavePlayer();
+                Log(missionId, value);
+            }
         }
     }
 }

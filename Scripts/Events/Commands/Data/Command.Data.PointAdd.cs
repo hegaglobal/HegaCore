@@ -17,9 +17,12 @@ namespace HegaCore.Events.Commands.Data
                 return;
 
             var data = EventManager.Instance.BaseDataContainer;
-            data.ChangePlayerProgressPoint(value);
-            data.SavePlayer();
-            Log(value);
+
+            if (data.ChangePlayerProgressPoint(value))
+            {
+                data.SavePlayer();
+                Log(value);
+            }
         }
     }
 }

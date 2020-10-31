@@ -26,8 +26,12 @@ namespace HegaCore.Events.Commands.Data
             }
 
             var data = EventManager.Instance.BaseDataContainer;
-            data.SetPlayerCharacterProgress(id, value);
-            Log(id, value);
+
+            if (data.SetPlayerCharacterProgress(id, value))
+            {
+                data.SavePlayer();
+                Log(id, value);
+            }
         }
     }
 }

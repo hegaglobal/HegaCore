@@ -96,15 +96,16 @@ namespace HegaCore
             return this.BasePlayer.DoneLobbyTutorial;
         }
 
-        public int ChangePlayerWealth(int amount)
+        public bool ChangePlayerWealth(int amount)
         {
             if (!Validate())
-                return 0;
+                return false;
 
-            if (amount != 0)
-                this.BasePlayer.Wealth += amount;
+            if (amount == 0)
+                return false;
 
-            return this.BasePlayer.Wealth;
+            this.BasePlayer.Wealth += amount;
+            return true;
         }
 
         public int GetPlayerProgressPoint()
@@ -115,54 +116,58 @@ namespace HegaCore
             return this.BasePlayer.ProgressPoint;
         }
 
-        public int ChangePlayerProgressPoint(int amount)
+        public bool ChangePlayerProgressPoint(int amount)
         {
             if (!Validate())
-                return 0;
+                return false;
 
-            if (amount != 0)
-                this.BasePlayer.ProgressPoint += amount;
+            if (amount == 0)
+                return false;
 
-            return this.BasePlayer.ProgressPoint;
+            this.BasePlayer.ProgressPoint += amount;
+            return true;
         }
 
-        public int ChangePlayerProgressPoint(int missionId, int amount)
+        public bool ChangePlayerProgressPoint(int missionId, int amount)
         {
             if (!Validate())
-                return 0;
+                return false;
 
-            if (this.CurrentMission == missionId &&
-                this.missions.Contains(missionId))
-            {
-                var latest = this.missions.Max();
+            if (this.CurrentMission != missionId ||
+                !this.missions.Contains(missionId))
+                return false;
 
-                if (this.CurrentMission == latest && amount != 0)
-                    this.BasePlayer.ProgressPoint += amount;
-            }
+            var latest = this.missions.Max();
 
-            return this.BasePlayer.ProgressPoint;
+            if (this.CurrentMission != latest || amount == 0)
+                return false;
+
+            this.BasePlayer.ProgressPoint += amount;
+            return true;
         }
 
-        public int ChangePlayerGoodPoint(int amount)
+        public bool ChangePlayerGoodPoint(int amount)
         {
             if (!Validate())
-                return 0;
+                return false;
 
-            if (amount != 0)
-                this.BasePlayer.GoodPoint += amount;
+            if (amount == 0)
+                return false;
 
-            return this.BasePlayer.GoodPoint;
+            this.BasePlayer.GoodPoint += amount;
+            return true;
         }
 
-        public int ChangePlayerBadPoint(int amount)
+        public bool ChangePlayerBadPoint(int amount)
         {
             if (!Validate())
-                return 0;
+                return false;
 
-            if (amount != 0)
-                this.BasePlayer.BadPoint += amount;
+            if (amount == 0)
+                return false;
 
-            return this.BasePlayer.BadPoint;
+            this.BasePlayer.BadPoint += amount;
+            return true;
         }
 
         public void ChangePlayerLastTime()
@@ -194,19 +199,25 @@ namespace HegaCore
             return this.BasePlayer.BadPoint > this.BasePlayer.GoodPoint;
         }
 
-        public void UnlockMission(int id)
+        public bool UnlockMission(int id)
         {
-            if (!this.missions.Contains(id))
-                this.missions.Add(id);
+            if (this.missions.Contains(id))
+                return false;
+
+            this.missions.Add(id);
+            return true;
         }
 
         public void ClearMissions()
             => this.missions.Clear();
 
-        public void PassMission(int id)
+        public bool PassMission(int id)
         {
-            if (!this.pastMissions.Contains(id))
-                this.pastMissions.Add(id);
+            if (this.pastMissions.Contains(id))
+                return false;
+
+            this.pastMissions.Add(id);
+            return true;
         }
 
         public void ClearPastMissions()
@@ -215,31 +226,34 @@ namespace HegaCore
         public void ClearCharacterImages()
             => this.characterImages.Clear();
 
-        public void UnlockCharacterImage(in CharacterId id)
+        public bool UnlockCharacterImage(in CharacterId id)
         {
             if (this.characterImages.Contains(id))
-                return;
+                return false;
 
             this.characterImages.Add(id);
+            return true;
         }
 
         public void ClearCharacterClips()
             => this.characterClips.Clear();
 
-        public void UnlockCharacterClip(in CharacterId id)
+        public bool UnlockCharacterClip(in CharacterId id)
         {
             if (this.characterClips.Contains(id))
-                return;
+                return false;
 
             this.characterClips.Add(id);
+            return true;
         }
 
-        public void SetPlayerCharacter(int value)
+        public bool SetPlayerCharacter(int value)
         {
             if (!Validate())
-                return;
+                return false;
 
             this.BasePlayer.CharacterId = value;
+            return true;
         }
 
         public int GetPlayerCharacterProgress(int characterId, bool silent = false)
@@ -258,25 +272,39 @@ namespace HegaCore
             return this.BasePlayer.CharacterProgressMap[characterId];
         }
 
-        public int ChangePlayerCharacterProgress(int characterId, int amount)
+        public bool ChangePlayerCharacterProgress(int characterId, int amount)
         {
             if (!Validate())
-                return 0;
+                return false;
 
-            var afterChanged = this.BasePlayer.CharacterProgressMap.ContainsKey(characterId)
-                ? (this.BasePlayer.CharacterProgressMap[characterId] += amount)
-                : (this.BasePlayer.CharacterProgressMap[characterId] = amount);
+            if (this.BasePlayer.CharacterProgressMap.ContainsKey(characterId))
+                this.BasePlayer.CharacterProgressMap[characterId] += amount;
+            else
+                this.BasePlayer.CharacterProgressMap[characterId] = amount;
 
-            return afterChanged;
+            return true;
         }
 
-        public int SetPlayerCharacterProgress(int characterId, int value)
+        public bool SetPlayerCharacterProgress(int characterId, int value)
         {
             if (!Validate())
-                return 0;
+                return false;
 
             this.BasePlayer.CharacterProgressMap[characterId] = value;
-            return value;
+            return true;
+        }
+
+        public bool UnlockPlayerCharacterProgress(int characterId, int value)
+        {
+            if (!Validate())
+                return false;
+
+            if (this.BasePlayer.CharacterProgressMap.TryGetValue(characterId, out var progress) &&
+                progress >= value)
+                return false;
+
+            this.BasePlayer.CharacterProgressMap[characterId] = value;
+            return true;
         }
 
         public abstract bool TryGetPlayer(int index, out BasePlayerData data);

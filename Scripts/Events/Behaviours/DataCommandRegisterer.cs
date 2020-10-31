@@ -22,6 +22,7 @@ namespace HegaCore.Events.Commands
             yield return new CharacterImageClear();
             yield return new CharacterImageUnlock();
             yield return new CharacterProgressSet();
+            yield return new CharacterProgressUnlock();
             yield return new MissionClear();
             yield return new MissionUnlock();
             yield return new MissionPastClear();

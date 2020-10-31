@@ -26,8 +26,9 @@ namespace HegaCore.Events.Commands.Data
             }
 
             var data = EventManager.Instance.BaseDataContainer;
-            data.UnlockCharacterClip(new CharacterId(id, variant));
-            Log(id, variant);
+
+            if (data.UnlockCharacterClip(new CharacterId(id, variant)))
+                Log(id, variant);
         }
     }
 }
