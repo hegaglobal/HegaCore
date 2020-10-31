@@ -17,7 +17,7 @@ namespace HegaCore.UI
 
         static UIDefaultActivity()
         {
-            _settings = UIActivity.Settings.Default.With(false, true, true, false, true, 0f, null);
+            _settings = UIActivity.Settings.Default.With(false, false, true, false, true, 0f, 0.5f);
         }
 
         public static void Preload()
