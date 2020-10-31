@@ -17,7 +17,7 @@ namespace HegaCore.UI
 
         static UIDefaultActivity()
         {
-            _settings = UIActivity.Settings.Default.With(false, false, true, false, true, 0f);
+            _settings = UIActivity.Settings.Default.With(false, true, true, false, true, 0f);
         }
 
         public static void Preload()
@@ -31,12 +31,44 @@ namespace HegaCore.UI
             UIMan.Instance.ShowActivity<UIActivity>(autoHide, _settings, OnCompleted);
         }
 
+        public static void Show(float showDuration, bool autoHide = false, Action onCompleted = null)
+        {
+            TryInit();
+            _onCompleted = onCompleted;
+
+            UIMan.Instance.ShowActivity<UIActivity>(showDuration, autoHide, _settings, OnCompleted);
+        }
+
+        public static void Show(float showDuration, float hideDuration, Action onCompleted = null)
+        {
+            TryInit();
+            _onCompleted = onCompleted;
+
+            UIMan.Instance.ShowActivity<UIActivity>(showDuration, hideDuration, _settings, OnCompleted);
+        }
+
         public static void Show(IEnumerator task, bool autoHide = false, Action onCompleted = null)
         {
             TryInit();
             _onCompleted = onCompleted;
 
             UIMan.Instance.ShowActivity<UIActivity>(task, autoHide, _settings, OnCompleted);
+        }
+
+        public static void Show(IEnumerator task, float showDuration, bool autoHide = false, Action onCompleted = null)
+        {
+            TryInit();
+            _onCompleted = onCompleted;
+
+            UIMan.Instance.ShowActivity<UIActivity>(task, showDuration, autoHide, _settings, OnCompleted);
+        }
+
+        public static void Show(IEnumerator task, float showDuration, float hideDuration, Action onCompleted = null)
+        {
+            TryInit();
+            _onCompleted = onCompleted;
+
+            UIMan.Instance.ShowActivity<UIActivity>(task, showDuration, hideDuration, _settings, OnCompleted);
         }
 
         public static void Show(AsyncOperation task, bool autoHide = false, Action onCompleted = null)
@@ -47,12 +79,44 @@ namespace HegaCore.UI
             UIMan.Instance.ShowActivity<UIActivity>(task, autoHide, _settings, OnCompleted);
         }
 
+        public static void Show(AsyncOperation task, float showDuration, bool autoHide = false, Action onCompleted = null)
+        {
+            TryInit();
+            _onCompleted = onCompleted;
+
+            UIMan.Instance.ShowActivity<UIActivity>(task, showDuration, autoHide, _settings, OnCompleted);
+        }
+
+        public static void Show(AsyncOperation task, float showDuration, float hideDuration, Action onCompleted = null)
+        {
+            TryInit();
+            _onCompleted = onCompleted;
+
+            UIMan.Instance.ShowActivity<UIActivity>(task, showDuration, hideDuration, _settings, OnCompleted);
+        }
+
         public static void Show(UnityWebRequest task, bool autoHide = false, Action onCompleted = null)
         {
             TryInit();
             _onCompleted = onCompleted;
 
             UIMan.Instance.ShowActivity<UIActivity>(task, autoHide, _settings, OnCompleted);
+        }
+
+        public static void Show(UnityWebRequest task, float showDuration, bool autoHide = false, Action onCompleted = null)
+        {
+            TryInit();
+            _onCompleted = onCompleted;
+
+            UIMan.Instance.ShowActivity<UIActivity>(task, showDuration, autoHide, _settings, OnCompleted);
+        }
+
+        public static void Show(UnityWebRequest task, float showDuration, float hideDuration, Action onCompleted = null)
+        {
+            TryInit();
+            _onCompleted = onCompleted;
+
+            UIMan.Instance.ShowActivity<UIActivity>(task, showDuration, hideDuration, _settings, OnCompleted);
         }
 
         public static void Show(Func<Task> task, bool autoHide = false, Action onCompleted = null)
@@ -63,12 +127,44 @@ namespace HegaCore.UI
             UIMan.Instance.ShowActivity<UIActivity>(task, autoHide, _settings, OnCompleted);
         }
 
+        public static void Show(Func<Task> task, float showDuration, bool autoHide = false, Action onCompleted = null)
+        {
+            TryInit();
+            _onCompleted = onCompleted;
+
+            UIMan.Instance.ShowActivity<UIActivity>(task, showDuration, autoHide, _settings, OnCompleted);
+        }
+
+        public static void Show(Func<Task> task, float showDuration, float hideDuration, Action onCompleted = null)
+        {
+            TryInit();
+            _onCompleted = onCompleted;
+
+            UIMan.Instance.ShowActivity<UIActivity>(task, showDuration, hideDuration, _settings, OnCompleted);
+        }
+
         public static void Show<T>(Func<Task<T>> task, bool autoHide = false, Action onCompleted = null)
         {
             TryInit();
             _onCompleted = onCompleted;
 
             UIMan.Instance.ShowActivity<UIActivity, T>(task, autoHide, _settings, OnCompleted);
+        }
+
+        public static void Show<T>(Func<Task<T>> task, float showDuration, bool autoHide = false, Action onCompleted = null)
+        {
+            TryInit();
+            _onCompleted = onCompleted;
+
+            UIMan.Instance.ShowActivity<UIActivity, T>(task, showDuration, autoHide, _settings, OnCompleted);
+        }
+
+        public static void Show<T>(Func<Task<T>> task, float showDuration, float hideDuration, Action onCompleted = null)
+        {
+            TryInit();
+            _onCompleted = onCompleted;
+
+            UIMan.Instance.ShowActivity<UIActivity, T>(task, showDuration, hideDuration, _settings, OnCompleted);
         }
 
         public static void Show<T>(Func<Task<T>> task, Action<T> onTaskCompleted, bool autoHide = false, Action onCompleted = null)
@@ -79,12 +175,44 @@ namespace HegaCore.UI
             UIMan.Instance.ShowActivity<UIActivity, T>(task, onTaskCompleted, autoHide, _settings, OnCompleted);
         }
 
+        public static void Show<T>(Func<Task<T>> task, Action<T> onTaskCompleted, float showDuration, bool autoHide = false, Action onCompleted = null)
+        {
+            TryInit();
+            _onCompleted = onCompleted;
+
+            UIMan.Instance.ShowActivity<UIActivity, T>(task, onTaskCompleted, showDuration, autoHide, _settings, OnCompleted);
+        }
+
+        public static void Show<T>(Func<Task<T>> task, Action<T> onTaskCompleted, float showDuration, float hideDuration, Action onCompleted = null)
+        {
+            TryInit();
+            _onCompleted = onCompleted;
+
+            UIMan.Instance.ShowActivity<UIActivity, T>(task, onTaskCompleted, showDuration, hideDuration, _settings, OnCompleted);
+        }
+
         public static void Show(Func<UniTask> task, bool autoHide = false, Action onCompleted = null)
         {
             TryInit();
             _onCompleted = onCompleted;
 
             UIMan.Instance.ShowActivity<UIActivity>(task, autoHide, _settings, OnCompleted);
+        }
+
+        public static void Show(Func<UniTask> task, float showDuration, bool autoHide = false, Action onCompleted = null)
+        {
+            TryInit();
+            _onCompleted = onCompleted;
+
+            UIMan.Instance.ShowActivity<UIActivity>(task, showDuration, autoHide, _settings, OnCompleted);
+        }
+
+        public static void Show(Func<UniTask> task, float showDuration, float hideDuration, Action onCompleted = null)
+        {
+            TryInit();
+            _onCompleted = onCompleted;
+
+            UIMan.Instance.ShowActivity<UIActivity>(task, showDuration, hideDuration, _settings, OnCompleted);
         }
 
         public static void Show<T>(Func<UniTask<T>> task, bool autoHide = false, Action onCompleted = null)
@@ -95,12 +223,44 @@ namespace HegaCore.UI
             UIMan.Instance.ShowActivity<UIActivity, T>(task, autoHide, _settings, OnCompleted);
         }
 
+        public static void Show<T>(Func<UniTask<T>> task, float showDuration, bool autoHide = false, Action onCompleted = null)
+        {
+            TryInit();
+            _onCompleted = onCompleted;
+
+            UIMan.Instance.ShowActivity<UIActivity, T>(task, showDuration, autoHide, _settings, OnCompleted);
+        }
+
+        public static void Show<T>(Func<UniTask<T>> task, float showDuration, float hideDuration, Action onCompleted = null)
+        {
+            TryInit();
+            _onCompleted = onCompleted;
+
+            UIMan.Instance.ShowActivity<UIActivity, T>(task, showDuration, hideDuration, _settings, OnCompleted);
+        }
+
         public static void Show<T>(Func<UniTask<T>> task, Action<T> onTaskCompleted, bool autoHide = false, Action onCompleted = null)
         {
             TryInit();
             _onCompleted = onCompleted;
 
             UIMan.Instance.ShowActivity<UIActivity, T>(task, onTaskCompleted, autoHide, _settings, OnCompleted);
+        }
+
+        public static void Show<T>(Func<UniTask<T>> task, Action<T> onTaskCompleted, float showDuration, bool autoHide = false, Action onCompleted = null)
+        {
+            TryInit();
+            _onCompleted = onCompleted;
+
+            UIMan.Instance.ShowActivity<UIActivity, T>(task, onTaskCompleted, showDuration, autoHide, _settings, OnCompleted);
+        }
+
+        public static void Show<T>(Func<UniTask<T>> task, Action<T> onTaskCompleted, float showDuration, float hideDuration, Action onCompleted = null)
+        {
+            TryInit();
+            _onCompleted = onCompleted;
+
+            UIMan.Instance.ShowActivity<UIActivity, T>(task, onTaskCompleted, showDuration, hideDuration, _settings, OnCompleted);
         }
 
         private static void OnCompleted(UIActivity sender, params object[] args)
