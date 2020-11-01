@@ -56,19 +56,20 @@ namespace HegaCore
 
             foreach (var character in data.Characters.Values)
             {
-                var key = character?.P1.OrDarkLord(this.darkLord);
+                var key = character?.P1;
+                var actualKey = key.OrDarkLord(this.darkLord);
 
-                if (string.IsNullOrEmpty(key))
+                if (string.IsNullOrEmpty(actualKey))
                     continue;
 
-                if (this.models.ContainsKey(key))
+                if (this.models.ContainsKey(actualKey))
                 {
-                    UnuLogger.LogWarning($"A model with key={key} has already existed");
+                    UnuLogger.LogWarning($"A model with key={actualKey} has already existed");
                     continue;
                 }
 
                 UnuLogger.Log($"Initializing {character.P1}...");
-                var model = this.spawner.Get(key);
+                var model = this.spawner.Get(actualKey);
 
                 if (!model)
                     continue;
@@ -109,7 +110,7 @@ namespace HegaCore
 
         public void Hide(string modelId)
         {
-            if (!this.models.TryGetValue(modelId.OrDarkLord(this.darkLord), out var model))
+            if (!this.models.TryGetValue(modelId, out var model))
                 return;
 
             model.Hide();
@@ -117,7 +118,6 @@ namespace HegaCore
 
         public void Hide(string modelId, float? duration)
         {
-            modelId = modelId.OrDarkLord(this.darkLord);
             var dur = GetDuration(duration, this.hideDuration);
 
             KillTweens(modelId);
@@ -132,7 +132,6 @@ namespace HegaCore
 
         public void Hide(string modelId, in Vector3 to, float? duration = null)
         {
-            modelId = modelId.OrDarkLord(this.darkLord);
             var dur = GetDuration(duration, this.hideDuration);
 
             KillTweens(modelId);
@@ -147,7 +146,7 @@ namespace HegaCore
 
         public CubismController Show(string modelId, in SingleOrderLayer? orderLayer = null, float? scale = null)
         {
-            if (!this.models.TryGetValue(modelId.OrDarkLord(this.darkLord), out var model))
+            if (!this.models.TryGetValue(modelId, out var model))
                 return null;
 
             if (orderLayer.HasValue)
@@ -162,7 +161,6 @@ namespace HegaCore
 
         public CubismController Show(string modelId, in Vector3 position, float? duration = null, in SingleOrderLayer? orderLayer = null, float? scale = null)
         {
-            modelId = modelId.OrDarkLord(this.darkLord);
             var dur = GetDuration(duration, this.showDuration);
 
             KillTweens(modelId);
@@ -185,7 +183,6 @@ namespace HegaCore
 
         public CubismController Show(string modelId, in Vector3 from, in Vector3 to, float? duration = null, in SingleOrderLayer? orderLayer = null, float? scale = null)
         {
-            modelId = modelId.OrDarkLord(this.darkLord);
             var dur = GetDuration(duration, this.showDuration);
 
             KillTweens(modelId);
@@ -208,7 +205,7 @@ namespace HegaCore
 
         public void SetColor(string modelId, in Color color)
         {
-            if (!this.models.TryGetValue(modelId.OrDarkLord(this.darkLord), out var model))
+            if (!this.models.TryGetValue(modelId, out var model))
                 return;
 
             if (model.gameObject.activeSelf)
@@ -217,7 +214,7 @@ namespace HegaCore
 
         public void SetColor(string modelId, in Color color, float? duration = null)
         {
-            if (!this.models.TryGetValue(modelId.OrDarkLord(this.darkLord), out var model))
+            if (!this.models.TryGetValue(modelId, out var model))
                 return;
 
             if (!model.gameObject.activeSelf)
@@ -232,8 +229,6 @@ namespace HegaCore
 
         public void SetColor(string modelId, in Color modelColor, in Color otherColor)
         {
-            modelId = modelId.OrDarkLord(this.darkLord);
-
             foreach (var kv in this.models)
             {
                 if (!kv.Value.gameObject.activeSelf)
