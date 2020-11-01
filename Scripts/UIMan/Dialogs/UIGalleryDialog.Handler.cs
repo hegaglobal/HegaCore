@@ -198,6 +198,9 @@ namespace HegaCore.UI
 
         private void HideCharacterModel()
         {
+            if (this.characterModel)
+                this.characterModel.PlayBodyAnimation(0);
+
             CubismManager.Instance.HideAll();
             this.characterModel = null;
         }
@@ -262,7 +265,8 @@ namespace HegaCore.UI
                 scale = 1f;
             }
 
-            this.characterModel = CubismManager.Instance.Show(model, position, orderLayer: this.characterLayer, scale: scale);
+            if (!this.characterModel)
+                this.characterModel = CubismManager.Instance.Show(model, position, orderLayer: this.characterLayer, scale: scale);
 
             if (!this.characterModel)
                 return;

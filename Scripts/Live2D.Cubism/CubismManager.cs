@@ -3,6 +3,7 @@ using UnityEngine;
 using Cysharp.Threading.Tasks;
 using VisualNovelData.Data;
 using DG.Tweening;
+using Sirenix.OdinInspector;
 
 namespace HegaCore
 {
@@ -22,6 +23,15 @@ namespace HegaCore
 
         [SerializeField]
         private SingleOrderLayer spawnLayer = default;
+
+        [SerializeField, BoxGroup("Animation"), LabelText("ID")]
+        private bool hasIdAnimation = false;
+
+        [SerializeField, BoxGroup("Animation"), LabelText("Body")]
+        private bool hasBodyAnimation = false;
+
+        [SerializeField, BoxGroup("Animation"), LabelText("Emo")]
+        private bool hasEmoAnimation = false;
 
         private readonly Dictionary<string, CubismController> models;
         private readonly Dictionary<string, Tweener> showTweens;
@@ -63,6 +73,7 @@ namespace HegaCore
                 if (!model)
                     continue;
 
+                model.Initialize(key, this.hasIdAnimation, this.hasBodyAnimation, this.hasEmoAnimation);
                 model.SetLayer(this.spawnLayer);
                 model.SetAlpha(1f);
                 this.models.Add(key, model);
@@ -193,15 +204,6 @@ namespace HegaCore
             this.showTweens[modelId] = model.transform.DOMove(to, dur).SetEase(Ease.InOutQuad);
 
             return model;
-        }
-
-        public void PlayAnimation(string modelId, int animId)
-        {
-            if (!this.models.TryGetValue(modelId.OrDarkLord(this.darkLord), out var model))
-                return;
-
-            if (model.gameObject.activeSelf)
-                model.PlayAnimation(animId);
         }
 
         public void SetColor(string modelId, in Color color)

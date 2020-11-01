@@ -21,6 +21,11 @@ namespace HegaCore
 
         public Vector3 LocalScale { get; private set; }
 
+        public string Id { get; private set; }
+
+        private bool hasIdAnim;
+        private bool hasBodyAnim;
+        private bool hasEmoAnim;
         private Color color;
 
         [ContextMenu("Get Components")]
@@ -36,6 +41,14 @@ namespace HegaCore
             GetComponents();
 
             this.LocalScale = this.useScaleOne ? Vector3.one : this.transform.localScale;
+        }
+
+        public void Initialize(string id, bool hasIdAnim, bool hasBodyAnim, bool hasEmoAnim)
+        {
+            this.Id = id;
+            this.hasIdAnim = hasIdAnim;
+            this.hasBodyAnim = hasBodyAnim;
+            this.hasEmoAnim = hasEmoAnim;
         }
 
         public void Hide()
@@ -114,19 +127,19 @@ namespace HegaCore
 
         public void PlayAnimation(int id)
         {
-            if (this.animator)
+            if (this.animator && this.hasIdAnim)
                 this.animator.SetInteger(Params.ID, id);
         }
 
         public void PlayBodyAnimation(int id)
         {
-            if (this.animator)
+            if (this.animator && this.hasBodyAnim)
                 this.animator.SetInteger(Params.Body, id);
         }
 
         public void PlayEmoAnimation(int id)
         {
-            if (this.animator)
+            if (this.animator && this.hasEmoAnim)
                 this.animator.SetInteger(Params.Emo, id);
         }
 
