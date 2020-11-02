@@ -27,7 +27,7 @@ namespace HegaCore.MVVM
             SubscribeOnChangedEvent(this.valueField, OnUpdateValue);
         }
 
-        public void OnUpdateValue(object val)
+        private void OnUpdateValue(object val)
         {
             if (val == null)
                 return;

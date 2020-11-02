@@ -34,6 +34,8 @@ namespace HegaCore.UI
         [SerializeField]
         private bool silent = false;
 
+        public string L10nKey => this.l10nKey;
+
         public bool IsShowing { get; private set; }
 
         private IToTemplatedString template = TooltipData.None;
@@ -45,13 +47,13 @@ namespace HegaCore.UI
                 this.rectTransform = GetComponent<RectTransform>();
         }
 
-        public void Set(IToTemplatedString template)
-        {
-            this.l10nKey = string.Empty;
-            this.template = template ?? TooltipData.None;
-        }
+        public void Set(string l10nKey)
+            => this.l10nKey = l10nKey ?? string.Empty;
 
-        public void Set(string l10nKey, IToTemplatedString template = null)
+        public void Set(IToTemplatedString template)
+            => this.template = template ?? TooltipData.None;
+
+        public void Set(string l10nKey, IToTemplatedString template)
         {
             this.l10nKey = l10nKey ?? string.Empty;
             this.template = template ?? TooltipData.None;

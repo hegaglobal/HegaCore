@@ -60,18 +60,18 @@ namespace HegaCore.MVVM
             SubscribeOnChangedEvent(this.formatKeyField, OnUpdateFormatKey);
         }
 
-        public void OnUpdateText(object val)
+        private void OnUpdateText(object val)
         {
             this.value = this.textConverter.Convert(val, this);
             Localize();
         }
 
-        public void OnUpdateColor(object val)
+        private void OnUpdateColor(object val)
         {
             this.text.color = this.colorConverter.Convert(val, this);
         }
 
-        public void OnUpdateFormatKey(object val)
+        private void OnUpdateFormatKey(object val)
         {
             var value = this.formatKeyConverter.Convert(val, this);
             SetKey(value);

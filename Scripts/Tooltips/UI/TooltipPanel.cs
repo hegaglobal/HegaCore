@@ -143,6 +143,9 @@ namespace HegaCore.UI
 
         private void AdjustPosition()
         {
+            if (!this.tooltip || !this.tooltip.rectTransform)
+                return;
+
             var target = this.tooltip.rectTransform;
             var offset = target.CalcOutsideOffset(this.rootCanvas.worldCamera);
 
