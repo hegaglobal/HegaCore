@@ -1,4 +1,5 @@
-﻿using UnityEngine;
+﻿using System;
+using UnityEngine;
 using UnityEngine.Rendering;
 using DG.Tweening;
 using Sirenix.OdinInspector;
@@ -21,6 +22,16 @@ namespace HegaCore
 
         [SerializeField, InlineButton(nameof(FindAllSpriteRenderers), "Find"), PropertySpace(6)]
         private SpriteRenderer[] spriteRenderers = null;
+
+        public SortingLayerId SortingLayer => this.sortingLayer;
+
+        public int SortingOrder => this.sortingOrder;
+
+        public SortingGroup SortingGroup => this.sortingGroup;
+
+        public ReadArray1<Renderer> Renderers => this.renderers;
+
+        public ReadArray1<SpriteRenderer> SpriteRenderers => this.spriteRenderers;
 
         private float alpha = 0f;
         private Tweener fadeTween;
@@ -130,6 +141,16 @@ namespace HegaCore
 
         private void OnFadeOutComplete()
         {
+        }
+
+        protected virtual void Init(in SortingLayerId layer, int order)
+        {
+            this.sortingLayer = layer;
+            this.sortingOrder = order;
+
+            FindSortingGroup();
+            FindAllRenderers();
+            FindAllSpriteRenderers();
         }
     }
 }

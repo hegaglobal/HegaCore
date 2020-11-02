@@ -2,12 +2,16 @@
 using Live2D.Cubism.Rendering;
 using Sirenix.OdinInspector;
 
+#if UNITY_EDITOR
+using UnityEditor;
+#endif
+
 namespace HegaCore
 {
     public sealed class CubismRendererController : RendererController
     {
         [Header("Cubism")]
-        [SerializeField, LabelText("Render Controller"), InlineButton(nameof(FindCubismRenderController), "Find")]
+        [SerializeField, InlineButton(nameof(FindCubismRenderController), "Find")]
         private CubismRenderController cubismRenderController = null;
 
         protected override void Awake()
@@ -42,5 +46,28 @@ namespace HegaCore
                 renderer.Color = color;
             }
         }
+
+#if UNITY_EDITOR
+        [MenuItem("Tools/Renderer Controller/Replace With Cubism")]
+        public static void Replace()
+        {
+            foreach (var obj in Selection.gameObjects)
+            {
+                var renderer = obj.GetComponent<RendererController>();
+
+                if (!renderer || renderer is CubismRendererController)
+                    continue;
+
+                var sortingLayer = renderer.SortingLayer;
+                var sortingOrder = renderer.SortingOrder;
+
+                DestroyImmediate(renderer, true);
+
+                var cubism = obj.AddComponent<CubismRendererController>();
+                cubism.Init(sortingLayer, sortingOrder);
+                cubism.FindCubismRenderController();
+            }
+        }
+#endif
     }
 }
