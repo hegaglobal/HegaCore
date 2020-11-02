@@ -3,49 +3,44 @@ using System.Collections.Generic;
 
 namespace HegaCore
 {
-    public class CommandManager : Singleton<CommandManager>, IOnUpdate
+    public class CommandManager : Singleton<CommandManager>
     {
-        private readonly Dictionary<int, ICommand> commands = new Dictionary<int, ICommand>();
+        private readonly Dictionary<string, ICommand> map = new Dictionary<string, ICommand>();
 
-        public CommandManager Register(int key, ICommand command)
+        public CommandManager Register(string key, ICommand command)
         {
             if (command != null)
-                this.commands[key] = command;
+                this.map[key] = command;
 
             return this;
         }
 
-        public CommandManager Register<T>(int key) where T : ICommand, new()
+        public CommandManager Register<T>(string key) where T : ICommand, new()
         {
-            this.commands[key] = new T();
+            this.map[key] = new T();
             return this;
         }
 
-        public CommandManager Remove(int key)
+        public bool Contains(string key)
+            => this.map.ContainsKey(key);
+
+        public bool TryGetCommand(string commandKey, out ICommand command)
+            => this.map.TryGetValue(commandKey, out command);
+
+        public CommandManager Remove(string key)
         {
-            this.commands.Remove(key);
+            this.map.Remove(key);
             return this;
         }
 
-        public void OnUpdate(float deltaTime)
+        public void Invoke(string commandKey)
         {
-            var keys = Pool.Provider.List<int>();
-            keys.AddRange(this.commands.Keys);
-
-            foreach (var key in keys)
+            if (TryGetCommand(commandKey, out var command))
             {
-                if (!this.commands.TryGetValue(key, out var command))
-                    continue;
-
-                if (command.Validate())
-                {
-                    command.PreExecute();
-                    command.Execute();
-                    command.PostExecute();
-                }
+                command.PreExecute();
+                command.Execute();
+                command.PostExecute();
             }
-
-            Pool.Provider.Return(keys);
         }
     }
 }

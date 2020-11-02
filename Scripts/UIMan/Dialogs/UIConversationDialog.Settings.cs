@@ -1,4 +1,5 @@
-﻿using VisualNovelData.Commands;
+﻿using UnityEngine;
+using VisualNovelData.Commands;
 
 namespace HegaCore.UI
 {
