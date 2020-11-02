@@ -183,7 +183,15 @@ namespace HegaCore
         {
             foreach (var key in keys)
             {
-                if (string.IsNullOrEmpty(key) || !AddressablesManager.ContainsKey(key))
+                if (string.IsNullOrEmpty(key))
+                {
+                    if (!silent)
+                        UnuLogger.LogWarning($"{type} key is empty");
+
+                    continue;
+                }
+
+                if (!AddressablesManager.ContainsKey(key))
                 {
                     UnuLogger.LogError($"Cannot find any {type} with key={key}");
                     continue;
