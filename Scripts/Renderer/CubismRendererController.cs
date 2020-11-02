@@ -66,6 +66,8 @@ namespace HegaCore
                 var cubism = obj.AddComponent<CubismRendererController>();
                 cubism.Init(sortingLayer, sortingOrder);
                 cubism.FindCubismRenderController();
+
+                EditorUtility.SetDirty(obj);
             }
         }
 #endif
