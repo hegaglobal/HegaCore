@@ -12,7 +12,7 @@ namespace HegaCore.Events.Commands
             Register(GetCommands(), @override);
         }
 
-        protected void Register(IEnumerable<ICommand> commands, bool @override)
+        protected void Register(IEnumerable<IEventCommand> commands, bool @override)
         {
             if (commands == null)
                 return;
@@ -25,7 +25,7 @@ namespace HegaCore.Events.Commands
             }
         }
 
-        protected virtual IEnumerable<ICommand> GetCommands()
+        protected virtual IEnumerable<IEventCommand> GetCommands()
             => null;
     }
 }

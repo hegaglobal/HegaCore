@@ -7,7 +7,7 @@ using VisualNovelData.Commands;
 namespace HegaCore.Events.Commands
 {
     [Serializable]
-    public abstract class DataCommand : BaseCommand, ICommand
+    public abstract class DataCommand : BaseCommand, IEventCommand
     {
         public abstract string Key { get; }
 

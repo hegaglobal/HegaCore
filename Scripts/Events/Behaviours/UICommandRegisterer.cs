@@ -4,7 +4,7 @@ namespace HegaCore.Events.Commands
 {
     public sealed class UICommandRegisterer : CommandRegisterer
     {
-        protected override IEnumerable<ICommand> GetCommands()
+        protected override IEnumerable<IEventCommand> GetCommands()
         {
             return GetComponentsInChildren<UICommand>();
         }

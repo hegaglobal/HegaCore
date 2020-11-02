@@ -1,6 +1,6 @@
 ﻿namespace HegaCore.Events.Commands
 {
-    public interface ICommand : VisualNovelData.Commands.ICommand
+    public interface IEventCommand : VisualNovelData.Commands.ICommand
     {
         string Key { get; }
     }

@@ -6,7 +6,7 @@ using VisualNovelData;
 
 namespace HegaCore.Events.Commands
 {
-    public abstract class UICommand : MonoBehaviour, ICommand
+    public abstract class UICommand : MonoBehaviour, IEventCommand
     {
         [SerializeField]
         private string key = string.Empty;
