@@ -51,16 +51,14 @@ namespace HegaCore.UI
         {
             this.l10nKey = l10nKey ?? string.Empty;
 
-            if (this.IsShowing)
-                Show();
+            RefreshShow();
         }
 
         public void Set(IToTemplatedString template)
         {
             this.template = template ?? TooltipData.None;
 
-            if (this.IsShowing)
-                Show();
+            RefreshShow();
         }
 
         public void Set(string l10nKey, IToTemplatedString template)
@@ -68,16 +66,26 @@ namespace HegaCore.UI
             this.l10nKey = l10nKey ?? string.Empty;
             this.template = template ?? TooltipData.None;
 
-            if (this.IsShowing)
-                Show();
+            RefreshShow();
         }
 
         public void Unset()
             => TooltipPanel.Instance.Set(this.type, this.l10nKey, this.template);
 
-        private void Show()
-            => TooltipPanel.Instance.Set(this.type, this.l10nKey, this.template)
-                                    .Show(this.type, this.rectTransform, this.direction, this.offset);
+        private void RefreshShow()
+        {
+            if (!this.IsShowing)
+                return;
+
+            if (this.template is IIsEmpty empty && empty.IsEmpty)
+            {
+                TooltipPanel.Instance.Hide(this.rectTransform);
+                return;
+            }
+
+            TooltipPanel.Instance.Set(this.type, this.l10nKey, this.template)
+                                 .Show(this.type, this.rectTransform, this.direction, this.offset);
+        }
 
         void IPointerEnterHandler.OnPointerEnter(PointerEventData eventData)
         {
@@ -89,7 +97,9 @@ namespace HegaCore.UI
                 return;
             }
 
-            Show();
+            TooltipPanel.Instance.Set(this.type, this.l10nKey, this.template)
+                                 .Show(this.type, this.rectTransform, this.direction, this.offset);
+
             this.IsShowing = true;
         }
 

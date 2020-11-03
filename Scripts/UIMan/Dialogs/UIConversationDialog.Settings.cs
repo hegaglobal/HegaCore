@@ -24,8 +24,6 @@ namespace HegaCore.UI
                 BackgroundDurationChange = bgDurationChange;
                 DataContainer = dataContainer;
                 CommandSystem = commandSystem;
-
-                Commands.RegisterDefaultInputKeys();
             }
         }
     }
