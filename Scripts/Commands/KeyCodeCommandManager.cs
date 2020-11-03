@@ -27,17 +27,18 @@ namespace HegaCore
             return Instance;
         }
 
-        protected List<KeyCode> GetKeys()
+        public void OnUpdate(float deltaTime)
         {
             var keys = Pool.Provider.List<KeyCode>();
             keys.AddRange(this.map.Keys);
 
-            return keys;
+            OnUpdate(deltaTime, keys);
+
+            Pool.Provider.Return(keys);
         }
 
-        protected void Return(List<KeyCode> item)
-            => Pool.Provider.Return(item);
-
-        public virtual void OnUpdate(float deltaTime) { }
+        protected virtual void OnUpdate(float deltaTime, IEnumerable<KeyCode> keys)
+        {
+        }
     }
 }

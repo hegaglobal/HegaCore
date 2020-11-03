@@ -62,7 +62,7 @@ namespace HegaCore
 
         public void SetValue(int value)
         {
-            this.ActualValue = value - this.ActualValue;
+            this.ActualValue = value;
             OnChange();
         }
 
