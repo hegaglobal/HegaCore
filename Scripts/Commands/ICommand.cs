@@ -2,10 +2,8 @@
 {
     public interface ICommand
     {
-        void PreExecute();
-
         void Execute();
 
-        void PostExecute();
+        void Deactivate();
     }
 }

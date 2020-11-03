@@ -139,6 +139,9 @@ namespace HegaCore.UI
             ResetUI().Forget();
             this.panelCover.Hide();
             this.onShowCompleted?.Invoke();
+
+            Commands.RegisterSpeedUpCommand(ExecuteSpeedUp, DeactivateSpeedUp);
+            Commands.RegisterSkipNextCommand(ExecuteSkipNextOrEnd, null);
         }
 
         public override void OnHide()
@@ -147,6 +150,8 @@ namespace HegaCore.UI
 
             this.isEnd = true;
             this.isHiding = true;
+
+            Commands.RemoveCommands();
 
             ForceHideAllActors();
             base.OnHide();
@@ -311,41 +316,36 @@ namespace HegaCore.UI
             }
         }
 
-        private void Update()
+        private void ExecuteSkipNextOrEnd()
         {
             if (this.isEnd && this.isHiding)
                 return;
 
             if (this.CanvasGroup.interactable)
             {
-                if (Input.GetKeyUp(KeyCode.Return) ||
-                    Input.GetKeyUp(KeyCode.KeypadEnter) ||
-                    Input.GetKeyUp(KeyCode.Space))
-                {
-                    TrySkipNextOrEnd();
-                }
-            }
-
-            if (Input.GetKey(KeyCode.LeftControl) ||
-                Input.GetKey(KeyCode.RightControl))
-            {
-                SpeedUp();
-            }
-            else
-            {
-                StopSpeedUp();
+                TrySkipNextOrEnd();
             }
         }
 
-        void IPointerClickHandler.OnPointerClick(PointerEventData eventData)
+        private void ExecuteSpeedUp()
         {
             if (this.isEnd && this.isHiding)
                 return;
 
-            if (!this.CanvasGroup.interactable)
+            SpeedUp();
+        }
+
+        private void DeactivateSpeedUp()
+        {
+            if (this.isEnd && this.isHiding)
                 return;
 
-            TrySkipNextOrEnd();
+            StopSpeedUp();
+        }
+
+        void IPointerClickHandler.OnPointerClick(PointerEventData eventData)
+        {
+            ExecuteSkipNextOrEnd();
         }
 
         public void TrySkipNextOrEnd()

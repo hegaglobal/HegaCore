@@ -33,13 +33,29 @@ namespace HegaCore
             return this;
         }
 
-        public void Invoke(string commandKey)
+        public CommandManager Remove(params string[] keys)
+        {
+            foreach (var key in keys)
+            {
+                this.map.Remove(key);
+            }
+
+            return this;
+        }
+
+        public void Execute(string commandKey)
         {
             if (TryGetCommand(commandKey, out var command))
             {
-                command.PreExecute();
                 command.Execute();
-                command.PostExecute();
+            }
+        }
+
+        public void Deactivate(string commandKey)
+        {
+            if (TryGetCommand(commandKey, out var command))
+            {
+                command.Deactivate();
             }
         }
     }

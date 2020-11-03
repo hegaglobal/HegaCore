@@ -1,5 +1,4 @@
-﻿using UnityEngine;
-using VisualNovelData.Commands;
+﻿using VisualNovelData.Commands;
 
 namespace HegaCore.UI
 {
@@ -25,6 +24,8 @@ namespace HegaCore.UI
                 BackgroundDurationChange = bgDurationChange;
                 DataContainer = dataContainer;
                 CommandSystem = commandSystem;
+
+                Commands.RegisterDefaultInputKeys();
             }
         }
     }
