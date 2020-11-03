@@ -78,10 +78,24 @@ namespace HegaCore
             SetAlpha(alpha);
         }
 
+        public void Show(in Color color)
+        {
+            if (!this.gameObject.activeSelf)
+                this.gameObject.SetActive(true);
+
+            SetColor(in color);
+        }
+
         public void Show(in Vector3 position, float alpha = 1f)
         {
             this.transform.position = position;
             Show(alpha);
+        }
+
+        public void Show(in Vector3 position, in Color color)
+        {
+            this.transform.position = position;
+            Show(color);
         }
 
         public void SetScale(float value)
