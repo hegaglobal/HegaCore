@@ -74,7 +74,7 @@ namespace HegaCore.UI
 
         private void RefreshShow()
         {
-            if (!this.IsShowing)
+            if (!this.IsShowing || !TooltipPanel.Instance.IsShowing(this.rectTransform))
                 return;
 
             if (this.template is IIsEmpty empty && empty.IsEmpty)
