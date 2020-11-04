@@ -56,6 +56,9 @@ namespace HegaCore.UI
         [SerializeField, PropertySpace(4)]
         private ActorView[] actorViews = new ActorView[0];
 
+        [SerializeField, InlineProperty, BoxGroup("Initial Actor View"), HideLabel]
+        private ActorView initialActorView = new ActorView();
+
         [SerializeField]
         private Transform positionLeft = null;
 
@@ -93,6 +96,7 @@ namespace HegaCore.UI
         private DialogueRow goodDialogue;
         private ChoiceRow defaultChoice;
 
+        private bool isInitialized = false;
         private bool areChoicesOnly = false;
         private bool showChoicesOnly = false;
         private bool canTrySkipNext = true;
@@ -135,8 +139,14 @@ namespace HegaCore.UI
         public override void OnShowComplete()
         {
             base.OnShowComplete();
+            LateShowComplete().Forget();
+        }
 
-            ResetUI().Forget();
+        private async UniTaskVoid LateShowComplete()
+        {
+            await ResetUIAsync();
+            await UniTask.WaitUntil(() => this.isInitialized);
+
             this.panelCover.Hide();
             this.onShowCompleted?.Invoke();
 
@@ -200,6 +210,8 @@ namespace HegaCore.UI
 
         private void Initialize()
         {
+            this.isInitialized = false;
+
             this.novelData = VisualNovelDataset.Novel;
             this.characterData = VisualNovelDataset.Character;
 
@@ -250,10 +262,22 @@ namespace HegaCore.UI
 
             var firstChoice = this.defaultDialogue.GetChoice(0);
             this.dialogue = this.conversation.GetDialogue(firstChoice.GoTo);
+
+            LateInitialize().Forget();
+        }
+
+        private async UniTaskVoid LateInitialize()
+        {
+            //CubismManager.Instance.ShowAll(this.initialActorView.Position.position, this.initialActorView.Layer, 0f);
+
+            await UniTask.Delay(TimeSpan.FromSeconds(Settings.Durations.Show));
+
+            this.isInitialized = true;
         }
 
         private void Deinitialize()
         {
+            this.isInitialized = false;
             this.SpeakerAvatar = string.Empty;
             this.AvatarAtlas = string.Empty;
             this.Choices.Clear();
@@ -280,7 +304,7 @@ namespace HegaCore.UI
         private void SetBackground(string name, float? duration = null)
             => this.panelBackground.Switch(name, duration: duration);
 
-        private async UniTaskVoid ResetUI()
+        private async UniTask ResetUIAsync()
         {
             this.Choices.Clear();
             this.panelBackground.Show(true);
@@ -745,7 +769,7 @@ namespace HegaCore.UI
         private string GetContent(CharacterRow character)
             => this.characterData.GetContent(character.ContentId).GetLocalization(Settings.DataContainer.Settings.Language);
 
-        private void Invoke(IReadOnlyList<VisualNovelData.Data.Command> commands)
+        private void Invoke(IReadOnlyList<Command> commands)
         {
             if (commands == null)
                 return;

@@ -1,5 +1,6 @@
 ﻿using UnityEngine;
 using Live2D.Cubism.Rendering;
+using Cysharp.Threading.Tasks;
 
 namespace HegaCore
 {
@@ -22,6 +23,8 @@ namespace HegaCore
         public Vector3 LocalScale { get; private set; }
 
         public string Id { get; private set; }
+
+        public bool IsActive => this.gameObject && this.gameObject.activeSelf;
 
         private bool hasIdAnim;
         private bool hasBodyAnim;
@@ -60,6 +63,13 @@ namespace HegaCore
 
             this.transform.localScale = this.LocalScale;
 
+            LateHide().Forget();
+        }
+
+        private async UniTaskVoid LateHide()
+        {
+            await UniTask.DelayFrame(2);
+
             if (this.gameObject.activeSelf)
                 this.gameObject.SetActive(false);
         }
@@ -68,6 +78,17 @@ namespace HegaCore
         {
             this.transform.position = position;
             Hide();
+        }
+
+        public void Set(in Vector3 position)
+        {
+            this.transform.position = position;
+        }
+
+        public void Set(in Vector3 position, in Color color)
+        {
+            this.transform.position = position;
+            SetColor(color);
         }
 
         public void Show(float alpha = 1f)
@@ -186,21 +207,20 @@ namespace HegaCore
 
         public void SetAlpha(float value)
         {
-            value = Mathf.Clamp(value, 0f, 1f);
-            this.TempAlpha = value;
+            this.TempAlpha = Mathf.Clamp(value, 0f, 1f);
 
             if (this.cubismRenderer)
             {
                 foreach (var renderer in this.cubismRenderer.Renderers)
                 {
-                    var color = renderer.Color.With(a: value);
+                    var color = renderer.Color.With(a: this.TempAlpha);
                     renderer.Color = color;
                 }
             }
 
             if (this.spriteRenderer)
             {
-                var color = this.spriteRenderer.color.With(a: value);
+                var color = this.spriteRenderer.color.With(a: this.TempAlpha);
                 this.spriteRenderer.color = color;
             }
         }

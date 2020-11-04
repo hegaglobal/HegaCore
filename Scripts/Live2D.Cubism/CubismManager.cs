@@ -147,6 +147,22 @@ namespace HegaCore
                                                       .OnComplete(model.Hide);
         }
 
+        public void ShowAll(in Vector3 position, in SingleOrderLayer? orderLayer = null, float? scale = null, float? alpha = null)
+        {
+            KillTweens();
+
+            foreach (var model in this.models.Values)
+            {
+                if (orderLayer.HasValue)
+                    model.SetLayer(orderLayer.Value);
+
+                if (scale.HasValue)
+                    model.SetScale(scale.Value);
+
+                model.Show(position, alpha ?? 1f);
+            }
+        }
+
         public CubismController Show(string modelId, in SingleOrderLayer? orderLayer = null, float? scale = null)
         {
             if (!this.models.TryGetValue(modelId, out var model))
@@ -299,6 +315,19 @@ namespace HegaCore
                     kv.Value.SetColor(in modelColor);
                 else
                     kv.Value.SetColor(in otherColor);
+            }
+        }
+
+        private void KillTweens()
+        {
+            foreach (var hideTween in this.hideTweens.Values)
+            {
+                hideTween?.Kill();
+            }
+
+            foreach (var showTween in this.showTweens.Values)
+            {
+                showTween?.Kill();
             }
         }
 
