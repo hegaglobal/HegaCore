@@ -77,8 +77,11 @@ namespace HegaCore
                 model.Initialize(key, this.hasIdAnimation, this.hasBodyAnimation, this.hasEmoAnimation);
                 model.SetLayer(this.spawnLayer);
                 model.SetAlpha(1f);
+
                 this.models.Add(key, model);
             }
+
+            await UniTask.Delay(System.TimeSpan.FromSeconds(this.hideDuration));
 
             HideAll(this.hideDuration);
 

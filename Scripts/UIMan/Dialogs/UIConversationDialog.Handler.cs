@@ -909,10 +909,7 @@ namespace HegaCore.UI
                 return;
 
             actor.Model = model;
-            actor.Controller = CubismManager.Instance.Show(model, view.Position.position, Settings.Durations.Show);
-
-            if (!this.isHiding)
-                ApplyLayerToActor(actor, view);
+            actor.Controller = CubismManager.Instance.Show(model, view.Position.position, Settings.Durations.Show, view.Layer);
         }
 
         public void UI_Event_Actor_Show_FromLeft(int actorNumber)
@@ -940,10 +937,7 @@ namespace HegaCore.UI
             var to = view.Position.position;
 
             actor.Model = model;
-            actor.Controller = CubismManager.Instance.Show(model, from, to, Settings.Durations.Show);
-
-            if (!this.isHiding)
-                ApplyLayerToActor(actor, view);
+            actor.Controller = CubismManager.Instance.Show(model, from, to, Settings.Durations.Show, view.Layer);
         }
 
         public void UI_Event_Actor_Hide(int actorNumber)
