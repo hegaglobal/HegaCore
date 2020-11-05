@@ -11,6 +11,9 @@ namespace HegaCore
     {
         protected override void ContinueLoad()
         {
+            Load<GameModeEntry, GameModeEntry.Mapping>
+                 (this.Tables.GameMode, nameof(this.Tables.GameMode), true);
+
             Load<LanguageEntry, LanguageEntry.Mapping>
                  (this.Tables.Language, nameof(this.Tables.Language), true);
 

@@ -29,6 +29,8 @@ namespace HegaCore
 
         public int CharacterId;
 
+        public GameMode GameMode;
+
         public CharacterProgressMap CharacterProgressMap = new CharacterProgressMap();
 
         public BasePlayerData()
@@ -49,6 +51,7 @@ namespace HegaCore
             this.LastTime = string.Empty;
             this.CharacterId = 0;
             this.CharacterProgressMap.Clear();
+            this.GameMode = GameMode.Normal;
         }
 
         protected void CopyFrom(BasePlayerData data)
@@ -76,6 +79,7 @@ namespace HegaCore
             this.BadPoint = data.BadPoint;
             this.LastTime = data.LastTime ?? string.Empty;
             this.CharacterId = data.CharacterId;
+            this.GameMode = data.GameMode;
 
             Copy(this.CharacterProgressMap, data.CharacterProgressMap);
         }

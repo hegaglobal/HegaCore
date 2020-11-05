@@ -8,6 +8,8 @@ namespace HegaCore
 
     public class VisualNovelDataTables : Tables
     {
+        public Table<GameModeEntry> GameMode { get; } = new Table<GameModeEntry>();
+
         public Table<LanguageEntry> Language { get; } = new Table<LanguageEntry>();
 
         public Table<AudioEntry> Audio { get; } = new Table<AudioEntry>();
@@ -33,6 +35,7 @@ namespace HegaCore
 
         public override void Clear()
         {
+            this.GameMode.Clear();
             this.Language.Clear();
             this.Audio.Clear();
             this.L10nData.Clear();
