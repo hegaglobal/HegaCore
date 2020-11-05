@@ -1,5 +1,6 @@
 ﻿using UnityEngine;
 using TMPro;
+using Cysharp.Threading.Tasks;
 
 namespace HegaCore
 {
@@ -27,6 +28,14 @@ namespace HegaCore
         private void Start()
         {
             L10n.Register(this);
+
+            LazyLocalize().Forget();
+        }
+
+        private async UniTaskVoid LazyLocalize()
+        {
+            await UniTask.WaitUntil(() => L10n.IsInitialized);
+
             Localize();
         }
 

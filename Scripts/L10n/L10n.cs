@@ -5,6 +5,8 @@ namespace HegaCore
 {
     public static class L10n
     {
+        public static bool IsInitialized => _language != null;
+
         private static readonly List<IL10n> _targets;
 
         private static ReadL10nData _data;
