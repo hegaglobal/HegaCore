@@ -20,11 +20,13 @@ namespace HegaCore
         private readonly AudioSource music;
         private readonly AudioSource sound;
         private readonly AudioSource voice;
+        private readonly AudioSource voiceBackground;
         private readonly List<string> soundBuffer;
 
         private float musicFadeTime;
         private string currentMusicKey = string.Empty;
         private string currentVoiceKey = string.Empty;
+        private string currentVoiceBGKey = string.Empty;
         private AssetReferenceAudioClip currentMusicRef = null;
         private AssetReferenceAudioClip currentVoiceRef = null;
 
@@ -32,13 +34,14 @@ namespace HegaCore
         private Tweener musicFadeOut;
         private Tweener musicFadeIn;
 
-        public AudioPlayer(AudioManager manager, AudioMixer mixer, AudioSource music, AudioSource sound, AudioSource voice)
+        public AudioPlayer(AudioManager manager, AudioMixer mixer, AudioSource music, AudioSource sound, AudioSource voice, AudioSource voiceBG)
         {
             this.manager = manager;
             this.mixer = mixer;
             this.music = music;
             this.sound = sound;
             this.voice = voice;
+            this.voiceBackground = voiceBG;
             this.soundBuffer = new List<string>();
         }
 
@@ -280,6 +283,29 @@ namespace HegaCore
                 this.voice.Stop();
             }
         }
+        
+        public void PlayVoiceBG(string key, bool loop)
+        {
+            if (this.voiceBackground.isPlaying &&
+                string.Equals(this.currentVoiceBGKey, key))
+                return;
+
+            this.voiceBackground.Stop();
+            this.voiceBackground.clip = null;
+
+            if (this.manager.TryGetVoice(key, out var voiceClip))
+            {
+                this.currentVoiceBGKey = key;
+                this.voiceBackground.clip = voiceClip;
+                this.voiceBackground.loop = loop;
+                this.voiceBackground.Play();
+            }
+            else
+            {
+                this.currentVoiceBGKey = string.Empty;
+                this.voiceBackground.Stop();
+            }
+        }
 
         public async UniTaskVoid PlayVoiceAsync(string key, bool silent = true)
         {
@@ -355,6 +381,14 @@ namespace HegaCore
         public void StopVoice()
             => this.voice.Stop();
 
+        public void StopVoiceBG()
+            => this.voiceBackground.Stop();
+
+        public void StopAllVoices()
+        {
+            StopVoice();
+            StopVoiceBG();
+        }
         private void FadeMusicPlay()
         {
             this.musicFadeIn?.Kill();
