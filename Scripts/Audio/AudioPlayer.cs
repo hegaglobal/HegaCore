@@ -34,7 +34,8 @@ namespace HegaCore
         private Tweener musicFadeOut;
         private Tweener musicFadeIn;
 
-        public AudioPlayer(AudioManager manager, AudioMixer mixer, AudioSource music, AudioSource sound, AudioSource voice, AudioSource voiceBG)
+        public AudioPlayer(AudioManager manager, AudioMixer mixer, AudioSource music, AudioSource sound,
+                           AudioSource voice, AudioSource voiceBG)
         {
             this.manager = manager;
             this.mixer = mixer;
@@ -150,6 +151,22 @@ namespace HegaCore
         private bool CanPlayMusic(string key)
             => !this.music.isPlaying ||
                !string.Equals(this.currentMusicKey, key);
+
+        public void PauseMusic()
+        {
+            if (!this.music.isPlaying)
+                return;
+
+            this.music.Pause();
+        }
+
+        public void ResumeMusic()
+        {
+            if (this.music.isPlaying)
+                return;
+
+            this.music.Play();
+        }
 
         public void PlayMusic(string key)
         {
@@ -283,7 +300,7 @@ namespace HegaCore
                 this.voice.Stop();
             }
         }
-        
+
         public void PlayVoiceBG(string key, bool loop)
         {
             if (this.voiceBackground.isPlaying &&
