@@ -18,6 +18,7 @@ namespace HegaCore
         [SerializeField]
         private SpriteRenderer spriteRenderer = null;
 
+        public Animator Animator => this.animator;    
         public float TempAlpha { get; set; }
 
         public Vector3 LocalScale { get; private set; }
