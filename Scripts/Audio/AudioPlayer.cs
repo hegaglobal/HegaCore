@@ -12,6 +12,8 @@ namespace HegaCore
         private const string InnerMusicVolume = nameof(InnerMusicVolume);
         private const string SoundVolume = nameof(SoundVolume);
         private const string VoiceVolume = nameof(VoiceVolume);
+        private const string VoiceBGVolume = nameof(VoiceBGVolume);
+        private const string InnerVoiceBGVolume = nameof(InnerVoiceBGVolume);
 
         private const float SoundBufferClearDelay = 0.04f;
 
@@ -20,7 +22,7 @@ namespace HegaCore
         private readonly AudioSource music;
         private readonly AudioSource sound;
         private readonly AudioSource voice;
-        private readonly AudioSource voiceBackground;
+        private readonly AudioSource voiceBG;
         private readonly List<string> soundBuffer;
 
         private float musicFadeTime;
@@ -29,10 +31,15 @@ namespace HegaCore
         private string currentVoiceBGKey = string.Empty;
         private AssetReferenceAudioClip currentMusicRef = null;
         private AssetReferenceAudioClip currentVoiceRef = null;
+        private AssetReferenceAudioClip currentVoiceBGRef = null;
 
         private AudioClip musicClip;
         private Tweener musicFadeOut;
         private Tweener musicFadeIn;
+
+        private AudioClip voiceBGClip;
+        private Tweener voiceBGFadeOut;
+        private Tweener voiceBGFadeIn;
 
         public AudioPlayer(AudioManager manager, AudioMixer mixer, AudioSource music, AudioSource sound,
                            AudioSource voice, AudioSource voiceBG)
@@ -42,7 +49,7 @@ namespace HegaCore
             this.music = music;
             this.sound = sound;
             this.voice = voice;
-            this.voiceBackground = voiceBG;
+            this.voiceBG = voiceBG;
             this.soundBuffer = new List<string>();
         }
 
@@ -82,7 +89,11 @@ namespace HegaCore
             => this.mixer.SetFloat(SoundVolume, ToVolume(value));
 
         public void ChangeVoiceVolume(float value)
-            => this.mixer.SetFloat(VoiceVolume, ToVolume(value));
+        {
+            var volume = ToVolume(value);
+            this.mixer.SetFloat(VoiceVolume, volume);
+            this.mixer.SetFloat(InnerVoiceBGVolume, volume);
+        }
 
         private static float ToVolume(float value)
         {
@@ -109,6 +120,11 @@ namespace HegaCore
                     break;
 
                 case AudioType.Voice:
+                    PlayVoice(key);
+                    break;
+
+                case AudioType.VoiceBG:
+                    PlayVoiceBG(key);
                     break;
             }
         }
@@ -126,6 +142,11 @@ namespace HegaCore
                     break;
 
                 case AudioType.Voice:
+                    PlayVoice(reference);
+                    break;
+
+                case AudioType.VoiceBG:
+                    PlayVoiceBG(reference);
                     break;
             }
         }
@@ -144,6 +165,10 @@ namespace HegaCore
 
                 case AudioType.Voice:
                     StopVoice();
+                    break;
+
+                case AudioType.VoiceBG:
+                    StopVoiceBG();
                     break;
             }
         }
@@ -301,29 +326,6 @@ namespace HegaCore
             }
         }
 
-        public void PlayVoiceBG(string key, bool loop)
-        {
-            if (this.voiceBackground.isPlaying &&
-                string.Equals(this.currentVoiceBGKey, key))
-                return;
-
-            this.voiceBackground.Stop();
-            this.voiceBackground.clip = null;
-
-            if (this.manager.TryGetVoice(key, out var voiceClip))
-            {
-                this.currentVoiceBGKey = key;
-                this.voiceBackground.clip = voiceClip;
-                this.voiceBackground.loop = loop;
-                this.voiceBackground.Play();
-            }
-            else
-            {
-                this.currentVoiceBGKey = string.Empty;
-                this.voiceBackground.Stop();
-            }
-        }
-
         public async UniTaskVoid PlayVoiceAsync(string key, bool silent = true)
         {
             await this.manager.PrepareVoiceAsync(silent, key);
@@ -336,6 +338,73 @@ namespace HegaCore
             await this.manager.PrepareVoiceAsync(silent, key);
 
             PlayVoice(key);
+        }
+
+        private bool CanPlayVoiceBG(string key)
+            => !this.voiceBG.isPlaying ||
+               !string.Equals(this.currentVoiceBGKey, key);
+
+        public void PlayVoiceBG(string key)
+        {
+            if (!CanPlayVoiceBG(key))
+                return;
+
+            if (this.manager.TryGetVoiceBG(key, out this.voiceBGClip))
+            {
+                this.currentVoiceBGKey = key;
+                FadeVoiceBGPlay();
+            }
+            else
+            {
+                this.currentVoiceBGKey = string.Empty;
+                FadeVoiceBGStop();
+            }
+        }
+
+        public void PlayVoiceBG(string key, AudioClip clip)
+        {
+            if (!clip)
+            {
+                PlayVoiceBG(key);
+                return;
+            }
+
+            if (!CanPlayVoiceBG(key))
+                return;
+
+            this.currentVoiceBGKey = key;
+            this.voiceBGClip = clip;
+            FadeVoiceBGPlay();
+        }
+
+        public async UniTaskVoid PlayVoiceBGAsync(string key, bool silent = true)
+        {
+            await this.manager.PrepareVoiceBGAsync(silent, key);
+
+            PlayVoiceBG(key);
+        }
+
+        public void PlayVoiceBGAsync(string key, AudioClip clip, bool silent = true)
+        {
+            if (!clip)
+            {
+                PlayVoiceBGAsync(key, silent).Forget();
+                return;
+            }
+
+            if (!CanPlayVoiceBG(key))
+                return;
+
+            this.currentVoiceBGKey = key;
+            this.voiceBGClip = clip;
+            FadeVoiceBGPlay();
+        }
+
+        public async UniTaskVoid PlayVoiceBGAsync(AssetReferenceAudioClip key, bool silent = true)
+        {
+            await this.manager.PrepareVoiceBGAsync(silent, key);
+
+            PlayVoiceBG(key);
         }
 
         public void PlayMusic(AssetReferenceAudioClip reference)
@@ -389,6 +458,24 @@ namespace HegaCore
             }
         }
 
+        public void PlayVoiceBG(AssetReferenceAudioClip reference)
+        {
+            if (this.voiceBG.isPlaying &&
+                this.currentVoiceBGRef == reference)
+                return;
+
+            if (this.manager.TryGetVoiceBG(reference, out this.voiceBGClip))
+            {
+                this.currentVoiceBGRef = reference;
+                FadeVoiceBGPlay();
+            }
+            else
+            {
+                this.currentVoiceBGRef = null;
+                FadeVoiceBGStop();
+            }
+        }
+
         public void StopMusic()
             => FadeMusicStop();
 
@@ -399,13 +486,20 @@ namespace HegaCore
             => this.voice.Stop();
 
         public void StopVoiceBG()
-            => this.voiceBackground.Stop();
+            => this.voiceBG.Stop();
 
         public void StopAllVoices()
         {
             StopVoice();
             StopVoiceBG();
         }
+
+        public void SetMusicLoop(bool value)
+            => this.music.loop = value;
+
+        public void SetVoiceBGLoop(bool value)
+            => this.voiceBG.loop = value;
+
         private void FadeMusicPlay()
         {
             this.musicFadeIn?.Kill();
@@ -438,6 +532,40 @@ namespace HegaCore
         private void OnFadeMusicStopComplete()
         {
             this.music.Stop();
+        }
+
+        private void FadeVoiceBGPlay()
+        {
+            this.voiceBGFadeIn?.Kill();
+
+            FadeVoiceBGStop();
+
+            this.voiceBGFadeOut.OnComplete(FadeVoiceBGPlayNext);
+        }
+
+        private void FadeVoiceBGPlayNext()
+        {
+            if (!this.voiceBGClip)
+                return;
+
+            this.voiceBG.clip = this.voiceBGClip;
+            this.voiceBG.Play();
+
+            this.voiceBGFadeIn = this.mixer.DOSetFloat(VoiceBGVolume, ToVolume(1f), this.musicFadeTime)
+                                           .SetEase(Ease.Linear);
+        }
+
+        private void FadeVoiceBGStop()
+        {
+            this.voiceBGFadeOut?.Kill();
+            this.voiceBGFadeOut = this.mixer.DOSetFloat(VoiceBGVolume, ToVolume(0f), this.musicFadeTime)
+                                            .SetEase(Ease.Linear)
+                                            .OnComplete(OnFadeVoiceBGStopComplete);
+        }
+
+        private void OnFadeVoiceBGStopComplete()
+        {
+            this.voiceBG.Stop();
         }
     }
 }

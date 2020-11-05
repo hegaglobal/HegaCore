@@ -2,6 +2,6 @@
 {
     public enum AudioType
     {
-        Music, Sound, Voice
+        Music, Sound, Voice, VoiceBG
     }
 }

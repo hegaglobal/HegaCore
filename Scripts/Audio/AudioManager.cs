@@ -38,17 +38,22 @@ namespace HegaCore
         [SerializeField]
         private VoiceRegisterer voiceRegisterer = null;
 
+        [SerializeField]
+        private VoiceBGRegisterer voiceBGRegisterer = null;
+
         public AudioPlayer Player { get; private set; }
 
         private readonly AudioMap musicMap;
         private readonly AudioMap soundMap;
         private readonly AudioMap voiceMap;
+        private readonly AudioMap voiceBGMap;
 
         public AudioManager()
         {
             this.musicMap = new AudioMap();
             this.soundMap = new AudioMap();
             this.voiceMap = new AudioMap();
+            this.voiceBGMap = new AudioMap();
         }
 
         private void Awake()
@@ -67,6 +72,9 @@ namespace HegaCore
 
             UnuLogger.Log("Initializing voice...");
             await this.voiceRegisterer.RegisterAsync(this);
+
+            UnuLogger.Log("Initializing voice background...");
+            await this.voiceBGRegisterer.RegisterAsync(this);
 
             this.Player.Initialize(musicFadeTime, musicVolume, soundVolume, voiceVolume);
         }
@@ -140,6 +148,7 @@ namespace HegaCore
                 case AudioType.Music: return this.musicMap;
                 case AudioType.Sound: return this.soundMap;
                 case AudioType.Voice: return this.voiceMap;
+                case AudioType.VoiceBG: return this.voiceBGMap;
                 default: return null;
             }
         }
@@ -152,6 +161,9 @@ namespace HegaCore
 
         public async UniTask PrepareVoiceAsync(bool silent, params AssetReferenceAudioClip[] references)
             => await PrepareAsync(this.voiceMap, AudioType.Voice, silent, references);
+
+        public async UniTask PrepareVoiceBGAsync(bool silent, params AssetReferenceAudioClip[] references)
+            => await PrepareAsync(this.voiceBGMap, AudioType.VoiceBG, silent, references);
 
         private async UniTask PrepareAsync(AudioMap map, AudioType type, bool silent, params AssetReferenceAudioClip[] references)
         {
@@ -182,6 +194,9 @@ namespace HegaCore
 
         public async UniTask PrepareVoiceAsync(bool silent, params string[] keys)
             => await PrepareAsync(this.voiceMap, AudioType.Voice, silent, keys);
+
+        public async UniTask PrepareVoiceBGAsync(bool silent, params string[] keys)
+            => await PrepareAsync(this.voiceBGMap, AudioType.VoiceBG, silent, keys);
 
         private async UniTask PrepareAsync(AudioMap map, AudioType type, bool silent, params string[] keys)
         {
@@ -232,6 +247,9 @@ namespace HegaCore
         public void ReleaseVoice(params AssetReferenceAudioClip[] references)
             => Release(this.voiceMap, references);
 
+        public void ReleaseVoiceBG(params AssetReferenceAudioClip[] references)
+            => Release(this.voiceBGMap, references);
+
         private void Release(AudioMap map, params AssetReferenceAudioClip[] references)
         {
             foreach (var reference in references)
@@ -255,6 +273,9 @@ namespace HegaCore
         public void ReleaseVoice(params string[] keys)
             => Release(this.voiceMap, keys);
 
+        public void ReleaseVoicBG(params string[] keys)
+            => Release(this.voiceBGMap, keys);
+
         private void Release(AudioMap map, params string[] keys)
         {
             foreach (var key in keys)
@@ -276,6 +297,9 @@ namespace HegaCore
         public bool TryGetVoice(AssetReferenceAudioClip reference, out AudioClip voice)
             => TryGetAudio(reference, this.voiceMap, out voice);
 
+        public bool TryGetVoiceBG(AssetReferenceAudioClip reference, out AudioClip voice)
+            => TryGetAudio(reference, this.voiceBGMap, out voice);
+
         private bool TryGetAudio(AssetReferenceAudioClip reference, AudioMap map, out AudioClip clip)
         {
             var key = reference.RuntimeKey.ToString();
@@ -295,6 +319,9 @@ namespace HegaCore
 
         public bool TryGetVoice(string key, out AudioClip voice)
             => TryGetAudio(key, this.voiceMap, out voice);
+
+        public bool TryGetVoiceBG(string key, out AudioClip voice)
+            => TryGetAudio(key, this.voiceBGMap, out voice);
 
         private bool TryGetAudio(string key, AudioMap map, out AudioClip clip)
         {

@@ -29,6 +29,7 @@ namespace HegaCore.Events.Commands
             yield return new MissionPass();
             yield return new MusicPlay();
             yield return new MusicPlayAsync();
+            yield return new MusicSetLoop();
             yield return new MusicStop();
             yield return new PointAdd();
             yield return new PointBadAdd();
@@ -40,6 +41,11 @@ namespace HegaCore.Events.Commands
             yield return new VoicePlay();
             yield return new VoicePlayAsync();
             yield return new VoiceStop();
+            yield return new VoiceStopAll();
+            yield return new VoiceBackgroundPlay();
+            yield return new VoiceBackgroundPlayAsync();
+            yield return new VoiceBackgroundSetLoop();
+            yield return new VoiceBackgroundStop();
         }
     }
 }
