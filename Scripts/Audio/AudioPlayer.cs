@@ -317,6 +317,30 @@ namespace HegaCore
             {
                 this.currentVoiceKey = key;
                 this.voice.clip = voiceClip;
+                this.voice.loop = false;
+                this.voice.Play();
+            }
+            else
+            {
+                this.currentVoiceKey = string.Empty;
+                this.voice.Stop();
+            }
+        }
+        
+        public void PlayVoiceLoop(string key)
+        {
+            if (this.voice.isPlaying &&
+                string.Equals(this.currentVoiceKey, key))
+                return;
+
+            this.voice.Stop();
+            this.voice.clip = null;
+
+            if (this.manager.TryGetVoice(key, out var voiceClip))
+            {
+                this.currentVoiceKey = key;
+                this.voice.clip = voiceClip;
+                this.voice.loop = true;
                 this.voice.Play();
             }
             else
