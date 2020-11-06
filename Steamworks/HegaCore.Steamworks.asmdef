@@ -1,0 +1,21 @@
+{
+    "name": "HegaCore.Steamworks",
+    "references": [
+        "Steamworks.NET"
+    ],
+    "includePlatforms": [],
+    "excludePlatforms": [],
+    "allowUnsafeCode": false,
+    "overrideReferences": false,
+    "precompiledReferences": [],
+    "autoReferenced": true,
+    "defineConstraints": [],
+    "noEngineReferences": false,
+    "versionDefines": [
+        {
+            "name": "com.rlabrecque.steamworks-net",
+            "expression": "",
+            "define": "STEAMWORKS"
+        }
+    ]
+}
