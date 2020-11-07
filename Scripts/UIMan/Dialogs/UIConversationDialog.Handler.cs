@@ -489,6 +489,7 @@ namespace HegaCore.UI
                 Invoke(this.dialogue.CommandsOnStart);
                 Invoke(this.dialogue.CommandsOnEnd);
 
+                Commands.RemoveCommands();
                 ForceHideAllActors();
                 HideOnEnd();
 
