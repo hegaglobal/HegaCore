@@ -50,7 +50,7 @@ namespace HegaCore
 
         private void Update()
         {
-            if (!this.canRunTasks)
+            if (!this.alive || !this.canRunTasks)
                 return;
 
             this.elapsed += GameTime.Provider.DeltaTime;
