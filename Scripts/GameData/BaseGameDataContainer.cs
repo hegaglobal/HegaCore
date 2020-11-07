@@ -27,6 +27,8 @@ namespace HegaCore
 
         public ReadList<int> Missions => this.missions;
 
+        public ReadList<int> PrePastMissions => this.prePastMissions;
+
         public ReadList<int> PastMissions => this.pastMissions;
 
         public ReadList<CharacterId> CharacterImages => this.characterImages;
@@ -34,6 +36,7 @@ namespace HegaCore
         public ReadList<CharacterId> CharacterClips => this.characterClips;
 
         private readonly List<int> missions = new List<int>();
+        private readonly List<int> prePastMissions = new List<int>();
         private readonly List<int> pastMissions = new List<int>();
         private readonly List<CharacterId> characterImages = new List<CharacterId>();
         private readonly List<CharacterId> characterClips = new List<CharacterId>();
@@ -210,6 +213,18 @@ namespace HegaCore
 
         public void ClearMissions()
             => this.missions.Clear();
+
+        public bool PrePassMission(int id)
+        {
+            if (this.prePastMissions.Contains(id))
+                return false;
+
+            this.prePastMissions.Add(id);
+            return true;
+        }
+
+        public void ClearPrePastMissions()
+            => this.prePastMissions.Clear();
 
         public bool PassMission(int id)
         {
