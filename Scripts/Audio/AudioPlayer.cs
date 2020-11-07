@@ -151,6 +151,50 @@ namespace HegaCore
             }
         }
 
+        public void PlayAsync(string key, AudioType type, bool silent = true)
+        {
+            switch (type)
+            {
+                case AudioType.Music:
+                    PlayMusicAsync(key, silent).Forget();
+                    break;
+
+                case AudioType.Sound:
+                    PlaySoundAsync(key, silent).Forget();
+                    break;
+
+                case AudioType.Voice:
+                    PlayVoiceAsync(key, silent).Forget();
+                    break;
+
+                case AudioType.VoiceBG:
+                    PlayVoiceBGAsync(key, silent).Forget();
+                    break;
+            }
+        }
+
+        public void PlayAsync(AssetReferenceAudioClip reference, AudioType type, bool silent = true)
+        {
+            switch (type)
+            {
+                case AudioType.Music:
+                    PlayMusicAsync(reference, silent).Forget();
+                    break;
+
+                case AudioType.Sound:
+                    PlaySoundAsync(reference, silent).Forget();
+                    break;
+
+                case AudioType.Voice:
+                    PlayVoiceAsync(reference, silent).Forget();
+                    break;
+
+                case AudioType.VoiceBG:
+                    PlayVoiceBGAsync(reference, silent).Forget();
+                    break;
+            }
+        }
+
         public void Stop(AudioType type)
         {
             switch (type)
@@ -326,7 +370,7 @@ namespace HegaCore
                 this.voice.Stop();
             }
         }
-        
+
         public void PlayVoiceLoop(string key)
         {
             if (this.voice.isPlaying &&

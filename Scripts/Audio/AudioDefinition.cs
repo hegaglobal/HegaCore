@@ -11,7 +11,7 @@ namespace HegaCore
         private AudioType type = AudioType.Sound;
 
         public void PlayAudio()
-            => AudioManager.Instance.Player.Play(this.audioReference, this.type);
+            => AudioManager.Instance.Player.PlayAsync(this.audioReference, this.type, true);
 
         public void StopAudio()
             => AudioManager.Instance.Player.Stop(this.type);
