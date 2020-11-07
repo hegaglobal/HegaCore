@@ -65,6 +65,14 @@ namespace HegaCore
             return this.BattleTutorial || !this.BasePlayer.DoneBattleTutorial;
         }
 
+        public void SetPlayerGameMode(GameMode value)
+        {
+            if (!Validate())
+                return;
+
+            this.BasePlayer.GameMode = value;
+        }
+
         public void SetPlayerBattleTutorial(bool value = true)
         {
             if (!Validate())
