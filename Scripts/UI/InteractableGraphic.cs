@@ -23,7 +23,7 @@ namespace HegaCore.UI
         private Event onLeave = new Event();
 
         [SerializeField]
-        private Event onClick = new Event();
+        private ClickEvent onClick = new ClickEvent();
 
         public Graphic Graphic => this.graphic;
 
@@ -37,7 +37,7 @@ namespace HegaCore.UI
 
         public Event OnLeave => this.onLeave;
 
-        public Event OnClick => this.onClick;
+        public ClickEvent OnClick => this.onClick;
 
         private void OnEnable()
         {
@@ -52,7 +52,7 @@ namespace HegaCore.UI
         void IPointerClickHandler.OnPointerClick(PointerEventData eventData)
         {
             if (this.interactable)
-                this.onClick.Invoke(this);
+                this.onClick.Invoke(this, eventData.button);
         }
 
         void IPointerEnterHandler.OnPointerEnter(PointerEventData eventData)
@@ -69,5 +69,8 @@ namespace HegaCore.UI
 
         [Serializable]
         public sealed class Event : UnityEvent<InteractableGraphic> { }
+
+        [Serializable]
+        public sealed class ClickEvent : UnityEvent<InteractableGraphic, PointerEventData.InputButton> { }
     }
 }
