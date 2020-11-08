@@ -137,6 +137,9 @@ namespace HegaCore.UI
         }
 
         private void SelectCharacter(int characterId)
+            => SelectCharacter(characterId, false);
+
+        private void SelectCharacter(int characterId, bool fromMax)
         {
             HideCharacterModel();
 
@@ -183,9 +186,14 @@ namespace HegaCore.UI
 
             if (this.maxImageIndex >= 0)
             {
-                if (this.currentImageIndex < 0 ||
-                    this.currentImageIndex > this.maxImageIndex)
-                    this.currentImageIndex = 0;
+                if (fromMax)
+                    this.currentImageIndex = this.maxImageIndex;
+                else
+                {
+                    if (this.currentImageIndex < 0 ||
+                      this.currentImageIndex > this.maxImageIndex)
+                        this.currentImageIndex = 0;
+                }
 
                 SelectImageIndex(this.currentImageIndex);
             }
@@ -377,16 +385,25 @@ namespace HegaCore.UI
             else
                 this.currentImageIndex = -1;
 
-            var characterIndex = this.characterList.CurrentIndex + 1;
+            var characterIndex = this.characterList.CurrentIndex;
+            var nextCharacterIndex = characterIndex + 1;
+            var reset = true;
 
-            if (characterIndex >= this.characterList.Count)
-                characterIndex = 0;
-
-            for (; characterIndex < this.characterList.Count; characterIndex++)
+            for (var i = 0; i < this.characterList.Count; i++)
             {
-                if (this.characterList.IsUnlock(characterIndex))
-                    break;
+                if (this.characterList.IsUnlock(i))
+                {
+                    if (i == nextCharacterIndex)
+                    {
+                        reset = false;
+                        characterIndex = nextCharacterIndex;
+                        break;
+                    }
+                }
             }
+
+            if (reset)
+                characterIndex = 0;
 
             SelectCharacter(this.characterList.GetCharacterId(characterIndex));
         }
@@ -414,7 +431,7 @@ namespace HegaCore.UI
                     break;
             }
 
-            SelectCharacter(this.characterList.GetCharacterId(characterIndex));
+            SelectCharacter(this.characterList.GetCharacterId(characterIndex), true);
         }
     }
 }
