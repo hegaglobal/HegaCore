@@ -25,8 +25,8 @@ namespace HegaCore.Events.Commands
             yield return new CharacterProgressUnlock();
             yield return new MissionClear();
             yield return new MissionUnlock();
-            yield return new MissionPrePastClear();
-            yield return new MissionPrePass();
+            yield return new MissionPendingClear();
+            yield return new MissionPending();
             yield return new MissionPastClear();
             yield return new MissionPass();
             yield return new MusicPlay();

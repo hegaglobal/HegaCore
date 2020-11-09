@@ -4,14 +4,14 @@ using System.Collections.Generic;
 namespace HegaCore.Events.Commands.Data
 {
     [Serializable]
-    public sealed class MissionPrePastClear : DataCommand
+    public sealed class MissionPendingClear : DataCommand
     {
-        public override string Key => "mission_pre_past_clear";
+        public override string Key => "mission_pending_clear";
 
         public override void Invoke(in Segment<object> parameters)
         {
             var data = EventManager.Instance.BaseDataContainer;
-            data.ClearPrePastMissions();
+            data.ClearPendingMissions();
             Log();
         }
     }
