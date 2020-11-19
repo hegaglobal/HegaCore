@@ -182,6 +182,8 @@ namespace HegaCore.UI
             if (this.isHiding)
                 return;
 
+            UnuLogger.Log("Begin close Conversation on END");
+
             this.isHiding = true;
             BeginHide();
         }
@@ -193,7 +195,10 @@ namespace HegaCore.UI
         }
 
         private void OnActivityShowComplete(UIActivity sender, params object[] args)
-            => Hide();
+        {
+            UnuLogger.Log("Close Conversation");
+            Hide();
+        }
 
         private void ToggleCanvases(bool value)
         {
