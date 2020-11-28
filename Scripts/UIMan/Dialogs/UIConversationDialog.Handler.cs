@@ -195,12 +195,14 @@ namespace HegaCore.UI
 
         private void BeginHide()
         {
-            var settings = UIActivity.Settings.Default.With(false, false, alphaOnShow: 0f);
-            UIDefaultActivity.Show(0.5f, 0.5f, settings, OnActivityShowComplete);
+            this.panelCover.OnShowComplete.AddListener(OnActivityShowComplete);
+            this.panelCover.Show();
         }
 
         private void OnActivityShowComplete()
         {
+            this.panelCover.OnShowComplete.RemoveListener(OnActivityShowComplete);
+
             UnuLogger.Log("Close Conversation");
             Hide();
         }
