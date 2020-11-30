@@ -7,7 +7,7 @@ namespace HegaCore
     [Serializable, InlineProperty]
     public struct EnergyColors
     {
-        [HorizontalGroup, LabelWidth(30)]
+        [HorizontalGroup(PaddingLeft = 6), LabelWidth(30)]
         public Color Min;
 
         [HorizontalGroup, LabelWidth(30)]

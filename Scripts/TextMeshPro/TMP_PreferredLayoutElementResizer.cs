@@ -124,7 +124,7 @@ namespace HegaCore
         [Serializable, InlineProperty]
         private struct SizeComponent
         {
-            [HorizontalGroup, LabelWidth(1), LabelText(" ")]
+            [HorizontalGroup(PaddingLeft = 6), LabelWidth(1), LabelText(" ")]
             public bool Enable;
 
             [HorizontalGroup, ShowIf(nameof(Enable)), LabelWidth(25)]

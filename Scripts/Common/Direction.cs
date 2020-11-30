@@ -12,7 +12,7 @@ namespace HegaCore
     [Serializable]
     public struct Direction : IEquatable<Direction>
     {
-        [HorizontalGroup, LabelText("H"), LabelWidth(12), Tooltip(nameof(Horizontal))]
+        [HorizontalGroup(PaddingLeft = 6), LabelText("H"), LabelWidth(12), Tooltip(nameof(Horizontal))]
         public Horizontal Horizontal;
 
         [HorizontalGroup, LabelText("V"), LabelWidth(12), Tooltip(nameof(Vertical))]

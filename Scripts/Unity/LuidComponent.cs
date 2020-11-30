@@ -32,7 +32,7 @@ namespace HegaCore
         [Serializable]
         private struct SerializableLuid
         {
-            [HorizontalGroup, LabelText("Id"), LabelWidth(20)]
+            [HorizontalGroup(PaddingLeft = 6), LabelText("Id"), LabelWidth(20)]
             public int Id;
 
             [HorizontalGroup, LabelText("Gid"), LabelWidth(28)]

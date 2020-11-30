@@ -28,7 +28,7 @@ namespace HegaCore
         [Serializable, InlineProperty]
         private sealed class EnergyGraphics
         {
-            [HorizontalGroup, LabelWidth(95)]
+            [HorizontalGroup(PaddingLeft = 6), LabelWidth(95)]
             public bool HideWhenMax = false;
 
             [HorizontalGroup, HideLabel, ShowIf(nameof(HideWhenMax))]

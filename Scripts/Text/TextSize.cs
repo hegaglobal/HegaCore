@@ -7,7 +7,7 @@ namespace HegaCore
     [Serializable, InlineProperty]
     public struct TextSize
     {
-        [HorizontalGroup, LabelWidth(47)]
+        [HorizontalGroup(PaddingLeft = 6), LabelWidth(47)]
         public bool Custom;
 
         [HorizontalGroup, ShowIf(nameof(Custom)), LabelText(" "), LabelWidth(12f), Min(0f), MinValue(0f), PropertySpace(0f, 4f)]

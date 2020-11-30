@@ -138,7 +138,7 @@ namespace HegaCore
         [Serializable, InlineProperty]
         private sealed class EnergyProgressBar
         {
-            [HorizontalGroup, HideLabel]
+            [HorizontalGroup(PaddingLeft = 6), HideLabel]
             public ProgressBar Bar = null;
 
             [HorizontalGroup, LabelWidth(45)]

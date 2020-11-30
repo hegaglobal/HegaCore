@@ -6,7 +6,7 @@ namespace HegaCore
     [Serializable, InlineProperty]
     public struct EnergyTween
     {
-        [HorizontalGroup, LabelWidth(45)]
+        [HorizontalGroup(PaddingLeft = 6), LabelWidth(45)]
         public bool Enable;
 
         [HorizontalGroup, ShowIf(nameof(Enable)), LabelWidth(55)]
