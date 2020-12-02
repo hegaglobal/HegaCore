@@ -787,7 +787,7 @@ namespace HegaCore.UI
             if (commands == null)
                 return;
 
-            var progress = Settings.DataContainer.BasePlayer.ProgressPoint;
+            var progress = Settings.DataContainer.Player.ProgressPoint;
             Settings.CommandSystem.Invoke(commands.AsSegment(), progress);
         }
 

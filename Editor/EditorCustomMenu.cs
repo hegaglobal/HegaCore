@@ -32,7 +32,7 @@ namespace HegaCore.Editor
             );
         }
 
-        [MenuItem("Tools/Delete User Data File")]
+        [MenuItem("Hega/Delete User Data File")]
         public static void DeleteUserDataFile()
         {
             var config = ScriptableObjectHelper.GetOrCreate<DatabaseConfig>(false, "Assets/Game/Resources");
@@ -43,7 +43,7 @@ namespace HegaCore.Editor
                 File.Delete(filePath);
         }
 
-        [MenuItem("Tools/Toggle Cheat")]
+        [MenuItem("Hega/Toggle Cheat")]
         public static void ToggleCheat()
         {
             var config = ScriptableObjectHelper.GetOrCreate<DatabaseConfig>(false, "Assets/Game/Resources");

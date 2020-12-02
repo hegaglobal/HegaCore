@@ -11,6 +11,8 @@ namespace HegaCore
     {
         protected override void ContinueLoad()
         {
+            base.ContinueLoad();
+
             Load<GameModeEntry, GameModeEntry.Mapping>
                  (this.Tables.GameMode, nameof(this.Tables.GameMode), true);
 
@@ -41,10 +43,6 @@ namespace HegaCore
 
             VisualNovelDataset.Initialize(this.Tables.CharacterData, this.Tables.NovelData);
             CharacterDataset.Initialize(this.Tables.CharacterData, this.Tables.Character, this.Tables.CharacterMap);
-        }
-
-        protected override void ContinueUnload()
-        {
         }
 
         private void PrepareLanguages()

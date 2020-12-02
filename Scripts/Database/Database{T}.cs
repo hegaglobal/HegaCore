@@ -74,7 +74,7 @@ namespace HegaCore
             ContinueLoad();
         }
 
-        protected abstract void ContinueLoad();
+        protected virtual void ContinueLoad() { }
 
         protected void Unload()
         {
@@ -83,7 +83,7 @@ namespace HegaCore
             ContinueUnload();
         }
 
-        protected abstract void ContinueUnload();
+        protected virtual void ContinueUnload() { }
 
         private async UniTask CheckDarkLordAsync()
         {

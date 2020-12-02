@@ -86,9 +86,11 @@ namespace HegaCore
 
         public abstract TGameData New(bool corrupted = false);
 
-        protected abstract bool TryRead(string filePath, out TGameData data);
+        protected virtual bool TryRead(string filePath, out TGameData data)
+            => throw new NotImplementedException();
 
-        protected abstract void Write(TGameData data, string filePath);
+        protected virtual void Write(TGameData data, string filePath)
+            => throw new NotImplementedException();
 
         private void BackUpFile()
         {

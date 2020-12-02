@@ -50,7 +50,7 @@ namespace HegaCore.UI
         private Action onHideCompleted;
         private bool manualHide;
 
-        private BaseGameDataContainer dataContainer;
+        private GameDataContainer dataContainer;
         private ReadCharacterData characterData;
         private ReadTable<CharacterEntry> table;
         private GalleryClipAction showClip;

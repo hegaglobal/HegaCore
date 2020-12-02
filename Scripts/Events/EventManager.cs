@@ -1,12 +1,15 @@
 ﻿using System;
+using System.Collections.Generic;
 using UnityEngine;
 using VisualNovelData.Commands;
 
 namespace HegaCore
 {
-    public class EventManager : SingletonBehaviour<EventManager>
+    public sealed class EventManager : SingletonBehaviour<EventManager>
     {
-        public BaseEventInvoker Invoker { get; private set; }
+        public EventInvoker Invoker { get; private set; }
+
+        private ReadDictionary<int, string> eventMap;
 
         public CommandSystem CommandSystem
             => this.Invoker.CommandSystem;
@@ -14,12 +17,35 @@ namespace HegaCore
         public EventCommandSystem EventCommandSystem
             => this.Invoker.EventCommandSystem;
 
-        public BaseGameDataContainer BaseDataContainer
+        public GameDataContainer BaseDataContainer
             => this.Invoker.BaseDataContainer;
 
-        public void Initialize(BaseEventInvoker invoker)
+        public void Initialize(EventInvoker invoker, in ReadDictionary<int, string> eventMap)
         {
             this.Invoker = invoker ?? throw new ArgumentNullException(nameof(invoker));
+            this.eventMap = eventMap;
+        }
+
+        public void Invoke(int eventId, string addon = "")
+        {
+            if (!this.eventMap.TryGetValue(eventId, out var eventName))
+                return;
+
+            if (string.IsNullOrEmpty(addon))
+                this.Invoker.Invoke(eventName);
+            else
+                this.Invoker.Invoke($"{eventName}_{addon}");
+        }
+
+        public void Invoke(int stage, int eventId, string addon = "")
+        {
+            if (!this.eventMap.TryGetValue(eventId, out var eventName))
+                return;
+
+            if (string.IsNullOrEmpty(addon))
+                this.Invoker.Invoke(eventName, stage);
+            else
+                this.Invoker.Invoke($"{eventName}_{addon}", stage);
         }
     }
 }

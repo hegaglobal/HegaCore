@@ -12,12 +12,12 @@ namespace HegaCore.UI
 
             public static float BackgroundDurationChange { get; private set; }
 
-            public static BaseGameDataContainer DataContainer { get; private set; }
+            public static GameDataContainer DataContainer { get; private set; }
 
             public static CommandSystem CommandSystem { get; private set; }
 
             public static void Initialize(string avatarAtlasName, in ConversationDurations durations, float bgDurationChange,
-                                          BaseGameDataContainer dataContainer, CommandSystem commandSystem)
+                                          GameDataContainer dataContainer, CommandSystem commandSystem)
             {
                 AvatarAtlasName = avatarAtlasName;
                 Durations = durations;

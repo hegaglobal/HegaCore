@@ -1,6 +1,9 @@
 {
-    "name": "HegaCore",
+    "name": "HegaCore.AutoGen",
     "references": [
+        "HegaCore",
+        "HegaCore.Editor",
+        "UnityCodeGen",
         "DOTween.Modules",
         "Live2D.Cubism",
         "TinyCsvParser",
@@ -22,9 +25,17 @@
         "UnityEngine.UI",
         "VisualNovelData",
         "RedBlueGames.TextTyper",
-        "Unity.GoogleSpreadsheetDownloader"
+        "Unity.GoogleSpreadsheetDownloader",
+        "Unity.AddressableImporter.Editor",
+        "Unity.Addressables.Editor",
+        "Unity.ScriptableBuildPipeline",
+        "Unity.ScriptableBuildPipeline.Editor",
+        "UIMan.Editor",
+        "UIMan.MVVM.Editor"
     ],
-    "includePlatforms": [],
+    "includePlatforms": [
+        "Editor"
+    ],
     "excludePlatforms": [],
     "allowUnsafeCode": false,
     "overrideReferences": false,
