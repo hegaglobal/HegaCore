@@ -26,6 +26,15 @@ namespace HegaCore.AutoGen
         private static string MakeKeepFile(string path)
             => MakePath(path, FileName.Keep);
 
+        private static string MakeFile(string path, string fileName)
+            => MakePath(path, fileName);
+
+        private static string MakeCsFile(string path, string prefix, string name)
+            => MakePath(path, $"{prefix}{name}.cs");
+
+        private static string MakeAsmdefFile(string path, string name)
+            => MakePath(path, $"{name}.asmdef");
+
         private static void CreateFolders(params string[] paths)
         {
             foreach (var path in paths)
@@ -46,6 +55,15 @@ namespace HegaCore.AutoGen
                     continue;
 
                 File.WriteAllText(path, string.Empty);
+                UnuLogger.Log($"Create File: {path}");
+            }
+        }
+
+        private static void CreateFiles(params (string path, string content)[] files)
+        {
+            foreach (var (path, content) in files)
+            {
+                File.WriteAllText(path, content);
                 UnuLogger.Log($"Create File: {path}");
             }
         }

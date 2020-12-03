@@ -3,7 +3,6 @@
     internal static class EventManagerTemplate
     {
         public const string Template = @"using System.Collections.Generic;
-using UnityEngine;
 using VisualNovelData.Data;
 using HegaCore;
 
@@ -13,7 +12,7 @@ namespace #_NAMESPACE_#
 
     public sealed partial class #_TYPE_PREFIX_#EventManager : EventManager<#_TYPE_PREFIX_#PlayerData, #_TYPE_PREFIX_#GameData, #_TYPE_PREFIX_#GameDataHandler, #_TYPE_PREFIX_#GameDataContainer, #_TYPE_PREFIX_#EventInvoker, #_TYPE_PREFIX_#EventManager>
     {
-        public override void Initialize(in ReadEventData eventData, TContainer dataContainer,
+        public override void Initialize(in ReadEventData eventData, #_TYPE_PREFIX_#GameDataContainer dataContainer,
                                         in ReadDictionary<int, string> eventMap)
         {
             base.Initialize(eventData, dataContainer, eventMap);

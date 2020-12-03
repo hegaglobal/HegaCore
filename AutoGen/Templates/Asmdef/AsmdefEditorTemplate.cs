@@ -1,10 +1,11 @@
 ﻿namespace HegaCore.AutoGen.Templates
 {
-    internal static class ProjectAsmdefTemplate
+    internal static class AsmdefEditorTemplate
     {
         public const string Template = @"{
-    ""name"": ""#_PROJECT_ASMDEF_#"",
+    ""name"": ""#_ASMDEF_EDITOR_#"",
     ""references"": [
+        ""#_ASMDEF_RUNTIME_#"",
         ""DOTween.Modules"",
         ""Live2D.Cubism"",
         ""TinyCsvParser"",
@@ -24,13 +25,15 @@
         ""Unity.QuaStateMachine"",
         ""Unity.TextMeshPro"",
         ""UnityEngine.UI"",
-        ""Unity.GoogleSpreadsheetDownloader""
+        ""Unity.GoogleSpreadsheetDownloader"",
         ""VisualNovelData"",
         ""HegaCore"",
         ""RedBlueGames.TextTyper"",
         ""HegaCore.Steamworks""
     ],
-    ""includePlatforms"": [],
+    ""includePlatforms"": [
+        ""Editor""
+    ],
     ""excludePlatforms"": [],
     ""allowUnsafeCode"": false,
     ""overrideReferences"": false,

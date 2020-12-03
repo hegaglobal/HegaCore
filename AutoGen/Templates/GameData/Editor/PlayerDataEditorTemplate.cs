@@ -8,8 +8,7 @@ using HegaCore.Editor;
 
 namespace #_NAMESPACE_#.Editor
 {
-    [Serializable]
-    public sealed partial class #_TYPE_PREFIX_#PlayerDataEditor : PlayerDataEditor<#_TYPE_PREFIX_#PlayerDataEditor>
+    public sealed partial class #_TYPE_PREFIX_#PlayerDataEditor : PlayerDataEditor<#_TYPE_PREFIX_#PlayerData>
     {
     }
 }

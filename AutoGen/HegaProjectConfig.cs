@@ -18,16 +18,28 @@ namespace HegaCore.AutoGen
         [Space]
         [TitleGroup("Folders")]
         [InfoBox("@\"Assets/\" + projectFolder + \"/Addressables/Systems/\" + $value.Replace('\\\\','/')")]
-        [SerializeField, LabelText("Project Systems")]
-        private string projectSystemsFolder = "Game";
+        [SerializeField, LabelText("Addressables Systems")]
+        private string projectAddressablesSystemsFolder = "Game";
 
-        [TitleGroup("Names")]
-        [SerializeField, LabelText("Project")]
-        private string projectName = "Game";
+        [Space]
+        [TitleGroup("Folders")]
+        [InfoBox("@\"Assets/\" + projectFolder + \"/\" + $value.Replace('\\\\','/')")]
+        [SerializeField, LabelText("Editor Scripts")]
+        private string projectScriptEditor = "Editor";
+
+        [Space]
+        [TitleGroup("Folders")]
+        [InfoBox("@\"Assets/\" + projectFolder + \"/\" + $value.Replace('\\\\','/')")]
+        [SerializeField, LabelText("Runtime Scripts")]
+        private string projectScriptRuntime = "Runtime";
 
         [TitleGroup("Source Code")]
-        [SerializeField, LabelText("ASMDEF")]
-        private string codeAsmdefName = "Game";
+        [SerializeField, LabelText("ASMDEF Editor")]
+        private string codeAsmdefEditorName = "Game.Editor";
+
+        [TitleGroup("Source Code")]
+        [SerializeField, LabelText("ASMDEF Runtime")]
+        private string codeAsmdefRuntimeName = "Game.Runtime";
 
         [TitleGroup("Source Code")]
         [SerializeField, LabelText("Namespace")]
@@ -45,7 +57,7 @@ namespace HegaCore.AutoGen
 
         public string HegaCoreFolder => this.hegaCoreFolder.Replace('\\', '/');
 
-        public string ProjectSystemsFolder => this.projectSystemsFolder.Replace('\\', '/');
+        public string ProjectSystemsFolder => this.projectAddressablesSystemsFolder.Replace('\\', '/');
 
         public enum DatabaseType
         {

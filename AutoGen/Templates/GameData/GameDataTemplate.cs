@@ -8,7 +8,7 @@ using HegaCore;
 namespace #_NAMESPACE_#
 {
     [Serializable]
-    public sealed partial class #_TYPE_PREFIX_#GameData : GameData<#_TYPE_PREFIX_#GameData>
+    public sealed partial class #_TYPE_PREFIX_#GameData : GameData<#_TYPE_PREFIX_#PlayerData>
     {
         public #_TYPE_PREFIX_#GameData() : base() { }
 

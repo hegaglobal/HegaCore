@@ -2,8 +2,7 @@
 {
     internal static class DataCommandRegistererTemplate
     {
-        public const string Template = @"using System.Collections.Generic;
-using HegaCore.Events.Commands;
+        public const string Template = @"using HegaCore.Events.Commands;
 
 namespace #_NAMESPACE_#.Events.Commands
 {
