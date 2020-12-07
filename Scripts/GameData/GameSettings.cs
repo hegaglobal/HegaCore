@@ -22,9 +22,13 @@ namespace HegaCore
 
         public float VoiceVolume;
 
+        public float InterfaceVolume;
+
         public ScreenResolution Resolution;
 
         public bool Fullscreen;
+
+        public int Framerate;
 
         public GameSettings()
         {
@@ -33,8 +37,10 @@ namespace HegaCore
             this.MusicVolume = 1f;
             this.SoundVolume = 1f;
             this.VoiceVolume = 1f;
+            this.InterfaceVolume = 1f;
             this.Resolution = default;
             this.Fullscreen = true;
+            this.Framerate = 200;
         }
 
         public void Copy(GameSettings data)
@@ -42,14 +48,16 @@ namespace HegaCore
             if (data != null)
             {
                 var isOld = data.Revision < CurrentRevision;
-
-                this.Language = string.IsNullOrEmpty(data.Language) ? DefaultLanguage : data.Language;
-                this.MusicVolume = isOld ? 1f : data.MusicVolume;
-                this.SoundVolume = isOld ? 1f : data.SoundVolume;
-                this.VoiceVolume = isOld ? 1f : data.VoiceVolume;
-                this.Resolution = data.Resolution;
-                this.Fullscreen = isOld || data.Fullscreen;
                 this.Revision = isOld ? CurrentRevision : data.Revision;
+
+                this.Language = string.IsNullOrWhiteSpace(data.Language) ? DefaultLanguage : data.Language;
+                this.MusicVolume = data.MusicVolume;
+                this.SoundVolume = data.SoundVolume;
+                this.VoiceVolume = data.VoiceVolume;
+                this.InterfaceVolume = data.InterfaceVolume;
+                this.Resolution = data.Resolution;
+                this.Fullscreen = data.Fullscreen;
+                this.Framerate = data.Framerate;
             }
 
             if (string.IsNullOrEmpty(this.Language))

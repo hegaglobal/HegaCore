@@ -85,6 +85,56 @@ namespace HegaCore.Database.Csv
                 BasicParse(csvData, mapper, output);
         }
 
+        public void Load<TEntity, TMapping>(ITable<TEntity> table, TMapping mapper, TextAsset file, bool autoIncrement = false)
+            where TEntity : class, IEntry, new()
+            where TMapping : CsvMapping<TEntity>
+        {
+            var csvData = GetCsvData(file);
+            var entries = Pool.Provider.List<TEntity>();
+
+            Parse<TEntity, TMapping>(csvData, mapper, entries);
+            table.AddRange(entries, autoIncrement);
+
+            Pool.Provider.Return(entries);
+        }
+
+        public void Load<TEntity, TMapping>(ITable<TEntity> table, TMapping mapper, TextAsset file, IGetId<TEntity> idGetter)
+            where TEntity : class, IEntry, new()
+            where TMapping : CsvMapping<TEntity>
+        {
+            var csvData = GetCsvData(file);
+            var entries = Pool.Provider.List<TEntity>();
+
+            Parse<TEntity, TMapping>(csvData, mapper, entries);
+            table.AddRange(entries, idGetter);
+
+            Pool.Provider.Return(entries);
+        }
+
+        public void Load<TEntity, TMapping, TIdGetter>(ITable<TEntity> table, TMapping mapper, TextAsset file)
+            where TEntity : class, IEntry, new()
+            where TMapping : CsvMapping<TEntity>
+            where TIdGetter : IGetId<TEntity>, new()
+        {
+            var csvData = GetCsvData(file);
+            var entries = Pool.Provider.List<TEntity>();
+
+            Parse<TEntity, TMapping>(csvData, mapper, entries);
+            table.AddRange(entries, new TIdGetter());
+
+            Pool.Provider.Return(entries);
+        }
+
+        private void Parse<TEntity, TMapping>(string csvData, TMapping mapper, List<TEntity> output)
+            where TEntity : class, new()
+            where TMapping : CsvMapping<TEntity>
+        {
+            if (IsAdvanced<TEntity, TMapping>())
+                AdvancedParse(csvData, mapper, output);
+            else
+                BasicParse(csvData, mapper, output);
+        }
+
         private bool IsAdvanced<TEntity, TMapping>()
             where TEntity : class, new()
             where TMapping : CsvMapping<TEntity>
