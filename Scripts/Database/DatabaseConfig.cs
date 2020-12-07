@@ -46,9 +46,17 @@ namespace HegaCore
 
         public SaveDataConfig SaveData => this.saveDataConfig;
 
-        public string InternalCsvFolder => this.internalCsvFolder;
+        public string InternalCsvFolder
+        {
+            get => this.internalCsvFolder;
+            set => this.internalCsvFolder = value ?? string.Empty;
+        }
 
-        public string ExternalCsvFolder => this.externalCsvFolder;
+        public string ExternalCsvFolder
+        {
+            get => this.externalCsvFolder;
+            set => this.externalCsvFolder = value ?? string.Empty;
+        }
 
         public ReadDictionary<string, TextAsset> CsvFiles => this.csvFiles;
 

@@ -38,6 +38,7 @@ namespace HegaCore.AutoGen
             var projectFolderAddressablesUIActivities = MakePath(projectFolderAddressablesUI, "Activities");
             var projectFolderAddressablesUIDialogs = MakePath(projectFolderAddressablesUI, "Dialogs");
             var projectFolderAddressablesUIScreens = MakePath(projectFolderAddressablesUI, "Screens");
+            var projectFolderAddressablesUIBackgrounds = MakePath(projectFolderAddressablesUI, "Backgrounds");
 
             // Addressables.Systems
             var projectFolderAddressablesSystems = MakePath(projectFolderAddressables, "Systems");
@@ -45,6 +46,7 @@ namespace HegaCore.AutoGen
 
             // Addressables.UI - Keeps
             var projectFileAddressablesUIScreensKeep = MakeKeepFile(projectFolderAddressablesUIScreens);
+            var projectFileAddressablesUIBackgroundsKeep = MakeKeepFile(projectFolderAddressablesUIBackgrounds);
 
             // Keeps
             var projectFileAnimationsKeep = MakeKeepFile(projectFolderAnimations);
@@ -54,6 +56,7 @@ namespace HegaCore.AutoGen
 
             CreateFolders(
                 projectFolderAddressablesUIScreens,
+                projectFolderAddressablesUIBackgrounds,
                 projectFolderAnimations,
                 projectFolderDatabase,
                 projectFolderScenes,
@@ -62,6 +65,7 @@ namespace HegaCore.AutoGen
 
             CreateFiles(
                 projectFileAddressablesUIScreensKeep,
+                projectFileAddressablesUIBackgroundsKeep,
                 projectFileAnimationsKeep,
                 projectFileDatabaseKeep,
                 projectFileScenesKeep,
@@ -82,8 +86,33 @@ namespace HegaCore.AutoGen
             CopyPrefabs(hegaFolderPrefabsUIManDialogs, projectFolderAddressablesUIDialogs);
 
             CreateScriptableFile<UIManConfig>(assetProjectResources);
+            CreateScriptableFile<DatabaseConfig>(assetProjectResources);
 
             AssetDatabase.Refresh();
+
+            ConfigUIMan();
+            ConfigDatabase();
+        }
+
+        private void ConfigUIMan()
+        {
+            if (!ScriptableObjectHelper.TryGet<UIManConfig>(out var config, false))
+                return;
+
+            config.screenPrefabFolder = MakePath(this.ProjectFolder, "Addressables/UI/Screens");
+            config.dialogPrefabFolder = MakePath(this.ProjectFolder, "Addressables/UI/Dialogs");
+            config.activityPrefabFolder = MakePath(this.ProjectFolder, "Addressables/UI/Activities");
+            config.backgroundRootFolder = MakePath(this.ProjectFolder, "Addressables/UI/Backgrounds");
+            config.animRootFolder = MakePath(this.ProjectFolder, "Game/Animations");
+        }
+
+        private void ConfigDatabase()
+        {
+            if (!ScriptableObjectHelper.TryGet<DatabaseConfig>(out var config, false))
+                return;
+
+            config.InternalCsvFolder = MakePath(this.ProjectFolder, "Database");
+            config.ExternalCsvFolder = "../External_Database";
         }
     }
 }
