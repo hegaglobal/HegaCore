@@ -1,18 +1,12 @@
-﻿using System.Table;
-using TinyCsvParser.Mapping;
+﻿using TinyCsvParser.Mapping;
 
 namespace HegaCore.Database
 {
-    public sealed class LanguageEntry : IEntry
+    public sealed class LanguageEntry : Entry
     {
-        public int Id { get; private set; }
-
         public string Key { get; private set; }
 
         public bool IsUsed { get; private set; }
-
-        void IEntry.SetId(int value)
-            => this.Id = value;
 
         public sealed class Mapping : CsvMapping<LanguageEntry>
         {

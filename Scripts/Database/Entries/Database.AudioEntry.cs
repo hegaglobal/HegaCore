@@ -1,21 +1,15 @@
-﻿using System.Table;
-using TinyCsvParser.Mapping;
+﻿using TinyCsvParser.Mapping;
 using TinyCsvParser.TypeConverter;
 
 namespace HegaCore.Database
 {
-    public sealed class AudioEntry : IEntry
+    public sealed class AudioEntry : Entry
     {
-        public int Id { get; private set; }
-
         public string Key { get; private set; }
 
         public string SecondKey { get; private set; }
 
         public AudioType Type { get; private set; }
-
-        void IEntry.SetId(int value)
-            => this.Id = value;
 
         public sealed class Mapping : CsvMapping<AudioEntry>
         {

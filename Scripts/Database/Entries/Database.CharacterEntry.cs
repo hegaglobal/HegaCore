@@ -3,10 +3,8 @@ using TinyCsvParser.Mapping;
 
 namespace HegaCore.Database
 {
-    public sealed class CharacterEntry : IEntry
+    public sealed class CharacterEntry : Entry
     {
-        public int Id { get; private set; }
-
         public string Name { get; private set; }
 
         public int MaxProgress { get; private set; }
@@ -22,9 +20,6 @@ namespace HegaCore.Database
         public string NameKey { get; private set; }
 
         public string IconKey { get; private set; }
-
-        void IEntry.SetId(int value)
-            => this.Id = value;
 
         public sealed class Mapping : CsvMapping<CharacterEntry>
         {
