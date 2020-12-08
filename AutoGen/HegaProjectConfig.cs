@@ -53,6 +53,10 @@ namespace HegaCore.AutoGen
         [SerializeField, LabelText("Database Type"), EnumToggleButtons]
         private DatabaseType codeDatabaseType = DatabaseType.Base;
 
+        [TitleGroup("Source Code")]
+        [SerializeField, LabelText("Game Data Save Type"), EnumToggleButtons]
+        private GameDataHandlerType codeDataHandlerType = GameDataHandlerType.Binary;
+
         public string ProjectFolder => this.projectFolder.Replace('\\', '/');
 
         public string HegaCoreFolder => this.hegaCoreFolder.Replace('\\', '/');
@@ -62,6 +66,11 @@ namespace HegaCore.AutoGen
         public enum DatabaseType
         {
             Base, VisualNovel
+        }
+
+        public enum GameDataHandlerType
+        {
+            Binary, Json
         }
     }
 }

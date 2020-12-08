@@ -33,6 +33,10 @@ namespace HegaCore.AutoGen
                 tableBaseType = "Tables";
             }
 
+            var dataHandlerBaseType = this.codeDataHandlerType == GameDataHandlerType.Json
+                                      ? "GameDataHandlerJson"
+                                      : "GameDataHandlerBinary";
+
             var projectFolder = MakePath(Application.dataPath, this.ProjectFolder);
 
             var folderScripts = MakePath(projectFolder, "Scripts");
@@ -85,7 +89,7 @@ namespace HegaCore.AutoGen
 
                 (fileGameDataPlayerData, ProcessCsTemplate(PlayerDataTemplate.Template)),
                 (fileGameDataGameData, ProcessCsTemplate(GameDataTemplate.Template)),
-                (fileGameDataGameDataHandler, ProcessCsTemplate(GameDataHandlerTemplate.Template)),
+                (fileGameDataGameDataHandler, ProcessCsTemplate(GameDataHandlerTemplate.Template, dataHandlerBaseType)),
                 (fileGameDataGameDataContainer, ProcessCsTemplate(GameDataContainerTemplate.Template)),
                 (fileGameDataGameDataManager, ProcessCsTemplate(GameDataManagerTemplate.Template)),
 
