@@ -41,10 +41,13 @@ namespace HegaCore
         private readonly List<CharacterId> characterImages = new List<CharacterId>();
         private readonly List<CharacterId> characterClips = new List<CharacterId>();
 
-        public virtual void InitializeCurrentPlayer(int playerIndex)
+        public virtual void InitializeCurrentPlayer(int playerIndex, GameMode? mode = null)
         {
             this.CurrentPlayerIndex = Mathf.Clamp(playerIndex, 0, this.LastPlayerIndex);
             this.CurrentPlayerInitialized = true;
+
+            if (mode.HasValue)
+                SetPlayerGameMode(mode.Value);
         }
 
         public virtual void DeinitializeCurrentPlayer()
