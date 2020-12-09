@@ -11,6 +11,7 @@ namespace HegaCore.AutoGen
         {
             public const string AsmdefRuntime = "#_ASMDEF_RUNTIME_#";
             public const string AsmdefEditor = "#_ASMDEF_EDITOR_#";
+            public const string AsmdefRefs = "#_ASMDEF_REFS_#";
             public const string Namespace = "#_NAMESPACE_#";
             public const string TypePrefix = "#_TYPE_PREFIX_#";
             public const string BaseType = "#_BASE_TYPE_#";
@@ -107,9 +108,10 @@ namespace HegaCore.AutoGen
             AssetDatabase.Refresh();
         }
 
-        private string ProcessAsmdefTemplate(string template)
+        private string ProcessAsmdefTemplate(string template, string customRefs = "")
             => template.Replace(AutoGenKey.AsmdefEditor, this.codeAsmdefEditorName)
-                       .Replace(AutoGenKey.AsmdefRuntime, this.codeAsmdefRuntimeName);
+                       .Replace(AutoGenKey.AsmdefRuntime, this.codeAsmdefRuntimeName)
+                       .Replace(AutoGenKey.AsmdefRefs, customRefs ?? string.Empty);
 
         private string ProcessCsTemplate(string template)
             => template.Replace(AutoGenKey.Namespace, this.codeNamespace)

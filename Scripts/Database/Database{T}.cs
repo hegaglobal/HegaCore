@@ -141,21 +141,37 @@ namespace HegaCore
                 this.usedLanguages.Add(language);
         }
 
-        public TextAsset GetCsv(string key)
-            => this.config.CsvFiles[key];
+        public bool TryGetCsv(string name, out TextAsset csv, bool silent = false)
+        {
+            if (!this.config.CsvFiles.TryGetValue(name, out csv))
+            {
+                csv = null;
+
+                if (!silent)
+                    UnuLogger.LogError($"Cannot find CSV file by name={name}", this.config);
+            }
+
+            return csv;
+        }
 
         protected void Load<TEntity, TMapping>(ITable<TEntity> table, string file, bool autoIncrement = false)
             where TEntity : class, IEntry, new()
             where TMapping : CsvMapping<TEntity>, new()
         {
-            this.csvLoader.Load<TEntity, TMapping>(table, GetCsv(file), autoIncrement);
+            if (!TryGetCsv(file, out var csv))
+                return;
+
+            this.csvLoader.Load<TEntity, TMapping>(table, csv, autoIncrement);
         }
 
         protected void Load<TEntity, TMapping>(ITable<TEntity> table, string file, IGetId<TEntity> idGetter)
             where TEntity : class, IEntry, new()
             where TMapping : CsvMapping<TEntity>, new()
         {
-            this.csvLoader.Load<TEntity, TMapping>(table, GetCsv(file), idGetter);
+            if (!TryGetCsv(file, out var csv))
+                return;
+
+            this.csvLoader.Load<TEntity, TMapping>(table, csv, idGetter);
         }
 
         protected void Load<TEntity, TMapping, TIdGetter>(ITable<TEntity> table, string file)
@@ -163,14 +179,20 @@ namespace HegaCore
             where TMapping : CsvMapping<TEntity>, new()
             where TIdGetter : IGetId<TEntity>, new()
         {
-            this.csvLoader.Load<TEntity, TMapping, TIdGetter>(table, GetCsv(file));
+            if (!TryGetCsv(file, out var csv))
+                return;
+
+            this.csvLoader.Load<TEntity, TMapping, TIdGetter>(table, csv);
         }
 
         protected void Load<TData, TParser>(TData data, string file, in Segment<string> languages)
             where TData : class
             where TParser : ICsvParser<TData>, new()
         {
-            this.csvLoader.Load<TData, TParser>(data, GetCsv(file), languages);
+            if (!TryGetCsv(file, out var csv))
+                return;
+
+            this.csvLoader.Load<TData, TParser>(data, csv, languages);
         }
     }
 }

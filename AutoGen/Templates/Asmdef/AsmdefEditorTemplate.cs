@@ -29,7 +29,7 @@
         ""VisualNovelData"",
         ""HegaCore"",
         ""RedBlueGames.TextTyper"",
-        ""HegaCore.Steamworks""
+        ""HegaCore.Steamworks""#_ASMDEF_REFS_#
     ],
     ""includePlatforms"": [
         ""Editor""
