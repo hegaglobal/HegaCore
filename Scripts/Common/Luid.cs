@@ -2,7 +2,6 @@
 
 namespace HegaCore
 {
-    [Serializable]
     public readonly struct Luid : IEquatableReadOnlyStruct<Luid>
     {
         public readonly int Id;
