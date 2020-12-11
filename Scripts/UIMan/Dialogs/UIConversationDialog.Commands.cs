@@ -18,7 +18,7 @@ namespace HegaCore.UI
             public static void Initialize(CommandMap commandMap = null, CommandInvokerKey keyInvoker = null,
                                           CommandInvokerMouseButton mouseButtonInvoker = null,
                                           CommandKeys commandKeys = null, InputKeys inputKeys = null,
-                                          ButtonStates? buttonStates = null)
+                                          in ButtonStates? buttonStates = null)
             {
                 _commandMap = commandMap;
                 _keyInvoker = keyInvoker;
