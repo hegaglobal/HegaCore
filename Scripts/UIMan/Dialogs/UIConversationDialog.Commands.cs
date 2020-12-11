@@ -37,6 +37,21 @@ namespace HegaCore.UI
                 set => _commandInvokerKey = value ?? CommandInvokerKey.Default;
             }
 
+            private static CommandInvokerMouseButton _commandInvokerMouse;
+
+            public static CommandInvokerMouseButton CommandInvokerMouseButton
+            {
+                get
+                {
+                    if (_commandInvokerMouse == null)
+                        _commandInvokerMouse = CommandInvokerMouseButton.Default;
+
+                    return _commandInvokerMouse;
+                }
+
+                set => _commandInvokerMouse = value ?? CommandInvokerMouseButton.Default;
+            }
+
             public static void RegisterSpeedUpCommand(Action execute, Action deactivate)
             {
                 CommandMap.Register(Key.SpeedUp, new ActionCommand(execute, deactivate));
@@ -52,15 +67,17 @@ namespace HegaCore.UI
                 CommandMap.Remove(Key.SpeedUp, Key.SkipNext);
             }
 
-            public static void RegisterDefaultInputKeys()
+            public static void RegisterDefaultInput()
             {
-                SetSkipNextKeys(ButtonState.Up, KeyCode.Return, KeyCode.KeypadEnter, KeyCode.Space);
                 SetSpeedUpKeys(ButtonState.Press, KeyCode.LeftControl, KeyCode.RightControl);
+                SetSkipNextKeys(ButtonState.Up, KeyCode.Return, KeyCode.KeypadEnter, KeyCode.Space);
+                SetSkipNextMouseButtons(ButtonState.Press, 0);
             }
 
-            public static void RemoveInputKeys()
+            public static void RemoveInput()
             {
                 CommandInvokerKey.Remove(Key.SpeedUp, Key.SkipNext);
+                CommandInvokerMouseButton.Remove(Key.SkipNext);
             }
 
             public static void SetSpeedUpKeys(ButtonState state, params KeyCode[] keys)
@@ -73,6 +90,12 @@ namespace HegaCore.UI
             {
                 CommandInvokerKey.Remove(Key.SkipNext);
                 CommandInvokerKey.Register(state, Key.SkipNext, keys);
+            }
+
+            public static void SetSkipNextMouseButtons(ButtonState state, params int[] buttons)
+            {
+                CommandInvokerMouseButton.Remove(Key.SkipNext);
+                CommandInvokerMouseButton.Register(state, Key.SkipNext, buttons);
             }
 
             public static class Key

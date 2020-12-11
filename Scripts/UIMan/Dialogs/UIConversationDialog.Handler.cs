@@ -14,7 +14,7 @@ using HegaCore.Events.Commands.Data;
 
 namespace HegaCore.UI
 {
-    public partial class UIConversationDialog : UIManDialog, IPointerClickHandler
+    public partial class UIConversationDialog : UIManDialog
     {
         public static void Show(string id, Action onShow = null, Action onShowCompleted = null,
                                 Action onHide = null, Action onHideCompleted = null)
@@ -377,11 +377,6 @@ namespace HegaCore.UI
                 return;
 
             StopSpeedUp();
-        }
-
-        void IPointerClickHandler.OnPointerClick(PointerEventData eventData)
-        {
-            ExecuteSkipNextOrEnd();
         }
 
         public void TrySkipNextOrEnd()
