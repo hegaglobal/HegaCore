@@ -7,48 +7,78 @@ namespace HegaCore.UI
     {
         public static class Commands
         {
+            private static CommandMap _commandMap;
+
+            public static CommandMap CommandMap
+            {
+                get
+                {
+                    if (_commandMap == null)
+                        _commandMap = CommandMap.Default;
+
+                    return _commandMap;
+                }
+
+                set => _commandMap = value ?? CommandMap.Default;
+            }
+
+            private static CommandInvokerKey _commandInvokerKey;
+
+            public static CommandInvokerKey CommandInvokerKey
+            {
+                get
+                {
+                    if (_commandInvokerKey == null)
+                        _commandInvokerKey = CommandInvokerKey.Default;
+
+                    return _commandInvokerKey;
+                }
+
+                set => _commandInvokerKey = value ?? CommandInvokerKey.Default;
+            }
+
             public static void RegisterSpeedUpCommand(Action execute, Action deactivate)
             {
-                CommandManager.Instance.Register(Key.SpeedUp, new ActionCommand(execute, deactivate));
+                CommandMap.Register(Key.SpeedUp, new ActionCommand(execute, deactivate));
             }
 
             public static void RegisterSkipNextCommand(Action execute, Action deactivate)
             {
-                CommandManager.Instance.Register(Key.SkipNext, new ActionCommand(execute, deactivate));
+                CommandMap.Register(Key.SkipNext, new ActionCommand(execute, deactivate));
             }
 
             public static void RemoveCommands()
             {
-                CommandManager.Instance.Remove(Key.SpeedUp, Key.SkipNext);
+                CommandMap.Remove(Key.SpeedUp, Key.SkipNext);
             }
 
             public static void RegisterDefaultInputKeys()
             {
-                SetSkipNextKeys(InputKeyState.Up, KeyCode.Return, KeyCode.KeypadEnter, KeyCode.Space);
-                SetSpeedUpKeys(InputKeyState.Press, KeyCode.LeftControl, KeyCode.RightControl);
+                SetSkipNextKeys(ButtonState.Up, KeyCode.Return, KeyCode.KeypadEnter, KeyCode.Space);
+                SetSpeedUpKeys(ButtonState.Press, KeyCode.LeftControl, KeyCode.RightControl);
             }
 
             public static void RemoveInputKeys()
             {
-                CommandKeyInvokerHelper.Remove(Key.SpeedUp, Key.SkipNext);
+                CommandInvokerKey.Remove(Key.SpeedUp, Key.SkipNext);
             }
 
-            public static void SetSpeedUpKeys(InputKeyState state, params KeyCode[] keys)
+            public static void SetSpeedUpKeys(ButtonState state, params KeyCode[] keys)
             {
-                CommandKeyInvokerHelper.Remove(Key.SpeedUp);
-                CommandKeyInvokerHelper.Register(state, Key.SpeedUp, keys);
+                CommandInvokerKey.Remove(Key.SpeedUp);
+                CommandInvokerKey.Register(state, Key.SpeedUp, keys);
             }
 
-            public static void SetSkipNextKeys(InputKeyState state, params KeyCode[] keys)
+            public static void SetSkipNextKeys(ButtonState state, params KeyCode[] keys)
             {
-                CommandKeyInvokerHelper.Remove(Key.SkipNext);
-                CommandKeyInvokerHelper.Register(state, Key.SkipNext, keys);
+                CommandInvokerKey.Remove(Key.SkipNext);
+                CommandInvokerKey.Register(state, Key.SkipNext, keys);
             }
 
             public static class Key
             {
-                public const string SpeedUp = "SpeedUpConversation";
-                public const string SkipNext = "SkipNextConversation";
+                public const string SpeedUp = "UIConversationDialog-SpeedUp";
+                public const string SkipNext = "UIConversationDialog-SkipNext";
             }
         }
     }
