@@ -12,12 +12,20 @@ namespace HegaCore
 
         public CommandInvoker(IReadOnlyCommandMap commandMap)
         {
-            this.commandMap = commandMap ?? throw new ArgumentNullException();
+            this.commandMap = commandMap ?? throw new ArgumentNullException(nameof(commandMap));
         }
 
         public void Register(TInputKey inputKey, string commandKey)
         {
             this.map[inputKey] = commandKey;
+        }
+
+        public void Register(IEnumerable<TInputKey> inputKeys, string commandKey)
+        {
+            foreach (var inputKey in inputKeys)
+            {
+                this.map[inputKey] = commandKey;
+            }
         }
 
         public void Register(string commandKey, params TInputKey[] inputKeys)
@@ -40,6 +48,14 @@ namespace HegaCore
         public void Remove(TInputKey inputKey)
         {
             this.map.Remove(inputKey);
+        }
+
+        public void Remove(IEnumerable<TInputKey> inputKeys)
+        {
+            foreach (var key in inputKeys)
+            {
+                this.map.Remove(key);
+            }
         }
 
         public void Remove(params TInputKey[] inputKeys)

@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using UnityEngine;
 
 namespace HegaCore.UI
@@ -8,100 +9,199 @@ namespace HegaCore.UI
         public static class Commands
         {
             private static CommandMap _commandMap;
+            private static CommandInvokerKey _keyInvoker;
+            private static CommandInvokerMouseButton _mouseButtonInvoker;
+            private static CommandKeys _commandKeys;
+            private static InputKeys _inputKeys;
+            private static ButtonStates? _buttonStates;
 
-            public static CommandMap CommandMap
+            public static void Initialize(CommandMap commandMap = null, CommandInvokerKey keyInvoker = null,
+                                          CommandInvokerMouseButton mouseButtonInvoker = null,
+                                          CommandKeys commandKeys = null, InputKeys inputKeys = null,
+                                          ButtonStates? buttonStates = null)
             {
-                get
-                {
-                    if (_commandMap == null)
-                        _commandMap = CommandMap.Default;
+                _commandMap = commandMap;
+                _keyInvoker = keyInvoker;
+                _mouseButtonInvoker = mouseButtonInvoker;
+                _commandKeys = commandKeys;
+                _inputKeys = inputKeys;
+                _buttonStates = buttonStates;
 
-                    return _commandMap;
-                }
-
-                set => _commandMap = value ?? CommandMap.Default;
+                RegisterInput();
             }
 
-            private static CommandInvokerKey _commandInvokerKey;
-
-            public static CommandInvokerKey CommandInvokerKey
+            public static void RegisterInput()
             {
-                get
-                {
-                    if (_commandInvokerKey == null)
-                        _commandInvokerKey = CommandInvokerKey.Default;
+                var buttonStates = GetButtonStates();
+                var inputKeys = GetInputKeys();
 
-                    return _commandInvokerKey;
-                }
-
-                set => _commandInvokerKey = value ?? CommandInvokerKey.Default;
-            }
-
-            private static CommandInvokerMouseButton _commandInvokerMouse;
-
-            public static CommandInvokerMouseButton CommandInvokerMouseButton
-            {
-                get
-                {
-                    if (_commandInvokerMouse == null)
-                        _commandInvokerMouse = CommandInvokerMouseButton.Default;
-
-                    return _commandInvokerMouse;
-                }
-
-                set => _commandInvokerMouse = value ?? CommandInvokerMouseButton.Default;
-            }
-
-            public static void RegisterSpeedUpCommand(Action execute, Action deactivate)
-            {
-                CommandMap.Register(Key.SpeedUp, new ActionCommand(execute, deactivate));
-            }
-
-            public static void RegisterSkipNextCommand(Action execute, Action deactivate)
-            {
-                CommandMap.Register(Key.SkipNext, new ActionCommand(execute, deactivate));
-            }
-
-            public static void RemoveCommands()
-            {
-                CommandMap.Remove(Key.SpeedUp, Key.SkipNext);
-            }
-
-            public static void RegisterDefaultInput()
-            {
-                SetSpeedUpKeys(ButtonState.Press, KeyCode.LeftControl, KeyCode.RightControl);
-                SetSkipNextKeys(ButtonState.Up, KeyCode.Return, KeyCode.KeypadEnter, KeyCode.Space);
-                SetSkipNextMouseButtons(ButtonState.Press, 0);
+                RegisterSpeedUpKey(buttonStates.SpeedUpKey, inputKeys.SpeedUpKeys);
+                RegisterSkipNextKey(buttonStates.SkipNextKey, inputKeys.SkipNextKeys);
+                RegisterSkipNextMouseButton(buttonStates.SkipNextMouseButton, inputKeys.SkipNextMouseButtons);
             }
 
             public static void RemoveInput()
             {
-                CommandInvokerKey.Remove(Key.SpeedUp, Key.SkipNext);
-                CommandInvokerMouseButton.Remove(Key.SkipNext);
+                var commandKeys = GetCommandKeys();
+
+                GetKeyInvoker().Remove(commandKeys.SpeedUp, commandKeys.SkipNext);
+                GetMouseButtonInvoker().Remove(commandKeys.SkipNext);
             }
 
-            public static void SetSpeedUpKeys(ButtonState state, params KeyCode[] keys)
+            public static void RegisterSpeedUpKey(ButtonState state, IEnumerable<KeyCode> inputKeys)
             {
-                CommandInvokerKey.Remove(Key.SpeedUp);
-                CommandInvokerKey.Register(state, Key.SpeedUp, keys);
+                var commandKeys = GetCommandKeys();
+                var invoker = GetKeyInvoker();
+
+                invoker.Remove(commandKeys.SpeedUp);
+                invoker.Register(state, inputKeys, commandKeys.SpeedUp);
             }
 
-            public static void SetSkipNextKeys(ButtonState state, params KeyCode[] keys)
+            public static void RegisterSkipNextKey(ButtonState state, IEnumerable<KeyCode> inputKeys)
             {
-                CommandInvokerKey.Remove(Key.SkipNext);
-                CommandInvokerKey.Register(state, Key.SkipNext, keys);
+                var commandKeys = GetCommandKeys();
+                var invoker = GetKeyInvoker();
+
+                invoker.Remove(commandKeys.SkipNext);
+                invoker.Register(state, inputKeys, commandKeys.SkipNext);
             }
 
-            public static void SetSkipNextMouseButtons(ButtonState state, params int[] buttons)
+            public static void RegisterSkipNextMouseButton(ButtonState state, IEnumerable<int> buttonKeys)
             {
-                CommandInvokerMouseButton.Remove(Key.SkipNext);
-                CommandInvokerMouseButton.Register(state, Key.SkipNext, buttons);
+                var commandKeys = GetCommandKeys();
+                var invoker = GetMouseButtonInvoker();
+
+                invoker.Remove(commandKeys.SkipNext);
+                invoker.Register(state, buttonKeys, commandKeys.SkipNext);
             }
 
-            public static class Key
+            internal static void RegisterSpeedUpCommand(Action execute, Action deactivate)
             {
-                public const string SpeedUp = "UIConversationDialog-SpeedUp";
-                public const string SkipNext = "UIConversationDialog-SkipNext";
+                GetCommandMap().Register(GetCommandKeys().SpeedUp, new ActionCommand(execute, deactivate));
+            }
+
+            internal static void RegisterSkipNextCommand(Action execute, Action deactivate)
+            {
+                GetCommandMap().Register(GetCommandKeys().SkipNext, new ActionCommand(execute, deactivate));
+            }
+
+            internal static void RemoveCommands()
+            {
+                var commandKeys = GetCommandKeys();
+                GetCommandMap().Remove(commandKeys.SpeedUp, commandKeys.SkipNext);
+            }
+
+            private static CommandMap GetCommandMap()
+            {
+                if (_commandMap == null)
+                    _commandMap = CommandMap.Default;
+
+                return _commandMap;
+            }
+
+            private static CommandInvokerKey GetKeyInvoker()
+            {
+                if (_keyInvoker == null)
+                    _keyInvoker = CommandInvokerKey.Default;
+
+                return _keyInvoker;
+            }
+
+            private static CommandInvokerMouseButton GetMouseButtonInvoker()
+            {
+                if (_mouseButtonInvoker == null)
+                    _mouseButtonInvoker = CommandInvokerMouseButton.Default;
+
+                return _mouseButtonInvoker;
+            }
+
+            private static CommandKeys GetCommandKeys()
+            {
+                if (_commandKeys == null)
+                    _commandKeys = CommandKeys.Default;
+
+                return _commandKeys;
+            }
+
+            private static InputKeys GetInputKeys()
+            {
+                if (_inputKeys == null)
+                    _inputKeys = InputKeys.Default;
+
+                return _inputKeys;
+            }
+
+            private static ButtonStates GetButtonStates()
+            {
+                if (!_buttonStates.HasValue)
+                    _buttonStates = ButtonStates.Default;
+
+                return _buttonStates.Value;
+            }
+
+            public class CommandKeys
+            {
+                public readonly string SpeedUp;
+                public readonly string SkipNext;
+
+                public CommandKeys(string speedUp, string skipNext)
+                {
+                    this.SpeedUp = speedUp;
+                    this.SkipNext = skipNext;
+                }
+
+                public static CommandKeys Default { get; }
+                    = new CommandKeys(
+                        "UIConversationDialog-SpeedUp",
+                        "UIConversationDialog-SkipNext"
+                    );
+            }
+
+            public readonly struct ButtonStates
+            {
+                public readonly ButtonState SpeedUpKey;
+                public readonly ButtonState SkipNextKey;
+                public readonly ButtonState SkipNextMouseButton;
+
+                public ButtonStates(ButtonState speedUpKey, ButtonState skipNextKey,
+                                    ButtonState skipNextMouseButton)
+                {
+                    this.SpeedUpKey = speedUpKey;
+                    this.SkipNextKey = skipNextKey;
+                    this.SkipNextMouseButton = skipNextMouseButton;
+                }
+
+                public static ButtonStates Default { get; }
+                    = new ButtonStates(ButtonState.Press, ButtonState.Up, ButtonState.Up);
+            }
+
+            public class InputKeys
+            {
+                public ReadList<KeyCode> SpeedUpKeys => this.speedUpKeys;
+
+                public ReadList<KeyCode> SkipNextKeys => this.skipNextKeys;
+
+                public ReadList<int> SkipNextMouseButtons => this.skipNextMouseButtons;
+
+                private readonly List<KeyCode> speedUpKeys = new List<KeyCode>();
+                private readonly List<KeyCode> skipNextKeys = new List<KeyCode>();
+                private readonly List<int> skipNextMouseButtons = new List<int>();
+
+                public InputKeys(IEnumerable<KeyCode> speedUpKeys,
+                              IEnumerable<KeyCode> skipNextKeys,
+                              IEnumerable<int> skipNextMouseButtons)
+                {
+                    this.speedUpKeys.AddRange(speedUpKeys);
+                    this.skipNextKeys.AddRange(skipNextKeys);
+                    this.skipNextMouseButtons.AddRange(skipNextMouseButtons);
+                }
+
+                public static InputKeys Default { get; }
+                    = new InputKeys(
+                        new [] { KeyCode.LeftControl, KeyCode.RightControl },
+                        new [] { KeyCode.Return, KeyCode.KeypadEnter, KeyCode.Space },
+                        new [] { 0 }
+                    );
             }
         }
     }
