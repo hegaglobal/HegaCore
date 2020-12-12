@@ -7,39 +7,70 @@ namespace HegaCore
     [Serializable]
     public struct TextEmitterParams
     {
-        public Vector3 OffsetPosition;
+        [BoxGroup("Position Offset")]
+        public bool RandomInRange;
+
+        [BoxGroup("Position Offset"), LabelText("Offset"), ShowIf(nameof(RandomInRange))]
+        public Vector3Range OffsetRange;
+
+        [BoxGroup("Position Offset"), LabelText("Offset"), HideIf(nameof(RandomInRange))]
+        public Vector3 Offset;
+
         public Color Color;
 
         [HorizontalGroup]
         public TextSize Size;
 
         public TextEmitterParams(in Color color)
-            : this(Vector3.zero, color, false, 0f)
+            : this(Vector3Range.Zero, color, false, 0f)
         { }
 
         public TextEmitterParams(in Color color, float size)
-            : this(Vector3.zero, color, true, size)
+            : this(Vector3Range.Zero, color, true, size)
         { }
 
         public TextEmitterParams(in Color color, float? size)
-            : this(Vector3.zero, color, size.HasValue, size.Value)
+            : this(Vector3Range.Zero, color, size.HasValue, size.Value)
         { }
 
-        public TextEmitterParams(in Vector3 offsetPosition, in Color color, float size)
-            : this(offsetPosition, color, true, size)
+        public TextEmitterParams(in Vector3Range offsetRange, in Color color, float size)
+            : this(offsetRange, color, true, size)
         { }
 
-        public TextEmitterParams(in Vector3 offsetPosition, in Color color, float? size)
-            : this(offsetPosition, color, size.HasValue, size.Value)
+        public TextEmitterParams(in Vector3Range offsetRange, in Color color, float? size)
+            : this(offsetRange, color, size.HasValue, size.Value)
         { }
 
-        private TextEmitterParams(in Vector3 offsetPosition, in Color color, bool customSize, float size)
+        private TextEmitterParams(in Vector3Range offsetRange, in Color color, bool customSize, float size)
         {
-            this.OffsetPosition = offsetPosition;
+            this.RandomInRange = true;
+            this.OffsetRange = offsetRange;
+            this.Offset = Vector3.zero;
             this.Color = color;
             this.Size = new TextSize(customSize, size);
         }
 
-        public static TextEmitterParams Default { get; } = new TextEmitterParams(Color.white, 1f);
+        public TextEmitterParams(in Vector3 offset, in Color color, float size)
+            : this(offset, color, true, size)
+        { }
+
+        public TextEmitterParams(in Vector3 offset, in Color color, float? size)
+            : this(offset, color, size.HasValue, size.Value)
+        { }
+
+        private TextEmitterParams(in Vector3 offset, in Color color, bool customSize, float size)
+        {
+            this.RandomInRange = false;
+            this.OffsetRange = Vector3Range.Zero;
+            this.Offset = offset;
+            this.Offset = Vector3.zero;
+            this.Color = color;
+            this.Size = new TextSize(customSize, size);
+        }
+
+        /// <summary>
+        /// TextEmitterParams(Vector3Range.Zero, Color.white, true, 1f)
+        /// </summary>
+        public static TextEmitterParams Default { get; } = new TextEmitterParams(Vector3Range.Zero, Color.white, true, 1f);
     }
 }
