@@ -18,5 +18,11 @@ namespace HegaCore
                 return this.text;
             }
         }
+
+        public string GetText()
+            => this.Text.text;
+
+        public void SetText(string value)
+            => this.Text.SetText(value);
     }
 }
