@@ -17,7 +17,7 @@ namespace HegaCore.AutoGen
                 ScriptableObjectHelper.Create<HegaProjectConfig>(true, AutoGenFolder);
         }
 
-        [PropertySpace, TitleGroup("Folders")]
+        [PropertySpace, FoldoutGroup("Folders")]
         [Button(ButtonSizes.Large, Name = "Init New Project")]
         private void InitializeNewProject()
         {

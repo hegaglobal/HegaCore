@@ -17,7 +17,7 @@ namespace HegaCore.AutoGen
             public const string BaseType = "#_BASE_TYPE_#";
         }
 
-        [PropertySpace, TitleGroup("Source Code")]
+        [PropertySpace, FoldoutGroup("Source Code")]
         [Button(ButtonSizes.Large, Name = "Generate Scripts")]
         private void GenerateScripts()
         {

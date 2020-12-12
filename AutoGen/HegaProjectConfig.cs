@@ -1,59 +1,74 @@
 ﻿using UnityEngine;
 using Sirenix.OdinInspector;
+using UnityEditorInternal;
 
 namespace HegaCore.AutoGen
 {
     [CreateAssetMenu(fileName = nameof(HegaProjectConfig), menuName = "Hega Project Config")]
     public partial class HegaProjectConfig : ScriptableObject
     {
-        [TitleGroup("Folders")]
+        [FoldoutGroup("Folders", expanded: true)]
         [SerializeField, LabelText("Project"), InfoBox("@\"Assets/\" + $value.Replace('\\\\','/')")]
         private string projectFolder = "Game";
 
         [Space]
-        [TitleGroup("Folders")]
+        [FoldoutGroup("Folders")]
         [SerializeField, LabelText("Hega Core"), InfoBox("@\"Assets/\" + $value.Replace('\\\\','/')")]
         private string hegaCoreFolder = "HegaCore";
 
         [Space]
-        [TitleGroup("Folders")]
+        [FoldoutGroup("Folders")]
         [InfoBox("@\"Assets/\" + projectFolder + \"/Addressables/Systems/\" + $value.Replace('\\\\','/')")]
         [SerializeField, LabelText("Addressables Systems")]
         private string projectAddressablesSystemsFolder = "Game";
 
         [Space]
-        [TitleGroup("Folders")]
+        [FoldoutGroup("Folders")]
         [InfoBox("@\"Assets/\" + projectFolder + \"/\" + $value.Replace('\\\\','/')")]
         [SerializeField, LabelText("Editor Scripts")]
         private string projectScriptEditor = "Editor";
 
         [Space]
-        [TitleGroup("Folders")]
+        [FoldoutGroup("Folders")]
         [InfoBox("@\"Assets/\" + projectFolder + \"/\" + $value.Replace('\\\\','/')")]
         [SerializeField, LabelText("Runtime Scripts")]
         private string projectScriptRuntime = "Runtime";
 
-        [TitleGroup("Source Code")]
+        [Space]
+        [FoldoutGroup("Scripting Define Symbols")]
+        [SerializeField, HideLabel]
+        private string[] scriptingDefineSymbols = new[] {
+            "CUBISM_LOADER",
+            "CUBISM_USE_MUTUAL_TEXTURE",
+            "UNITASK_DOTWEEN_SUPPORT"
+        };
+
+        [Space]
+        [FoldoutGroup("Assembly Definitions")]
+        [SerializeField, HideLabel]
+        private AssemblyDefinitionAsset[] assemblyDefinitions = null;
+
+        [FoldoutGroup("Source Code", expanded: true)]
         [SerializeField, LabelText("ASMDEF Editor")]
         private string codeAsmdefEditorName = "Game.Editor";
 
-        [TitleGroup("Source Code")]
+        [FoldoutGroup("Source Code")]
         [SerializeField, LabelText("ASMDEF Runtime")]
         private string codeAsmdefRuntimeName = "Game.Runtime";
 
-        [TitleGroup("Source Code")]
+        [FoldoutGroup("Source Code")]
         [SerializeField, LabelText("Namespace")]
         private string codeNamespace = "Game";
 
-        [TitleGroup("Source Code")]
+        [FoldoutGroup("Source Code")]
         [SerializeField, LabelText("Type Prefix")]
         private string codeTypePrefix = "Game";
 
-        [TitleGroup("Source Code")]
+        [FoldoutGroup("Source Code")]
         [SerializeField, LabelText("Database Type"), EnumToggleButtons]
         private DatabaseType codeDatabaseType = DatabaseType.Base;
 
-        [TitleGroup("Source Code")]
+        [FoldoutGroup("Source Code")]
         [SerializeField, LabelText("Game Data Save Type"), EnumToggleButtons]
         private GameDataHandlerType codeDataHandlerType = GameDataHandlerType.Binary;
 
