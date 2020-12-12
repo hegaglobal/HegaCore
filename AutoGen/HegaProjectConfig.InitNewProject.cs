@@ -18,7 +18,7 @@ namespace HegaCore.AutoGen
         }
 
         [PropertySpace, FoldoutGroup("Folders")]
-        [Button(ButtonSizes.Large, Name = "Init New Project")]
+        [Button(ButtonSizes.Large, Name = "Init New Project"), GUIColor(0f, 1f, 0f)]
         private void InitializeNewProject()
         {
             var projectFolder = MakePath(Application.dataPath, this.ProjectFolder);

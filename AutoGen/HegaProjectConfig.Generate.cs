@@ -18,7 +18,7 @@ namespace HegaCore.AutoGen
         }
 
         [PropertySpace, FoldoutGroup("Source Code")]
-        [Button(ButtonSizes.Large, Name = "Generate Scripts")]
+        [Button(ButtonSizes.Large, Name = "Generate Scripts"), GUIColor(0f, 1f, 0f)]
         private void GenerateScripts()
         {
             string databaseBaseType, tableBaseType;

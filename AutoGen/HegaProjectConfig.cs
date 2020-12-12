@@ -7,7 +7,7 @@ namespace HegaCore.AutoGen
     [CreateAssetMenu(fileName = nameof(HegaProjectConfig), menuName = "Hega Project Config")]
     public partial class HegaProjectConfig : ScriptableObject
     {
-        [FoldoutGroup("Folders", expanded: true)]
+        [FoldoutGroup("Folders")]
         [SerializeField, LabelText("Project"), InfoBox("@\"Assets/\" + $value.Replace('\\\\','/')")]
         private string projectFolder = "Game";
 
@@ -45,10 +45,15 @@ namespace HegaCore.AutoGen
 
         [Space]
         [FoldoutGroup("Assembly Definitions")]
-        [SerializeField, HideLabel]
-        private AssemblyDefinitionAsset[] assemblyDefinitions = null;
+        [SerializeField, LabelText("Editor")]
+        private AssemblyDefinitionAsset[] asmdefEditor = null;
 
-        [FoldoutGroup("Source Code", expanded: true)]
+        [Space]
+        [FoldoutGroup("Assembly Definitions")]
+        [SerializeField, LabelText("Runtime")]
+        private AssemblyDefinitionAsset[] asmdefRuntime = null;
+
+        [FoldoutGroup("Source Code")]
         [SerializeField, LabelText("ASMDEF Editor")]
         private string codeAsmdefEditorName = "Game.Editor";
 
