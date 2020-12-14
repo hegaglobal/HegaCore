@@ -17,13 +17,19 @@ namespace HegaCore
 
         public int LastPlayerIndex { get; protected set; }
 
-        public bool Daemon { get; set; }
+        public bool Daemon { get; private set; }
 
-        public bool DarkLord { get; set; }
+        public bool DarkLord { get; private set; }
 
         public bool BattleTutorial { get; set; }
 
         public int CurrentMission { get; set; }
+
+        public string Conversation { get; set; }
+
+        public bool ShowStartConversation { get; set; }
+
+        public bool ShowEndConversation { get; set; }
 
         public ReadList<int> Missions => this.missions;
 
@@ -40,6 +46,15 @@ namespace HegaCore
         private readonly List<int> passedMissions = new List<int>();
         private readonly List<CharacterId> characterImages = new List<CharacterId>();
         private readonly List<CharacterId> characterClips = new List<CharacterId>();
+
+        public virtual void Clear()
+        {
+            this.CurrentMission = 0;
+            this.BattleTutorial = false;
+            this.Conversation = string.Empty;
+            this.ShowStartConversation = false;
+            this.ShowEndConversation = false;
+        }
 
         public virtual void InitializeCurrentPlayer(int playerIndex, GameMode? mode = null)
         {
@@ -67,6 +82,12 @@ namespace HegaCore
 
             return this.BattleTutorial || !this.Player.DoneBattleTutorial;
         }
+
+        public void SetDaemon(bool value)
+            => this.Daemon = value;
+
+        public void SetDarkLord(bool value)
+            => this.DarkLord = value;
 
         public void SetPlayerGameMode(GameMode value)
         {

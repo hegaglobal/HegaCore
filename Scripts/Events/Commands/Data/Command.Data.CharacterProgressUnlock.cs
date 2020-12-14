@@ -6,7 +6,7 @@ namespace HegaCore.Events.Commands.Data
     [Serializable]
     public sealed class CharacterProgressUnlock : DataCommand
     {
-        public override string Key => "character_progress_unlock";
+        public override string Key => "char_progress_unlock";
 
         public override void Invoke(in Segment<object> parameters)
         {

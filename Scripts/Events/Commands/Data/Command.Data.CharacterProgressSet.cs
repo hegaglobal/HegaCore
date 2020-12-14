@@ -6,7 +6,7 @@ namespace HegaCore.Events.Commands.Data
     [Serializable]
     public sealed class CharacterProgressSet : DataCommand
     {
-        public override string Key => "character_progress_set";
+        public override string Key => "char_progress_set";
 
         public override void Invoke(in Segment<object> parameters)
         {

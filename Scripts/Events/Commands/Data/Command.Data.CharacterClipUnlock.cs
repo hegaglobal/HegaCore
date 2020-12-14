@@ -6,7 +6,7 @@ namespace HegaCore.Events.Commands.Data
     [Serializable]
     public sealed class CharacterClipUnlock : DataCommand
     {
-        public override string Key => "character_clip_unlock";
+        public override string Key => "char_clip_unlock";
 
         public override void Invoke(in Segment<object> parameters)
         {

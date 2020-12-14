@@ -41,8 +41,8 @@ namespace HegaCore
 
             InitializeHandler(config);
 
-            this.Container.Daemon = daemon;
-            this.Container.DarkLord = darkLord;
+            this.Container.SetDaemon(daemon);
+            this.Container.SetDarkLord(darkLord);
             this.Container.Load(shouldBackup);
 
             EnsureResolution();

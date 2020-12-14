@@ -6,7 +6,7 @@ namespace HegaCore.Events.Commands.Data
     [Serializable]
     public sealed class CharacterClipClear : DataCommand
     {
-        public override string Key => "character_clip_clear";
+        public override string Key => "char_clip_clear";
 
         public override void Invoke(in Segment<object> parameters)
         {

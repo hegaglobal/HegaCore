@@ -23,6 +23,9 @@ namespace HegaCore.Events.Commands
             yield return new CharacterImageUnlock();
             yield return new CharacterProgressSet();
             yield return new CharacterProgressUnlock();
+            yield return new ConversationSet();
+            yield return new ConversationShowEnd();
+            yield return new ConversationShowStart();
             yield return new MissionClear();
             yield return new MissionPass();
             yield return new MissionPassedClear();
