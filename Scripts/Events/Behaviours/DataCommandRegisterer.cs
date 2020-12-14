@@ -24,11 +24,11 @@ namespace HegaCore.Events.Commands
             yield return new CharacterProgressSet();
             yield return new CharacterProgressUnlock();
             yield return new MissionClear();
-            yield return new MissionUnlock();
+            yield return new MissionPass();
+            yield return new MissionPassedClear();
             yield return new MissionPendingClear();
             yield return new MissionPending();
-            yield return new MissionPassedClear();
-            yield return new MissionPass();
+            yield return new MissionUnlock();
             yield return new MusicPlay();
             yield return new MusicPlayAsync();
             yield return new MusicSetLoop();
@@ -37,17 +37,22 @@ namespace HegaCore.Events.Commands
             yield return new PointBadAdd();
             yield return new PointGoodAdd();
             yield return new PointMissionAdd();
+            yield return new PrefabDestroy();
+            yield return new PrefabDestroyAll();
+            yield return new PrefabHide();
+            yield return new PrefabHideAll();
+            yield return new PrefabShow();
             yield return new SoundPlay();
             yield return new SoundPlayAsync();
             yield return new SoundStop();
-            yield return new VoicePlay();
-            yield return new VoicePlayAsync();
-            yield return new VoiceStop();
-            yield return new VoiceStopAll();
             yield return new VoiceBackgroundPlay();
             yield return new VoiceBackgroundPlayAsync();
             yield return new VoiceBackgroundSetLoop();
             yield return new VoiceBackgroundStop();
+            yield return new VoicePlay();
+            yield return new VoicePlayAsync();
+            yield return new VoiceStop();
+            yield return new VoiceStopAll();
         }
     }
 }
