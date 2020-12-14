@@ -90,7 +90,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   m_Navigation:
-    m_Mode: 3
+    m_Mode: 0
     m_SelectOnUp: {fileID: 0}
     m_SelectOnDown: {fileID: 0}
     m_SelectOnLeft: {fileID: 0}
@@ -157,6 +157,7 @@ MonoBehaviour:
   audioReference:
     m_AssetGUID: 
     m_SubObjectName: 
+    m_SubObjectType: 
   type: 1
 --- !u!1 &398727119868963534
 GameObject:
@@ -529,7 +530,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   m_Navigation:
-    m_Mode: 3
+    m_Mode: 0
     m_SelectOnUp: {fileID: 0}
     m_SelectOnDown: {fileID: 0}
     m_SelectOnLeft: {fileID: 0}
@@ -596,6 +597,7 @@ MonoBehaviour:
   audioReference:
     m_AssetGUID: 
     m_SubObjectName: 
+    m_SubObjectType: 
   type: 1
 --- !u!1 &1787362311622423927
 GameObject:
@@ -844,8 +846,9 @@ MonoBehaviour:
   - {fileID: 5349394464369353370}
   - {fileID: 3098289628794709229}
   characterLayer:
-    value: 5
-  sortingOrder: 15
+    Layer:
+      value: 0
+    Order: 0
 --- !u!1 &2477333414609432860
 GameObject:
   m_ObjectHideFlags: 0
@@ -1047,7 +1050,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   m_Navigation:
-    m_Mode: 3
+    m_Mode: 0
     m_SelectOnUp: {fileID: 0}
     m_SelectOnDown: {fileID: 0}
     m_SelectOnLeft: {fileID: 0}
@@ -1114,6 +1117,7 @@ MonoBehaviour:
   audioReference:
     m_AssetGUID: 
     m_SubObjectName: 
+    m_SubObjectType: 
   type: 1
 --- !u!1 &2624850784418244336
 GameObject:
@@ -1256,7 +1260,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   m_Navigation:
-    m_Mode: 3
+    m_Mode: 0
     m_SelectOnUp: {fileID: 0}
     m_SelectOnDown: {fileID: 0}
     m_SelectOnLeft: {fileID: 0}
@@ -1323,6 +1327,7 @@ MonoBehaviour:
   audioReference:
     m_AssetGUID: 
     m_SubObjectName: 
+    m_SubObjectType: 
   type: 1
 --- !u!1 &3330255361870214092
 GameObject:
@@ -1606,7 +1611,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   m_Navigation:
-    m_Mode: 3
+    m_Mode: 0
     m_SelectOnUp: {fileID: 0}
     m_SelectOnDown: {fileID: 0}
     m_SelectOnLeft: {fileID: 0}
@@ -1673,6 +1678,7 @@ MonoBehaviour:
   audioReference:
     m_AssetGUID: 
     m_SubObjectName: 
+    m_SubObjectType: 
   type: 1
 --- !u!1 &4843956504730353215
 GameObject:
@@ -1996,7 +2002,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   m_Navigation:
-    m_Mode: 3
+    m_Mode: 0
     m_SelectOnUp: {fileID: 0}
     m_SelectOnDown: {fileID: 0}
     m_SelectOnLeft: {fileID: 0}
@@ -2063,6 +2069,7 @@ MonoBehaviour:
   audioReference:
     m_AssetGUID: 
     m_SubObjectName: 
+    m_SubObjectType: 
   type: 1
 --- !u!1 &6043098080886572431
 GameObject:
@@ -2536,7 +2543,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   m_Navigation:
-    m_Mode: 3
+    m_Mode: 0
     m_SelectOnUp: {fileID: 0}
     m_SelectOnDown: {fileID: 0}
     m_SelectOnLeft: {fileID: 0}
@@ -2603,6 +2610,7 @@ MonoBehaviour:
   audioReference:
     m_AssetGUID: 
     m_SubObjectName: 
+    m_SubObjectType: 
   type: 1
 --- !u!1 &8707542687116820251
 GameObject:

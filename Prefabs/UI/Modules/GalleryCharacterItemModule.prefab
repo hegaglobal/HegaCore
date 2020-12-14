@@ -91,7 +91,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   m_Navigation:
-    m_Mode: 3
+    m_Mode: 0
     m_SelectOnUp: {fileID: 0}
     m_SelectOnDown: {fileID: 0}
     m_SelectOnLeft: {fileID: 0}
@@ -147,6 +147,7 @@ MonoBehaviour:
   audioReference:
     m_AssetGUID: 
     m_SubObjectName: 
+    m_SubObjectType: 
   type: 1
 --- !u!1 &2980755302975197215
 GameObject:
@@ -239,7 +240,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   m_Navigation:
-    m_Mode: 3
+    m_Mode: 0
     m_SelectOnUp: {fileID: 0}
     m_SelectOnDown: {fileID: 0}
     m_SelectOnLeft: {fileID: 0}
@@ -306,6 +307,7 @@ MonoBehaviour:
   audioReference:
     m_AssetGUID: 
     m_SubObjectName: 
+    m_SubObjectType: 
   type: 1
 --- !u!1 &3951408105264168891
 GameObject:

@@ -166,7 +166,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   m_Navigation:
-    m_Mode: 3
+    m_Mode: 0
     m_SelectOnUp: {fileID: 0}
     m_SelectOnDown: {fileID: 0}
     m_SelectOnLeft: {fileID: 0}
@@ -230,6 +230,9 @@ MonoBehaviour:
   onValueChanged:
     label: On Value Changed
     m_value: 1
+    converter:
+      label: Int
+      m_adapter: {fileID: 0}
   optionDataConverter:
     label: Option Data
     m_adapter: {fileID: 0}
@@ -376,7 +379,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   m_Navigation:
-    m_Mode: 3
+    m_Mode: 0
     m_SelectOnUp: {fileID: 0}
     m_SelectOnDown: {fileID: 0}
     m_SelectOnLeft: {fileID: 0}
@@ -423,6 +426,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   dataContext: {fileID: 2561179272648961150}
+  ignoreGroup: 0
   valueField:
     label: Value
     member: Fullscreen
@@ -430,6 +434,9 @@ MonoBehaviour:
   onValueChanged:
     label: On Value Changed
     m_value: 1
+    converter:
+      label: Bool
+      m_adapter: {fileID: 0}
   valueConverter:
     label: Value
     m_adapter: {fileID: 0}
@@ -1149,7 +1156,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   m_Navigation:
-    m_Mode: 3
+    m_Mode: 0
     m_SelectOnUp: {fileID: 0}
     m_SelectOnDown: {fileID: 0}
     m_SelectOnLeft: {fileID: 0}
@@ -1214,6 +1221,9 @@ MonoBehaviour:
   onValueChanged:
     label: On Value Changed
     m_value: 1
+    converter:
+      label: Float
+      m_adapter: {fileID: 0}
   durationField:
     label: Duration
     member: 
@@ -1516,7 +1526,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   m_Navigation:
-    m_Mode: 3
+    m_Mode: 0
     m_SelectOnUp: {fileID: 0}
     m_SelectOnDown: {fileID: 0}
     m_SelectOnLeft: {fileID: 0}
@@ -1583,6 +1593,7 @@ MonoBehaviour:
   audioReference:
     m_AssetGUID: 
     m_SubObjectName: 
+    m_SubObjectType: 
   type: 1
 --- !u!1 &1231185537675895638
 GameObject:
@@ -2143,7 +2154,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   m_Navigation:
-    m_Mode: 3
+    m_Mode: 0
     m_SelectOnUp: {fileID: 0}
     m_SelectOnDown: {fileID: 0}
     m_SelectOnLeft: {fileID: 0}
@@ -2208,6 +2219,9 @@ MonoBehaviour:
   onValueChanged:
     label: On Value Changed
     m_value: 1
+    converter:
+      label: Float
+      m_adapter: {fileID: 0}
   durationField:
     label: Duration
     member: 
@@ -3406,6 +3420,7 @@ MonoBehaviour:
   audioReference:
     m_AssetGUID: 
     m_SubObjectName: 
+    m_SubObjectType: 
   type: 1
 --- !u!1 &3409508408986423599
 GameObject:
@@ -3648,7 +3663,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   m_Navigation:
-    m_Mode: 3
+    m_Mode: 0
     m_SelectOnUp: {fileID: 0}
     m_SelectOnDown: {fileID: 0}
     m_SelectOnLeft: {fileID: 0}
@@ -3712,6 +3727,9 @@ MonoBehaviour:
   onValueChanged:
     label: On Value Changed
     m_value: 1
+    converter:
+      label: Int
+      m_adapter: {fileID: 0}
   optionDataConverter:
     label: Option Data
     m_adapter: {fileID: 0}
@@ -4385,7 +4403,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   m_Navigation:
-    m_Mode: 3
+    m_Mode: 0
     m_SelectOnUp: {fileID: 0}
     m_SelectOnDown: {fileID: 0}
     m_SelectOnLeft: {fileID: 0}
@@ -4450,6 +4468,9 @@ MonoBehaviour:
   onValueChanged:
     label: On Value Changed
     m_value: 1
+    converter:
+      label: Float
+      m_adapter: {fileID: 0}
   durationField:
     label: Duration
     member: 
@@ -4593,7 +4614,7 @@ MonoBehaviour:
   m_BlockingObjects: 0
   m_BlockingMask:
     serializedVersion: 2
-    m_Bits: 3895
+    m_Bits: 55
 --- !u!1 &5086208845293594870
 GameObject:
   m_ObjectHideFlags: 0

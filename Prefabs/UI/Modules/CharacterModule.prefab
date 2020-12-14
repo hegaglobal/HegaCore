@@ -88,7 +88,7 @@ GameObject:
   - component: {fileID: 4666648127167470292}
   - component: {fileID: 8680860877847827532}
   m_Layer: 5
-  m_Name: GalleryCharacterModule
+  m_Name: CharacterModule
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -127,7 +127,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: bb2a6e7ad891ca440bdff02540ff6769, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  characterId: 0
+  character: 
   image: 
 --- !u!114 &1431123174472690414
 MonoBehaviour:
@@ -504,7 +504,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   m_Navigation:
-    m_Mode: 3
+    m_Mode: 0
     m_SelectOnUp: {fileID: 0}
     m_SelectOnDown: {fileID: 0}
     m_SelectOnLeft: {fileID: 0}
@@ -560,6 +560,7 @@ MonoBehaviour:
   audioReference:
     m_AssetGUID: 
     m_SubObjectName: 
+    m_SubObjectType: 
   type: 1
 --- !u!1 &6673661359003742038
 GameObject:
@@ -652,7 +653,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   m_Navigation:
-    m_Mode: 3
+    m_Mode: 0
     m_SelectOnUp: {fileID: 0}
     m_SelectOnDown: {fileID: 0}
     m_SelectOnLeft: {fileID: 0}
@@ -719,4 +720,5 @@ MonoBehaviour:
   audioReference:
     m_AssetGUID: 
     m_SubObjectName: 
+    m_SubObjectType: 
   type: 1
