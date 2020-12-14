@@ -1,7 +1,6 @@
 using System;
 using System.Collections.Generic;
 using UnityEngine;
-using UnityEngine.EventSystems;
 using UnityEngine.UI;
 using TMPro;
 using UnuGames;
@@ -259,7 +258,7 @@ namespace HegaCore.UI
                 return;
             }
 
-            this.defaultDialogue = this.conversation.GetDialogue(this.conversation.StartingDialogue);
+            this.defaultDialogue = GetDialogue(this.conversation.StartingDialogue);
 
             if (this.defaultDialogue.Choices.Count <= 0)
             {
@@ -273,15 +272,13 @@ namespace HegaCore.UI
             }
 
             var firstChoice = this.defaultDialogue.GetChoice(0);
-            this.dialogue = this.conversation.GetDialogue(firstChoice.GoTo);
+            this.dialogue = GetDialogue(firstChoice.GoTo);
 
             LateInitialize().Forget();
         }
 
         private async UniTaskVoid LateInitialize()
         {
-            //CubismManager.Instance.ShowAll(this.initialActorView.Position.position, this.initialActorView.Layer, 0f);
-
             await UniTask.Delay(TimeSpan.FromSeconds(Settings.Durations.Show));
 
             this.isInitialized = true;
@@ -311,6 +308,17 @@ namespace HegaCore.UI
             {
                 daemon.SetActive(value);
             }
+        }
+
+        private DialogueRow GetDialogue(string id)
+        {
+            var dialogue = this.conversation.GetDialogue(id);
+
+#if UNITY_EDITOR
+            UnuLogger.Log($"[row={dialogue.Row}] dialogue_id={dialogue.Id}");
+#endif
+
+            return dialogue;
         }
 
         private void SetBackground(string name, float? duration = null)
@@ -616,7 +624,7 @@ namespace HegaCore.UI
 
         private void NextDialogue(string id)
         {
-            this.dialogue = this.conversation.GetDialogue(id);
+            this.dialogue = GetDialogue(id);
 
             ShowDialogue(out var canShowActors);
 
@@ -640,7 +648,7 @@ namespace HegaCore.UI
             if (this.defaultChoice.IsNullOrNone())
                 return;
 
-            var nextDialogue = this.conversation.GetDialogue(this.defaultChoice.GoTo);
+            var nextDialogue = GetDialogue(this.defaultChoice.GoTo);
 
             if (nextDialogue.IsNullOrNone() || nextDialogue.IsEnd())
                 return;
@@ -879,7 +887,7 @@ namespace HegaCore.UI
             if (this.contentTyper.IsTyping)
                 this.contentTyper.Skip();
 
-            var endDialogue = this.conversation.GetDialogue(EndDialogueRow.Keyword);
+            var endDialogue = GetDialogue(EndDialogueRow.Keyword);
 
             if (endDialogue == null)
             {
