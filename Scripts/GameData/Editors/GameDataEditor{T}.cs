@@ -52,10 +52,14 @@ namespace HegaCore.Editor
             if (this.config)
             {
                 this.folderPath = this.config.SaveData.FolderFullPathEditor;
+                this.fileName = this.config.SaveData.FileName;
+                this.extension = this.config.SaveData.Extension;
             }
             else
             {
                 this.folderPath = string.Empty;
+                this.fileName = string.Empty;
+                this.extension = string.Empty;
             }
 
             this.settings = GetComponentInChildren<GameSettingsEditor>();
