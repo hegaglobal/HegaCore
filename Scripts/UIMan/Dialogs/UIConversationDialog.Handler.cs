@@ -945,7 +945,8 @@ namespace HegaCore.UI
             var view = GetActorView(actorNumber);
             var actor = GetActor(actorNumber);
 
-            if (view == null || actor == null)
+            if (view == null || actor == null ||
+                string.Equals(actor.Model, model))
                 return;
 
             actor.Model = model;
@@ -970,7 +971,8 @@ namespace HegaCore.UI
             var view = GetActorView(actorNumber);
             var actor = GetActor(actorNumber);
 
-            if (view == null || actor == null)
+            if (view == null || actor == null ||
+                string.Equals(actor.Model, model))
                 return;
 
             var from = fromPosition.position;
