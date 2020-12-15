@@ -14,7 +14,7 @@ namespace HegaCore.MVVM
         public BindingField textField = new BindingField("Text");
 
         [HideInInspector]
-        public BindingField colorField = new BindingField("Color", true);
+        public BindingField colorField = new BindingField("Color");
 
         [HideInInspector]
         public BindingField formatKeyField = new BindingField("Format Key");
