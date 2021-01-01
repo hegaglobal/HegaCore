@@ -13,14 +13,18 @@ namespace HegaCore.Database.Csv
 {
     public sealed class CsvDataLoader
     {
+        public bool Verbose { get; set; }
+
         private readonly CsvReaderOptions readerOptions;
         private readonly CsvParserOptions parserOptions;
         private readonly AdvancedCsvParserOptions advancedParserOptions;
 
         private DatabaseConfig config;
 
-        public CsvDataLoader()
+        public CsvDataLoader(bool verbose = true)
         {
+            this.Verbose = verbose;
+
             var options = new Options('"', '\\', ',');
             var tokenizer = new RFC4180Tokenizer(options);
             this.readerOptions = new CsvReaderOptions(new[] { "\r\n", "\n" });
@@ -177,7 +181,9 @@ namespace HegaCore.Database.Csv
 
             if (!File.Exists(externalFilePath))
             {
-                UnuLogger.Log($"Read [built-in]/{file.name}");
+                if (this.Verbose)
+                    UnuLogger.Log($"Read [built-in]/{file.name}");
+
                 return file.text;
             }
 
@@ -185,14 +191,18 @@ namespace HegaCore.Database.Csv
 
             try
             {
-                UnuLogger.Log($"Read {externalFilePath}");
+                if (this.Verbose)
+                    UnuLogger.Log($"Read {externalFilePath}");
+
                 data = File.ReadAllText(externalFilePath);
             }
             catch (Exception ex)
             {
                 UnuLogger.LogException(ex);
 
-                UnuLogger.Log($"Read [built-in]/{file.name}");
+                if (this.Verbose)
+                    UnuLogger.Log($"Read [built-in]/{file.name}");
+
                 data = file.text;
             }
 

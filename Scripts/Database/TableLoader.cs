@@ -14,10 +14,10 @@ namespace HegaCore
 
         private readonly CsvDataLoader csvLoader;
 
-        public TableLoader(DatabaseConfig config)
+        public TableLoader(DatabaseConfig config, bool verbose = true)
         {
             this.Config = config;
-            this.csvLoader = new CsvDataLoader();
+            this.csvLoader = new CsvDataLoader(verbose);
             this.csvLoader.Initialize(this.Config);
         }
 
