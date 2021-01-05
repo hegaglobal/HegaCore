@@ -6,30 +6,35 @@ namespace HegaCore.Editor
 {
     public static class ScriptableObjectHelper
     {
-        public static T Create<T>(bool autoSelection = true, string folderPath = "") where T : ScriptableObject
+        public static T Create<T>(bool autoSelection = true, string folderPath = "", string fileName = null) where T : ScriptableObject
         {
             T asset = ScriptableObject.CreateInstance<T>();
 
             string path;
 
-            if (string.IsNullOrEmpty(folderPath))
+            if (string.IsNullOrWhiteSpace(folderPath))
             {
                 path = AssetDatabase.GetAssetPath(Selection.activeObject);
 
-                if (string.IsNullOrEmpty(path))
+                if (string.IsNullOrWhiteSpace(path))
                     path = "Assets";
-                else if (Path.GetExtension(path) != "")
-                    path = path.Replace(Path.GetFileName(AssetDatabase.GetAssetPath(Selection.activeObject)), "");
+                else if (!string.IsNullOrEmpty(Path.GetExtension(path)))
+                    path = path.Replace(Path.GetFileName(AssetDatabase.GetAssetPath(Selection.activeObject)), string.Empty);
             }
             else
-                path = folderPath;
+            {
+                path = folderPath.Replace('\\', '/');
+            }
 
             var directoryPath = Path.Combine(Application.dataPath, "..", path);
 
             if (!Directory.Exists(directoryPath))
                 Directory.CreateDirectory(directoryPath);
 
-            var assetPathAndName = AssetDatabase.GenerateUniqueAssetPath(path + "/" + typeof(T).Name + ".asset");
+            if (string.IsNullOrWhiteSpace(fileName))
+                fileName = typeof(T).Name;
+
+            var assetPathAndName = AssetDatabase.GenerateUniqueAssetPath($"{path}/{fileName}.asset");
 
             AssetDatabase.CreateAsset(asset, assetPathAndName);
             AssetDatabase.SaveAssets();
@@ -41,14 +46,14 @@ namespace HegaCore.Editor
             return asset;
         }
 
-        public static T GetOrCreate<T>(bool autoSelection = true, string folderPath = "") where T : ScriptableObject
+        public static T GetOrCreate<T>(bool autoSelection = true, string folderPath = "", string fileName = null) where T : ScriptableObject
         {
             var typeName = typeof(T).Name;
             var guids = AssetDatabase.FindAssets($"t:{typeName}");
 
             if (guids == null || guids.Length == 0)
             {
-                return Create<T>(autoSelection, folderPath);
+                return Create<T>(autoSelection, folderPath, fileName);
             }
 
             var file = AssetDatabase.GUIDToAssetPath(guids[0]);
