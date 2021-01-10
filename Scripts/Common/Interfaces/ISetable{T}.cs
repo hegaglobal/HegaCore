@@ -1,6 +1,6 @@
 ﻿namespace HegaCore
 {
-    public interface ISetable<T>
+    public interface ISetable<in T>
     {
         void Set(T value);
     }
