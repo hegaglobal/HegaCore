@@ -5,7 +5,7 @@ using UnityEngine.Events;
 namespace HegaCore
 {
     [Serializable]
-    public sealed class AnimatorStateUnityEvent : BaseAnimatorStateEvent
+    public sealed class AnimatorStateUnityEvent : AnimatorStateEventBase
     {
         [SerializeField]
         private StateEvent onInvoke = new StateEvent();

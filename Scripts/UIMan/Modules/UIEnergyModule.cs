@@ -3,7 +3,7 @@ using UnityEngine.UI;
 
 namespace HegaCore.UI
 {
-    public sealed class UIEnergyModule : BaseEnergyModule
+    public sealed class UIEnergyModule : EnergyModuleBase
     {
         [SerializeField]
         private Image foreground = null;

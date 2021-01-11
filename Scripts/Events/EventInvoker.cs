@@ -10,7 +10,7 @@ namespace HegaCore
 
         public EventCommandSystem EventCommandSystem { get; }
 
-        public GameDataContainer BaseDataContainer { get; private set; }
+        public GameDataContainer DataContainerBase { get; private set; }
 
         public EventInvoker()
         {
@@ -21,13 +21,13 @@ namespace HegaCore
         public void Initialize(in ReadEventData eventData, GameDataContainer dataContainer)
         {
             this.EventCommandSystem.Set(eventData);
-            this.BaseDataContainer = dataContainer ?? throw new ArgumentNullException(nameof(dataContainer));
+            this.DataContainerBase = dataContainer ?? throw new ArgumentNullException(nameof(dataContainer));
         }
 
         public void Invoke(string @event)
         {
             UnuLogger.Log($"Invoke Event: {@event}");
-            this.EventCommandSystem.Invoke(@event, this.BaseDataContainer.GetPlayerProgressPoint());
+            this.EventCommandSystem.Invoke(@event, this.DataContainerBase.GetPlayerProgressPoint());
         }
 
         public void Invoke(string @event, int stage)

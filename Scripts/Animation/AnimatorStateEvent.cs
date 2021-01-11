@@ -3,7 +3,7 @@
 namespace HegaCore
 {
     [Serializable]
-    public sealed class AnimatorStateEvent : BaseAnimatorStateEvent
+    public sealed class AnimatorStateEvent : AnimatorStateEventBase
     {
         public event StateEvent OnInvoke;
         public event StateEvent OnEnter;

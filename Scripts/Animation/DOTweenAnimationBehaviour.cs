@@ -13,7 +13,7 @@ namespace HegaCore
         [field: SerializeField, LabelText(nameof(Ease))]
         public Ease Ease { get; set; } = Ease.Linear;
 
-        private readonly Dictionary<BaseAnimatorStateEvent, bool> events = new Dictionary<BaseAnimatorStateEvent, bool>();
+        private readonly Dictionary<AnimatorStateEventBase, bool> events = new Dictionary<AnimatorStateEventBase, bool>();
         private Tweener tween;
 
         public void Play()
@@ -41,7 +41,7 @@ namespace HegaCore
 
         private void OnPlay()
         {
-            var list = Pool.Provider.List<BaseAnimatorStateEvent>();
+            var list = Pool.Provider.List<AnimatorStateEventBase>();
             list.AddRange(this.events.Keys);
 
             var normalizedTime = this.tween.ElapsedPercentage(false);
@@ -57,7 +57,7 @@ namespace HegaCore
 
         private void OnUpdate()
         {
-            var list = Pool.Provider.List<BaseAnimatorStateEvent>();
+            var list = Pool.Provider.List<AnimatorStateEventBase>();
             list.AddRange(this.events.Keys);
 
             var normalizedTime = this.tween.ElapsedPercentage(false);
@@ -81,7 +81,7 @@ namespace HegaCore
 
         private void OnComplete()
         {
-            var list = Pool.Provider.List<BaseAnimatorStateEvent>();
+            var list = Pool.Provider.List<AnimatorStateEventBase>();
             list.AddRange(this.events.Keys);
 
             var normalizedTime = this.tween.ElapsedPercentage(false);
@@ -94,7 +94,7 @@ namespace HegaCore
             Pool.Provider.Return(list);
         }
 
-        public void Register(BaseAnimatorStateEvent @event)
+        public void Register(AnimatorStateEventBase @event)
         {
             if (@event == null || this.events.ContainsKey(@event))
                 return;
@@ -102,7 +102,7 @@ namespace HegaCore
             this.events[@event] = false;
         }
 
-        public void Register(params BaseAnimatorStateEvent[] events)
+        public void Register(params AnimatorStateEventBase[] events)
         {
             if (events == null)
                 return;
@@ -113,7 +113,7 @@ namespace HegaCore
             }
         }
 
-        public void Register(IEnumerable<BaseAnimatorStateEvent> events)
+        public void Register(IEnumerable<AnimatorStateEventBase> events)
         {
             if (events == null)
                 return;
@@ -124,7 +124,7 @@ namespace HegaCore
             }
         }
 
-        public void Remove(BaseAnimatorStateEvent @event)
+        public void Remove(AnimatorStateEventBase @event)
         {
             if (@event == null || !this.events.ContainsKey(@event))
                 return;
@@ -132,7 +132,7 @@ namespace HegaCore
             this.events.Remove(@event);
         }
 
-        public void Remove(params BaseAnimatorStateEvent[] events)
+        public void Remove(params AnimatorStateEventBase[] events)
         {
             if (events == null)
                 return;
@@ -143,7 +143,7 @@ namespace HegaCore
             }
         }
 
-        public void Remove(IEnumerable<BaseAnimatorStateEvent> events)
+        public void Remove(IEnumerable<AnimatorStateEventBase> events)
         {
             if (events == null)
                 return;

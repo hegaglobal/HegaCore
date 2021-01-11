@@ -5,9 +5,9 @@ namespace HegaCore
 {
     public class AnimatorStateBehaviour : StateMachineBehaviour
     {
-        private readonly Dictionary<BaseAnimatorStateEvent, bool> events = new Dictionary<BaseAnimatorStateEvent, bool>();
+        private readonly Dictionary<AnimatorStateEventBase, bool> events = new Dictionary<AnimatorStateEventBase, bool>();
 
-        public void Register(BaseAnimatorStateEvent @event)
+        public void Register(AnimatorStateEventBase @event)
         {
             if (@event == null || this.events.ContainsKey(@event))
                 return;
@@ -15,7 +15,7 @@ namespace HegaCore
             this.events[@event] = false;
         }
 
-        public void Register(params BaseAnimatorStateEvent[] events)
+        public void Register(params AnimatorStateEventBase[] events)
         {
             if (events == null)
                 return;
@@ -26,7 +26,7 @@ namespace HegaCore
             }
         }
 
-        public void Register(IEnumerable<BaseAnimatorStateEvent> events)
+        public void Register(IEnumerable<AnimatorStateEventBase> events)
         {
             if (events == null)
                 return;
@@ -37,7 +37,7 @@ namespace HegaCore
             }
         }
 
-        public void Remove(BaseAnimatorStateEvent @event)
+        public void Remove(AnimatorStateEventBase @event)
         {
             if (@event == null || !this.events.ContainsKey(@event))
                 return;
@@ -45,7 +45,7 @@ namespace HegaCore
             this.events.Remove(@event);
         }
 
-        public void Remove(params BaseAnimatorStateEvent[] events)
+        public void Remove(params AnimatorStateEventBase[] events)
         {
             if (events == null)
                 return;
@@ -56,7 +56,7 @@ namespace HegaCore
             }
         }
 
-        public void Remove(IEnumerable<BaseAnimatorStateEvent> events)
+        public void Remove(IEnumerable<AnimatorStateEventBase> events)
         {
             if (events == null)
                 return;
@@ -72,7 +72,7 @@ namespace HegaCore
 
         public override void OnStateEnter(Animator animator, AnimatorStateInfo stateInfo, int layerIndex)
         {
-            var list = Pool.Provider.List<BaseAnimatorStateEvent>();
+            var list = Pool.Provider.List<AnimatorStateEventBase>();
             list.AddRange(this.events.Keys);
 
             foreach (var item in list)
@@ -86,7 +86,7 @@ namespace HegaCore
 
         public override void OnStateExit(Animator animator, AnimatorStateInfo stateInfo, int layerIndex)
         {
-            var list = Pool.Provider.List<BaseAnimatorStateEvent>();
+            var list = Pool.Provider.List<AnimatorStateEventBase>();
             list.AddRange(this.events.Keys);
 
             foreach (var item in list)
@@ -99,7 +99,7 @@ namespace HegaCore
 
         public override void OnStateUpdate(Animator animator, AnimatorStateInfo stateInfo, int layerIndex)
         {
-            var list = Pool.Provider.List<BaseAnimatorStateEvent>();
+            var list = Pool.Provider.List<AnimatorStateEventBase>();
             list.AddRange(this.events.Keys);
 
             foreach (var item in list)

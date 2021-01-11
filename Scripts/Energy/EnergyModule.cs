@@ -5,7 +5,7 @@ using Sirenix.OdinInspector;
 
 namespace HegaCore
 {
-    public sealed class EnergyModule : BaseEnergyModule
+    public sealed class EnergyModule : EnergyModuleBase
     {
         [SerializeField]
         private EnergyGraphics graphics = new EnergyGraphics();

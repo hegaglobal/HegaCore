@@ -5,7 +5,7 @@ namespace HegaCore
 {
     public static class AnimatorExtensions
     {
-        public static T RegisterStateEvent<T>(this Animator self, BaseAnimatorStateEvent @event)
+        public static T RegisterStateEvent<T>(this Animator self, AnimatorStateEventBase @event)
             where T : AnimatorStateBehaviour
         {
             if (!self)
@@ -19,7 +19,7 @@ namespace HegaCore
             return behaviour;
         }
 
-        public static T RegisterStateEvent<T>(this Animator self, params BaseAnimatorStateEvent[] events)
+        public static T RegisterStateEvent<T>(this Animator self, params AnimatorStateEventBase[] events)
             where T : AnimatorStateBehaviour
         {
             if (!self)
@@ -33,7 +33,7 @@ namespace HegaCore
             return behaviour;
         }
 
-        public static T RegisterStateEvent<T>(this Animator self, IEnumerable<BaseAnimatorStateEvent> events)
+        public static T RegisterStateEvent<T>(this Animator self, IEnumerable<AnimatorStateEventBase> events)
             where T : AnimatorStateBehaviour
         {
             if (!self)
@@ -47,7 +47,7 @@ namespace HegaCore
             return behaviour;
         }
 
-        public static T RemoveStateEvent<T>(this Animator self, BaseAnimatorStateEvent @event)
+        public static T RemoveStateEvent<T>(this Animator self, AnimatorStateEventBase @event)
             where T : AnimatorStateBehaviour
         {
             if (!self)
@@ -61,7 +61,7 @@ namespace HegaCore
             return behaviour;
         }
 
-        public static T RemoveStateEvent<T>(this Animator self, params BaseAnimatorStateEvent[] events)
+        public static T RemoveStateEvent<T>(this Animator self, params AnimatorStateEventBase[] events)
             where T : AnimatorStateBehaviour
         {
             if (!self)
@@ -75,7 +75,7 @@ namespace HegaCore
             return behaviour;
         }
 
-        public static T RemoveStateEvent<T>(this Animator self, IEnumerable<BaseAnimatorStateEvent> events)
+        public static T RemoveStateEvent<T>(this Animator self, IEnumerable<AnimatorStateEventBase> events)
             where T : AnimatorStateBehaviour
         {
             if (!self)

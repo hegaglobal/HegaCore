@@ -5,7 +5,7 @@ namespace HegaCore
 {
     using State = State<string, StateDirection<string>, string>;
 
-    public abstract partial class BaseStateManager<T> : SingletonBehaviour<T> where T : MonoBehaviour
+    public abstract partial class StateManagerBase<T> : SingletonBehaviour<T> where T : MonoBehaviour
     {
         private StateMachine machine;
 

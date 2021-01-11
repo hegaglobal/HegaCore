@@ -6,7 +6,7 @@ using Sirenix.OdinInspector;
 
 namespace HegaCore
 {
-    public abstract class BaseEnergyModule : UIManModule<EnergyModel>, IEnergyView
+    public abstract class EnergyModuleBase : UIManModule<EnergyModel>, IEnergyView
     {
         [SerializeField]
         private EnergyColors colors = EnergyColors.White;

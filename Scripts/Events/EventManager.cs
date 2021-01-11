@@ -18,7 +18,7 @@ namespace HegaCore
             => this.Invoker.EventCommandSystem;
 
         public GameDataContainer BaseDataContainer
-            => this.Invoker.BaseDataContainer;
+            => this.Invoker.DataContainerBase;
 
         public void Initialize(EventInvoker invoker, in ReadDictionary<int, string> eventMap)
         {

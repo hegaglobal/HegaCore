@@ -4,7 +4,7 @@ using UnityEngine;
 namespace HegaCore
 {
     [Serializable]
-    public abstract class BaseAnimatorStateEvent
+    public abstract class AnimatorStateEventBase
     {
         [SerializeField, Range(0f, 1f)]
         private float invokeTime = 0f;
@@ -18,9 +18,9 @@ namespace HegaCore
             set => this.invokeTime = Mathf.Clamp(value, 0f, 1f);
         }
 
-        public BaseAnimatorStateEvent() { }
+        public AnimatorStateEventBase() { }
 
-        public BaseAnimatorStateEvent(float invokeTime)
+        public AnimatorStateEventBase(float invokeTime)
         {
             this.InvokeTime = invokeTime;
         }
