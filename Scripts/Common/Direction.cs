@@ -10,7 +10,7 @@ namespace HegaCore
 
     [InlineProperty]
     [Serializable]
-    public struct Direction : IEquatable<Direction>
+    public struct Direction : IEquatableReadOnlyStruct<Direction>
     {
         [HorizontalGroup(PaddingLeft = 6), LabelText("H"), LabelWidth(12), Tooltip(nameof(Horizontal))]
         public Horizontal Horizontal;
