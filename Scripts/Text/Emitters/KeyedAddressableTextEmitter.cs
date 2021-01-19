@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.AddressableAssets;
+using UnityEngine.Pooling;
 using Cysharp.Threading.Tasks;
 
 namespace HegaCore

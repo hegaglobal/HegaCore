@@ -4,7 +4,7 @@
     {
         public static void Initialize()
         {
-            System.Collections.Generic.Pool.Set<PoolProvider>();
+            System.Collections.Pooling.Pool.Set<PoolProvider>();
         }
     }
 }

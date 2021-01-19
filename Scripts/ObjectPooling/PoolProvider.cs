@@ -1,12 +1,14 @@
 ﻿using System;
+using System.Collections.ArrayBased;
 using System.Collections.Generic;
+using System.Collections.Pooling;
 
 namespace HegaCore
 {
     public class PoolProvider : IPoolProvider
     {
         public Pool<T> Pool<T>() where T : class, new()
-            => System.Collections.Generic.Pool<T>.Default;
+            => System.Collections.Pooling.Pool<T>.Default;
 
         public T[] Array1<T>(int size)
             => Array1Pool<T>.Get(size);
@@ -79,5 +81,29 @@ namespace HegaCore
 
         public void Return<TKey, TValue>(IEnumerable<Dictionary<TKey, TValue>> items)
             => DictionaryPool<TKey, TValue>.Return(items);
+
+        public ArrayList<T> ArrayList<T>()
+            => ArrayListPool<T>.Get();
+
+        public void Return<T>(ArrayList<T> item)
+            => ArrayListPool<T>.Return(item);
+
+        public void Return<T>(params ArrayList<T>[] items)
+            => ArrayListPool<T>.Return(items);
+
+        public void Return<T>(IEnumerable<ArrayList<T>> items)
+            => ArrayListPool<T>.Return(items);
+
+        public ArrayDictionary<TKey, TValue> ArrayDictionary<TKey, TValue>() where TKey : IEquatable<TKey>
+            => ArrayDictionaryPool<TKey, TValue>.Get();
+
+        public void Return<TKey, TValue>(ArrayDictionary<TKey, TValue> item) where TKey : IEquatable<TKey>
+            => ArrayDictionaryPool<TKey, TValue>.Return(item);
+
+        public void Return<TKey, TValue>(params ArrayDictionary<TKey, TValue>[] items) where TKey : IEquatable<TKey>
+            => ArrayDictionaryPool<TKey, TValue>.Return(items);
+
+        public void Return<TKey, TValue>(IEnumerable<ArrayDictionary<TKey, TValue>> items) where TKey : IEquatable<TKey>
+            => ArrayDictionaryPool<TKey, TValue>.Return(items);
     }
 }

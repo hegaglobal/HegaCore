@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Collections.Pooling;
 using System.Linq;
 
 namespace HegaCore
