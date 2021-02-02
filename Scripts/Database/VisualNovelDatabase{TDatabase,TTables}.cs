@@ -19,10 +19,12 @@ namespace HegaCore
             Load<LanguageEntry, LanguageEntry.Mapping>
                  (this.Tables.Language, nameof(this.Tables.Language), true);
 
+            PrepareLanguages();
+
             Load<AudioEntry, AudioEntry.Mapping>
                  (this.Tables.Audio, nameof(this.Tables.Audio), true);
 
-            PrepareLanguages();
+            this.Tables.PrepareAudioMap();
 
             Load<L10nData, L10nParser>
                  (this.Tables.L10nData, nameof(this.Tables.L10nData), this.Languages);

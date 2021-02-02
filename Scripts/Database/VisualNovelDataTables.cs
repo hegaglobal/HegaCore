@@ -4,6 +4,7 @@ using VisualNovelData.Data;
 
 namespace HegaCore
 {
+    using System.Collections.Pooling;
     using Database;
 
     public class VisualNovelDataTables : Tables
@@ -26,11 +27,15 @@ namespace HegaCore
 
         public ReadDictionary<string, int> CharacterMap => this.characterMap;
 
+        public ReadDictionary<AudioType, List<KeyValuePair<string, string>>> AudioMap => this.audioMap;
+
         private readonly Dictionary<string, int> characterMap;
+        private readonly Dictionary<AudioType, List<KeyValuePair<string, string>>> audioMap;
 
         public VisualNovelDataTables()
         {
             this.characterMap = new Dictionary<string, int>();
+            this.audioMap = new Dictionary<AudioType, List<KeyValuePair<string, string>>>();
         }
 
         public override void Clear()
@@ -55,6 +60,27 @@ namespace HegaCore
                     continue;
 
                 this.characterMap[entry.Name] = entry.Id;
+            }
+        }
+
+        public void PrepareAudioMap()
+        {
+            foreach (var value in this.audioMap.Values)
+            {
+                Pool.Provider.Return(value);
+            }
+
+            this.audioMap.Clear();
+
+            foreach (var entry in this.Audio.Entries)
+            {
+                if (!this.audioMap.TryGetValue(entry.Type, out var map))
+                {
+                    map = Pool.Provider.List<KeyValuePair<string, string>>();
+                    this.audioMap[entry.Type] = map;
+                }
+
+                map.Add(new KeyValuePair<string, string>(entry.Key, entry.AssetKey));
             }
         }
     }

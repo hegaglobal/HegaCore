@@ -7,7 +7,7 @@ namespace HegaCore.Database
     {
         public string Key { get; private set; }
 
-        public string SecondKey { get; private set; }
+        public string AssetKey { get; private set; }
 
         public AudioType Type { get; private set; }
 
@@ -18,7 +18,7 @@ namespace HegaCore.Database
                 var col = 0;
 
                 MapProperty(++col, x => x.Key, (x, v) => x.Key = v);
-                MapProperty(++col, x => x.SecondKey, (x, v) => x.SecondKey = v);
+                MapProperty(++col, x => x.AssetKey, (x, v) => x.AssetKey = v);
                 MapProperty(++col, x => x.Type, (x, v) => x.Type = v, new EnumConverter<AudioType>());
             }
         }

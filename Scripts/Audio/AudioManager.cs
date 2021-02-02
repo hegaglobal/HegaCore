@@ -1,16 +1,16 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Table;
 using UnityEngine;
 using UnityEngine.Audio;
 using UnityEngine.AddressableAssets;
 using UnityEngine.ResourceManagement.AsyncOperations;
 using Cysharp.Threading.Tasks;
-using HegaCore.Database;
 
 namespace HegaCore
 {
     using AudioMap = Dictionary<string, AsyncOperationHandle<AudioClip>>;
+    using AudioKeyList = List<KeyValuePair<string, string>>;
+    using AudioKeyMap = Dictionary<string, string>;
 
     public sealed class AudioManager : SingletonBehaviour<AudioManager>
     {
@@ -47,6 +47,10 @@ namespace HegaCore
         private readonly AudioMap soundMap;
         private readonly AudioMap voiceMap;
         private readonly AudioMap voiceBGMap;
+        private readonly AudioKeyMap musicKeyMap;
+        private readonly AudioKeyMap soundKeyMap;
+        private readonly AudioKeyMap voiceKeyMap;
+        private readonly AudioKeyMap voiceBGKeyMap;
 
         public AudioManager()
         {
@@ -54,6 +58,10 @@ namespace HegaCore
             this.soundMap = new AudioMap();
             this.voiceMap = new AudioMap();
             this.voiceBGMap = new AudioMap();
+            this.musicKeyMap = new AudioKeyMap();
+            this.soundKeyMap = new AudioKeyMap();
+            this.voiceKeyMap = new AudioKeyMap();
+            this.voiceBGKeyMap = new AudioKeyMap();
         }
 
         private void Awake()
@@ -79,77 +87,86 @@ namespace HegaCore
             this.Player.Initialize(musicFadeTime, musicVolume, soundVolume, voiceVolume);
         }
 
-        public async UniTask PrepareAudioAsync(ReadTable<AudioEntry> table, AudioType filterType)
+        public async UniTask PrepareAudioAsync(ReadDictionary<AudioType, AudioKeyList> map, AudioType filterType)
         {
-            foreach (var entry in table.Entries)
+            foreach (var kv in map)
             {
-                if (entry == null || entry.Type != filterType)
+                if (kv.Key != filterType || kv.Value == null)
                     return;
 
-                await PrepareAudioAsync(entry);
+                await PrepareAudioAsync(kv.Key, kv.Value);
             }
         }
 
-        public async UniTask PrepareAudioAsync(ReadTable<AudioEntry> table)
+        public async UniTask PrepareAudioAsync(ReadDictionary<AudioType, AudioKeyList> map)
         {
-            foreach (var entry in table.Entries)
+            foreach (var kv in map)
             {
-                if (entry == null)
+                if (kv.Value == null)
                     return;
 
-                await PrepareAudioAsync(entry);
+                await PrepareAudioAsync(kv.Key, kv.Value);
             }
         }
 
-        private async UniTask PrepareAudioAsync(AudioEntry entry)
+        private async UniTask PrepareAudioAsync(AudioType type, AudioKeyList list)
         {
-            var key = entry.Key;
-            var assetKey = entry.Key;
+            GetMap(type, out var audioMap, out var keyMap);
 
-            if (string.IsNullOrEmpty(assetKey) || !AddressablesManager.ContainsKey(assetKey))
+            if (audioMap == null || keyMap == null)
+                return;
+
+            foreach (var kv in list)
             {
-                assetKey = entry.SecondKey;
+                var key = kv.Key;
+                var assetKey = kv.Value;
 
-                if (string.IsNullOrEmpty(assetKey) || !AddressablesManager.ContainsKey(assetKey))
+                if (string.IsNullOrWhiteSpace(assetKey) || !AddressablesManager.ContainsKey(assetKey))
                 {
-                    UnuLogger.LogError($"Cannot find any {entry.Type} with either key={entry.Key} or key={entry.SecondKey}");
-                    return;
+                    UnuLogger.LogError($"Cannot find any {type} with asset_key={assetKey}");
+                    continue;
+                }
+
+                if (audioMap.ContainsKey(assetKey))
+                {
+                    UnuLogger.LogWarning($"Duplicate {type} asset_key={assetKey}");
+                    continue;
+                }
+
+                try
+                {
+                    var handle = Addressables.LoadAssetAsync<AudioClip>(assetKey);
+                    await handle.Task;
+
+                    audioMap.Add(assetKey, handle);
+
+                    if (string.IsNullOrWhiteSpace(key))
+                        continue;
+
+                    if (keyMap.ContainsKey(key))
+                    {
+                        UnuLogger.LogWarning($"Duplicate {type} key={key}");
+                        continue;
+                    }
+
+                    keyMap.Add(key, assetKey);
+                }
+                catch (Exception ex)
+                {
+                    UnuLogger.LogException(ex, this);
                 }
             }
-
-            var map = GetMap(entry.Type);
-
-            if (map == null)
-                return;
-
-            if (map.ContainsKey(key))
-            {
-                UnuLogger.LogWarning($"Duplicate {entry.Type} key={key}");
-                return;
-            }
-
-            try
-            {
-                var handle = Addressables.LoadAssetAsync<AudioClip>(key);
-                await handle.Task;
-
-                map.Add(key, handle);
-            }
-            catch (Exception ex)
-            {
-                UnuLogger.LogException(ex, this);
-            }
         }
 
-        private AudioMap GetMap(AudioType type)
+        private void GetMap(AudioType type, out AudioMap audioMap, out AudioKeyMap keyMap)
         {
             switch (type)
             {
-                case AudioType.Music: return this.musicMap;
-                case AudioType.Sound: return this.soundMap;
-                case AudioType.Voice: return this.voiceMap;
-                case AudioType.VoiceBG: return this.voiceBGMap;
-                default: return null;
+                case AudioType.Music: audioMap = this.musicMap; keyMap = this.musicKeyMap; break;
+                case AudioType.Sound: audioMap = this.soundMap; keyMap = this.soundKeyMap; break;
+                case AudioType.Voice: audioMap = this.voiceMap; keyMap = this.voiceKeyMap; break;
+                case AudioType.VoiceBG: audioMap = this.voiceBGMap; keyMap = this.voiceBGKeyMap; break;
+                default: audioMap = null; keyMap = null; break;
             }
         }
 
@@ -312,23 +329,34 @@ namespace HegaCore
         }
 
         public bool TryGetMusic(string key, out AudioClip music)
-            => TryGetAudio(key, this.musicMap, out music);
+            => TryGetAudio(key, this.musicKeyMap, this.musicMap, out music);
 
         public bool TryGetSound(string key, out AudioClip sound)
-            => TryGetAudio(key, this.soundMap, out sound);
+            => TryGetAudio(key, this.soundKeyMap, this.soundMap, out sound);
 
         public bool TryGetVoice(string key, out AudioClip voice)
-            => TryGetAudio(key, this.voiceMap, out voice);
+            => TryGetAudio(key, this.voiceKeyMap, this.voiceMap, out voice);
 
         public bool TryGetVoiceBG(string key, out AudioClip voice)
-            => TryGetAudio(key, this.voiceBGMap, out voice);
+            => TryGetAudio(key, this.voiceBGKeyMap, this.voiceBGMap, out voice);
 
-        private bool TryGetAudio(string key, AudioMap map, out AudioClip clip)
+        private bool TryGetAudio(string key, AudioKeyMap keyMap, AudioMap audioMap, out AudioClip clip)
         {
             clip = null;
 
-            if (map.TryGetValue(key, out var op))
-                clip = op.Result;
+            if (keyMap.TryGetValue(key, out var assetKey))
+            {
+                if (audioMap.TryGetValue(assetKey, out var op))
+                {
+                    clip = op.Result;
+                    return clip;
+                }
+            }
+            else
+            {
+                if (audioMap.TryGetValue(key, out var op))
+                    clip = op.Result;
+            }
 
             return clip;
         }
