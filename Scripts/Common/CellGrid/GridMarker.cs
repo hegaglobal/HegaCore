@@ -238,8 +238,8 @@ namespace HegaCore
             {
                 get
                 {
-                    var current = this.source.Current;
-                    return new GridValue<T>(current.Key, current.Value);
+                    (var key, var value) = this.source.Current;
+                    return new GridValue<T>(in key, value);
                 }
             }
 

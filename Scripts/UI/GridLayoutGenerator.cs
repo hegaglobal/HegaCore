@@ -71,9 +71,9 @@ namespace HegaCore.UI
 
             var cache = Pool.Provider.List<GridValue<GridLayoutCell>>();
 
-            foreach (var kv in this.cells)
+            foreach (var (key, value) in this.cells)
             {
-                cache.Add(new GridValue<GridLayoutCell>(kv.Key, kv.Value));
+                cache.Add(new GridValue<GridLayoutCell>(key, in value));
             }
 
             this.grid.Initialize((GridIndex)this.gridSize, cache);
@@ -110,9 +110,9 @@ namespace HegaCore.UI
         {
             var cache = Pool.Provider.List<GridValue<GridLayoutCell>>();
 
-            foreach (var kv in this.cells)
+            foreach (var (key, value) in this.cells)
             {
-                cache.Add(new GridValue<GridLayoutCell>(kv.Key, kv.Value));
+                cache.Add(new GridValue<GridLayoutCell>(key, in value));
             }
 
             this.grid.Initialize((GridIndex)this.gridSize, cache);
