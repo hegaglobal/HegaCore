@@ -12,13 +12,12 @@ namespace HegaCore
                 return false;
             }
 
-            if (!machine.Initialized)
-            {
-                UnuLogger.LogError("State machine has not been initialized.");
-                return false;
-            }
+            if (machine.Initialized)
+                return true;
 
-            return true;
+            UnuLogger.LogError("State machine has not been initialized.");
+            return false;
+
         }
     }
 }

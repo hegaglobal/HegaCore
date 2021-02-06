@@ -30,7 +30,7 @@ namespace HegaCore
         { }
 
         public TextEmitterParams(in Color color, float? size)
-            : this(Vector3Range.Zero, color, size.HasValue, size.Value)
+            : this(Vector3Range.Zero, color, size.HasValue, size ?? 1f)
         { }
 
         public TextEmitterParams(in Vector3Range offsetRange, in Color color, float size)
@@ -38,7 +38,7 @@ namespace HegaCore
         { }
 
         public TextEmitterParams(in Vector3Range offsetRange, in Color color, float? size)
-            : this(offsetRange, color, size.HasValue, size.Value)
+            : this(offsetRange, color, size.HasValue, size ?? 1f)
         { }
 
         private TextEmitterParams(in Vector3Range offsetRange, in Color color, bool customSize, float size)
@@ -55,7 +55,7 @@ namespace HegaCore
         { }
 
         public TextEmitterParams(in Vector3 offset, in Color color, float? size)
-            : this(offset, color, size.HasValue, size.Value)
+            : this(offset, color, size.HasValue, size ?? 1f)
         { }
 
         private TextEmitterParams(in Vector3 offset, in Color color, bool customSize, float size)

@@ -31,10 +31,7 @@ namespace HegaCore
             if (!this.eventMap.TryGetValue(eventId, out var eventName))
                 return;
 
-            if (string.IsNullOrEmpty(addon))
-                this.Invoker.Invoke(eventName);
-            else
-                this.Invoker.Invoke($"{eventName}_{addon}");
+            this.Invoker.Invoke(string.IsNullOrEmpty(addon) ? eventName : $"{eventName}_{addon}");
         }
 
         public void Invoke(int stage, int eventId, string addon = "")
@@ -42,10 +39,7 @@ namespace HegaCore
             if (!this.eventMap.TryGetValue(eventId, out var eventName))
                 return;
 
-            if (string.IsNullOrEmpty(addon))
-                this.Invoker.Invoke(eventName, stage);
-            else
-                this.Invoker.Invoke($"{eventName}_{addon}", stage);
+            this.Invoker.Invoke(string.IsNullOrEmpty(addon) ? eventName : $"{eventName}_{addon}", stage);
         }
     }
 }

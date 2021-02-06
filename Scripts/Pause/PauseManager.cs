@@ -14,7 +14,7 @@ namespace HegaCore
         private TPauseState currentState;
         private IPause<TPauseState> current;
 
-        public PauseManager()
+        protected PauseManager()
         {
             this.map = new Dictionary<TPauseState, IPause<TPauseState>>();
         }

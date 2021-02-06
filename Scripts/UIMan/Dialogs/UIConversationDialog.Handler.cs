@@ -522,10 +522,7 @@ namespace HegaCore.UI
 
             canShowActors = true;
 
-            if (this.dialogue.Choices.Count > 1)
-                this.defaultChoice = ChoiceRow.None;
-            else
-                this.defaultChoice = this.dialogue.GetChoice(0);
+            this.defaultChoice = this.dialogue.Choices.Count > 1 ? ChoiceRow.None : this.dialogue.GetChoice(0);
 
             Invoke(this.dialogue.CommandsOnStart);
 

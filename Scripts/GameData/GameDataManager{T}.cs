@@ -24,7 +24,7 @@ namespace HegaCore
 
         private readonly List<ScreenResolution> resolutions;
 
-        public GameDataManager()
+        protected GameDataManager()
         {
             this.resolutions = new List<ScreenResolution>();
             this.Container = new TContainer();

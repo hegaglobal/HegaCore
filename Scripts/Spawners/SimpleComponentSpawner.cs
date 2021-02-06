@@ -22,7 +22,7 @@ namespace HegaCore
 
         private readonly ComponentPool<T> pool;
 
-        public SimpleComponentSpawner()
+        protected SimpleComponentSpawner()
         {
             this.pool = new ComponentPool<T>(this);
         }

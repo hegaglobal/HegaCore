@@ -12,7 +12,7 @@ namespace HegaCore
 
         public GameDataContainer DataContainerBase { get; private set; }
 
-        public EventInvoker()
+        protected EventInvoker()
         {
             this.CommandSystem = new CommandSystem();
             this.EventCommandSystem = new EventCommandSystem(this.CommandSystem);

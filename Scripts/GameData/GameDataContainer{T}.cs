@@ -20,7 +20,7 @@ namespace HegaCore
         public override GameSettings Settings
             => this.Data.Settings;
 
-        public GameDataContainer()
+        protected GameDataContainer()
         {
             this.Handler = new THandler();
             this.Data = this.Handler.New();

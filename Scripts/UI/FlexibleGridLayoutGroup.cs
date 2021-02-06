@@ -58,8 +58,9 @@ namespace HegaCore.UI
             if (this.fitType == FitType.Height || this.fitType == FitType.FixedRowCount || this.fitType == FitType.Uniform)
                 this.gridSize.Column = Mathf.CeilToInt(this.transform.childCount / (float)this.gridSize.Row);
 
-            var parentWidth = this.rectTransform.rect.width;
-            var parentHeight = this.rectTransform.rect.height;
+            var rect = this.rectTransform.rect;
+            var parentWidth = rect.width;
+            var parentHeight = rect.height;
 
             float cellWidth;
             float cellHeight;

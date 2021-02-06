@@ -33,7 +33,7 @@ namespace HegaCore
         private readonly ComponentAsyncInstantiator<T> instantiator;
         private readonly AsyncComponentPool<T> pool;
 
-        public SimpleAddressableComponentSpawner()
+        protected SimpleAddressableComponentSpawner()
         {
             this.instantiator = new ComponentAsyncInstantiator<T>();
             this.pool = new AsyncComponentPool<T>(this.instantiator);

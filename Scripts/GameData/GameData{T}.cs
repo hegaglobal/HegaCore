@@ -11,9 +11,9 @@ namespace HegaCore
 
         public GameSettings Settings;
 
-        public GameData() : this(false) { }
+        protected GameData() : this(false) { }
 
-        public GameData(bool corrupted)
+        protected GameData(bool corrupted)
         {
             this.OnceCorrupted = corrupted;
             this.Players = new TPlayerData[4];

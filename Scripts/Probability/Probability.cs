@@ -5,7 +5,7 @@ namespace HegaCore
 {
     public static class Probability
     {
-        private readonly static PseudoProbability _probability;
+        private static readonly PseudoProbability _probability;
 
         static Probability()
         {

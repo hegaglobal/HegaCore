@@ -5,7 +5,7 @@ namespace HegaCore
 {
     public class DOTweenMoveBehaviour : DOTweenAnimationBehaviour
     {
-        public void Move(Vector3 position)
+        public void Move(in Vector3 position)
             => Setup(this.transform.DOMove(position, this.Duration));
     }
 }

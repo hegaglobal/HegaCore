@@ -11,7 +11,7 @@ namespace HegaCore
         private readonly HashSet<TInputKey> executed = new HashSet<TInputKey>();
         private readonly IReadOnlyCommandMap commandMap;
 
-        public CommandInvoker(IReadOnlyCommandMap commandMap)
+        protected CommandInvoker(IReadOnlyCommandMap commandMap)
         {
             this.commandMap = commandMap ?? throw new ArgumentNullException(nameof(commandMap));
         }

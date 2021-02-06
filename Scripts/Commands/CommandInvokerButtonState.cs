@@ -9,7 +9,7 @@ namespace HegaCore
         protected readonly TInvoker Down;
         protected readonly TInvoker Up;
 
-        public CommandInvokerButtonState(TInvoker press, TInvoker down, TInvoker up)
+        protected CommandInvokerButtonState(TInvoker press, TInvoker down, TInvoker up)
         {
             this.Press = press;
             this.Down = down;

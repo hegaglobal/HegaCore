@@ -167,8 +167,8 @@ namespace HegaCore.UI
             {
                 clip.Deinitialize();
 
-                var unlocked = false;
-                var character = string.Empty;
+                bool unlocked;
+                string character;
 
                 if (clip.Id == 1)
                 {

@@ -21,7 +21,7 @@ namespace HegaCore
             if (!string.IsNullOrEmpty(key) && value == 0)
                 throw new InvalidOperationException("Character value 0 is reserved.");
 
-            this.map[key] = value;
+            this.map[key ?? string.Empty] = value;
         }
 
         public int GetValue (string key)

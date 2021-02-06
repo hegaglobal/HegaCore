@@ -45,7 +45,7 @@ namespace HegaCore.MVVM
             L10n.Deregister(this);
         }
 
-        public override void Initialize(bool forceInit)
+        public override void Initialize(bool forceInit = false)
         {
             if (!CheckInitialize(forceInit))
                 return;

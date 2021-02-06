@@ -2,7 +2,7 @@
 
 namespace HegaCore.Database.Csv
 {
-    [AttributeUsage(AttributeTargets.Class | AttributeTargets.Struct, AllowMultiple = false, Inherited = true)]
+    [AttributeUsage(AttributeTargets.Class | AttributeTargets.Struct)]
     public class RowAsColumnAttribute : Attribute
     {
     }

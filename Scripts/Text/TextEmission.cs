@@ -67,8 +67,9 @@ namespace HegaCore
                     module.Text.fontSize = @params.Size.Value;
             }
 
-            module.transform.position = OffsetPosition(position, @params);
-            module.transform.localScale = Vector3.one;
+            var transform = module.transform;
+            transform.position = OffsetPosition(position, @params);
+            transform.localScale = Vector3.one;
         }
 
         private async UniTaskVoid Show(TextModule module, float duration)

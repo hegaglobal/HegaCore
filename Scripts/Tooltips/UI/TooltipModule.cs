@@ -13,7 +13,7 @@ namespace HegaCore.UI
 
         private CanvasGroup canvasGroup;
 
-        public TooltipModule()
+        protected TooltipModule()
         {
             SubscribeAction(nameof(this.DataInstance.Content), OnContentChanged);
         }

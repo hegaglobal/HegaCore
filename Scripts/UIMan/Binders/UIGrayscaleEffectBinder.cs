@@ -18,7 +18,7 @@ namespace HegaCore.MVVM
         public bool tweenValueChange;
         public float changeTime = 0.1f;
 
-        public override void Initialize(bool forceInit)
+        public override void Initialize(bool forceInit = false)
         {
             if (!CheckInitialize(forceInit))
                 return;

@@ -21,7 +21,7 @@ namespace HegaCore.MVVM
         [HideInInspector]
         public BoolConverter valueConverter = new BoolConverter("Value");
 
-        public override void Initialize(bool forceInit)
+        public override void Initialize(bool forceInit = false)
         {
             if (!CheckInitialize(forceInit))
                 return;

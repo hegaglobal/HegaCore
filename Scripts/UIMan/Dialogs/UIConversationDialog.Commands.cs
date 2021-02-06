@@ -92,44 +92,19 @@ namespace HegaCore.UI
             }
 
             private static CommandMap GetCommandMap()
-            {
-                if (_commandMap == null)
-                    _commandMap = CommandMap.Default;
-
-                return _commandMap;
-            }
+                => _commandMap ?? (_commandMap = CommandMap.Default);
 
             private static CommandInvokerKey GetKeyInvoker()
-            {
-                if (_keyInvoker == null)
-                    _keyInvoker = CommandInvokerKey.Default;
-
-                return _keyInvoker;
-            }
+                => _keyInvoker ?? (_keyInvoker = CommandInvokerKey.Default);
 
             private static CommandInvokerMouseButton GetMouseButtonInvoker()
-            {
-                if (_mouseButtonInvoker == null)
-                    _mouseButtonInvoker = CommandInvokerMouseButton.Default;
-
-                return _mouseButtonInvoker;
-            }
+                => _mouseButtonInvoker ?? (_mouseButtonInvoker = CommandInvokerMouseButton.Default);
 
             private static CommandKeys GetCommandKeys()
-            {
-                if (_commandKeys == null)
-                    _commandKeys = CommandKeys.Default;
-
-                return _commandKeys;
-            }
+                => _commandKeys ?? (_commandKeys = CommandKeys.Default);
 
             private static InputKeys GetInputKeys()
-            {
-                if (_inputKeys == null)
-                    _inputKeys = InputKeys.Default;
-
-                return _inputKeys;
-            }
+                => _inputKeys ?? (_inputKeys = InputKeys.Default);
 
             private static ButtonStates GetButtonStates()
             {

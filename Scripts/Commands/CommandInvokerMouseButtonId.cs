@@ -4,7 +4,7 @@ namespace HegaCore
 {
     public abstract class CommandInvokerMouseButtonId : CommandInvoker<int>
     {
-        public CommandInvokerMouseButtonId(IReadOnlyCommandMap commandMap) : base(commandMap) { }
+        protected CommandInvokerMouseButtonId(IReadOnlyCommandMap commandMap) : base(commandMap) { }
     }
 
     public sealed class CommandInvokerMouseButtonPress : CommandInvokerMouseButtonId

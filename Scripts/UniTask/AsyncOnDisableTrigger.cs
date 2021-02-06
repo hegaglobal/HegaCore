@@ -92,7 +92,7 @@ namespace Cysharp.Threading.Tasks.Triggers
         }
     }
 
-    public static partial class OnDisableAsyncTriggerExtensions
+    public static class OnDisableAsyncTriggerExtensions
     {
         /// <summary>This function is called when the MonoBehaviour will be disabed.</summary>
         public static UniTask OnDisableAsync(this GameObject gameObject)

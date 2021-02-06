@@ -33,7 +33,7 @@ namespace HegaCore
 
         public CharacterProgressMap CharacterProgressMap = new CharacterProgressMap();
 
-        public PlayerData()
+        protected PlayerData()
         {
             this.Revision = 1;
         }

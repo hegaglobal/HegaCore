@@ -15,13 +15,13 @@ namespace HegaCore.UI
         {
             foreach (var panel in this.panels)
             {
-                if (panel)
-                {
-                    if (this.show)
-                        panel.Show();
-                    else
-                        panel.Hide();
-                }
+                if (!panel)
+                    continue;
+
+                if (this.show)
+                    panel.Show();
+                else
+                    panel.Hide();
             }
         }
 
@@ -29,13 +29,13 @@ namespace HegaCore.UI
         {
             foreach (var panel in this.panels)
             {
-                if (panel)
-                {
-                    if (this.show)
-                        panel.Hide();
-                    else
-                        panel.Show();
-                }
+                if (!panel)
+                    continue;
+
+                if (this.show)
+                    panel.Hide();
+                else
+                    panel.Show();
             }
         }
     }

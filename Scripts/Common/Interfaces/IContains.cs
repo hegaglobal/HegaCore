@@ -1,6 +1,6 @@
 ﻿namespace HegaCore
 {
-    public interface IContains<T>
+    public interface IContains<in T>
     {
         bool Contains(T value);
     }

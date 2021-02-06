@@ -42,11 +42,7 @@ namespace HegaCore
             if (map == null)
                 throw new ArgumentNullException(nameof(map));
 
-            if (useMapReference)
-                this.map = map;
-            else
-                this.map = new Dictionary<GridIndex, T>(map);
-
+            this.map = useMapReference ? map : new Dictionary<GridIndex, T>(map);
             this.defaultValue = defaultValue;
         }
 
@@ -227,7 +223,7 @@ namespace HegaCore
         IEnumerator<GridValue<T>> IReadGridMarker<T>.GetEnumerator()
             => GetEnumerator();
 
-        public struct Enumerator : IEnumerator<GridValue<T>>
+        public readonly struct Enumerator : IEnumerator<GridValue<T>>
         {
             private readonly IEnumerator<KeyValuePair<GridIndex, T>> source;
             private readonly bool hasSource;

@@ -4,7 +4,7 @@ namespace HegaCore
 {
     public abstract class CommandInvokerKeyCode : CommandInvoker<KeyCode>
     {
-        public CommandInvokerKeyCode(IReadOnlyCommandMap commandMap) : base(commandMap) { }
+        protected CommandInvokerKeyCode(IReadOnlyCommandMap commandMap) : base(commandMap) { }
     }
 
     public sealed class CommandInvokerKeyPress : CommandInvokerKeyCode

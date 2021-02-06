@@ -18,9 +18,9 @@ namespace HegaCore
             set => this.invokeTime = Mathf.Clamp(value, 0f, 1f);
         }
 
-        public AnimatorStateEventBase() { }
+        protected AnimatorStateEventBase() { }
 
-        public AnimatorStateEventBase(float invokeTime)
+        protected AnimatorStateEventBase(float invokeTime)
         {
             this.InvokeTime = invokeTime;
         }

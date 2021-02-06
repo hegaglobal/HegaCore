@@ -31,13 +31,10 @@ namespace HegaCore
             this.tween?.Kill();
             this.tween = value;
 
-            if (this.tween == null)
-                return;
-
-            this.tween.SetEase(this.Ease)
-                      .OnPlay(OnPlay)
-                      .OnUpdate(OnUpdate)
-                      .OnComplete(OnComplete);
+            this.tween?.SetEase(this.Ease)
+                       .OnPlay(OnPlay)
+                       .OnUpdate(OnUpdate)
+                       .OnComplete(OnComplete);
         }
 
         private void OnPlay()
