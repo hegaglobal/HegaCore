@@ -1,7 +1,6 @@
 ﻿namespace HegaCore
 {
-    public interface ISetableReadOnlyStruct<T> where T : struct
+    public interface ISetableReadOnlyStruct<T> : ISetableIn<T> where T : struct
     {
-        void Set(in T value);
     }
 }
