@@ -345,7 +345,7 @@ namespace HegaCore
                 var random = Pool.Provider.List<Cell>();
                 random.AddRange(cells.Randomize());
 
-                foreach (var _ in IntRange.FromSize(count))
+                for (var i = 0; i < count; i++)
                 {
                     if (random.Count <= 0)
                         break;
