@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Collections.Pooling;
 
 namespace HegaCore
@@ -35,6 +36,14 @@ namespace HegaCore
             }
 
             Pool.Provider.Return(set);
+        }
+
+        public static void Dispose(this IEnumerable<IDisposable> self)
+        {
+            foreach (var disposable in self)
+            {
+                disposable?.Dispose();
+            }
         }
     }
 }
