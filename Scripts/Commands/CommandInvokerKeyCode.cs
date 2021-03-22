@@ -11,8 +11,8 @@ namespace HegaCore
     {
         public CommandInvokerKeyPress(IReadOnlyCommandMap commandMap) : base(commandMap) { }
 
-        protected override bool CanInvoke(KeyCode inputKey)
-            => Input.GetKey(inputKey);
+        protected override bool CanInvoke(KeyCode input)
+            => Input.GetKey(input);
 
         public static CommandInvokerKeyPress Default { get; }
             = new CommandInvokerKeyPress(CommandMap.Default);
@@ -22,8 +22,8 @@ namespace HegaCore
     {
         public CommandInvokerKeyDown(IReadOnlyCommandMap commandMap) : base(commandMap) { }
 
-        protected override bool CanInvoke(KeyCode inputKey)
-            => Input.GetKeyDown(inputKey);
+        protected override bool CanInvoke(KeyCode input)
+            => Input.GetKeyDown(input);
 
         public static CommandInvokerKeyDown Default { get; }
             = new CommandInvokerKeyDown(CommandMap.Default);
@@ -33,8 +33,8 @@ namespace HegaCore
     {
         public CommandInvokerKeyUp(IReadOnlyCommandMap commandMap) : base(commandMap) { }
 
-        protected override bool CanInvoke(KeyCode inputKey)
-            => Input.GetKeyUp(inputKey);
+        protected override bool CanInvoke(KeyCode input)
+            => Input.GetKeyUp(input);
 
         public static CommandInvokerKeyUp Default { get; }
             = new CommandInvokerKeyUp(CommandMap.Default);

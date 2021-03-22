@@ -2,19 +2,19 @@
 {
     public interface IReadOnlyCommandMap
     {
-        bool Contains(string key);
+        bool Contains(string id);
 
-        bool TryGetCommand(string commandKey, out ICommand command);
+        bool TryGetCommand(string id, out ICommand command);
     }
 
     public interface ICommandMap : IReadOnlyCommandMap
     {
-        void Register(string key, ICommand command);
+        void Register(string id, ICommand command);
 
-        void Register<T>(string key) where T : ICommand, new();
+        void Register<T>(string id) where T : ICommand, new();
 
-        void Remove(string key);
+        void Remove(string id);
 
-        void Remove(params string[] keys);
+        void Remove(params string[] ids);
     }
 }

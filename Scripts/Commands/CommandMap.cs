@@ -6,41 +6,41 @@ namespace HegaCore
     {
         private readonly Dictionary<string, ICommand> map = new Dictionary<string, ICommand>();
 
-        public void Register(string key, ICommand command)
+        public void Register(string id, ICommand command)
         {
             if (command != null)
-                this.map[key] = command;
+                this.map[id] = command;
         }
 
-        public void Register<T>(string key) where T : ICommand, new()
+        public void Register<T>(string id) where T : ICommand, new()
         {
-            this.map[key] = new T();
+            this.map[id] = new T();
         }
 
-        public bool Contains(string key)
-            => this.map.ContainsKey(key);
+        public bool Contains(string id)
+            => this.map.ContainsKey(id);
 
-        public bool TryGetCommand(string commandKey, out ICommand command)
-            => this.map.TryGetValue(commandKey, out command);
+        public bool TryGetCommand(string id, out ICommand command)
+            => this.map.TryGetValue(id, out command);
 
-        public void Remove(string key)
+        public void Remove(string id)
         {
-            this.map.Remove(key);
+            this.map.Remove(id);
         }
 
-        public void Remove(params string[] keys)
+        public void Remove(params string[] ids)
         {
-            foreach (var key in keys)
+            foreach (var id in ids)
             {
-                this.map.Remove(key);
+                this.map.Remove(id);
             }
         }
 
-        public void Remove(IEnumerable<string> keys)
+        public void Remove(IEnumerable<string> ids)
         {
-            foreach (var key in keys)
+            foreach (var id in ids)
             {
-                this.map.Remove(key);
+                this.map.Remove(id);
             }
         }
 

@@ -11,8 +11,8 @@ namespace HegaCore
     {
         public CommandInvokerMouseButtonPress(IReadOnlyCommandMap commandMap) : base(commandMap) { }
 
-        protected override bool CanInvoke(int inputKey)
-            => Input.GetMouseButton(inputKey);
+        protected override bool CanInvoke(int input)
+            => Input.GetMouseButton(input);
 
         public static CommandInvokerMouseButtonPress Default { get; }
             = new CommandInvokerMouseButtonPress(CommandMap.Default);
@@ -22,8 +22,8 @@ namespace HegaCore
     {
         public CommandInvokerMouseButtonDown(IReadOnlyCommandMap commandMap) : base(commandMap) { }
 
-        protected override bool CanInvoke(int inputKey)
-            => Input.GetMouseButtonDown(inputKey);
+        protected override bool CanInvoke(int input)
+            => Input.GetMouseButtonDown(input);
 
         public static CommandInvokerMouseButtonDown Default { get; }
             = new CommandInvokerMouseButtonDown(CommandMap.Default);
@@ -33,8 +33,8 @@ namespace HegaCore
     {
         public CommandInvokerMouseButtonUp(IReadOnlyCommandMap commandMap) : base(commandMap) { }
 
-        protected override bool CanInvoke(int inputKey)
-            => Input.GetMouseButtonUp(inputKey);
+        protected override bool CanInvoke(int input)
+            => Input.GetMouseButtonUp(input);
 
         public static CommandInvokerMouseButtonUp Default { get; }
             = new CommandInvokerMouseButtonUp(CommandMap.Default);

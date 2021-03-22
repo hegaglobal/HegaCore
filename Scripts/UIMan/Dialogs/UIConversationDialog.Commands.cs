@@ -11,20 +11,20 @@ namespace HegaCore.UI
             private static CommandMap _commandMap;
             private static CommandInvokerKey _keyInvoker;
             private static CommandInvokerMouseButton _mouseButtonInvoker;
-            private static CommandKeys _commandKeys;
-            private static InputKeys _inputKeys;
+            private static CommandIds _commandIdss;
+            private static CommandInputs _inputs;
             private static ButtonStates? _buttonStates;
 
             public static void Initialize(CommandMap commandMap = null, CommandInvokerKey keyInvoker = null,
                                           CommandInvokerMouseButton mouseButtonInvoker = null,
-                                          CommandKeys commandKeys = null, InputKeys inputKeys = null,
+                                          CommandIds commandIds = null, CommandInputs inputs = null,
                                           in ButtonStates? buttonStates = null)
             {
                 _commandMap = commandMap;
                 _keyInvoker = keyInvoker;
                 _mouseButtonInvoker = mouseButtonInvoker;
-                _commandKeys = commandKeys;
-                _inputKeys = inputKeys;
+                _commandIdss = commandIds;
+                _inputs = inputs;
                 _buttonStates = buttonStates;
 
                 RegisterInput();
@@ -33,7 +33,7 @@ namespace HegaCore.UI
             public static void RegisterInput()
             {
                 var buttonStates = GetButtonStates();
-                var inputKeys = GetInputKeys();
+                var inputKeys = GetCommandInputs();
 
                 RegisterSpeedUpKey(buttonStates.SpeedUpKey, inputKeys.SpeedUpKeys);
                 RegisterSkipNextKey(buttonStates.SkipNextKey, inputKeys.SkipNextKeys);
@@ -42,7 +42,7 @@ namespace HegaCore.UI
 
             public static void RemoveInput()
             {
-                var commandKeys = GetCommandKeys();
+                var commandKeys = GetCommandIds();
 
                 GetKeyInvoker().Remove(commandKeys.SpeedUp, commandKeys.SkipNext);
                 GetMouseButtonInvoker().Remove(commandKeys.SkipNext);
@@ -50,7 +50,7 @@ namespace HegaCore.UI
 
             public static void RegisterSpeedUpKey(ButtonState state, IEnumerable<KeyCode> inputKeys)
             {
-                var commandKeys = GetCommandKeys();
+                var commandKeys = GetCommandIds();
                 var invoker = GetKeyInvoker();
 
                 invoker.Remove(commandKeys.SpeedUp);
@@ -59,7 +59,7 @@ namespace HegaCore.UI
 
             public static void RegisterSkipNextKey(ButtonState state, IEnumerable<KeyCode> inputKeys)
             {
-                var commandKeys = GetCommandKeys();
+                var commandKeys = GetCommandIds();
                 var invoker = GetKeyInvoker();
 
                 invoker.Remove(commandKeys.SkipNext);
@@ -68,7 +68,7 @@ namespace HegaCore.UI
 
             public static void RegisterSkipNextMouseButton(ButtonState state, IEnumerable<int> buttonKeys)
             {
-                var commandKeys = GetCommandKeys();
+                var commandKeys = GetCommandIds();
                 var invoker = GetMouseButtonInvoker();
 
                 invoker.Remove(commandKeys.SkipNext);
@@ -77,17 +77,17 @@ namespace HegaCore.UI
 
             internal static void RegisterSpeedUpCommand(Action execute, Action deactivate)
             {
-                GetCommandMap().Register(GetCommandKeys().SpeedUp, new ActionCommand(execute, deactivate));
+                GetCommandMap().Register(GetCommandIds().SpeedUp, new ActionCommand(execute, deactivate));
             }
 
             internal static void RegisterSkipNextCommand(Action execute, Action deactivate)
             {
-                GetCommandMap().Register(GetCommandKeys().SkipNext, new ActionCommand(execute, deactivate));
+                GetCommandMap().Register(GetCommandIds().SkipNext, new ActionCommand(execute, deactivate));
             }
 
             internal static void RemoveCommands()
             {
-                var commandKeys = GetCommandKeys();
+                var commandKeys = GetCommandIds();
                 GetCommandMap().Remove(commandKeys.SpeedUp, commandKeys.SkipNext);
             }
 
@@ -100,11 +100,11 @@ namespace HegaCore.UI
             private static CommandInvokerMouseButton GetMouseButtonInvoker()
                 => _mouseButtonInvoker ?? (_mouseButtonInvoker = CommandInvokerMouseButton.Default);
 
-            private static CommandKeys GetCommandKeys()
-                => _commandKeys ?? (_commandKeys = CommandKeys.Default);
+            private static CommandIds GetCommandIds()
+                => _commandIdss ?? (_commandIdss = CommandIds.Default);
 
-            private static InputKeys GetInputKeys()
-                => _inputKeys ?? (_inputKeys = InputKeys.Default);
+            private static CommandInputs GetCommandInputs()
+                => _inputs ?? (_inputs = CommandInputs.Default);
 
             private static ButtonStates GetButtonStates()
             {
@@ -114,19 +114,19 @@ namespace HegaCore.UI
                 return _buttonStates.Value;
             }
 
-            public class CommandKeys
+            public class CommandIds
             {
                 public readonly string SpeedUp;
                 public readonly string SkipNext;
 
-                public CommandKeys(string speedUp, string skipNext)
+                public CommandIds(string speedUp, string skipNext)
                 {
                     this.SpeedUp = speedUp;
                     this.SkipNext = skipNext;
                 }
 
-                public static CommandKeys Default { get; }
-                    = new CommandKeys(
+                public static CommandIds Default { get; }
+                    = new CommandIds(
                         "UIConversationDialog-SpeedUp",
                         "UIConversationDialog-SkipNext"
                     );
@@ -150,7 +150,7 @@ namespace HegaCore.UI
                     = new ButtonStates(ButtonState.Press, ButtonState.Up, ButtonState.Up);
             }
 
-            public class InputKeys
+            public class CommandInputs
             {
                 public ReadList<KeyCode> SpeedUpKeys => this.speedUpKeys;
 
@@ -162,7 +162,7 @@ namespace HegaCore.UI
                 private readonly List<KeyCode> skipNextKeys = new List<KeyCode>();
                 private readonly List<int> skipNextMouseButtons = new List<int>();
 
-                public InputKeys(IEnumerable<KeyCode> speedUpKeys,
+                public CommandInputs(IEnumerable<KeyCode> speedUpKeys,
                               IEnumerable<KeyCode> skipNextKeys,
                               IEnumerable<int> skipNextMouseButtons)
                 {
@@ -171,8 +171,8 @@ namespace HegaCore.UI
                     this.skipNextMouseButtons.AddRange(skipNextMouseButtons);
                 }
 
-                public static InputKeys Default { get; }
-                    = new InputKeys(
+                public static CommandInputs Default { get; }
+                    = new CommandInputs(
                         new [] { KeyCode.LeftControl, KeyCode.RightControl },
                         new [] { KeyCode.Return, KeyCode.KeypadEnter, KeyCode.Space },
                         new [] { 0 }
