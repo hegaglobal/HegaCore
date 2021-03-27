@@ -2,21 +2,21 @@
 
 namespace HegaCore
 {
-    public abstract class CommandInvokerButtonState<TInput, TInvoker> : IOnUpdate
+    public abstract class CommandInvokerPressState<TInput, TInvoker> : IOnUpdate
         where TInvoker : CommandInvoker<TInput>
     {
         protected readonly TInvoker Press;
         protected readonly TInvoker Down;
         protected readonly TInvoker Up;
 
-        protected CommandInvokerButtonState(TInvoker press, TInvoker down, TInvoker up)
+        protected CommandInvokerPressState(TInvoker press, TInvoker down, TInvoker up)
         {
             this.Press = press;
             this.Down = down;
             this.Up = up;
         }
 
-        public void Register(ButtonState state, TInput input, string commandId)
+        public void Register(PressState state, TInput input, string commandId)
         {
             this.Press.RemoveCommand(commandId);
             this.Down.RemoveCommand(commandId);
@@ -24,21 +24,21 @@ namespace HegaCore
 
             switch (state)
             {
-                case ButtonState.Press:
+                case PressState.Press:
                     this.Press.Register(input, commandId);
                     break;
 
-                case ButtonState.Down:
+                case PressState.Down:
                     this.Down.Register(input, commandId);
                     break;
 
-                case ButtonState.Up:
+                case PressState.Up:
                     this.Up.Register(input, commandId);
                     break;
             }
         }
 
-        public void Register(ButtonState state, IEnumerable<TInput> inputs, string commandId)
+        public void Register(PressState state, IEnumerable<TInput> inputs, string commandId)
         {
             this.Press.RemoveCommand(commandId);
             this.Up.RemoveCommand(commandId);
@@ -46,21 +46,21 @@ namespace HegaCore
 
             switch (state)
             {
-                case ButtonState.Press:
+                case PressState.Press:
                     this.Press.Register(inputs, commandId);
                     break;
 
-                case ButtonState.Down:
+                case PressState.Down:
                     this.Down.Register(inputs, commandId);
                     break;
 
-                case ButtonState.Up:
+                case PressState.Up:
                     this.Up.Register(inputs, commandId);
                     break;
             }
         }
 
-        public void Register(ButtonState state, string commandId, params TInput[] inputs)
+        public void Register(PressState state, string commandId, params TInput[] inputs)
         {
             this.Press.RemoveCommand(commandId);
             this.Up.RemoveCommand(commandId);
@@ -68,89 +68,89 @@ namespace HegaCore
 
             switch (state)
             {
-                case ButtonState.Press:
+                case PressState.Press:
                     this.Press.Register(commandId, inputs);
                     break;
 
-                case ButtonState.Down:
+                case PressState.Down:
                     this.Down.Register(commandId, inputs);
                     break;
 
-                case ButtonState.Up:
+                case PressState.Up:
                     this.Up.Register(commandId, inputs);
                     break;
             }
         }
 
-        public bool ContainsInput(ButtonState state, TInput input)
+        public bool ContainsInput(PressState state, TInput input)
         {
             switch (state)
             {
-                case ButtonState.Press:
+                case PressState.Press:
                     return this.Press.ContainsKey(input);
 
-                case ButtonState.Down:
+                case PressState.Down:
                     return this.Down.ContainsKey(input);
 
-                case ButtonState.Up:
+                case PressState.Up:
                     return this.Up.ContainsKey(input);
             }
 
             return false;
         }
 
-        public bool ContainsCommand(ButtonState state, string commandId)
+        public bool ContainsCommand(PressState state, string commandId)
         {
             switch (state)
             {
-                case ButtonState.Press:
+                case PressState.Press:
                     return this.Press.ContainsCommand(commandId);
 
-                case ButtonState.Down:
+                case PressState.Down:
                     return this.Down.ContainsCommand(commandId);
 
-                case ButtonState.Up:
+                case PressState.Up:
                     return this.Up.ContainsCommand(commandId);
             }
 
             return false;
         }
 
-        public IEnumerable<ButtonState> ContainsInput(TInput input)
+        public IEnumerable<PressState> ContainsInput(TInput input)
         {
             if (this.Press.ContainsKey(input))
-                yield return ButtonState.Press;
+                yield return PressState.Press;
 
             if (this.Down.ContainsKey(input))
-                yield return ButtonState.Down;
+                yield return PressState.Down;
 
             if (this.Up.ContainsKey(input))
-                yield return ButtonState.Up;
+                yield return PressState.Up;
         }
 
-        public IEnumerable<ButtonState> ContainsCommand(string commandId)
+        public IEnumerable<PressState> ContainsCommand(string commandId)
         {
             if (this.Press.ContainsCommand(commandId))
-                yield return ButtonState.Press;
+                yield return PressState.Press;
 
             if (this.Down.ContainsCommand(commandId))
-                yield return ButtonState.Down;
+                yield return PressState.Down;
 
             if (this.Up.ContainsCommand(commandId))
-                yield return ButtonState.Up;
+                yield return PressState.Up;
         }
 
-        public bool TryGetCommand(ButtonState state, TInput input, out string commandId)
+        public bool TryGetCommand(PressState state, TInput input, out string commandId)
         {
             switch (state)
             {
-                case ButtonState.Press:
+                case PressState.Press:
                     return this.Press.TryGetCommand(input, out commandId);
 
-                case ButtonState.Down:
+                case PressState.Down:
                     return this.Down.TryGetCommand(input, out commandId);
 
-                case ButtonState.Up:
+                case PressState.Up:
                     return this.Up.TryGetCommand(input, out commandId);
             }
 
@@ -200,109 +200,109 @@ namespace HegaCore
             this.Up.RemoveCommand(commandIds);
         }
 
-        public void Remove(ButtonState state, TInput input)
+        public void Remove(PressState state, TInput input)
         {
             switch (state)
             {
-                case ButtonState.Press:
+                case PressState.Press:
                     this.Press.Remove(input);
                     break;
 
-                case ButtonState.Down:
+                case PressState.Down:
                     this.Down.Remove(input);
                     break;
 
-                case ButtonState.Up:
+                case PressState.Up:
                     this.Up.Remove(input);
                     break;
             }
         }
 
-        public void Remove(ButtonState state, IEnumerable<TInput> inputs)
+        public void Remove(PressState state, IEnumerable<TInput> inputs)
         {
             switch (state)
             {
-                case ButtonState.Press:
+                case PressState.Press:
                     this.Press.Remove(inputs);
                     break;
 
-                case ButtonState.Down:
+                case PressState.Down:
                     this.Down.Remove(inputs);
                     break;
 
-                case ButtonState.Up:
+                case PressState.Up:
                     this.Up.Remove(inputs);
                     break;
             }
         }
 
-        public void Remove(ButtonState state, params TInput[] inputs)
+        public void Remove(PressState state, params TInput[] inputs)
         {
             switch (state)
             {
-                case ButtonState.Press:
+                case PressState.Press:
                     this.Press.Remove(inputs);
                     break;
 
-                case ButtonState.Down:
+                case PressState.Down:
                     this.Down.Remove(inputs);
                     break;
 
-                case ButtonState.Up:
+                case PressState.Up:
                     this.Up.Remove(inputs);
                     break;
             }
         }
 
-        public void Remove(ButtonState state, string commandId)
+        public void Remove(PressState state, string commandId)
         {
             switch (state)
             {
-                case ButtonState.Press:
+                case PressState.Press:
                     this.Press.RemoveCommand(commandId);
                     break;
 
-                case ButtonState.Down:
+                case PressState.Down:
                     this.Down.RemoveCommand(commandId);
                     break;
 
-                case ButtonState.Up:
+                case PressState.Up:
                     this.Up.RemoveCommand(commandId);
                     break;
             }
         }
 
-        public void Remove(ButtonState state, IEnumerable<string> commandIds)
+        public void Remove(PressState state, IEnumerable<string> commandIds)
         {
             switch (state)
             {
-                case ButtonState.Press:
+                case PressState.Press:
                     this.Press.RemoveCommand(commandIds);
                     break;
 
-                case ButtonState.Down:
+                case PressState.Down:
                     this.Down.RemoveCommand(commandIds);
                     break;
 
-                case ButtonState.Up:
+                case PressState.Up:
                     this.Up.RemoveCommand(commandIds);
                     break;
             }
         }
 
-        public void Remove(ButtonState state, params string[] commandIds)
+        public void Remove(PressState state, params string[] commandIds)
         {
             switch (state)
             {
-                case ButtonState.Press:
+                case PressState.Press:
                     this.Press.RemoveCommand(commandIds);
                     break;
 
-                case ButtonState.Down:
+                case PressState.Down:
                     this.Down.RemoveCommand(commandIds);
                     break;
 
-                case ButtonState.Up:
+                case PressState.Up:
                     this.Up.RemoveCommand(commandIds);
                     break;
             }

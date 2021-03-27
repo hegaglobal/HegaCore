@@ -1,6 +1,6 @@
 ﻿namespace HegaCore
 {
-    public enum ButtonState
+    public enum PressState
     {
         Press, Down, Up
     }

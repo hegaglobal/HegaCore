@@ -1,4 +1,5 @@
 using System.Collections.Generic;
+using Sirenix.OdinInspector;
 using UnityEngine;
 using UnuGames;
 using UnuGames.MVVM;
@@ -24,6 +25,14 @@ namespace HegaCore.UI
         [UIManProperty]
         public ObservableList<Language> Languages { get; }
             = new ObservableList<Language>();
+
+        [ShowIf("@UnityEngine.Application.isPlaying")]
+        private IModule[] modules;
+
+        private void Awake()
+        {
+            this.modules = GetComponentsInChildren<IModule>();
+        }
 
         public override void OnShow(params object[] args)
         {
@@ -64,6 +73,14 @@ namespace HegaCore.UI
             SubscribeAction(nameof(this.SelectedResolution), SelectedResolution_OnChanged);
             SubscribeAction(nameof(this.Fullscreen), Fullscreen_OnChanged);
             SubscribeAction(nameof(this.SelectedLanguage), SelectedLanguage_OnChanged);
+
+            if (this.modules != null && this.modules.Length > 0)
+            {
+                for (var i = 0; i < this.modules.Length; i++)
+                {
+                    this.modules[i]?.Initialize(this);
+                }
+            }
         }
 
         private void Deinitialize()
@@ -74,6 +91,14 @@ namespace HegaCore.UI
             UnsubscribeAction(nameof(this.SelectedResolution), SelectedResolution_OnChanged);
             UnsubscribeAction(nameof(this.Fullscreen), Fullscreen_OnChanged);
             UnsubscribeAction(nameof(this.SelectedLanguage), SelectedLanguage_OnChanged);
+
+            if (this.modules != null && this.modules.Length > 0)
+            {
+                for (var i = 0; i < this.modules.Length; i++)
+                {
+                    this.modules[i]?.Deinitialize();
+                }
+            }
         }
 
         private void RefreshResolutions(in Segment<ScreenResolution> resolutions)

@@ -1,6 +1,6 @@
 ﻿namespace HegaCore
 {
-    public class CommandInvokerMouseButton : CommandInvokerButtonState<int, CommandInvokerMouseButtonId>
+    public class CommandInvokerMouseButton : CommandInvokerPressState<int, CommandInvokerMouseButtonId>
     {
         public CommandInvokerMouseButton(CommandInvokerMouseButtonId press,
                                          CommandInvokerMouseButtonId down,
