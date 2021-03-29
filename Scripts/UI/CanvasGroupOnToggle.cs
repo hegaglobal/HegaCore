@@ -1,6 +1,7 @@
 ﻿using UnityEngine;
 using UnityEngine.UI;
 using Sirenix.OdinInspector;
+using DG.Tweening;
 
 namespace HegaCore.UI
 {
@@ -16,21 +17,54 @@ namespace HegaCore.UI
         [SerializeField, BoxGroup("Alpha"), LabelText("On"), Range(0f, 1f)]
         private float onAlpha = 1f;
 
+        [SerializeField, BoxGroup("Tween")]
+        private bool tween = false;
+
+        [ShowIf(nameof(tween))]
+        [SerializeField, BoxGroup("Tween"), LabelText("Duration")]
+        private float tweenDuration = 0f;
+
+        [ShowIf(nameof(tween))]
+        [SerializeField, BoxGroup("Tween"), LabelText("Ease")]
+        private Ease tweenEase = Ease.Linear;
+
         private Toggle toggle;
+        private float alpha;
+        private Tweener tweener;
 
         private void Awake()
         {
             this.toggle = GetComponent<Toggle>();
-            OnToggleChanged(this.toggle.isOn);
+            SetValue(GetAlpha(this.toggle.isOn));
 
             this.toggle.onValueChanged.AddListener(OnToggleChanged);
         }
 
-        private void OnToggleChanged(bool value)
-            => SetAlpha(value ? this.onAlpha : this.offAlpha);
+        private float GetAlpha(bool value)
+            => value ? this.onAlpha : this.offAlpha;
 
-        private void SetAlpha(float alpha)
+        private void OnToggleChanged(bool value)
+            => SetAlpha(GetAlpha(value));
+
+        private void SetAlpha(float value)
         {
+            if (!this.tween)
+            {
+                SetValue(value);
+                return;
+            }
+
+            this.tweener?.Kill();
+            this.tweener = DOTween.To(GetValue, SetValue, value, this.tweenDuration).SetEase(this.tweenEase);
+        }
+
+        private float GetValue()
+            => this.alpha;
+
+        private void SetValue(float value)
+        {
+            this.alpha = value;
+
             foreach (var canvasGroup in this.canvasGroups)
             {
                 if (canvasGroup)
