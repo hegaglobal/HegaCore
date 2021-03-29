@@ -9,13 +9,13 @@ namespace HegaCore.UI
         [SerializeField]
         private CanvasGroup[] canvasGroups = new CanvasGroup[0];
 
-        [SerializeField, BoxGroup("Alpha"), LabelText("Default")]
+        [SerializeField, BoxGroup("Alpha"), LabelText("Default"), Range(0f, 1f)]
         private float defaultAlpha = 1f;
 
-        [SerializeField, BoxGroup("Alpha"), LabelText("Hover")]
+        [SerializeField, BoxGroup("Alpha"), LabelText("Hover"), Range(0f, 1f)]
         private float hoverAlpha = 1f;
 
-        [SerializeField, BoxGroup("Alpha"), LabelText("Click")]
+        [SerializeField, BoxGroup("Alpha"), LabelText("Click"), Range(0f, 1f)]
         private float clickAlpha = 1f;
 
         private void Awake()

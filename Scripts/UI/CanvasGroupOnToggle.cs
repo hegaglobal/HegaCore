@@ -10,10 +10,10 @@ namespace HegaCore.UI
         [SerializeField]
         private CanvasGroup[] canvasGroups = new CanvasGroup[0];
 
-        [SerializeField, BoxGroup("Alpha"), LabelText("Off")]
+        [SerializeField, BoxGroup("Alpha"), LabelText("Off"), Range(0f, 1f)]
         private float offAlpha = 1f;
 
-        [SerializeField, BoxGroup("Alpha"), LabelText("On")]
+        [SerializeField, BoxGroup("Alpha"), LabelText("On"), Range(0f, 1f)]
         private float onAlpha = 1f;
 
         private Toggle toggle;
