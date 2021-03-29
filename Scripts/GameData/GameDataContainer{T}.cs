@@ -15,6 +15,9 @@ namespace HegaCore
         public TPlayerData CurrentPlayer
             => this.Data.Players[this.CurrentPlayerIndex];
 
+        public TGameSettings CurrentSettings
+            => this.Data.Settings;
+
         public override PlayerData Player
             => this.CurrentPlayer;
 
@@ -82,7 +85,7 @@ namespace HegaCore
         public override void SaveSettings()
         {
             if (this.Daemon)
-                UnuLogger.Log(JsonConvert.SerializeObject(this.Settings));
+                UnuLogger.Log(JsonConvert.SerializeObject(this.CurrentSettings));
 
             this.Handler.Save(this.Data);
         }
