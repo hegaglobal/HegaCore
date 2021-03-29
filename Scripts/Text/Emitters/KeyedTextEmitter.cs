@@ -6,7 +6,7 @@ using UnityEngine.Pooling;
 
 namespace HegaCore
 {
-    public sealed class KeyedTextEmitter : ComponentSpawner<TextModule>, ITextEmitter, ITextSpawner
+    public sealed class KeyedTextEmitter : ComponentSpawner<TextModule>, ITextEmitter, ITextModuleSpawner
     {
         [SerializeField]
         private List<TextItem> items = new List<TextItem>();
@@ -53,7 +53,7 @@ namespace HegaCore
             return this.defaultEmission;
         }
 
-        UniTask<TextModule> ITextSpawner.GetTextAsync(string key)
+        UniTask<TextModule> ITextModuleSpawner.GetTextAsync(string key)
         {
             TextModule text = null;
 

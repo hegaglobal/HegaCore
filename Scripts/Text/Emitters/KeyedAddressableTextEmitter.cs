@@ -7,7 +7,7 @@ using Cysharp.Threading.Tasks;
 
 namespace HegaCore
 {
-    public sealed class KeyedAddressableTextEmitter : ComponentSpawner<TextModule>, ITextEmitter, ITextSpawner
+    public sealed class KeyedAddressableTextEmitter : ComponentSpawner<TextModule>, ITextEmitter, ITextModuleSpawner
     {
         [SerializeField]
         private List<TextItem> items = new List<TextItem>();
@@ -86,7 +86,7 @@ namespace HegaCore
             return this.defaultEmission;
         }
 
-        UniTask<TextModule> ITextSpawner.GetTextAsync(string key)
+        UniTask<TextModule> ITextModuleSpawner.GetTextAsync(string key)
         {
             TextModule text = null;
 

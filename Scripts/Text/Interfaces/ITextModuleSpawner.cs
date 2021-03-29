@@ -2,7 +2,7 @@
 
 namespace HegaCore
 {
-    public interface ITextSpawner
+    public interface ITextModuleSpawner
     {
         UniTask<TextModule> GetTextAsync(string key);
 
