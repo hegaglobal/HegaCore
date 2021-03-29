@@ -2,10 +2,11 @@
 
 namespace HegaCore
 {
-    public abstract class GameDataContainer<TPlayerData, TGameData, THandler> : GameDataContainer
+    public abstract class GameDataContainer<TPlayerData, TGameSettings, TGameData, THandler> : GameDataContainer
         where TPlayerData : PlayerData<TPlayerData>, new()
-        where TGameData : GameData<TPlayerData>
-        where THandler : GameDataHandler<TPlayerData, TGameData>, new()
+        where TGameSettings : GameSettings<TGameSettings>, new()
+        where TGameData : GameData<TPlayerData, TGameSettings>
+        where THandler : GameDataHandler<TPlayerData, TGameSettings, TGameData>, new()
     {
         public THandler Handler { get; }
 
@@ -73,7 +74,7 @@ namespace HegaCore
         }
 
         public override void Load(bool shouldBackUp = false)
-            => this.Data.Copy(this.Handler.Load(shouldBackUp));
+            => this.Data.CopyFrom(this.Handler.Load(shouldBackUp));
 
         public override void Save()
             => this.Handler.Save(this.Data);

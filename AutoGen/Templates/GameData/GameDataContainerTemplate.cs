@@ -6,7 +6,7 @@
 
 namespace #_NAMESPACE_#
 {
-    public sealed partial class #_TYPE_PREFIX_#GameDataContainer : GameDataContainer<#_TYPE_PREFIX_#PlayerData, #_TYPE_PREFIX_#GameData, #_TYPE_PREFIX_#GameDataHandler>
+    public sealed partial class #_TYPE_PREFIX_#GameDataContainer : GameDataContainer<#_TYPE_PREFIX_#PlayerData, #_TYPE_PREFIX_#GameSettings, #_TYPE_PREFIX_#GameData, #_TYPE_PREFIX_#GameDataHandler>
     {
     }
 }

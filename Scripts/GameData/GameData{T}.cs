@@ -3,13 +3,15 @@
 namespace HegaCore
 {
     [Serializable]
-    public abstract class GameData<TPlayerData> where TPlayerData : PlayerData<TPlayerData>, new()
+    public abstract class GameData<TPlayerData, TGameSettings>
+        where TPlayerData : PlayerData<TPlayerData>, new()
+        where TGameSettings : GameSettings<TGameSettings>, new()
     {
         public bool OnceCorrupted;
 
         public TPlayerData[] Players;
 
-        public GameSettings Settings;
+        public TGameSettings Settings;
 
         protected GameData() : this(false) { }
 
@@ -23,12 +25,10 @@ namespace HegaCore
                 this.Players[i] = new TPlayerData();
             }
 
-            this.Settings = new GameSettings {
-                Language = "en"
-            };
+            this.Settings = new TGameSettings();
         }
 
-        public void Copy(GameData<TPlayerData> data)
+        public void CopyFrom(GameData<TPlayerData, TGameSettings> data)
         {
             if (data == null)
                 return;
@@ -48,7 +48,7 @@ namespace HegaCore
 
             if (this.Settings != null)
             {
-                this.Settings.Copy(data?.Settings);
+                this.Settings.CopyFrom(data?.Settings);
             }
         }
     }

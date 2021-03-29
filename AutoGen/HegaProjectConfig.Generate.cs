@@ -59,12 +59,14 @@ namespace HegaCore.AutoGen
             var fileDatabaseDatabase = MakeCsFilePrefix(folderRuntimeDatabaseGenerated, "Database");
             var fileDatabaseTables = MakeCsFilePrefix(folderRuntimeDatabaseGenerated, "Tables");
 
+            var fileGameDataGameSettings = MakeCsFilePrefix(folderRuntimeGameDataGenerated, "GameSettings");
             var fileGameDataPlayerData = MakeCsFilePrefix(folderRuntimeGameDataGenerated, "PlayerData");
             var fileGameDataGameData = MakeCsFilePrefix(folderRuntimeGameDataGenerated, "GameData");
             var fileGameDataGameDataHandler = MakeCsFilePrefix(folderRuntimeGameDataGenerated, "GameDataHandler");
             var fileGameDataGameDataContainer = MakeCsFilePrefix(folderRuntimeGameDataGenerated, "GameDataContainer");
             var fileGameDataGameDataManager = MakeCsFilePrefix(folderRuntimeGameDataGenerated, "GameDataManager");
 
+            var fileGameDataGameSettingsEditor = MakeCsFilePrefix(folderRuntimeGameDataEditorGenerated, "GameSettingsEditor");
             var fileGameDataPlayerDataEditor = MakeCsFilePrefix(folderRuntimeGameDataEditorGenerated, "PlayerDataEditor");
             var fileGameDataGameDataEditor = MakeCsFilePrefix(folderRuntimeGameDataEditorGenerated, "GameDataEditor");
 
@@ -84,26 +86,70 @@ namespace HegaCore.AutoGen
                 folderRuntimeEventsBehavioursGenerated
             );
 
-            CreateFiles(
-                (fileDatabaseDatabase, ProcessCsTemplate(DatabaseTemplate.Template, databaseBaseType)),
-                (fileDatabaseTables, ProcessCsTemplate(TableTemplate.Template, tableBaseType)),
+            switch (this.codeGenerateFileType)
+            {
+                case GenerateFileType.Database:
+                    CreateFiles(
+                        (fileDatabaseDatabase, ProcessCsTemplate(DatabaseTemplate.Template, databaseBaseType)),
+                        (fileDatabaseTables, ProcessCsTemplate(TableTemplate.Template, tableBaseType))
+                    );
+                    break;
 
-                (fileGameDataPlayerData, ProcessCsTemplate(PlayerDataTemplate.Template)),
-                (fileGameDataGameData, ProcessCsTemplate(GameDataTemplate.Template)),
-                (fileGameDataGameDataHandler, ProcessCsTemplate(GameDataHandlerTemplate.Template, dataHandlerBaseType)),
-                (fileGameDataGameDataContainer, ProcessCsTemplate(GameDataContainerTemplate.Template)),
-                (fileGameDataGameDataManager, ProcessCsTemplate(GameDataManagerTemplate.Template)),
+                case GenerateFileType.GameData:
+                    CreateFiles(
+                        (fileGameDataGameSettings, ProcessCsTemplate(GameSettingsTemplate.Template)),
+                        (fileGameDataPlayerData, ProcessCsTemplate(PlayerDataTemplate.Template)),
+                        (fileGameDataGameData, ProcessCsTemplate(GameDataTemplate.Template)),
+                        (fileGameDataGameDataHandler, ProcessCsTemplate(GameDataHandlerTemplate.Template, dataHandlerBaseType)),
+                        (fileGameDataGameDataContainer, ProcessCsTemplate(GameDataContainerTemplate.Template)),
+                        (fileGameDataGameDataManager, ProcessCsTemplate(GameDataManagerTemplate.Template)),
 
-                (fileGameDataPlayerDataEditor, ProcessCsTemplate(PlayerDataEditorTemplate.Template)),
-                (fileGameDataGameDataEditor, ProcessCsTemplate(GameDataEditorTemplate.Template)),
+                        (fileGameDataGameSettingsEditor, ProcessCsTemplate(GameSettingsEditorTemplate.Template)),
+                        (fileGameDataPlayerDataEditor, ProcessCsTemplate(PlayerDataEditorTemplate.Template)),
+                        (fileGameDataGameDataEditor, ProcessCsTemplate(GameDataEditorTemplate.Template))
+                    );
+                    break;
 
-                (fileEventsEventInvoker, ProcessCsTemplate(EventInvokerTemplate.Template)),
-                (fileEventsEventManager, ProcessCsTemplate(EventManagerTemplate.Template)),
-                (fileEventsDataCommandRegisterer, ProcessCsTemplate(DataCommandRegistererTemplate.Template)),
+                case GenerateFileType.EventSystem:
+                    CreateFiles(
+                        (fileEventsEventInvoker, ProcessCsTemplate(EventInvokerTemplate.Template)),
+                        (fileEventsEventManager, ProcessCsTemplate(EventManagerTemplate.Template)),
+                        (fileEventsDataCommandRegisterer, ProcessCsTemplate(DataCommandRegistererTemplate.Template))
+                    );
+                    break;
 
-                (fileAsmdefEditor, ProcessAsmdefTemplate(AsmdefEditorTemplate.Template)),
-                (fileAsmdefRuntime, ProcessAsmdefTemplate(AsmdefRuntimeTemplate.Template))
-            );
+                case GenerateFileType.Asmdef:
+                    CreateFiles(
+                        (fileAsmdefEditor, ProcessAsmdefTemplate(AsmdefEditorTemplate.Template)),
+                        (fileAsmdefRuntime, ProcessAsmdefTemplate(AsmdefRuntimeTemplate.Template))
+                    );
+                    break;
+
+                default:
+                    CreateFiles(
+                        (fileDatabaseDatabase, ProcessCsTemplate(DatabaseTemplate.Template, databaseBaseType)),
+                        (fileDatabaseTables, ProcessCsTemplate(TableTemplate.Template, tableBaseType)),
+
+                        (fileGameDataGameSettings, ProcessCsTemplate(GameSettingsTemplate.Template)),
+                        (fileGameDataPlayerData, ProcessCsTemplate(PlayerDataTemplate.Template)),
+                        (fileGameDataGameData, ProcessCsTemplate(GameDataTemplate.Template)),
+                        (fileGameDataGameDataHandler, ProcessCsTemplate(GameDataHandlerTemplate.Template, dataHandlerBaseType)),
+                        (fileGameDataGameDataContainer, ProcessCsTemplate(GameDataContainerTemplate.Template)),
+                        (fileGameDataGameDataManager, ProcessCsTemplate(GameDataManagerTemplate.Template)),
+
+                        (fileGameDataGameSettingsEditor, ProcessCsTemplate(GameSettingsEditorTemplate.Template)),
+                        (fileGameDataPlayerDataEditor, ProcessCsTemplate(PlayerDataEditorTemplate.Template)),
+                        (fileGameDataGameDataEditor, ProcessCsTemplate(GameDataEditorTemplate.Template)),
+
+                        (fileEventsEventInvoker, ProcessCsTemplate(EventInvokerTemplate.Template)),
+                        (fileEventsEventManager, ProcessCsTemplate(EventManagerTemplate.Template)),
+                        (fileEventsDataCommandRegisterer, ProcessCsTemplate(DataCommandRegistererTemplate.Template)),
+
+                        (fileAsmdefEditor, ProcessAsmdefTemplate(AsmdefEditorTemplate.Template)),
+                        (fileAsmdefRuntime, ProcessAsmdefTemplate(AsmdefRuntimeTemplate.Template))
+                    );
+                    break;
+            }
 
             AssetDatabase.Refresh();
         }

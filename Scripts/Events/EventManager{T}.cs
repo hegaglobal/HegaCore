@@ -4,13 +4,14 @@ using VisualNovelData.Data;
 
 namespace HegaCore
 {
-    public abstract class EventManager<TPlayerData, TGameData, THandler, TContainer, TInvoker, TManager> : SingletonBehaviour<TManager>
+    public abstract class EventManager<TPlayerData, TGameSettings, TGameData, THandler, TContainer, TInvoker, TManager> : SingletonBehaviour<TManager>
         where TPlayerData : PlayerData<TPlayerData>, new()
-        where TGameData : GameData<TPlayerData>
-        where THandler : GameDataHandler<TPlayerData, TGameData>, new()
-        where TContainer : GameDataContainer<TPlayerData, TGameData, THandler>
-        where TInvoker: EventInvoker<TPlayerData, TGameData, THandler, TContainer>, new()
-        where TManager : EventManager<TPlayerData, TGameData, THandler, TContainer, TInvoker, TManager>
+        where TGameSettings : GameSettings<TGameSettings>, new()
+        where TGameData : GameData<TPlayerData, TGameSettings>
+        where THandler : GameDataHandler<TPlayerData, TGameSettings, TGameData>, new()
+        where TContainer : GameDataContainer<TPlayerData, TGameSettings, TGameData, THandler>
+        where TInvoker: EventInvoker<TPlayerData, TGameSettings, TGameData, THandler, TContainer>, new()
+        where TManager : EventManager<TPlayerData, TGameSettings, TGameData, THandler, TContainer, TInvoker, TManager>
     {
         public TInvoker Invoker { get; private set; }
 

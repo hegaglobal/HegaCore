@@ -77,6 +77,10 @@ namespace HegaCore.AutoGen
         [SerializeField, LabelText("Game Data Save Type"), EnumToggleButtons]
         private GameDataHandlerType codeDataHandlerType = GameDataHandlerType.Binary;
 
+        [FoldoutGroup("Source Code")]
+        [SerializeField, LabelText("Generate File Type"), EnumToggleButtons]
+        private GenerateFileType codeGenerateFileType = GenerateFileType.All;
+
         public string ProjectFolder => this.projectFolder.Replace('\\', '/');
 
         public string HegaCoreFolder => this.hegaCoreFolder.Replace('\\', '/');
@@ -91,6 +95,11 @@ namespace HegaCore.AutoGen
         public enum GameDataHandlerType
         {
             Binary, Json
+        }
+
+        public enum GenerateFileType
+        {
+            All, Database, GameData, EventSystem, Asmdef
         }
     }
 }
