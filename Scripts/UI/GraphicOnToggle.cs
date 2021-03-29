@@ -1,5 +1,6 @@
 ﻿using UnityEngine;
 using UnityEngine.UI;
+using Sirenix.OdinInspector;
 
 namespace HegaCore.UI
 {
@@ -7,44 +8,34 @@ namespace HegaCore.UI
     public class GraphicOnToggle : MonoBehaviour
     {
         [SerializeField]
-        private bool onUpdate = false;
+        private Graphic[] graphics = new Graphic[0];
 
-        [SerializeField]
-        private Graphic graphic = null;
-
-        [SerializeField]
+        [SerializeField, BoxGroup("Colors"), LabelText("Off")]
         private Color offColor = Color.white;
 
-        [SerializeField]
+        [SerializeField, BoxGroup("Colors"), LabelText("On")]
         private Color onColor = Color.white;
 
         private Toggle toggle;
-        private bool currentIsOn;
 
         private void Awake()
         {
             this.toggle = GetComponent<Toggle>();
-            this.currentIsOn = this.toggle.isOn;
-
             OnToggleChanged(this.toggle.isOn);
 
-            if (!this.onUpdate)
-                this.toggle.onValueChanged.AddListener(OnToggleChanged);
-        }
-
-        private void Update()
-        {
-            if (!this.onUpdate || this.currentIsOn == this.toggle.isOn)
-                return;
-
-            this.currentIsOn = this.toggle.isOn;
-            OnToggleChanged(this.currentIsOn);
+            this.toggle.onValueChanged.AddListener(OnToggleChanged);
         }
 
         private void OnToggleChanged(bool value)
+            => SetColor(value ? this.onColor : this.offColor);
+
+        private void SetColor(in Color color)
         {
-            if (this.graphic)
-                this.graphic.color = value ? this.onColor : this.offColor;
+            foreach (var graphic in this.graphics)
+            {
+                if (graphic)
+                    graphic.color = color;
+            }
         }
     }
 }

@@ -8,7 +8,7 @@ namespace HegaCore.UI
     public class GraphicOnClick : MonoBehaviour, IPointerDownHandler, IPointerUpHandler
     {
         [SerializeField]
-        private Graphic graphic = null;
+        private Graphic[] graphics = new Graphic[0];
 
         [SerializeField, BoxGroup("Colors"), LabelText("Default")]
         private Color defaultColor = Color.white;
@@ -29,8 +29,11 @@ namespace HegaCore.UI
 
         private void SetColor(in Color color)
         {
-            if (this.graphic)
-                this.graphic.color = color;
+            foreach (var graphic in this.graphics)
+            {
+                if (graphic)
+                    graphic.color = color;
+            }
         }
     }
 }
