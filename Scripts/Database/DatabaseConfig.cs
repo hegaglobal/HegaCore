@@ -33,15 +33,15 @@ namespace HegaCore
         private string internalCsvPath = string.Empty;
 
         [BoxGroup("Other Files")]
-        [SerializeField, LabelText("Daemon")]
+        [SerializeField, LabelText("Daemon Ingame"), Tooltip("Ingame cheat")]
         private string daemonFile = null;
 
         [BoxGroup("Other Files")]
-        [SerializeField, LabelText("Overlord")]
+        [SerializeField, LabelText("Overlord"), Tooltip("Achievement cheat")]
         private string overlordFile = null;
 
         [BoxGroup("Other Files")]
-        [SerializeField, LabelText("DarkLord")]
+        [SerializeField, LabelText("DarkLord DLC") , Tooltip("DLC")]
         private string darkLordFile = null;
 
         public SaveDataConfig SaveData => this.saveDataConfig;
