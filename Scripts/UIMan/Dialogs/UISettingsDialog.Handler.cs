@@ -27,11 +27,15 @@ namespace HegaCore.UI
             = new ObservableList<Language>();
 
         [ShowIf("@UnityEngine.Application.isPlaying")]
-        private IModule[] modules;
+        private IInitializable[] initializables;
+
+        [ShowIf("@UnityEngine.Application.isPlaying")]
+        private IDeinitializable[] deinitializables;
 
         private void Awake()
         {
-            this.modules = GetComponentsInChildren<IModule>();
+            this.initializables = GetComponentsInChildren<IInitializable>();
+            this.deinitializables = GetComponentsInChildren<IDeinitializable>();
         }
 
         public override void OnShow(params object[] args)
@@ -74,11 +78,11 @@ namespace HegaCore.UI
             SubscribeAction(nameof(this.Fullscreen), Fullscreen_OnChanged);
             SubscribeAction(nameof(this.SelectedLanguage), SelectedLanguage_OnChanged);
 
-            if (this.modules != null && this.modules.Length > 0)
+            if (this.initializables != null && this.initializables.Length > 0)
             {
-                for (var i = 0; i < this.modules.Length; i++)
+                for (var i = 0; i < this.initializables.Length; i++)
                 {
-                    this.modules[i]?.Initialize(this);
+                    this.initializables[i]?.Initialize(this);
                 }
             }
         }
@@ -92,11 +96,11 @@ namespace HegaCore.UI
             UnsubscribeAction(nameof(this.Fullscreen), Fullscreen_OnChanged);
             UnsubscribeAction(nameof(this.SelectedLanguage), SelectedLanguage_OnChanged);
 
-            if (this.modules != null && this.modules.Length > 0)
+            if (this.deinitializables != null && this.deinitializables.Length > 0)
             {
-                for (var i = 0; i < this.modules.Length; i++)
+                for (var i = 0; i < this.deinitializables.Length; i++)
                 {
-                    this.modules[i]?.Deinitialize();
+                    this.deinitializables[i]?.Deinitialize();
                 }
             }
         }
