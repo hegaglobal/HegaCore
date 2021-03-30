@@ -99,8 +99,6 @@ namespace HegaCore
 
         public void OnUpdate(float deltaTime)
         {
-            PreUpdate(deltaTime);
-
             var inputs = Pool.Provider.List<TInput>();
             inputs.AddRange(this.map.Keys);
 
@@ -126,13 +124,7 @@ namespace HegaCore
             }
 
             Pool.Provider.Return(inputs);
-
-            PostUpdate(deltaTime);
         }
-
-        protected virtual void PreUpdate(float deltaTime) { }
-
-        protected virtual void PostUpdate(float deltaTime) { }
 
         protected abstract bool CanInvoke(TInput input);
     }
