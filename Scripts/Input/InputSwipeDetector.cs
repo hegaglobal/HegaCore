@@ -28,8 +28,6 @@ namespace HegaCore
         {
             var screenShortSide = Screen.width < Screen.height ? Screen.width : Screen.height;
             this.minMoveDistance = screenShortSide / this.sensetivity;
-
-            UnuLogger.Log(this.minMoveDistance);
         }
 
         private void Activate()
