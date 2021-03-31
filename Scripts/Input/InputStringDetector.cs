@@ -6,7 +6,7 @@ namespace HegaCore
     public class InputStringDetector : MonoBehaviour, IInput<string>
     {
         [SerializeField]
-        private bool ignoreCase = true;
+        private bool ignoreCase = false;
 
         private const string None = "";
 
