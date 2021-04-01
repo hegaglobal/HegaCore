@@ -10,13 +10,13 @@ namespace HegaCore.UI
         {
             private static CommandMap _commandMap;
             private static CommandInvokerKeyboard _invokerKeyboard;
-            private static CommandInvokerMouseButton _invokerMouseButton;
+            private static CommandInvokerMouse _invokerMouseButton;
             private static CommandIds _commandIds;
             private static CommandInputs _inputs;
             private static ButtonStates? _buttonStates;
 
             public static void Initialize(CommandMap commandMap = null, CommandInvokerKeyboard invokerKeyboard = null,
-                                          CommandInvokerMouseButton invokerMouseButton = null,
+                                          CommandInvokerMouse invokerMouseButton = null,
                                           CommandIds commandIds = null, CommandInputs inputs = null,
                                           in ButtonStates? buttonStates = null)
             {
@@ -66,7 +66,7 @@ namespace HegaCore.UI
                 invoker.Register(state, inputKeys, commandKeys.SkipNext);
             }
 
-            public static void RegisterSkipNextMouseButton(PressState state, IEnumerable<int> buttonKeys)
+            public static void RegisterSkipNextMouseButton(PressState state, IEnumerable<MouseButton> buttonKeys)
             {
                 var commandKeys = GetCommandIds();
                 var invoker = GetInvokerMouseButton();
@@ -97,8 +97,8 @@ namespace HegaCore.UI
             private static CommandInvokerKeyboard GetInvokerKeyboard()
                 => _invokerKeyboard ?? (_invokerKeyboard = CommandInvokerKeyboard.Default);
 
-            private static CommandInvokerMouseButton GetInvokerMouseButton()
-                => _invokerMouseButton ?? (_invokerMouseButton = CommandInvokerMouseButton.Default);
+            private static CommandInvokerMouse GetInvokerMouseButton()
+                => _invokerMouseButton ?? (_invokerMouseButton = CommandInvokerMouse.Default);
 
             private static CommandIds GetCommandIds()
                 => _commandIds ?? (_commandIds = CommandIds.Default);
@@ -156,15 +156,15 @@ namespace HegaCore.UI
 
                 public ReadList<KeyCode> SkipNextKeys => this.skipNextKeys;
 
-                public ReadList<int> SkipNextMouseButtons => this.skipNextMouseButtons;
+                public ReadList<MouseButton> SkipNextMouseButtons => this.skipNextMouseButtons;
 
                 private readonly List<KeyCode> speedUpKeys = new List<KeyCode>();
                 private readonly List<KeyCode> skipNextKeys = new List<KeyCode>();
-                private readonly List<int> skipNextMouseButtons = new List<int>();
+                private readonly List<MouseButton> skipNextMouseButtons = new List<MouseButton>();
 
                 public CommandInputs(IEnumerable<KeyCode> speedUpKeys,
                                      IEnumerable<KeyCode> skipNextKeys,
-                                     IEnumerable<int> skipNextMouseButtons)
+                                     IEnumerable<MouseButton> skipNextMouseButtons)
                 {
                     this.speedUpKeys.AddRange(speedUpKeys);
                     this.skipNextKeys.AddRange(skipNextKeys);
@@ -175,7 +175,7 @@ namespace HegaCore.UI
                     = new CommandInputs(
                         new [] { KeyCode.LeftControl, KeyCode.RightControl },
                         new [] { KeyCode.Return, KeyCode.KeypadEnter, KeyCode.Space },
-                        new [] { 0 }
+                        new [] { MouseButton.Left }
                     );
             }
         }
