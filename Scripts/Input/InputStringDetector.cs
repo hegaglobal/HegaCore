@@ -3,25 +3,20 @@ using UnityEngine;
 
 namespace HegaCore
 {
-    public class InputStringDetector : MonoBehaviour, IInput<string>
+    public sealed class InputStringDetector : InputDetectorSimple<string>
     {
         [SerializeField]
         private bool ignoreCase = false;
 
-        private const string None = "";
+        protected override string None => string.Empty;
 
-        private string detectedInput = None;
-
-        public void SetDetectedInput(string value)
-            => this.detectedInput = string.IsNullOrEmpty(value) ? None : value;
+        public override void SetDetectedInput(string value)
+            => base.SetDetectedInput(string.IsNullOrEmpty(value) ? this.None : value);
 
         private StringComparison GetComparison()
             => this.ignoreCase ? StringComparison.OrdinalIgnoreCase : StringComparison.Ordinal;
 
-        public bool Get(string input)
-            => this.detectedInput != None && string.Equals(input, this.detectedInput, GetComparison());
-
-        public void ResetInput()
-            => this.detectedInput = None;
+        public override bool Get(string input)
+            => this.DetectedInput != this.None && string.Equals(input, this.DetectedInput, GetComparison());
     }
 }
