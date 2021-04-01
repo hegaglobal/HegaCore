@@ -36,11 +36,11 @@ namespace HegaCore.UI
         private bool eventsOnBegin = false;
 
         [ShowIf(nameof(eventsOnBegin))]
-        [SerializeField, FoldoutGroup("Events On Begin/Events"), LabelText("Off")]
+        [SerializeField, FoldoutGroup("Events On Begin/Events", false), LabelText("Off")]
         private UnityEvent onBeginOff = new UnityEvent();
 
         [ShowIf(nameof(eventsOnBegin))]
-        [SerializeField, FoldoutGroup("Events On Begin/Events"), LabelText("On")]
+        [SerializeField, FoldoutGroup("Events On Begin/Events", false), LabelText("On")]
         private UnityEvent onBeginOn = new UnityEvent();
 
         [TitleGroup("Events On Complete")]
@@ -48,11 +48,11 @@ namespace HegaCore.UI
         private bool eventsOnComplete = false;
 
         [ShowIf(nameof(eventsOnComplete))]
-        [SerializeField, FoldoutGroup("Events On Complete/Events"), LabelText("Off")]
+        [SerializeField, FoldoutGroup("Events On Complete/Events", false), LabelText("Off")]
         private UnityEvent onCompleteOff = new UnityEvent();
 
         [ShowIf(nameof(eventsOnComplete))]
-        [SerializeField, FoldoutGroup("Events On Complete/Events"), LabelText("On")]
+        [SerializeField, FoldoutGroup("Events On Complete/Events", false), LabelText("On")]
         private UnityEvent onCompleteOn = new UnityEvent();
 
         private Toggle toggle;

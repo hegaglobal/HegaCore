@@ -39,15 +39,15 @@ namespace HegaCore.UI
         private bool eventsOnBegin = false;
 
         [ShowIf(nameof(eventsOnBegin))]
-        [SerializeField, FoldoutGroup("Events On Begin/Events"), LabelText("Default")]
+        [SerializeField, FoldoutGroup("Events On Begin/Events", false), LabelText("Default")]
         private UnityEvent onBeginDefault = new UnityEvent();
 
         [ShowIf(nameof(eventsOnBegin))]
-        [SerializeField, FoldoutGroup("Events On Begin/Events"), LabelText("Hover")]
+        [SerializeField, FoldoutGroup("Events On Begin/Events", false), LabelText("Hover")]
         private UnityEvent onBeginHover = new UnityEvent();
 
         [ShowIf(nameof(eventsOnBegin))]
-        [SerializeField, FoldoutGroup("Events On Begin/Events"), LabelText("Click")]
+        [SerializeField, FoldoutGroup("Events On Begin/Events", false), LabelText("Click")]
         private UnityEvent onBeginClick = new UnityEvent();
 
         [TitleGroup("Events On Complete")]
@@ -55,15 +55,15 @@ namespace HegaCore.UI
         private bool eventsOnComplete = false;
 
         [ShowIf(nameof(eventsOnComplete))]
-        [SerializeField, FoldoutGroup("Events On Complete/Events"), LabelText("Default")]
+        [SerializeField, FoldoutGroup("Events On Complete/Events", false), LabelText("Default")]
         private UnityEvent onCompleteDefault = new UnityEvent();
 
         [ShowIf(nameof(eventsOnComplete))]
-        [SerializeField, FoldoutGroup("Events On Complete/Events"), LabelText("Hover")]
+        [SerializeField, FoldoutGroup("Events On Complete/Events", false), LabelText("Hover")]
         private UnityEvent onCompleteHover = new UnityEvent();
 
         [ShowIf(nameof(eventsOnComplete))]
-        [SerializeField, FoldoutGroup("Events On Complete/Events"), LabelText("Click")]
+        [SerializeField, FoldoutGroup("Events On Complete/Events", false), LabelText("Click")]
         private UnityEvent onCompleteClick = new UnityEvent();
 
         private Color color;
