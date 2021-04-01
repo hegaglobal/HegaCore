@@ -1,12 +1,11 @@
 ﻿using UnityEngine;
 using UnityEngine.Events;
-using UnityEngine.EventSystems;
 using Sirenix.OdinInspector;
 using DG.Tweening;
 
 namespace HegaCore.UI
 {
-    public class CanvasGroupOnClick : MonoBehaviour, IPointerDownHandler, IPointerUpHandler
+    public class CanvasGroupOnShow : MonoBehaviour
     {
         [SerializeField]
         private CanvasGroup[] canvasGroups = new CanvasGroup[0];
@@ -15,8 +14,8 @@ namespace HegaCore.UI
         [SerializeField, LabelText("Default"), Range(0f, 1f)]
         private float defaultAlpha = 1f;
 
-        [SerializeField, LabelText("Click"), Range(0f, 1f)]
-        private float clickAlpha = 1f;
+        [SerializeField, LabelText("Show"), Range(0f, 1f)]
+        private float showAlpha = 1f;
 
         [TitleGroup("Tween")]
         [SerializeField, LabelText("Enable")]
@@ -39,8 +38,8 @@ namespace HegaCore.UI
         private UnityEvent onBeginDefault = new UnityEvent();
 
         [ShowIf(nameof(eventsOnBegin))]
-        [SerializeField, FoldoutGroup("Events On Begin/Events"), LabelText("Click")]
-        private UnityEvent onBeginClick = new UnityEvent();
+        [SerializeField, FoldoutGroup("Events On Begin/Events"), LabelText("Show")]
+        private UnityEvent onBeginShow = new UnityEvent();
 
         [TitleGroup("Events On Complete")]
         [SerializeField, LabelText("Enable")]
@@ -51,8 +50,8 @@ namespace HegaCore.UI
         private UnityEvent onCompleteDefault = new UnityEvent();
 
         [ShowIf(nameof(eventsOnComplete))]
-        [SerializeField, FoldoutGroup("Events On Complete/Events"), LabelText("Click")]
-        private UnityEvent onCompleteClick = new UnityEvent();
+        [SerializeField, FoldoutGroup("Events On Complete/Events"), LabelText("Show")]
+        private UnityEvent onCompleteShow = new UnityEvent();
 
         private float alpha;
         private Tweener tweener;
@@ -63,16 +62,32 @@ namespace HegaCore.UI
             InvokeOnCompleteDefault();
         }
 
-        void IPointerUpHandler.OnPointerUp(PointerEventData eventData)
-            => SetAlpha(this.defaultAlpha, false);
-
-        void IPointerDownHandler.OnPointerDown(PointerEventData eventData)
-            => SetAlpha(this.clickAlpha, true);
-
-        private void SetAlpha(float value, bool clicked)
+        public void Default(bool instant = false)
         {
-            if (clicked)
-                InvokeOnBeginClick();
+            if (instant)
+            {
+                SetValue(this.defaultAlpha);
+                InvokeOnCompleteDefault();
+            }
+            else
+                SetAlpha(this.defaultAlpha, false);
+        }
+
+        public void Show(bool instant = false)
+        {
+            if (instant)
+            {
+                SetValue(this.showAlpha);
+                InvokeOnCompleteShow();
+            }
+            else
+                SetAlpha(this.showAlpha, true);
+        }
+
+        private void SetAlpha(float value, bool shown)
+        {
+            if (shown)
+                InvokeOnBeginShow();
             else
                 InvokeOnBeginDefault();
 
@@ -80,8 +95,8 @@ namespace HegaCore.UI
             {
                 SetValue(value);
 
-                if (clicked)
-                    InvokeOnCompleteClick();
+                if (shown)
+                    InvokeOnCompleteShow();
                 else
                     InvokeOnCompleteDefault();
 
@@ -91,8 +106,8 @@ namespace HegaCore.UI
             this.tweener?.Kill();
             this.tweener = DOTween.To(GetValue, SetValue, value, this.tweenDuration).SetEase(this.tweenEase);
 
-            if (clicked)
-                this.tweener.OnComplete(InvokeOnCompleteClick);
+            if (shown)
+                this.tweener.OnComplete(InvokeOnCompleteShow);
             else
                 this.tweener.OnComplete(InvokeOnCompleteDefault);
         }
@@ -117,10 +132,10 @@ namespace HegaCore.UI
                 this.onBeginDefault?.Invoke();
         }
 
-        private void InvokeOnBeginClick()
+        private void InvokeOnBeginShow()
         {
             if (this.eventsOnBegin)
-                this.onBeginClick?.Invoke();
+                this.onBeginShow?.Invoke();
         }
 
         private void InvokeOnCompleteDefault()
@@ -129,10 +144,10 @@ namespace HegaCore.UI
                 this.onCompleteDefault?.Invoke();
         }
 
-        private void InvokeOnCompleteClick()
+        private void InvokeOnCompleteShow()
         {
             if (this.eventsOnComplete)
-                this.onCompleteClick?.Invoke();
+                this.onCompleteShow?.Invoke();
         }
     }
 }

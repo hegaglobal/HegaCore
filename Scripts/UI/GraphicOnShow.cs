@@ -1,22 +1,22 @@
 ﻿using UnityEngine;
 using UnityEngine.Events;
-using UnityEngine.EventSystems;
+using UnityEngine.UI;
 using Sirenix.OdinInspector;
 using DG.Tweening;
 
 namespace HegaCore.UI
 {
-    public class CanvasGroupOnClick : MonoBehaviour, IPointerDownHandler, IPointerUpHandler
+    public class GraphicOnShow : MonoBehaviour
     {
         [SerializeField]
-        private CanvasGroup[] canvasGroups = new CanvasGroup[0];
+        private Graphic[] graphics = new Graphic[0];
 
-        [TitleGroup("Alpha")]
-        [SerializeField, LabelText("Default"), Range(0f, 1f)]
-        private float defaultAlpha = 1f;
+        [TitleGroup("Colors")]
+        [SerializeField, LabelText("Default")]
+        private Color defaultColor = Color.white;
 
-        [SerializeField, LabelText("Click"), Range(0f, 1f)]
-        private float clickAlpha = 1f;
+        [SerializeField, LabelText("Show")]
+        private Color showColor = Color.white;
 
         [TitleGroup("Tween")]
         [SerializeField, LabelText("Enable")]
@@ -39,8 +39,8 @@ namespace HegaCore.UI
         private UnityEvent onBeginDefault = new UnityEvent();
 
         [ShowIf(nameof(eventsOnBegin))]
-        [SerializeField, FoldoutGroup("Events On Begin/Events"), LabelText("Click")]
-        private UnityEvent onBeginClick = new UnityEvent();
+        [SerializeField, FoldoutGroup("Events On Begin/Events"), LabelText("Show")]
+        private UnityEvent onBeginShow = new UnityEvent();
 
         [TitleGroup("Events On Complete")]
         [SerializeField, LabelText("Enable")]
@@ -51,28 +51,44 @@ namespace HegaCore.UI
         private UnityEvent onCompleteDefault = new UnityEvent();
 
         [ShowIf(nameof(eventsOnComplete))]
-        [SerializeField, FoldoutGroup("Events On Complete/Events"), LabelText("Click")]
-        private UnityEvent onCompleteClick = new UnityEvent();
+        [SerializeField, FoldoutGroup("Events On Complete/Events"), LabelText("Show")]
+        private UnityEvent onCompleteShow = new UnityEvent();
 
-        private float alpha;
+        private Color color;
         private Tweener tweener;
 
         private void Awake()
         {
-            SetValue(this.defaultAlpha);
+            SetValue(this.defaultColor);
             InvokeOnCompleteDefault();
         }
 
-        void IPointerUpHandler.OnPointerUp(PointerEventData eventData)
-            => SetAlpha(this.defaultAlpha, false);
-
-        void IPointerDownHandler.OnPointerDown(PointerEventData eventData)
-            => SetAlpha(this.clickAlpha, true);
-
-        private void SetAlpha(float value, bool clicked)
+        public void Default(bool instant = false)
         {
-            if (clicked)
-                InvokeOnBeginClick();
+            if (instant)
+            {
+                SetValue(this.defaultColor);
+                InvokeOnCompleteDefault();
+            }
+            else
+                SetColor(this.defaultColor, false);
+        }
+
+        public void Show(bool instant = false)
+        {
+            if (instant)
+            {
+                SetValue(this.showColor);
+                InvokeOnCompleteShow();
+            }
+            else
+                SetColor(this.showColor, true);
+        }
+
+        private void SetColor(in Color value, bool shown)
+        {
+            if (shown)
+                InvokeOnBeginShow();
             else
                 InvokeOnBeginDefault();
 
@@ -80,8 +96,8 @@ namespace HegaCore.UI
             {
                 SetValue(value);
 
-                if (clicked)
-                    InvokeOnCompleteClick();
+                if (shown)
+                    InvokeOnCompleteShow();
                 else
                     InvokeOnCompleteDefault();
 
@@ -91,23 +107,23 @@ namespace HegaCore.UI
             this.tweener?.Kill();
             this.tweener = DOTween.To(GetValue, SetValue, value, this.tweenDuration).SetEase(this.tweenEase);
 
-            if (clicked)
-                this.tweener.OnComplete(InvokeOnCompleteClick);
+            if (shown)
+                this.tweener.OnComplete(InvokeOnCompleteShow);
             else
                 this.tweener.OnComplete(InvokeOnCompleteDefault);
         }
 
-        private float GetValue()
-            => this.alpha;
+        private Color GetValue()
+            => this.color;
 
-        private void SetValue(float value)
+        private void SetValue(Color value)
         {
-            this.alpha = value;
+            this.color = value;
 
-            foreach (var canvasGroup in this.canvasGroups)
+            foreach (var graphic in this.graphics)
             {
-                if (canvasGroup)
-                    canvasGroup.alpha = alpha;
+                if (graphic)
+                    graphic.color = value;
             }
         }
 
@@ -117,10 +133,10 @@ namespace HegaCore.UI
                 this.onBeginDefault?.Invoke();
         }
 
-        private void InvokeOnBeginClick()
+        private void InvokeOnBeginShow()
         {
             if (this.eventsOnBegin)
-                this.onBeginClick?.Invoke();
+                this.onBeginShow?.Invoke();
         }
 
         private void InvokeOnCompleteDefault()
@@ -129,10 +145,10 @@ namespace HegaCore.UI
                 this.onCompleteDefault?.Invoke();
         }
 
-        private void InvokeOnCompleteClick()
+        private void InvokeOnCompleteShow()
         {
             if (this.eventsOnComplete)
-                this.onCompleteClick?.Invoke();
+                this.onCompleteShow?.Invoke();
         }
     }
 }
