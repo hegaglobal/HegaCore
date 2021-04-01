@@ -89,14 +89,16 @@ namespace HegaCore
         {
             try
             {
-                var (isCanceled, result) = await AddressablesManager.LoadAssetAsync<TextAsset>(this.config.DarkLordFile)
-                                                                    .SuppressCancellationThrow();
-                this.DarkLord = !isCanceled && result.Succeeded;
+                var result = await AddressablesManager.LoadAssetAsync<TextAsset>(this.config.DarkLordFile);
+                this.DarkLord = result.Succeeded;
             }
             catch
             {
                 this.DarkLord = false;
             }
+
+            if (!this.DarkLord && !string.IsNullOrWhiteSpace(this.config.DarkLordFileWarning))
+                UnuLogger.LogWarning(this.config.DarkLordFileWarning);
         }
 
         private void CheckDaemon()
