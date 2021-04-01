@@ -21,7 +21,7 @@ namespace HegaCore
 
         [BoxGroup("Csv Files")]
         [SerializeField, LabelText("External Folder")]
-        private string externalCsvFolder = "Database";
+        private string externalCsvFolder = "../Database";
 
         [BoxGroup("Csv Files")]
         [DictionaryDrawerSettings(KeyLabel = "Name", ValueLabel = "File"), PropertySpace]
@@ -30,19 +30,31 @@ namespace HegaCore
 
         [BoxGroup("Csv Files")]
         [SerializeField, ReadOnly, LabelText("Internal Path")]
-        private string internalCsvPath = string.Empty;
+        private string internalCsvPath = "Game/Database";
 
-        [BoxGroup("Other Files")]
+        [BoxGroup("External Files")]
         [SerializeField, LabelText("Daemon")]
-        private string daemonFile = null;
+        private string daemonFile = "daemon.dae";
 
-        [BoxGroup("Other Files")]
+        [BoxGroup("External Files")]
+        [SerializeField, ReadOnly, LabelText("Path"), Indent]
+        private string daemonFilePath = string.Empty;
+
+        [BoxGroup("External Files")]
         [SerializeField, LabelText("Overlord")]
-        private string overlordFile = null;
+        private string overlordFile = "overlord.ove";
 
-        [BoxGroup("Other Files")]
+        [BoxGroup("External Files")]
+        [SerializeField, ReadOnly, LabelText("Path"), Indent]
+        private string overlordFilePath = string.Empty;
+
+        [BoxGroup("Addressables Files")]
         [SerializeField, LabelText("DarkLord")]
-        private string darkLordFile = null;
+        private string darkLordFile = "darklord.dlc";
+
+        [BoxGroup("Addressables Files")]
+        [SerializeField, LabelText("Not Found Log"), Indent]
+        private string darkLordFileNotFoundLog = "DLC is not installed";
 
         public SaveDataConfig SaveData => this.saveDataConfig;
 
@@ -66,6 +78,8 @@ namespace HegaCore
 
         public string DarkLordFile => this.darkLordFile;
 
+        public string DarkLordFileWarning => this.darkLordFileNotFoundLog;
+
         public string InternalCsvFolderFullPath => Path.Combine(Application.dataPath, this.internalCsvFolder);
 
         public string ExternalCsvFolderFullPath => Path.Combine(Application.dataPath, this.externalCsvFolder);
@@ -81,19 +95,19 @@ namespace HegaCore
         public sealed class SaveDataConfig
         {
             [SerializeField]
-            private string folder = string.Empty;
+            private string folder = "save_folder";
 
             [SerializeField]
-            private string folderEditor = string.Empty;
+            private string folderEditor = "../external_save_folder";
 
             [SerializeField]
-            private string fileName = string.Empty;
+            private string fileName = "file_name";
 
             [SerializeField]
-            private string extension = string.Empty;
+            private string extension = "ext";
 
             [SerializeField]
-            private string bakExtension = string.Empty;
+            private string bakExtension = "bak.ext";
 
             public string Folder => this.folder;
 
