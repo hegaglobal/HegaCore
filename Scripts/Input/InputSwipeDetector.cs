@@ -90,7 +90,7 @@ namespace HegaCore
                 return false;
             }
 
-            if (this.waitForSwipe && Input.GetMouseButton(0))
+            if (Input.GetMouseButton(0))
             {
                 CheckSwipe();
             }
@@ -103,8 +103,7 @@ namespace HegaCore
             return this.detectedInput != None && this.detectedInput == input;
         }
 
-        public void ResetInput()
-            => this.detectedInput = None;
+        public void ResetInput() { }
 
         private SwipeDirection DetectFourDirection()
         {
