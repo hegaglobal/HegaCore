@@ -18,6 +18,12 @@
         }
 
         protected override void OnPostUpdate(float deltaTime)
-            => this.input?.ResetInput();
+        {
+            if (this.input == null)
+                return;
+
+            if (this.input.AutoReset)
+                this.input?.ResetInput();
+        }
     }
 }

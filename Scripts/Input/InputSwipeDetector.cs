@@ -1,9 +1,13 @@
 ﻿using UnityEngine;
+using Sirenix.OdinInspector;
 
 namespace HegaCore
 {
     public class InputSwipeDetector : MonoBehaviour, IInput<SwipeDirection>
     {
+        [field: SerializeField, LabelText(nameof(AutoReset), true)]
+        public bool AutoReset { get; set; } = true;
+
         [SerializeField]
         private DirectionMode mode = DirectionMode.FourDirection;
 
@@ -103,7 +107,8 @@ namespace HegaCore
             return this.detectedInput != None && this.detectedInput == input;
         }
 
-        public void ResetInput() { }
+        public void ResetInput()
+            => this.detectedInput = None;
 
         private SwipeDirection DetectFourDirection()
         {
