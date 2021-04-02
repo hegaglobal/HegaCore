@@ -60,6 +60,7 @@ namespace HegaCore.UI
         private void Awake()
         {
             SetValue(this.defaultColor);
+            InvokeOnBeginDefault();
             InvokeOnCompleteDefault();
         }
 

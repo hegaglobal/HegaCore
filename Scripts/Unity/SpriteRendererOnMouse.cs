@@ -1,23 +1,24 @@
 ﻿using UnityEngine;
 using UnityEngine.Events;
-using UnityEngine.EventSystems;
-using UnityEngine.UI;
 using Sirenix.OdinInspector;
 using DG.Tweening;
 
-namespace HegaCore.UI
+namespace HegaCore
 {
-    public class GraphicOnClick : MonoBehaviour, IPointerDownHandler, IPointerUpHandler
+    public class SpriteRendererOnMouse : MonoBehaviour
     {
         [field: SerializeField, LabelText(nameof(RaycastTarget), true)]
         public bool RaycastTarget { get; set; } = true;
 
         [SerializeField]
-        private Graphic[] graphics = new Graphic[0];
+        private SpriteRenderer[] renderers = new SpriteRenderer[0];
 
         [TitleGroup("Colors")]
         [SerializeField, LabelText("Default")]
         private Color defaultColor = Color.white;
+
+        [SerializeField, LabelText("Hover")]
+        private Color hoverColor = Color.white;
 
         [SerializeField, LabelText("Click")]
         private Color clickColor = Color.white;
@@ -43,6 +44,10 @@ namespace HegaCore.UI
         private UnityEvent onBeginDefault = new UnityEvent();
 
         [ShowIf(nameof(eventsOnBegin))]
+        [SerializeField, FoldoutGroup("Events On Begin/Events", false), LabelText("Hover")]
+        private UnityEvent onBeginHover = new UnityEvent();
+
+        [ShowIf(nameof(eventsOnBegin))]
         [SerializeField, FoldoutGroup("Events On Begin/Events", false), LabelText("Click")]
         private UnityEvent onBeginClick = new UnityEvent();
 
@@ -53,6 +58,10 @@ namespace HegaCore.UI
         [ShowIf(nameof(eventsOnComplete))]
         [SerializeField, FoldoutGroup("Events On Complete/Events", false), LabelText("Default")]
         private UnityEvent onCompleteDefault = new UnityEvent();
+
+        [ShowIf(nameof(eventsOnComplete))]
+        [SerializeField, FoldoutGroup("Events On Complete/Events", false), LabelText("Hover")]
+        private UnityEvent onCompleteHover = new UnityEvent();
 
         [ShowIf(nameof(eventsOnComplete))]
         [SerializeField, FoldoutGroup("Events On Complete/Events", false), LabelText("Click")]
@@ -68,44 +77,61 @@ namespace HegaCore.UI
             InvokeOnCompleteDefault();
         }
 
-        void IPointerUpHandler.OnPointerUp(PointerEventData eventData)
+        private void OnMouseDown()
         {
             if (this.RaycastTarget)
-                SetColor(this.defaultColor, false);
+                SetColor(this.clickColor, MouseType.Click);
         }
 
-        void IPointerDownHandler.OnPointerDown(PointerEventData eventData)
+        private void OnMouseUp()
         {
             if (this.RaycastTarget)
-                SetColor(this.clickColor, true);
+                SetColor(this.hoverColor, MouseType.Hover);
         }
 
-        private void SetColor(in Color value, bool clicked)
+        private void OnMouseEnter()
         {
-            if (clicked)
-                InvokeOnBeginClick();
-            else
-                InvokeOnBeginDefault();
+            if (this.RaycastTarget)
+                SetColor(this.hoverColor, MouseType.Hover);
+        }
+
+        private void OnMouseExit()
+        {
+            if (this.RaycastTarget)
+                SetColor(this.defaultColor, MouseType.Default);
+        }
+
+        private void SetColor(in Color value, MouseType mouse)
+        {
+            switch (mouse)
+            {
+                case MouseType.Default: InvokeOnBeginDefault(); break;
+                case MouseType.Hover: InvokeOnBeginHover(); break;
+                case MouseType.Click: InvokeOnBeginClick(); break;
+            }
 
             if (!this.tween)
             {
                 SetValue(value);
 
-                if (clicked)
-                    InvokeOnCompleteClick();
-                else
-                    InvokeOnCompleteDefault();
-
+                switch (mouse)
+                {
+                    case MouseType.Default: InvokeOnCompleteDefault(); break;
+                    case MouseType.Hover: InvokeOnCompleteHover(); break;
+                    case MouseType.Click: InvokeOnCompleteClick(); break;
+                }
                 return;
             }
 
             this.tweener?.Kill();
             this.tweener = DOTween.To(GetValue, SetValue, value, this.tweenDuration).SetEase(this.tweenEase);
 
-            if (clicked)
-                this.tweener.OnComplete(InvokeOnCompleteClick);
-            else
-                this.tweener.OnComplete(InvokeOnCompleteDefault);
+            switch (mouse)
+            {
+                case MouseType.Default: this.tweener.OnComplete(InvokeOnCompleteDefault); break;
+                case MouseType.Hover: this.tweener.OnComplete(InvokeOnCompleteHover); break;
+                case MouseType.Click: this.tweener.OnComplete(InvokeOnCompleteClick); break;
+            }
         }
 
         private Color GetValue()
@@ -115,10 +141,10 @@ namespace HegaCore.UI
         {
             this.color = value;
 
-            foreach (var graphic in this.graphics)
+            foreach (var renderer in this.renderers)
             {
-                if (graphic)
-                    graphic.color = value;
+                if (renderer)
+                    renderer.color = value;
             }
         }
 
@@ -126,6 +152,12 @@ namespace HegaCore.UI
         {
             if (this.eventsOnBegin)
                 this.onBeginDefault?.Invoke();
+        }
+
+        private void InvokeOnBeginHover()
+        {
+            if (this.eventsOnBegin)
+                this.onBeginHover?.Invoke();
         }
 
         private void InvokeOnBeginClick()
@@ -140,10 +172,21 @@ namespace HegaCore.UI
                 this.onCompleteDefault?.Invoke();
         }
 
+        private void InvokeOnCompleteHover()
+        {
+            if (this.eventsOnComplete)
+                this.onCompleteHover?.Invoke();
+        }
+
         private void InvokeOnCompleteClick()
         {
             if (this.eventsOnComplete)
                 this.onCompleteClick?.Invoke();
+        }
+
+        private enum MouseType
+        {
+            Default, Hover, Click
         }
     }
 }

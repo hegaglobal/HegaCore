@@ -59,6 +59,7 @@ namespace HegaCore.UI
         private void Awake()
         {
             SetValue(this.defaultAlpha);
+            InvokeOnBeginDefault();
             InvokeOnCompleteDefault();
         }
 

@@ -63,7 +63,17 @@ namespace HegaCore.UI
         {
             this.toggle = GetComponent<Toggle>();
             SetValue(GetColor(this.toggle.isOn));
-            InvokeOnCompleteOff();
+
+            if (this.toggle.isOn)
+            {
+                InvokeOnBeginOn();
+                InvokeOnCompleteOn();
+            }
+            else
+            {
+                InvokeOnBeginOff();
+                InvokeOnCompleteOff();
+            }
 
             this.toggle.onValueChanged.AddListener(OnToggleChanged);
         }

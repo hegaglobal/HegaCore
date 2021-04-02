@@ -4,7 +4,11 @@
     {
         bool AutoReset { get; }
 
+        bool Consumable { get; }
+
         bool Get(T input);
+
+        void Consume(T input);
 
         void ResetInput();
     }

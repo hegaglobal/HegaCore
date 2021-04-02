@@ -9,6 +9,9 @@ namespace HegaCore.UI
 {
     public class GraphicOnMouse : MonoBehaviour, IPointerDownHandler, IPointerUpHandler, IPointerEnterHandler, IPointerExitHandler
     {
+        [field: SerializeField, LabelText(nameof(RaycastTarget), true)]
+        public bool RaycastTarget { get; set; } = true;
+
         [SerializeField]
         private Graphic[] graphics = new Graphic[0];
 
@@ -72,20 +75,33 @@ namespace HegaCore.UI
         private void Awake()
         {
             SetValue(this.defaultColor);
+            InvokeOnBeginDefault();
             InvokeOnCompleteDefault();
         }
 
         void IPointerDownHandler.OnPointerDown(PointerEventData eventData)
-            => SetColor(this.clickColor, MouseType.Click);
+        {
+            if (this.RaycastTarget)
+                SetColor(this.clickColor, MouseType.Click);
+        }
 
         void IPointerUpHandler.OnPointerUp(PointerEventData eventData)
-            => SetColor(this.hoverColor, MouseType.Hover);
+        {
+            if (this.RaycastTarget)
+                SetColor(this.hoverColor, MouseType.Hover);
+        }
 
         void IPointerEnterHandler.OnPointerEnter(PointerEventData eventData)
-            => SetColor(this.hoverColor, MouseType.Hover);
+        {
+            if (this.RaycastTarget)
+                SetColor(this.hoverColor, MouseType.Hover);
+        }
 
         void IPointerExitHandler.OnPointerExit(PointerEventData eventData)
-            => SetColor(this.defaultColor, MouseType.Default);
+        {
+            if (this.RaycastTarget)
+                SetColor(this.defaultColor, MouseType.Default);
+        }
 
         private void SetColor(in Color value, MouseType mouse)
         {

@@ -8,6 +8,9 @@ namespace HegaCore.UI
 {
     public class CanvasGroupOnMouse : MonoBehaviour, IPointerDownHandler, IPointerUpHandler, IPointerEnterHandler, IPointerExitHandler
     {
+        [field: SerializeField, LabelText(nameof(RaycastTarget), true)]
+        public bool RaycastTarget { get; set; } = true;
+
         [SerializeField]
         private CanvasGroup[] canvasGroups = new CanvasGroup[0];
 
@@ -70,21 +73,34 @@ namespace HegaCore.UI
 
         private void Awake()
         {
-            SetValue (this.defaultAlpha);
+            SetValue(this.defaultAlpha);
+            InvokeOnBeginDefault();
             InvokeOnCompleteDefault();
         }
 
         void IPointerDownHandler.OnPointerDown(PointerEventData eventData)
-            => SetAlpha(this.clickAlpha, MouseType.Click);
+        {
+            if (this.RaycastTarget)
+                SetAlpha(this.clickAlpha, MouseType.Click);
+        }
 
         void IPointerUpHandler.OnPointerUp(PointerEventData eventData)
-            => SetAlpha(this.hoverAlpha, MouseType.Hover);
+        {
+            if (this.RaycastTarget)
+                SetAlpha(this.hoverAlpha, MouseType.Hover);
+        }
 
         void IPointerEnterHandler.OnPointerEnter(PointerEventData eventData)
-            => SetAlpha(this.hoverAlpha, MouseType.Hover);
+        {
+            if (this.RaycastTarget)
+                SetAlpha(this.hoverAlpha, MouseType.Hover);
+        }
 
         void IPointerExitHandler.OnPointerExit(PointerEventData eventData)
-            => SetAlpha(this.defaultAlpha, MouseType.Default);
+        {
+            if (this.RaycastTarget)
+                SetAlpha(this.defaultAlpha, MouseType.Default);
+        }
 
         private void SetAlpha(float value, MouseType mouse)
         {

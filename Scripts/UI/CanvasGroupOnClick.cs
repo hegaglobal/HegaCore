@@ -8,6 +8,9 @@ namespace HegaCore.UI
 {
     public class CanvasGroupOnClick : MonoBehaviour, IPointerDownHandler, IPointerUpHandler
     {
+        [field: SerializeField, LabelText(nameof(RaycastTarget), true)]
+        public bool RaycastTarget { get; set; } = true;
+
         [SerializeField]
         private CanvasGroup[] canvasGroups = new CanvasGroup[0];
 
@@ -60,14 +63,21 @@ namespace HegaCore.UI
         private void Awake()
         {
             SetValue(this.defaultAlpha);
+            InvokeOnBeginDefault();
             InvokeOnCompleteDefault();
         }
 
         void IPointerUpHandler.OnPointerUp(PointerEventData eventData)
-            => SetAlpha(this.defaultAlpha, false);
+        {
+            if (this.RaycastTarget)
+                SetAlpha(this.defaultAlpha, false);
+        }
 
         void IPointerDownHandler.OnPointerDown(PointerEventData eventData)
-            => SetAlpha(this.clickAlpha, true);
+        {
+            if (this.RaycastTarget)
+                SetAlpha(this.clickAlpha, true);
+        }
 
         private void SetAlpha(float value, bool clicked)
         {

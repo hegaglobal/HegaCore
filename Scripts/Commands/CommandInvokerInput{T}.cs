@@ -17,6 +17,15 @@
             return this.input.Get(input);
         }
 
+        protected override void Consume(T input)
+        {
+            if (this.input == null)
+                return;
+
+            if (this.input.Consumable)
+                this.input?.Consume(input);
+        }
+
         protected override void OnPostUpdate(float deltaTime)
         {
             if (this.input == null)

@@ -8,6 +8,9 @@ namespace HegaCore
         [field: SerializeField, LabelText(nameof(AutoReset), true)]
         public bool AutoReset { get; set; } = true;
 
+        [field: SerializeField, LabelText(nameof(Consumable), true)]
+        public bool Consumable { get; set; } = true;
+
         [SerializeField]
         private DirectionMode mode = DirectionMode.FourDirection;
 
@@ -106,6 +109,9 @@ namespace HegaCore
 
             return this.detectedInput != None && this.detectedInput == input;
         }
+
+        public void Consume(SwipeDirection input)
+            => this.detectedInput = None;
 
         public void ResetInput()
             => this.detectedInput = None;
