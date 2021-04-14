@@ -97,7 +97,7 @@ namespace HegaCore
                 return false;
             }
 
-            if (Input.GetMouseButton(0))
+            if (this.waitForSwipe && Input.GetMouseButton(0))
             {
                 CheckSwipe();
             }
