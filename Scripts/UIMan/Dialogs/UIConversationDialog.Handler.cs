@@ -107,6 +107,12 @@ namespace HegaCore.UI
         private bool isHiding = true;
         private bool daemon;
 
+        private void Update()
+        {
+            if (Settings.AutoUpdateCommandSystem)
+                Commands.Update(GameTime.Provider.DeltaTime);
+        }
+
         private void FindAllCanvases()
             => this.canvases = GetComponentsInChildren<Canvas>();
 

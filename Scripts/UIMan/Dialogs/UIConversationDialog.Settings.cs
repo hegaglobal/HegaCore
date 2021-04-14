@@ -15,15 +15,18 @@ namespace HegaCore.UI
             public static GameDataContainer DataContainer { get; private set; }
 
             public static CommandSystem CommandSystem { get; private set; }
+            
+            public static bool AutoUpdateCommandSystem { get; set; }
 
             public static void Initialize(string avatarAtlasName, in ConversationDurations durations, float bgDurationChange,
-                                          GameDataContainer dataContainer, CommandSystem commandSystem)
+                                          GameDataContainer dataContainer, CommandSystem commandSystem, bool autoUpdateCommandSystem = true)
             {
                 AvatarAtlasName = avatarAtlasName;
                 Durations = durations;
                 BackgroundDurationChange = bgDurationChange;
                 DataContainer = dataContainer;
                 CommandSystem = commandSystem;
+                AutoUpdateCommandSystem = autoUpdateCommandSystem;
             }
         }
     }

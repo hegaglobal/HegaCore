@@ -14,7 +14,7 @@ namespace HegaCore.UI
             private static CommandIds _commandIdss;
             private static CommandInputs _inputs;
             private static ButtonStates? _buttonStates;
-
+            
             public static void Initialize(CommandMap commandMap = null, CommandInvokerKey keyInvoker = null,
                                           CommandInvokerMouseButton mouseButtonInvoker = null,
                                           CommandIds commandIds = null, CommandInputs inputs = null,
@@ -28,6 +28,15 @@ namespace HegaCore.UI
                 _buttonStates = buttonStates;
 
                 RegisterInput();
+            }
+
+            public static void Update(float deltaTime)
+            {
+                var invokerKeyboard = GetKeyInvoker();
+                var invokerMouseButton = GetMouseButtonInvoker();
+                
+                invokerKeyboard.OnUpdate(deltaTime);
+                invokerMouseButton.OnUpdate(deltaTime);
             }
 
             public static void RegisterInput()
