@@ -6,23 +6,23 @@ using VisualNovelData;
 using UnityEngine.Events;
 
 
-public class UICommandStopVoiceBG : UICommand
+public class UICommandFloatParam : UICommand
 {
     [System.Serializable]
-    private class StopVoiceBGEvent : UnityEvent<float> { }
+    private class FloatParamEvent : UnityEvent<float> { }
     
     [Space]
     [SerializeField]
-    private StopVoiceBGEvent tStopVoiceBgEvent = null;
+    private FloatParamEvent floatParamEvent = null;
 
     public override void Invoke(in Segment<object> parameters)
     {
-        if (!ValidateParams(parameters, 1, nameof(UICommandPlayVoice)))
+        if (!ValidateParams(parameters, 1, nameof(UICommandFloatParam)))
             return;
         
         if (this.converter.TryConvert(parameters[0], out float delay))
         {
-            this.tStopVoiceBgEvent?.Invoke(delay);
+            this.floatParamEvent?.Invoke(delay);
             Log(delay);
         }
     }

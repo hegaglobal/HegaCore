@@ -5,7 +5,7 @@ using UnityEngine.Events;
 using HegaCore.Events.Commands;
 using VisualNovelData;
 
-public class UICommandChangeHscenePhase : UICommand
+public class UICommandIntParam : UICommand
 {
     [System.Serializable]
     private class ChangeHscenePhaseEvent : UnityEvent<int> { }
@@ -15,7 +15,7 @@ public class UICommandChangeHscenePhase : UICommand
     private ChangeHscenePhaseEvent changeHscenePhaseEvent = null;
     public override void Invoke(in Segment<object> parameters)
     {
-        if (!ValidateParams(parameters, 1, nameof(UICommandChangeHscenePhase)))
+        if (!ValidateParams(parameters, 1, nameof(UICommandIntParam)))
             return;
         
         if (this.converter.TryConvert(parameters[0], out int phase))

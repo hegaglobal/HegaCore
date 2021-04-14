@@ -18,6 +18,9 @@ namespace HegaCore
         [SerializeField]
         private SpriteRenderer spriteRenderer = null;
 
+        public bool SetOrderOnAwake = false;
+        public int orderInLayer = 0;
+        
         public Animator Animator => this.animator;
 
         public float TempAlpha { get; set; }
@@ -46,6 +49,10 @@ namespace HegaCore
             GetComponents();
 
             this.LocalScale = this.useScaleOne ? Vector3.one : this.transform.localScale;
+            if (SetOrderOnAwake)
+            {
+                SetSortingOrder(orderInLayer);
+            }
         }
 
         public void Initialize(string id, bool hasIdAnim, bool hasBodyAnim, bool hasEmoAnim)
@@ -139,6 +146,18 @@ namespace HegaCore
             if (this.spriteRenderer)
             {
                 this.spriteRenderer.gameObject.layer = layer;
+                this.spriteRenderer.sortingOrder = sortingOrder;
+            }
+        }
+
+        public void SetSortingOrder(int sortingOrder)
+        {
+            if (this.cubismRenderer)
+            {
+                this.cubismRenderer.SortingOrder = sortingOrder;
+            }
+            else if (this.spriteRenderer)
+            {
                 this.spriteRenderer.sortingOrder = sortingOrder;
             }
         }

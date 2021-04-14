@@ -76,7 +76,7 @@ namespace HegaCore
 
                 model.Initialize(key, this.hasIdAnimation, this.hasBodyAnimation, this.hasEmoAnimation);
                 model.SetLayer(this.spawnLayer);
-                model.SetAlpha(1f);
+                model.SetAlpha(0f);
 
                 this.models.Add(key, model);
             }
