@@ -175,16 +175,16 @@ namespace HegaCore
             var angles = Quaternion.FromToRotation(this.offset, Vector3.right).eulerAngles;
             var angle = angles.y + angles.z;
 
-            if (angle >= 15f && angle < 75f)
+            if (angle >= 5f && angle < 85f)
                 return SwipeDirection.UpLeft;
 
-            if (angle >= 105f && angle < 165f)
+            if (angle >= 95f && angle < 175f)
                 return SwipeDirection.UpRight;
 
-            if (angle >= 195f && angle < 255f)
+            if (angle >= 185f && angle < 265f)
                 return SwipeDirection.DownRight;
 
-            if (angle >= 285f && angle < 345f)
+            if (angle >= 275f && angle < 355f)
                 return SwipeDirection.DownLeft;
 
             return None;
