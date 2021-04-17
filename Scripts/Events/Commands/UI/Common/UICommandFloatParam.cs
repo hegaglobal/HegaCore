@@ -1,29 +1,29 @@
-﻿using System.Collections;
+﻿using System;
 using System.Collections.Generic;
 using UnityEngine;
-using HegaCore.Events.Commands;
-using VisualNovelData;
 using UnityEngine.Events;
 
-
-public class UICommandFloatParam : UICommand
+namespace HegaCore.Events.Commands.UI
 {
-    [System.Serializable]
-    private class FloatParamEvent : UnityEvent<float> { }
-    
-    [Space]
-    [SerializeField]
-    private FloatParamEvent floatParamEvent = null;
-
-    public override void Invoke(in Segment<object> parameters)
+    public class UICommandFloatParam : UICommand
     {
-        if (!ValidateParams(parameters, 1, nameof(UICommandFloatParam)))
-            return;
-        
-        if (this.converter.TryConvert(parameters[0], out float delay))
+        [Serializable]
+        private class FloatParamEvent : UnityEvent<float> { }
+
+        [Space]
+        [SerializeField]
+        private FloatParamEvent floatParamEvent = new FloatParamEvent();
+
+        public override void Invoke(in Segment<object> parameters)
         {
-            this.floatParamEvent?.Invoke(delay);
-            Log(delay);
+            if (!ValidateParams(parameters, 1, nameof(UICommandFloatParam)))
+                return;
+
+            if (this.converter.TryConvert(parameters[0], out float value))
+            {
+                this.floatParamEvent.Invoke(value);
+                Log(value);
+            }
         }
     }
 }

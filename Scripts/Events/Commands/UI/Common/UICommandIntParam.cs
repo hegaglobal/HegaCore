@@ -1,27 +1,29 @@
-﻿using System.Collections;
+﻿using System;
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.Events;
-using HegaCore.Events.Commands;
-using VisualNovelData;
 
-public class UICommandIntParam : UICommand
+namespace HegaCore.Events.Commands.UI
 {
-    [System.Serializable]
-    private class ChangeHscenePhaseEvent : UnityEvent<int> { }
-    
-    [Space]
-    [SerializeField]
-    private ChangeHscenePhaseEvent changeHscenePhaseEvent = null;
-    public override void Invoke(in Segment<object> parameters)
+    public class UICommandIntParam : UICommand
     {
-        if (!ValidateParams(parameters, 1, nameof(UICommandIntParam)))
-            return;
-        
-        if (this.converter.TryConvert(parameters[0], out int phase))
+        [Serializable]
+        private class IntParamEvent : UnityEvent<int> { }
+
+        [Space]
+        [SerializeField]
+        private IntParamEvent intParamEvent = new IntParamEvent();
+
+        public override void Invoke(in Segment<object> parameters)
         {
-            this.changeHscenePhaseEvent?.Invoke(phase);
-            Log(phase);
+            if (!ValidateParams(parameters, 1, nameof(UICommandIntParam)))
+                return;
+
+            if (this.converter.TryConvert(parameters[0], out int value))
+            {
+                this.intParamEvent.Invoke(value);
+                Log(value);
+            }
         }
     }
 }
