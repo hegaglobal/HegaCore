@@ -11,6 +11,8 @@ namespace HegaCore
         private void OnValidate()
         {
             this.internalCsvPath = $"Assets/{this.internalCsvFolder}";
+            this.daemonFilePath = $"{this.externalCsvFolder}/{this.daemonFile}";
+            this.overlordFilePath = $"{this.externalCsvFolder}/{this.overlordFile}";
         }
 
         [Button("Find All"), BoxGroup("Csv Files")]

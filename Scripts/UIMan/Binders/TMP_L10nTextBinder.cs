@@ -32,9 +32,6 @@ namespace HegaCore.MVVM
         public bool shouldLocalizeText;
         public bool silent;
 
-        public string Key
-            => this.formatKey;
-
         private string value = string.Empty;
 
         private void OnDestroy()
@@ -77,7 +74,7 @@ namespace HegaCore.MVVM
             SetKey(value);
         }
 
-        public void SetKey(string value)
+        private void SetKey(string value)
         {
             if (string.Equals(this.formatKey, value))
                 return;

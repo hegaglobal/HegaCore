@@ -14,6 +14,9 @@ namespace HegaCore
         [SerializeField, InlineButton(nameof(FindCubismRenderController), "Find")]
         private CubismRenderController cubismRenderController = null;
 
+        [SerializeField, Indent]
+        private bool useOpacity = true;
+
         protected override void Awake()
         {
             base.Awake();
@@ -36,6 +39,12 @@ namespace HegaCore
                 return;
 
             value = Mathf.Clamp(value, 0f, 1f);
+
+            if (this.useOpacity)
+            {
+                this.cubismRenderController.Opacity = value;
+                return;
+            }
 
             foreach (var renderer in this.cubismRenderController.Renderers)
             {

@@ -1,36 +1,149 @@
 ﻿using UnityEngine;
+using UnityEngine.Events;
 using UnityEngine.EventSystems;
 using UnityEngine.UI;
 using Sirenix.OdinInspector;
+using DG.Tweening;
 
 namespace HegaCore.UI
 {
     public class GraphicOnClick : MonoBehaviour, IPointerDownHandler, IPointerUpHandler
     {
-        [SerializeField]
-        private Graphic graphic = null;
+        [field: SerializeField, LabelText(nameof(RaycastTarget), true)]
+        public bool RaycastTarget { get; set; } = true;
 
-        [SerializeField, BoxGroup("Colors"), LabelText("Default")]
+        [SerializeField]
+        private Graphic[] graphics = new Graphic[0];
+
+        [TitleGroup("Colors")]
+        [SerializeField, LabelText("Default")]
         private Color defaultColor = Color.white;
 
-        [SerializeField, BoxGroup("Colors"), LabelText("Click")]
+        [SerializeField, LabelText("Click")]
         private Color clickColor = Color.white;
+
+        [TitleGroup("Tween")]
+        [SerializeField, LabelText("Enable")]
+        private bool tween = false;
+
+        [ShowIf(nameof(tween))]
+        [SerializeField, LabelText("Duration")]
+        private float tweenDuration = 0f;
+
+        [ShowIf(nameof(tween))]
+        [SerializeField, LabelText("Ease")]
+        private Ease tweenEase = Ease.Linear;
+
+        [TitleGroup("Events On Begin")]
+        [SerializeField, LabelText("Enable")]
+        private bool eventsOnBegin = false;
+
+        [ShowIf(nameof(eventsOnBegin))]
+        [SerializeField, FoldoutGroup("Events On Begin/Events", false), LabelText("Default")]
+        private UnityEvent onBeginDefault = new UnityEvent();
+
+        [ShowIf(nameof(eventsOnBegin))]
+        [SerializeField, FoldoutGroup("Events On Begin/Events", false), LabelText("Click")]
+        private UnityEvent onBeginClick = new UnityEvent();
+
+        [TitleGroup("Events On Complete")]
+        [SerializeField, LabelText("Enable")]
+        private bool eventsOnComplete = false;
+
+        [ShowIf(nameof(eventsOnComplete))]
+        [SerializeField, FoldoutGroup("Events On Complete/Events", false), LabelText("Default")]
+        private UnityEvent onCompleteDefault = new UnityEvent();
+
+        [ShowIf(nameof(eventsOnComplete))]
+        [SerializeField, FoldoutGroup("Events On Complete/Events", false), LabelText("Click")]
+        private UnityEvent onCompleteClick = new UnityEvent();
+
+        private Color color;
+        private Tweener tweener;
 
         private void Awake()
         {
-            SetColor(this.defaultColor);
+            SetValue(this.defaultColor);
+            InvokeOnBeginDefault();
+            InvokeOnCompleteDefault();
         }
 
         void IPointerUpHandler.OnPointerUp(PointerEventData eventData)
-            => SetColor(this.defaultColor);
+        {
+            if (this.RaycastTarget)
+                SetColor(this.defaultColor, false);
+        }
 
         void IPointerDownHandler.OnPointerDown(PointerEventData eventData)
-            => SetColor(this.clickColor);
-
-        private void SetColor(in Color color)
         {
-            if (this.graphic)
-                this.graphic.color = color;
+            if (this.RaycastTarget)
+                SetColor(this.clickColor, true);
+        }
+
+        private void SetColor(in Color value, bool clicked)
+        {
+            if (clicked)
+                InvokeOnBeginClick();
+            else
+                InvokeOnBeginDefault();
+
+            if (!this.tween)
+            {
+                SetValue(value);
+
+                if (clicked)
+                    InvokeOnCompleteClick();
+                else
+                    InvokeOnCompleteDefault();
+
+                return;
+            }
+
+            this.tweener?.Kill();
+            this.tweener = DOTween.To(GetValue, SetValue, value, this.tweenDuration).SetEase(this.tweenEase);
+
+            if (clicked)
+                this.tweener.OnComplete(InvokeOnCompleteClick);
+            else
+                this.tweener.OnComplete(InvokeOnCompleteDefault);
+        }
+
+        private Color GetValue()
+            => this.color;
+
+        private void SetValue(Color value)
+        {
+            this.color = value;
+
+            foreach (var graphic in this.graphics)
+            {
+                if (graphic)
+                    graphic.color = value;
+            }
+        }
+
+        private void InvokeOnBeginDefault()
+        {
+            if (this.eventsOnBegin)
+                this.onBeginDefault?.Invoke();
+        }
+
+        private void InvokeOnBeginClick()
+        {
+            if (this.eventsOnBegin)
+                this.onBeginClick?.Invoke();
+        }
+
+        private void InvokeOnCompleteDefault()
+        {
+            if (this.eventsOnComplete)
+                this.onCompleteDefault?.Invoke();
+        }
+
+        private void InvokeOnCompleteClick()
+        {
+            if (this.eventsOnComplete)
+                this.onCompleteClick?.Invoke();
         }
     }
 }

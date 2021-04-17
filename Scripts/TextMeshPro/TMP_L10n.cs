@@ -17,9 +17,6 @@ namespace HegaCore
         [SerializeField]
         private TMP_Text text = null;
 
-        public string Key
-            => this.key;
-
         private void OnValidate()
         {
             this.text = GetComponent<TMP_Text>();
@@ -49,14 +46,5 @@ namespace HegaCore
 
         public void Localize()
             => this.text.SetText(L10n.Localize(this.key, this.silent));
-
-        public void SetKey(string value)
-        {
-            if (string.Equals(this.key, value))
-                return;
-
-            this.key = value ?? string.Empty;
-            Localize();
-        }
     }
 }

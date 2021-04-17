@@ -5,102 +5,116 @@ namespace HegaCore
 {
     public static class AnimatorExtensions
     {
-        public static T RegisterStateEvent<T>(this Animator self, AnimatorStateEventBase @event)
+        public static T[] RegisterStateEvent<T>(this Animator self, AnimatorStateEventBase @event)
             where T : AnimatorStateBehaviour
         {
             if (!self)
                 return null;
 
-            var behaviour = self.GetBehaviour<T>();
+            var behaviours = self.GetBehaviours<T>();
 
-            if (behaviour)
+            foreach (var behaviour in behaviours)
+            {
                 behaviour.Register(@event);
+            }
 
-            return behaviour;
+            return behaviours;
         }
 
-        public static T RegisterStateEvent<T>(this Animator self, params AnimatorStateEventBase[] events)
+        public static T[] RegisterStateEvent<T>(this Animator self, params AnimatorStateEventBase[] events)
             where T : AnimatorStateBehaviour
         {
             if (!self)
                 return null;
 
-            var behaviour = self.GetBehaviour<T>();
+            var behaviours = self.GetBehaviours<T>();
 
-            if (behaviour)
+            foreach (var behaviour in behaviours)
+            {
                 behaviour.Register(events);
+            }
 
-            return behaviour;
+            return behaviours;
         }
 
-        public static T RegisterStateEvent<T>(this Animator self, IEnumerable<AnimatorStateEventBase> events)
+        public static T[] RegisterStateEvent<T>(this Animator self, IEnumerable<AnimatorStateEventBase> events)
             where T : AnimatorStateBehaviour
         {
             if (!self)
                 return null;
 
-            var behaviour = self.GetBehaviour<T>();
+            var behaviours = self.GetBehaviours<T>();
 
-            if (behaviour)
+            foreach (var behaviour in behaviours)
+            {
                 behaviour.Register(events);
+            }
 
-            return behaviour;
+            return behaviours;
         }
 
-        public static T RemoveStateEvent<T>(this Animator self, AnimatorStateEventBase @event)
+        public static T[] RemoveStateEvent<T>(this Animator self, AnimatorStateEventBase @event)
             where T : AnimatorStateBehaviour
         {
             if (!self)
                 return null;
 
-            var behaviour = self.GetBehaviour<T>();
+            var behaviours = self.GetBehaviours<T>();
 
-            if (behaviour)
+            foreach (var behaviour in behaviours)
+            {
                 behaviour.Remove(@event);
+            }
 
-            return behaviour;
+            return behaviours;
         }
 
-        public static T RemoveStateEvent<T>(this Animator self, params AnimatorStateEventBase[] events)
+        public static T[] RemoveStateEvent<T>(this Animator self, params AnimatorStateEventBase[] events)
             where T : AnimatorStateBehaviour
         {
             if (!self)
                 return null;
 
-            var behaviour = self.GetBehaviour<T>();
+            var behaviours = self.GetBehaviours<T>();
 
-            if (behaviour)
+            foreach (var behaviour in behaviours)
+            {
                 behaviour.Remove(events);
+            }
 
-            return behaviour;
+            return behaviours;
         }
 
-        public static T RemoveStateEvent<T>(this Animator self, IEnumerable<AnimatorStateEventBase> events)
+        public static T[] RemoveStateEvent<T>(this Animator self, IEnumerable<AnimatorStateEventBase> events)
             where T : AnimatorStateBehaviour
         {
             if (!self)
                 return null;
 
-            var behaviour = self.GetBehaviour<T>();
+            var behaviours = self.GetBehaviours<T>();
 
-            if (behaviour)
+            foreach (var behaviour in behaviours)
+            {
                 behaviour.Remove(events);
+            }
 
-            return behaviour;
+            return behaviours;
         }
 
-        public static T RemoveAllStateEvents<T>(this Animator self)
+        public static T[] RemoveAllStateEvents<T>(this Animator self)
             where T : AnimatorStateBehaviour
         {
             if (!self)
                 return null;
 
-            var behaviour = self.GetBehaviour<T>();
+            var behaviours = self.GetBehaviours<T>();
 
-            if (behaviour)
+            foreach (var behaviour in behaviours)
+            {
                 behaviour.RemoveAllEvents();
+            }
 
-            return behaviour;
+            return behaviours;
         }
     }
 }

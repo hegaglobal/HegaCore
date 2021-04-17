@@ -1,12 +1,12 @@
-﻿using System.Collections.Generic;
-using System.Collections.Pooling;
+﻿using System.Collections.ArrayBased;
+using System.Collections.Generic;
 using UnityEngine;
 
 namespace HegaCore
 {
     public class AnimatorStateBehaviour : StateMachineBehaviour
     {
-        private readonly Dictionary<AnimatorStateEventBase, bool> events = new Dictionary<AnimatorStateEventBase, bool>();
+        private readonly ArrayDictionary<AnimatorStateEventBase, bool> events = new ArrayDictionary<AnimatorStateEventBase, bool>();
 
         public void Register(AnimatorStateEventBase @event)
         {
@@ -73,38 +73,34 @@ namespace HegaCore
 
         public override void OnStateEnter(Animator animator, AnimatorStateInfo stateInfo, int layerIndex)
         {
-            var list = Pool.Provider.List<AnimatorStateEventBase>();
-            list.AddRange(this.events.Keys);
+            this.events.GetUnsafeKeys(out var list, out var count);
 
-            foreach (var item in list)
+            for (var i = 0u; i < count; i++)
             {
+                var item = list[i].Key;
                 this.events[item] = false;
                 item.Enter(stateInfo.normalizedTime);
             }
-
-            Pool.Provider.Return(list);
         }
 
         public override void OnStateExit(Animator animator, AnimatorStateInfo stateInfo, int layerIndex)
         {
-            var list = Pool.Provider.List<AnimatorStateEventBase>();
-            list.AddRange(this.events.Keys);
+            this.events.GetUnsafeKeys(out var list, out var count);
 
-            foreach (var item in list)
+            for (var i = 0u; i < count; i++)
             {
+                var item = list[i].Key;
                 item.Exit(stateInfo.normalizedTime);
             }
-
-            Pool.Provider.Return(list);
         }
 
         public override void OnStateUpdate(Animator animator, AnimatorStateInfo stateInfo, int layerIndex)
         {
-            var list = Pool.Provider.List<AnimatorStateEventBase>();
-            list.AddRange(this.events.Keys);
+            this.events.GetUnsafeKeys(out var list, out var count);
 
-            foreach (var item in list)
+            for (var i = 0u; i < count; i++)
             {
+                var item = list[i].Key;
                 var invoked = this.events[item];
 
                 item.Update(stateInfo.normalizedTime);
@@ -115,8 +111,6 @@ namespace HegaCore
                 this.events[item] = true;
                 item.Invoke(stateInfo.normalizedTime);
             }
-
-            Pool.Provider.Return(list);
         }
     }
 }

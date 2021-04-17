@@ -6,9 +6,10 @@ using Newtonsoft.Json;
 namespace HegaCore
 {
     [Serializable]
-    public abstract class GameDataHandlerJson<TPlayerData, TGameData> : GameDataHandler<TPlayerData, TGameData>, ITextFormatter<TGameData>
+    public abstract class GameDataHandlerJson<TPlayerData, TGameSettings, TGameData> : GameDataHandler<TPlayerData, TGameSettings, TGameData>, ITextFormatter<TGameData>
         where TPlayerData : PlayerData<TPlayerData>, new()
-        where TGameData : GameData<TPlayerData>
+        where TGameSettings : GameSettings<TGameSettings>, new()
+        where TGameData : GameData<TPlayerData, TGameSettings>
     {
         protected override bool TryRead(string filePath, out TGameData data)
         {
