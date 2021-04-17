@@ -30,6 +30,15 @@ namespace HegaCore.UI
                 RegisterInput();
             }
 
+            public static void Update(float deltaTime)
+            {
+                var invokerKeyboard = GetInvokerKeyboard();
+                var invokerMouseButton = GetInvokerMouseButton();
+
+                invokerKeyboard.OnUpdate(deltaTime);
+                invokerMouseButton.OnUpdate(deltaTime);
+            }
+
             public static void RegisterInput()
             {
                 var buttonStates = GetButtonStates();
