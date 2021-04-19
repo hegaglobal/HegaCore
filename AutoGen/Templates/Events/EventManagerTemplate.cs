@@ -10,7 +10,7 @@ namespace #_NAMESPACE_#
 {
     using Events.Commands;
 
-    public sealed partial class #_TYPE_PREFIX_#EventManager : EventManager<#_TYPE_PREFIX_#PlayerData, #_TYPE_PREFIX_#GameData, #_TYPE_PREFIX_#GameDataHandler, #_TYPE_PREFIX_#GameDataContainer, #_TYPE_PREFIX_#EventInvoker, #_TYPE_PREFIX_#EventManager>
+    public sealed partial class #_TYPE_PREFIX_#EventManager : EventManager<#_TYPE_PREFIX_#PlayerData, #_TYPE_PREFIX_#GameSettings, #_TYPE_PREFIX_#GameData, #_TYPE_PREFIX_#GameDataHandler, #_TYPE_PREFIX_#GameDataContainer, #_TYPE_PREFIX_#EventInvoker, #_TYPE_PREFIX_#EventManager>
     {
         public override void Initialize(in ReadEventData eventData, #_TYPE_PREFIX_#GameDataContainer dataContainer,
                                         in ReadDictionary<int, string> eventMap)

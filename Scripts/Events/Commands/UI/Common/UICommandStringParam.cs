@@ -1,29 +1,29 @@
-﻿using System.Collections;
+﻿using System;
 using System.Collections.Generic;
 using UnityEngine;
-using HegaCore.Events.Commands;
-using VisualNovelData;
 using UnityEngine.Events;
 
-
-public class UICommandStringParam : UICommand
+namespace HegaCore.Events.Commands.UI
 {
-    [System.Serializable]
-    private class StringParamEvent : UnityEvent<string> { }
-    
-    [Space]
-    [SerializeField]
-    private StringParamEvent stringParamEvent = null;
-
-    public override void Invoke(in Segment<object> parameters)
+    public class UICommandStringParam : UICommand
     {
-        if (!ValidateParams(parameters, 1, nameof(UICommandStringParam)))
-            return;
-        
-        if (this.converter.TryConvert(parameters[0], out string voiceKey))
+        [Serializable]
+        private class StringParamEvent : UnityEvent<string> { }
+
+        [Space]
+        [SerializeField]
+        private StringParamEvent stringParamEvent = new StringParamEvent();
+
+        public override void Invoke(in Segment<object> parameters)
         {
-            this.stringParamEvent?.Invoke(voiceKey);
-            Log(voiceKey);
+            if (!ValidateParams(parameters, 1, nameof(UICommandStringParam)))
+                return;
+
+            if (this.converter.TryConvert(parameters[0], out string value))
+            {
+                this.stringParamEvent.Invoke(value);
+                Log(value);
+            }
         }
     }
 }

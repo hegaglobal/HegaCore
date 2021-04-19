@@ -5,9 +5,10 @@ using UnityEngine;
 namespace HegaCore
 {
     [Serializable]
-    public abstract class GameDataHandler<TPlayerData, TGameData>
+    public abstract class GameDataHandler<TPlayerData, TGameSettings, TGameData>
         where TPlayerData : PlayerData<TPlayerData>, new()
-        where TGameData : GameData<TPlayerData>
+        where TGameSettings : GameSettings<TGameSettings>, new()
+        where TGameData : GameData<TPlayerData, TGameSettings>
     {
         [SerializeField, HideInInspector]
         private string folderPath = default;

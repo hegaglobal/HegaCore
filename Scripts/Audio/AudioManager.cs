@@ -188,6 +188,14 @@ namespace HegaCore
             {
                 var key = reference.RuntimeKey.ToString();
 
+                if (string.IsNullOrEmpty(key))
+                {
+                    if (!silent)
+                        UnuLogger.LogWarning($"{type} key is empty");
+
+                    continue;
+                }
+
                 if (map.ContainsKey(key))
                 {
                     if (!silent)
@@ -273,6 +281,9 @@ namespace HegaCore
             {
                 var key = reference.RuntimeKey.ToString();
 
+                if (string.IsNullOrEmpty(key))
+                    continue;
+
                 if (!map.ContainsKey(key))
                     continue;
 
@@ -320,6 +331,13 @@ namespace HegaCore
         private bool TryGetAudio(AssetReferenceAudioClip reference, AudioMap map, out AudioClip clip)
         {
             var key = reference.RuntimeKey.ToString();
+
+            if (string.IsNullOrEmpty(key))
+            {
+                clip = default;
+                return false;
+            }
+
             clip = null;
 
             if (map.TryGetValue(key, out var op))

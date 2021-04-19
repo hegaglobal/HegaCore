@@ -4,7 +4,7 @@ using UnityEngine;
 namespace HegaCore
 {
     [Serializable]
-    public class GameSettings : ILanguage
+    public abstract class GameSettings : ILanguage
     {
         public const int CurrentRevision = 1;
 
@@ -30,7 +30,7 @@ namespace HegaCore
 
         public int Framerate;
 
-        public GameSettings()
+        protected GameSettings()
         {
             this.Revision = 1;
             this.Language = DefaultLanguage;
@@ -43,7 +43,7 @@ namespace HegaCore
             this.Framerate = 200;
         }
 
-        public void Copy(GameSettings data)
+        public void CopyFrom(GameSettings data)
         {
             if (data != null)
             {

@@ -31,10 +31,24 @@
         ""RedBlueGames.TextTyper"",
         ""HegaCore.Steamworks""#_ASMDEF_REFS_#
     ],
-    ""includePlatforms"": [
-        ""Editor""
+    ""includePlatforms"": [],
+    ""excludePlatforms"": [
+        ""Android"",
+        ""CloudRendering"",
+        ""iOS"",
+        ""LinuxStandalone64"",
+        ""Lumin"",
+        ""macOSStandalone"",
+        ""PS4"",
+        ""Stadia"",
+        ""Switch"",
+        ""tvOS"",
+        ""WSA"",
+        ""WebGL"",
+        ""WindowsStandalone32"",
+        ""WindowsStandalone64"",
+        ""XboxOne""
     ],
-    ""excludePlatforms"": [],
     ""allowUnsafeCode"": false,
     ""overrideReferences"": false,
     ""precompiledReferences"": [],

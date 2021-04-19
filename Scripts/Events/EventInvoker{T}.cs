@@ -3,11 +3,12 @@ using VisualNovelData.Data;
 
 namespace HegaCore
 {
-    public abstract class EventInvoker<TPlayerData, TGameData, THandler, TContainer> : EventInvoker
+    public abstract class EventInvoker<TPlayerData, TGameSettings, TGameData, THandler, TContainer> : EventInvoker
         where TPlayerData : PlayerData<TPlayerData>, new()
-        where TGameData : GameData<TPlayerData>
-        where THandler : GameDataHandler<TPlayerData, TGameData>, new()
-        where TContainer : GameDataContainer<TPlayerData, TGameData, THandler>
+        where TGameSettings : GameSettings<TGameSettings>, new()
+        where TGameData : GameData<TPlayerData, TGameSettings>
+        where THandler : GameDataHandler<TPlayerData, TGameSettings, TGameData>, new()
+        where TContainer : GameDataContainer<TPlayerData, TGameSettings, TGameData, THandler>
     {
         public TContainer DataContainer { get; private set; }
 

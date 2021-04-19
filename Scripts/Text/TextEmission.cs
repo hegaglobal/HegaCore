@@ -6,10 +6,10 @@ namespace HegaCore
 {
     public sealed class TextEmission
     {
-        private ITextSpawner spawner;
+        private ITextModuleSpawner spawner;
         private string key;
 
-        public void Initialize(ITextSpawner spawner, string key)
+        public void Initialize(ITextModuleSpawner spawner, string key)
         {
             this.spawner = spawner ?? throw new ArgumentNullException(nameof(spawner));
             this.key = key;
@@ -58,14 +58,11 @@ namespace HegaCore
 
         private void Set(TextModule module, string value, in Vector3 position, in TextEmitterParams @params)
         {
-            if (module.Text)
-            {
-                module.Text.SetText(value);
-                module.Text.color = @params.Color;
+            module.SetText(value);
+            module.SetColor(@params.Color);
 
-                if (@params.Size.Custom)
-                    module.Text.fontSize = @params.Size.Value;
-            }
+            if (@params.Size.Custom)
+                module.SetFontSize(@params.Size.Value);
 
             var transform = module.transform;
             transform.position = OffsetPosition(position, @params);

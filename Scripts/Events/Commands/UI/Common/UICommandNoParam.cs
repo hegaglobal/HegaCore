@@ -1,17 +1,19 @@
 ﻿using System.Collections.Generic;
 using UnityEngine;
-using HegaCore.Events.Commands;
 using UnityEngine.Events;
 
-public class UICommandNoParam : UICommand
+namespace HegaCore.Events.Commands.UI
 {
-    [Space]
-    [SerializeField]
-    private UnityEvent noParamEvent = null;
-
-    public override void Invoke(in Segment<object> parameters)
+    public class UICommandNoParam : UICommand
     {
-        this.noParamEvent?.Invoke();
-        Log(Key);
+        [Space]
+        [SerializeField]
+        private UnityEvent noParamEvent = new UnityEvent();
+
+        public override void Invoke(in Segment<object> parameters)
+        {
+            this.noParamEvent.Invoke();
+            Log();
+        }
     }
 }

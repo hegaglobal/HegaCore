@@ -4,9 +4,10 @@ using System.IO;
 namespace HegaCore
 {
     [Serializable]
-    public abstract class GameDataHandlerBinary<TPlayerData, TGameData> : GameDataHandler<TPlayerData, TGameData>
+    public abstract class GameDataHandlerBinary<TPlayerData, TGameSettings, TGameData> : GameDataHandler<TPlayerData, TGameSettings, TGameData>
         where TPlayerData : PlayerData<TPlayerData>, new()
-        where TGameData : GameData<TPlayerData>
+        where TGameSettings : GameSettings<TGameSettings>, new()
+        where TGameData : GameData<TPlayerData, TGameSettings>
     {
         protected sealed override bool TryRead(string filePath, out TGameData data)
         {

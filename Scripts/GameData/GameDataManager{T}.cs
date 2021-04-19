@@ -4,12 +4,13 @@ using UnityEngine;
 
 namespace HegaCore
 {
-    public abstract class GameDataManager<TPlayerData, TGameData, THandler, TContainer, TManager> : Singleton<TManager>
+    public abstract class GameDataManager<TPlayerData, TGameSettings, TGameData, THandler, TContainer, TManager> : Singleton<TManager>
         where TPlayerData : PlayerData<TPlayerData>, new()
-        where TGameData : GameData<TPlayerData>
-        where THandler : GameDataHandler<TPlayerData, TGameData>, new()
-        where TContainer : GameDataContainer<TPlayerData, TGameData, THandler>, new()
-        where TManager : GameDataManager<TPlayerData, TGameData, THandler, TContainer, TManager>, new()
+        where TGameSettings : GameSettings<TGameSettings>, new()
+        where TGameData : GameData<TPlayerData, TGameSettings>
+        where THandler : GameDataHandler<TPlayerData, TGameSettings, TGameData>, new()
+        where TContainer : GameDataContainer<TPlayerData, TGameSettings, TGameData, THandler>, new()
+        where TManager : GameDataManager<TPlayerData, TGameSettings, TGameData, THandler, TContainer, TManager>, new()
     {
         public TContainer Container { get; }
 

@@ -2,7 +2,7 @@
 
 namespace HegaCore
 {
-    public sealed class AddressableTextEmitter : SimpleAddressableComponentSpawner<TextModule>, ITextEmitter, ITextSpawner
+    public sealed class AddressableTextEmitter : SimpleAddressableComponentSpawner<TextModule>, ITextEmitter, ITextModuleSpawner
     {
         private readonly TextEmission emission = new TextEmission();
 
@@ -14,7 +14,7 @@ namespace HegaCore
         public TextEmission GetEmission(string key = null)
             => this.emission;
 
-        UniTask<TextModule> ITextSpawner.GetTextAsync(string key)
+        UniTask<TextModule> ITextModuleSpawner.GetTextAsync(string key)
             => GetAsync();
     }
 }

@@ -99,33 +99,45 @@ namespace HegaCore
 
         public void OnUpdate(float deltaTime)
         {
+            OnPreUpdate(deltaTime);
+
             var inputs = Pool.Provider.List<TInput>();
             inputs.AddRange(this.map.Keys);
 
             foreach (var input in inputs)
             {
-                if (TryGetCommand(input, out var commandId))
+                if (!TryGetCommand(input, out var commandId))
+                    continue;
+
+                if (executed.Contains(input))
                 {
-                    if (CanInvoke(input))
-                    {
-                        executed.Add(input);
+                    executed.Remove(input);
 
-                        if (this.commandMap.TryGetCommand(commandId, out var command))
-                            command.Execute();
-                    }
-                    else if (executed.Contains(input))
-                    {
-                        executed.Remove(input);
+                    if (this.commandMap.TryGetCommand(commandId, out var command))
+                        command.Deactivate();
+                }
+                else if (CanInvoke(input))
+                {
+                    executed.Add(input);
 
-                        if (this.commandMap.TryGetCommand(commandId, out var command))
-                            command.Deactivate();
-                    }
+                    if (this.commandMap.TryGetCommand(commandId, out var command))
+                        command.Execute();
+
+                    Consume(input);
                 }
             }
 
             Pool.Provider.Return(inputs);
+
+            OnPostUpdate(deltaTime);
         }
 
+        protected virtual void OnPreUpdate(float deltaTime) { }
+
+        protected virtual void OnPostUpdate(float deltaTime) { }
+
         protected abstract bool CanInvoke(TInput input);
+
+        protected virtual void Consume(TInput input) { }
     }
 }

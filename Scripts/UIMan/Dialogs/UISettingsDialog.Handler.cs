@@ -1,4 +1,5 @@
 using System.Collections.Generic;
+using Sirenix.OdinInspector;
 using UnityEngine;
 using UnuGames;
 using UnuGames.MVVM;
@@ -24,6 +25,18 @@ namespace HegaCore.UI
         [UIManProperty]
         public ObservableList<Language> Languages { get; }
             = new ObservableList<Language>();
+
+        [ShowIf("@UnityEngine.Application.isPlaying")]
+        private IInitializable[] initializables;
+
+        [ShowIf("@UnityEngine.Application.isPlaying")]
+        private IDeinitializable[] deinitializables;
+
+        private void Awake()
+        {
+            this.initializables = GetComponentsInChildren<IInitializable>();
+            this.deinitializables = GetComponentsInChildren<IDeinitializable>();
+        }
 
         public override void OnShow(params object[] args)
         {
@@ -64,6 +77,14 @@ namespace HegaCore.UI
             SubscribeAction(nameof(this.SelectedResolution), SelectedResolution_OnChanged);
             SubscribeAction(nameof(this.Fullscreen), Fullscreen_OnChanged);
             SubscribeAction(nameof(this.SelectedLanguage), SelectedLanguage_OnChanged);
+
+            if (this.initializables != null && this.initializables.Length > 0)
+            {
+                for (var i = 0; i < this.initializables.Length; i++)
+                {
+                    this.initializables[i]?.Initialize(this);
+                }
+            }
         }
 
         private void Deinitialize()
@@ -74,6 +95,14 @@ namespace HegaCore.UI
             UnsubscribeAction(nameof(this.SelectedResolution), SelectedResolution_OnChanged);
             UnsubscribeAction(nameof(this.Fullscreen), Fullscreen_OnChanged);
             UnsubscribeAction(nameof(this.SelectedLanguage), SelectedLanguage_OnChanged);
+
+            if (this.deinitializables != null && this.deinitializables.Length > 0)
+            {
+                for (var i = 0; i < this.deinitializables.Length; i++)
+                {
+                    this.deinitializables[i]?.Deinitialize();
+                }
+            }
         }
 
         private void RefreshResolutions(in Segment<ScreenResolution> resolutions)

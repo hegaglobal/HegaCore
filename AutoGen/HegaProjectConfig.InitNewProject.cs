@@ -1,4 +1,5 @@
-﻿using UnityEditor;
+﻿using System.Linq;
+using UnityEditor;
 using UnityEngine;
 using HegaCore.Editor;
 using Sirenix.OdinInspector;
@@ -21,6 +22,8 @@ namespace HegaCore.AutoGen
         [Button(ButtonSizes.Large, Name = "Init New Project"), GUIColor(0f, 1f, 0f)]
         private void InitializeNewProject()
         {
+            AddDefineSymbols();
+
             var projectFolder = MakePath(Application.dataPath, this.ProjectFolder);
             var hegaFolder = MakePath(Application.dataPath, this.HegaCoreFolder);
 
@@ -113,6 +116,20 @@ namespace HegaCore.AutoGen
 
             config.InternalCsvFolder = MakePath(this.ProjectFolder, "Database");
             config.ExternalCsvFolder = "../External_Database";
+        }
+
+        private void AddDefineSymbols()
+        {
+            var buildTargetGroup = EditorUserBuildSettings.selectedBuildTargetGroup;
+            var definesString = PlayerSettings.GetScriptingDefineSymbolsForGroup(buildTargetGroup);
+            var allDefines = definesString.Split(';').ToList();
+
+            allDefines.AddRange(this.scriptingDefineSymbols.Except(allDefines));
+
+            PlayerSettings.SetScriptingDefineSymbolsForGroup(
+                buildTargetGroup,
+                string.Join(";", allDefines.ToArray())
+            );
         }
     }
 }

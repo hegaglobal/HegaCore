@@ -9,21 +9,21 @@ namespace HegaCore.UI
         public static class Commands
         {
             private static CommandMap _commandMap;
-            private static CommandInvokerKey _keyInvoker;
-            private static CommandInvokerMouseButton _mouseButtonInvoker;
-            private static CommandIds _commandIdss;
+            private static CommandInvokerKeyboard _invokerKeyboard;
+            private static CommandInvokerMouse _invokerMouseButton;
+            private static CommandIds _commandIds;
             private static CommandInputs _inputs;
             private static ButtonStates? _buttonStates;
-            
-            public static void Initialize(CommandMap commandMap = null, CommandInvokerKey keyInvoker = null,
-                                          CommandInvokerMouseButton mouseButtonInvoker = null,
+
+            public static void Initialize(CommandMap commandMap = null, CommandInvokerKeyboard invokerKeyboard = null,
+                                          CommandInvokerMouse invokerMouseButton = null,
                                           CommandIds commandIds = null, CommandInputs inputs = null,
                                           in ButtonStates? buttonStates = null)
             {
                 _commandMap = commandMap;
-                _keyInvoker = keyInvoker;
-                _mouseButtonInvoker = mouseButtonInvoker;
-                _commandIdss = commandIds;
+                _invokerKeyboard = invokerKeyboard;
+                _invokerMouseButton = invokerMouseButton;
+                _commandIds = commandIds;
                 _inputs = inputs;
                 _buttonStates = buttonStates;
 
@@ -32,9 +32,9 @@ namespace HegaCore.UI
 
             public static void Update(float deltaTime)
             {
-                var invokerKeyboard = GetKeyInvoker();
-                var invokerMouseButton = GetMouseButtonInvoker();
-                
+                var invokerKeyboard = GetInvokerKeyboard();
+                var invokerMouseButton = GetInvokerMouseButton();
+
                 invokerKeyboard.OnUpdate(deltaTime);
                 invokerMouseButton.OnUpdate(deltaTime);
             }
@@ -53,32 +53,32 @@ namespace HegaCore.UI
             {
                 var commandKeys = GetCommandIds();
 
-                GetKeyInvoker().Remove(commandKeys.SpeedUp, commandKeys.SkipNext);
-                GetMouseButtonInvoker().Remove(commandKeys.SkipNext);
+                GetInvokerKeyboard().Remove(commandKeys.SpeedUp, commandKeys.SkipNext);
+                GetInvokerMouseButton().Remove(commandKeys.SkipNext);
             }
 
-            public static void RegisterSpeedUpKey(ButtonState state, IEnumerable<KeyCode> inputKeys)
+            public static void RegisterSpeedUpKey(PressState state, IEnumerable<KeyCode> inputKeys)
             {
                 var commandKeys = GetCommandIds();
-                var invoker = GetKeyInvoker();
+                var invoker = GetInvokerKeyboard();
 
                 invoker.Remove(commandKeys.SpeedUp);
                 invoker.Register(state, inputKeys, commandKeys.SpeedUp);
             }
 
-            public static void RegisterSkipNextKey(ButtonState state, IEnumerable<KeyCode> inputKeys)
+            public static void RegisterSkipNextKey(PressState state, IEnumerable<KeyCode> inputKeys)
             {
                 var commandKeys = GetCommandIds();
-                var invoker = GetKeyInvoker();
+                var invoker = GetInvokerKeyboard();
 
                 invoker.Remove(commandKeys.SkipNext);
                 invoker.Register(state, inputKeys, commandKeys.SkipNext);
             }
 
-            public static void RegisterSkipNextMouseButton(ButtonState state, IEnumerable<int> buttonKeys)
+            public static void RegisterSkipNextMouseButton(PressState state, IEnumerable<MouseButton> buttonKeys)
             {
                 var commandKeys = GetCommandIds();
-                var invoker = GetMouseButtonInvoker();
+                var invoker = GetInvokerMouseButton();
 
                 invoker.Remove(commandKeys.SkipNext);
                 invoker.Register(state, buttonKeys, commandKeys.SkipNext);
@@ -103,14 +103,14 @@ namespace HegaCore.UI
             private static CommandMap GetCommandMap()
                 => _commandMap ?? (_commandMap = CommandMap.Default);
 
-            private static CommandInvokerKey GetKeyInvoker()
-                => _keyInvoker ?? (_keyInvoker = CommandInvokerKey.Default);
+            private static CommandInvokerKeyboard GetInvokerKeyboard()
+                => _invokerKeyboard ?? (_invokerKeyboard = CommandInvokerKeyboard.Default);
 
-            private static CommandInvokerMouseButton GetMouseButtonInvoker()
-                => _mouseButtonInvoker ?? (_mouseButtonInvoker = CommandInvokerMouseButton.Default);
+            private static CommandInvokerMouse GetInvokerMouseButton()
+                => _invokerMouseButton ?? (_invokerMouseButton = CommandInvokerMouse.Default);
 
             private static CommandIds GetCommandIds()
-                => _commandIdss ?? (_commandIdss = CommandIds.Default);
+                => _commandIds ?? (_commandIds = CommandIds.Default);
 
             private static CommandInputs GetCommandInputs()
                 => _inputs ?? (_inputs = CommandInputs.Default);
@@ -143,12 +143,12 @@ namespace HegaCore.UI
 
             public readonly struct ButtonStates
             {
-                public readonly ButtonState SpeedUpKey;
-                public readonly ButtonState SkipNextKey;
-                public readonly ButtonState SkipNextMouseButton;
+                public readonly PressState SpeedUpKey;
+                public readonly PressState SkipNextKey;
+                public readonly PressState SkipNextMouseButton;
 
-                public ButtonStates(ButtonState speedUpKey, ButtonState skipNextKey,
-                                    ButtonState skipNextMouseButton)
+                public ButtonStates(PressState speedUpKey, PressState skipNextKey,
+                                    PressState skipNextMouseButton)
                 {
                     this.SpeedUpKey = speedUpKey;
                     this.SkipNextKey = skipNextKey;
@@ -156,7 +156,7 @@ namespace HegaCore.UI
                 }
 
                 public static ButtonStates Default { get; }
-                    = new ButtonStates(ButtonState.Press, ButtonState.Up, ButtonState.Up);
+                    = new ButtonStates(PressState.Press, PressState.Up, PressState.Up);
             }
 
             public class CommandInputs
@@ -165,15 +165,15 @@ namespace HegaCore.UI
 
                 public ReadList<KeyCode> SkipNextKeys => this.skipNextKeys;
 
-                public ReadList<int> SkipNextMouseButtons => this.skipNextMouseButtons;
+                public ReadList<MouseButton> SkipNextMouseButtons => this.skipNextMouseButtons;
 
                 private readonly List<KeyCode> speedUpKeys = new List<KeyCode>();
                 private readonly List<KeyCode> skipNextKeys = new List<KeyCode>();
-                private readonly List<int> skipNextMouseButtons = new List<int>();
+                private readonly List<MouseButton> skipNextMouseButtons = new List<MouseButton>();
 
                 public CommandInputs(IEnumerable<KeyCode> speedUpKeys,
-                              IEnumerable<KeyCode> skipNextKeys,
-                              IEnumerable<int> skipNextMouseButtons)
+                                     IEnumerable<KeyCode> skipNextKeys,
+                                     IEnumerable<MouseButton> skipNextMouseButtons)
                 {
                     this.speedUpKeys.AddRange(speedUpKeys);
                     this.skipNextKeys.AddRange(skipNextKeys);
@@ -184,7 +184,7 @@ namespace HegaCore.UI
                     = new CommandInputs(
                         new [] { KeyCode.LeftControl, KeyCode.RightControl },
                         new [] { KeyCode.Return, KeyCode.KeypadEnter, KeyCode.Space },
-                        new [] { 0 }
+                        new [] { MouseButton.Left }
                     );
             }
         }
