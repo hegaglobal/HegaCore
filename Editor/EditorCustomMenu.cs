@@ -43,7 +43,7 @@ namespace HegaCore.Editor
                 File.Delete(filePath);
         }
 
-        [MenuItem("Hega/Toggle Cheat")]
+        [MenuItem("Hega/Toggle Ingame Cheat")]
         public static void ToggleCheat()
         {
             var config = ScriptableObjectHelper.GetOrCreate<DatabaseConfig>(false, "Assets/Game/Resources");
@@ -57,12 +57,33 @@ namespace HegaCore.Editor
             if (File.Exists(filePath))
             {
                 File.Delete(filePath);
-                Debug.Log("CHEAT: OFF");
+                Debug.Log("CHEAT: TURN OFF");
             }
             else
             {
                 File.Create(filePath).Dispose();
-                Debug.Log("CHEAT: ON");
+                Debug.Log("CHEAT: TURN ON");
+            }
+        }
+        
+        [MenuItem("Hega/Check Ingame Cheat")]
+        public static void CheckIngameCheat()
+        {
+            var config = ScriptableObjectHelper.GetOrCreate<DatabaseConfig>(false, "Assets/Game/Resources");
+
+            var folderPath = config.ExternalCsvFolderFullPath;
+            var filePath = config.DaemonFileFullPath;
+
+            if (!Directory.Exists(folderPath))
+                Directory.CreateDirectory(folderPath);
+
+            if (File.Exists(filePath))
+            {
+                Debug.Log("CHEAT: IS ON");
+            }
+            else
+            {
+                Debug.Log("CHEAT: IS OFF");
             }
         }
     }
