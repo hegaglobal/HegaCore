@@ -147,7 +147,18 @@ MonoBehaviour:
   m_TargetGraphic: {fileID: 1781919161065677849}
   m_OnClick:
     m_PersistentCalls:
-      m_Calls: []
+      m_Calls:
+      - m_Target: {fileID: 8179151586381388875}
+        m_MethodName: Button_OnClick
+        m_Mode: 1
+        m_Arguments:
+          m_ObjectArgument: {fileID: 0}
+          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
+          m_IntArgument: 0
+          m_FloatArgument: 0
+          m_StringArgument: 
+          m_BoolArgument: 0
+        m_CallState: 2
 --- !u!1 &6708836193106093807
 GameObject:
   m_ObjectHideFlags: 0
@@ -299,15 +310,12 @@ MonoBehaviour:
   textField:
     label: Text
     member: Content
-    isNullable: 0
   colorField:
     label: Color
     member: 
-    isNullable: 1
   formatField:
     label: Format
     member: 
-    isNullable: 0
   textConverter:
     label: Text
     m_adapter: {fileID: 0}

@@ -535,6 +535,14 @@ namespace HegaCore.UI
             if (this.defaultChoice.IsNullOrNone())
             {
                 PrintNonDefaultDialogue(false);
+                return;
+            }
+
+            CheckNextDialogueAreChoicesOnly();
+
+            if (this.areChoicesOnly)
+            {
+                PrintNonDefaultDialogue(false);
             }
             else
             {
@@ -566,7 +574,6 @@ namespace HegaCore.UI
         private void PrintDefaultChoiceDialogue()
         {
             Clear();
-            CheckNextDialogueAreChoicesOnly();
 
             var content = GetContent(this.defaultChoice);
 
