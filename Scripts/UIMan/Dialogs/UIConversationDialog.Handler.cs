@@ -11,10 +11,11 @@ using VisualNovelData.Data;
 using Cysharp.Threading.Tasks;
 using Sirenix.OdinInspector;
 using HegaCore.Events.Commands.Data;
+using UnityEngine.EventSystems;
 
 namespace HegaCore.UI
 {
-    public partial class UIConversationDialog : UIManDialog
+    public partial class UIConversationDialog : UIManDialog, IPointerDownHandler
     {
         public static void Show(string id, Action onShow = null, Action onShowCompleted = null,
                                 Action onHide = null, Action onHideCompleted = null)
@@ -106,6 +107,7 @@ namespace HegaCore.UI
         private bool isEnd = true;
         private bool isHiding = true;
         private bool daemon;
+        private bool isCommandDisabled;
 
         private void Update()
         {
@@ -123,6 +125,7 @@ namespace HegaCore.UI
         {
             this.isEnd = true;
             this.isHiding = true;
+            this.isCommandDisabled = false;
 
             base.OnShow(args);
 
@@ -161,8 +164,24 @@ namespace HegaCore.UI
             this.panelCover.Hide();
             this.onShowCompleted?.Invoke();
 
+            RegisterCommands();
+        }
+
+        private void RegisterCommands()
+        {
             Commands.RegisterSpeedUpCommand(ExecuteSpeedUp, DeactivateSpeedUp);
             Commands.RegisterSkipNextCommand(ExecuteSkipNextOrEnd, null);
+        }
+
+        void IPointerDownHandler.OnPointerDown(PointerEventData eventData)
+        {
+            if (!this.isCommandDisabled ||
+                this.isEnd || this.isHiding ||
+                !this.isInitialized)
+                return;
+
+            this.isCommandDisabled = false;
+            RegisterCommands();
         }
 
         public override void OnHide()
@@ -566,6 +585,12 @@ namespace HegaCore.UI
         {
             if (invokeCommandsOnEnd)
                 Invoke(this.dialogue.CommandsOnEnd);
+
+            if (this.dialogue.Choices.Count > 0)
+            {
+                this.isCommandDisabled = true;
+                Commands.RemoveCommands();
+            }
 
             RefreshChoices(this.dialogue.Choices);
             TryShowNextDialogueImmediately();
