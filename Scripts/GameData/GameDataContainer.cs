@@ -31,7 +31,7 @@ namespace HegaCore
 
         public bool ShowEndConversation { get; set; }
 
-        public ReadList<int> Missions => this.missions;
+        public ReadList<int> UnlockedMissions => this.unlockedMissions;
 
         public ReadList<int> PendingMissions => this.pendingMissions;
 
@@ -41,7 +41,7 @@ namespace HegaCore
 
         public ReadList<CharacterId> CharacterClips => this.characterClips;
 
-        private readonly List<int> missions = new List<int>();
+        private readonly List<int> unlockedMissions = new List<int>();
         private readonly List<int> pendingMissions = new List<int>();
         private readonly List<int> passedMissions = new List<int>();
         private readonly List<CharacterId> characterImages = new List<CharacterId>();
@@ -168,13 +168,11 @@ namespace HegaCore
             if (!Validate())
                 return false;
 
-            if (this.CurrentMission != missionId ||
-                !this.missions.Contains(missionId))
+            if (!this.unlockedMissions.Contains(missionId) ||
+                this.passedMissions.Contains(missionId))
                 return false;
 
-            var latest = this.missions.Max();
-
-            if (this.CurrentMission != latest || amount == 0)
+            if (amount == 0)
                 return false;
 
             this.Player.ProgressPoint += amount;
@@ -236,15 +234,15 @@ namespace HegaCore
 
         public bool UnlockMission(int id)
         {
-            if (this.missions.Contains(id))
+            if (this.unlockedMissions.Contains(id))
                 return false;
 
-            this.missions.Add(id);
+            this.unlockedMissions.Add(id);
             return true;
         }
 
         public void ClearMissions()
-            => this.missions.Clear();
+            => this.unlockedMissions.Clear();
 
         public bool PendingMission(int id)
         {
