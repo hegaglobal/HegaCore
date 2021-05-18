@@ -288,7 +288,7 @@ namespace HegaCore.UI
 
             if (this.defaultDialogue.Choices.Count <= 0)
             {
-                UnuLogger.LogError($"Dialogue {this.dialogue.Id} of conversation {this.conversation.Id} has no choice");
+                UnuLogger.LogWarning($"Dialogue {this.dialogue.Id} of conversation {this.conversation.Id} has no choice");
                 return;
             }
 
@@ -432,7 +432,7 @@ namespace HegaCore.UI
 
             if (this.dialogue.IsNullOrNone())
             {
-                UnuLogger.LogError("Cannot skip null dialogue");
+                UnuLogger.LogWarning("Cannot skip null dialogue");
                 return;
             }
 
@@ -519,7 +519,7 @@ namespace HegaCore.UI
 
             if (this.dialogue.IsNullOrNone())
             {
-                UnuLogger.LogError("Cannot show null dialogue");
+                UnuLogger.LogWarning("Cannot show null dialogue");
                 return;
             }
 
@@ -539,7 +539,7 @@ namespace HegaCore.UI
 
             if (this.dialogue.Choices.Count <= 0)
             {
-                UnuLogger.LogError($"Dialogue {this.dialogue.Id} of conversation {this.conversation.Id} has no choice");
+                UnuLogger.LogWarning($"Dialogue {this.dialogue.Id} of conversation {this.conversation.Id} has no choice");
                 return;
             }
 
@@ -714,7 +714,7 @@ namespace HegaCore.UI
         {
             if (this.defaultChoice.IsNullOrNone())
             {
-                UnuLogger.LogError($"Cannot go next from dialogue id={this.dialogue.Id}");
+                UnuLogger.LogWarning($"Cannot go next from dialogue id={this.dialogue.Id}");
                 return;
             }
 
