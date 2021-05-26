@@ -55,5 +55,8 @@ namespace HegaCore
     {
         public static T GetValue<T>(this RefValue<T> self) where T : struct
             => self ?? default;
+
+        public static T GetValueOr<T>(this RefValue<T> self, T orValue) where T : struct
+            => self ?? orValue;
     }
 }
