@@ -1,4 +1,5 @@
-﻿using UnityEngine;
+﻿using System;
+using UnityEngine;
 using UnityEngine.Events;
 using Sirenix.OdinInspector;
 
@@ -9,17 +10,41 @@ namespace HegaCore
         [SerializeField, Required]
         private Component target = null;
 
-        [SerializeField]
-        private bool enableEvents = false;
+        [VerticalGroup("Play", PaddingTop = 10)]
+        [BoxGroup("Play/On Play")]
+        [SerializeField, LabelText("Enable")]
+        private bool enableOnPlay = false;
 
-        [SerializeField, ShowIf(nameof(enableEvents))]
+        [BoxGroup("Play/On Play")]
+        [SerializeField, ShowIf(nameof(enableOnPlay)), HideLabel]
         private UnityEvent onPlay = new UnityEvent();
 
-        [SerializeField, ShowIf(nameof(enableEvents))]
+        [VerticalGroup("Pause", PaddingTop = 10)]
+        [BoxGroup("Pause/On Pause")]
+        [SerializeField, LabelText("Enable")]
+        private bool enableOnPause = false;
+
+        [BoxGroup("Pause/On Pause")]
+        [SerializeField, ShowIf(nameof(enableOnPause)), HideLabel]
         private UnityEvent onPause = new UnityEvent();
 
-        [SerializeField, ShowIf(nameof(enableEvents))]
+        [VerticalGroup("Stop", PaddingTop = 10)]
+        [BoxGroup("Stop/On Stop")]
+        [SerializeField, LabelText("Enable")]
+        private bool enableOnStop = false;
+
+        [BoxGroup("Stop/On Stop")]
+        [SerializeField, ShowIf(nameof(enableOnStop)), HideLabel]
         private UnityEvent onStop = new UnityEvent();
+
+        [VerticalGroup("Update", PaddingTop = 10)]
+        [BoxGroup("Update/On Update Step")]
+        [SerializeField, LabelText("Enable")]
+        private bool enableOnUpdateStep = false;
+
+        [BoxGroup("Update/On Update Step")]
+        [SerializeField, ShowIf(nameof(enableOnUpdateStep)), HideLabel]
+        private UnityEventFloat onUpdateStep = new UnityEventFloat();
 
         public Component Target => this.target;
 
@@ -44,6 +69,8 @@ namespace HegaCore
         public UnityEvent OnPause => this.onPause;
 
         public UnityEvent OnStop => this.onStop;
+
+        public UnityEvent<float> OnUpdateStep => this.onUpdateStep;
 
         private GameObject m_gameObject;
         private Transform m_transform;
@@ -82,7 +109,7 @@ namespace HegaCore
 
             this.targetPlayState?.SetPlayState(PlayState.Running);
 
-            if (this.enableEvents)
+            if (this.enableOnPlay)
                 this.onPlay.Invoke();
         }
 
@@ -93,7 +120,7 @@ namespace HegaCore
 
             this.targetPlayState?.SetPlayState(PlayState.Paused);
 
-            if (this.enableEvents)
+            if (this.enableOnPause)
                 this.onPause.Invoke();
         }
 
@@ -104,7 +131,7 @@ namespace HegaCore
 
             this.targetPlayState?.SetPlayState(PlayState.Stopped);
 
-            if (this.enableEvents)
+            if (this.enableOnStop)
                 this.onStop.Invoke();
         }
 
@@ -128,8 +155,16 @@ namespace HegaCore
 
         public void OnUpdate(float deltaTime)
         {
-            if (this.Alive)
-                this.targetOnUpdate?.OnUpdate(deltaTime);
+            if (!this.Alive)
+                return;
+
+            this.targetOnUpdate?.OnUpdate(deltaTime);
+
+            if (this.enableOnUpdateStep)
+                this.onUpdateStep.Invoke(deltaTime);
         }
+
+        [Serializable]
+        private class UnityEventFloat : UnityEvent<float> { }
     }
 }
