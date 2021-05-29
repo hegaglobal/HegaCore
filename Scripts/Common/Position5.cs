@@ -58,6 +58,11 @@ namespace HegaCore
 
         public override int GetHashCode()
         {
+#if USE_SYSTEM_HASHCODE
+            return HashCode.Combine(this.Above, this.Behind, this.Ahead, this.Behind, this.Center);
+#endif
+
+#pragma warning disable CS0162 // Unreachable code detected
             var hashCode = -2007588305;
             hashCode = hashCode * -1521134295 + this.Above.GetHashCode();
             hashCode = hashCode * -1521134295 + this.Below.GetHashCode();
@@ -65,6 +70,7 @@ namespace HegaCore
             hashCode = hashCode * -1521134295 + this.Behind.GetHashCode();
             hashCode = hashCode * -1521134295 + this.Center.GetHashCode();
             return hashCode;
+#pragma warning restore CS0162 // Unreachable code detected
         }
 
         Vector3 IPosition5.Above => this.Above;
