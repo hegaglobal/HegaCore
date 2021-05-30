@@ -1,134 +1,51 @@
 ﻿using System;
-using UnityEngine;
-using Sirenix.OdinInspector;
-using System.Collections.Generic;
 
 namespace HegaCore
 {
     public static class RefValue
     {
-        public static RefValue<T> Create<T>(T value) where T : struct
-            => new RefValue<T>(value);
+        public static RefValue<T> Create<T>(Func<T> getter, Action<T> setter)
+            => new RefValue<T>(getter, setter);
 
-        public static RefValue<T> Create<T>(in T value) where T : struct
-            => new RefValue<T>(in value);
+        public static RefValue<T> Create<T>(Func<T> getter, ActionIn<T> setter)
+            => new RefValue<T>(getter, setter);
     }
 
-    [Serializable, InlineProperty]
-    public class RefValue<T> : IEquatable<T>, IEquatableIn<T>, IEquatable<RefValue<T>>
-        where T : struct
+    public class RefValue<T>
     {
-        [SerializeField, HideLabel]
-        private T value;
+        private Action<T> setter;
+        private ActionIn<T> setterIn;
+        private Func<T> getter;
 
-        public RefValue()
+        public RefValue(Func<T> getter, Action<T> setter)
         {
-            this.value = default;
+            this.getter = getter ?? throw new ArgumentNullException(nameof(getter));
+            this.setter = setter ?? throw new ArgumentNullException(nameof(setter));
         }
 
-        public RefValue(T value)
+        public RefValue(Func<T> getter, ActionIn<T> setterIn)
         {
-            this.value = value;
-        }
-
-        public RefValue(in T value)
-        {
-            this.value = value;
+            this.getter = getter ?? throw new ArgumentNullException(nameof(getter));
+            this.setterIn = setterIn ?? throw new ArgumentNullException(nameof(setterIn));
         }
 
         public T Get()
-            => this.value;
+            => this.getter();
 
         public void Set(T value)
-            => this.value = value;
+        {
+            if (this.setter != null)
+                this.setter(value);
+            else if (this.setterIn != null)
+                this.setterIn(in value);
+        }
 
         public void Set(in T value)
-            => this.value = value;
-
-        public override string ToString()
-            => this.value.ToString();
-
-        public override int GetHashCode()
-            => this.value.GetHashCode();
-
-        public override bool Equals(object obj)
         {
-            if (obj is T otherValue)
-                return EqualityComparer<T>.Default.Equals(this.value, otherValue);
-
-            if (obj is RefValue<T> other)
-                return EqualityComparer<T>.Default.Equals(this.value, other.value);
-
-            return false;
-        }
-
-        public bool Equals(T other)
-            => EqualityComparer<T>.Default.Equals(this.value, other);
-
-        public bool Equals(in T other)
-            => EqualityComparerIn<T>.Default.Equals(in this.value, in other);
-
-        public bool Equals(RefValue<T> other)
-            => !(other is null) && EqualityComparer<T>.Default.Equals(this.value, other);
-
-        public static explicit operator RefValue<T>(T value)
-            => new RefValue<T>(value);
-
-        public static implicit operator T(RefValue<T> value)
-            => value == null ? default : value.value;
-
-        public static bool operator ==(RefValue<T> lhs, RefValue<T> rhs)
-        {
-            if (lhs is null && rhs is null)
-                return true;
-
-            if (lhs is null || rhs is null)
-                return false;
-
-            return EqualityComparer<T>.Default.Equals(lhs.value, rhs.value);
-        }
-
-        public static bool operator !=(RefValue<T> lhs, RefValue<T> rhs)
-        {
-            if (lhs is null && rhs is null)
-                return false;
-
-            if (lhs is null || rhs is null)
-                return true;
-
-            return !EqualityComparer<T>.Default.Equals(lhs.value, rhs.value);
-        }
-
-        public static bool operator ==(RefValue<T> lhs, T rhs)
-        {
-            if (lhs is null)
-                return false;
-
-            return EqualityComparer<T>.Default.Equals(lhs.value, rhs);
-        }
-
-        public static bool operator !=(RefValue<T> lhs, T rhs)
-        {
-            if (lhs is null)
-                return true;
-
-            return !EqualityComparer<T>.Default.Equals(lhs.value, rhs);
-        }
-
-        public static bool operator ==(T lhs, RefValue<T> rhs)
-        {
-            if (rhs is null)
-                return false;
-
-            return EqualityComparer<T>.Default.Equals(lhs, rhs.value);
-        }
-
-        public static bool operator !=(T lhs, RefValue<T> rhs)
-        {
-            if (rhs is null)
-                return true;
-
-            return !EqualityComparer<T>.Default.Equals(lhs, rhs.value);
+            if (this.setterIn != null)
+                this.setterIn(in value);
+            else if (this.setter != null)
+                this.setter(value);
         }
     }
 
@@ -140,8 +57,8 @@ namespace HegaCore
         /// <typeparam name="T"></typeparam>
         /// <param name="self"></param>
         /// <returns>If null returns default(<typeparamref name="T"/>)</returns>
-        public static T GetValue<T>(this RefValue<T> self) where T : struct
-            => self is null ? default : self;
+        public static T GetValue<T>(this RefValue<T> self)
+            => self is null ? default : self.Get();
 
         /// <summary>
         /// Gets the value of an instance of <see cref="RefValue{T}"/> without invoking any exception
@@ -150,8 +67,8 @@ namespace HegaCore
         /// <param name="self"></param>
         /// <param name="orValue">The value to return if <paramref name="self"/> is null</param>
         /// <returns></returns>
-        public static T GetValueOr<T>(this RefValue<T> self, T orValue) where T : struct
-            => self is null ? orValue : self;
+        public static T GetValueOr<T>(this RefValue<T> self, T orValue)
+            => self is null ? orValue : self.Get();
 
         /// <summary>
         /// Gets the value of an instance of <see cref="RefValue{T}"/> without invoking any exception
@@ -160,8 +77,8 @@ namespace HegaCore
         /// <param name="self"></param>
         /// <param name="orValue">The value to return if <paramref name="self"/> is null</param>
         /// <returns></returns>
-        public static T GetValueOr<T>(this RefValue<T> self, in T orValue) where T : struct
-            => self is null ? orValue : self;
+        public static T GetValueOr<T>(this RefValue<T> self, in T orValue)
+            => self is null ? orValue : self.Get();
 
         /// <summary>
         /// Sets the value of an instance of <see cref="RefValue{T}"/> without invoking any exception
@@ -169,7 +86,7 @@ namespace HegaCore
         /// <typeparam name="T"></typeparam>
         /// <param name="self"></param>
         /// <param name="value"></param>
-        public static void SetValue<T>(this RefValue<T> self, T value) where T : struct
+        public static void SetValue<T>(this RefValue<T> self, T value)
         {
             if (self is null)
                 return;
@@ -183,7 +100,7 @@ namespace HegaCore
         /// <typeparam name="T"></typeparam>
         /// <param name="self"></param>
         /// <param name="value"></param>
-        public static void SetValue<T>(this RefValue<T> self, in T value) where T : struct
+        public static void SetValue<T>(this RefValue<T> self, in T value)
         {
             if (self is null)
                 return;
