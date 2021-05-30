@@ -42,6 +42,10 @@ namespace HegaCore
         [SerializeField]
         private VoiceBGRegisterer voiceBGRegisterer = null;
 
+        [Space]
+        [SerializeField]
+        private float soundBufferInterval = 0.1f;
+
         public AudioPlayer Player { get; private set; }
 
         private readonly AudioMap musicMap;
@@ -52,6 +56,7 @@ namespace HegaCore
         private readonly KeyMap soundKeyMap;
         private readonly KeyMap voiceKeyMap;
         private readonly KeyMap voiceBGKeyMap;
+        private readonly RefValue<float> soundBufferIntervalRef;
 
         public AudioManager()
         {
@@ -63,12 +68,18 @@ namespace HegaCore
             this.soundKeyMap = new KeyMap();
             this.voiceKeyMap = new KeyMap();
             this.voiceBGKeyMap = new KeyMap();
+            this.soundBufferIntervalRef = RefValue.Create(() => this.soundBufferInterval, value => this.soundBufferInterval = value);
         }
 
         private void Awake()
         {
             this.Player = new AudioPlayer(this, this.audioMixer, this.musicSource, this.soundSource,
-                                          this.voiceSource,this.voiceBGSource);
+                                          this.voiceSource,this.voiceBGSource, this.soundBufferIntervalRef);
+        }
+
+        private void Update()
+        {
+            this.Player?.OnUpdate(GameTime.Provider.UnscaledDeltaTime);
         }
 
         public async UniTask InitializeAsync(float musicFadeTime, float musicVolume, float soundVolume, float voiceVolume)

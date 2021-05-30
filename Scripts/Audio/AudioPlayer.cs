@@ -6,7 +6,7 @@ using Cysharp.Threading.Tasks;
 
 namespace HegaCore
 {
-    public sealed class AudioPlayer
+    public sealed class AudioPlayer : IOnUpdate
     {
         private const string MusicVolume = nameof(MusicVolume);
         private const string InnerMusicVolume = nameof(InnerMusicVolume);
@@ -15,8 +15,6 @@ namespace HegaCore
         private const string VoiceBGVolume = nameof(VoiceBGVolume);
         private const string InnerVoiceBGVolume = nameof(InnerVoiceBGVolume);
 
-        private const float SoundBufferClearDelay = 0.04f;
-
         private readonly AudioManager manager;
         private readonly AudioMixer mixer;
         private readonly AudioSource music;
@@ -24,6 +22,7 @@ namespace HegaCore
         private readonly AudioSource voice;
         private readonly AudioSource voiceBG;
         private readonly List<string> soundBuffer;
+        private readonly RefValue<float> soundBufferInterval;
 
         private float musicFadeTime;
         private string currentMusicKey = string.Empty;
@@ -41,8 +40,10 @@ namespace HegaCore
         private Tweener voiceBGFadeOut;
         private Tweener voiceBGFadeIn;
 
+        private float elapsedSoundBuffer = 0f;
+
         public AudioPlayer(AudioManager manager, AudioMixer mixer, AudioSource music, AudioSource sound,
-                           AudioSource voice, AudioSource voiceBG)
+                           AudioSource voice, AudioSource voiceBG, RefValue<float> soundBufferInterval)
         {
             this.manager = manager;
             this.mixer = mixer;
@@ -51,35 +52,33 @@ namespace HegaCore
             this.voice = voice;
             this.voiceBG = voiceBG;
             this.soundBuffer = new List<string>();
+            this.soundBufferInterval = soundBufferInterval;
         }
 
-        public void Initialize(float musicFadeTime, float musicVolume, float soundVolume, float voiceVolume,
-                               float? bufferClearDelay = null)
+        public void Initialize(float musicFadeTime, float musicVolume, float soundVolume, float voiceVolume)
         {
             this.musicFadeTime = musicFadeTime;
+            this.elapsedSoundBuffer = 0f;
 
             ChangeMusicVolume(musicVolume);
             ChangeSoundVolume(soundVolume);
             ChangeVoiceVolume(voiceVolume);
-            SoundBufferRoutine(bufferClearDelay ?? SoundBufferClearDelay).Forget();
         }
 
-        private async UniTaskVoid SoundBufferRoutine(float bufferClearDelay)
+        public void OnUpdate(float deltaTime)
         {
-            var time = 0f;
+            SoundBufferRoutine(deltaTime);
+        }
 
-            while (true)
-            {
-                time += GameTime.Provider.UnscaledDeltaTime;
+        private void SoundBufferRoutine(float deltaTime)
+        {
+            this.elapsedSoundBuffer += deltaTime;
 
-                await UniTask.DelayFrame(1);
+            if (this.elapsedSoundBuffer < this.soundBufferInterval.GetValue())
+                return;
 
-                if (time >= bufferClearDelay)
-                {
-                    this.soundBuffer.Clear();
-                    time = 0f;
-                }
-            }
+            this.elapsedSoundBuffer = 0f;
+            this.soundBuffer.Clear();
         }
 
         public void ChangeMusicVolume(float value)
