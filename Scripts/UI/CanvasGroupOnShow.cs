@@ -123,7 +123,7 @@ namespace HegaCore.UI
             foreach (var canvasGroup in this.canvasGroups)
             {
                 if (canvasGroup)
-                    canvasGroup.alpha = alpha;
+                    canvasGroup.alpha = this.alpha;
             }
         }
 
