@@ -15,7 +15,7 @@ using UnityEngine.EventSystems;
 
 namespace HegaCore.UI
 {
-    public partial class UIConversationDialog : UIManDialog, IPointerDownHandler
+    public partial class UIConversationDialog : UIManDialog
     {
         public static void Show(string id, Action onShow = null, Action onShowCompleted = null,
                                 Action onHide = null, Action onHideCompleted = null)
@@ -100,14 +100,13 @@ namespace HegaCore.UI
         private ChoiceRow defaultChoice;
 
         private bool isInitialized = false;
-        private bool areChoicesOnly = false;
-        private bool showChoicesOnly = false;
+        private bool nextDialogueHasMultipleChoices = false;
+        private bool showNextDialogueMultipleChoices = false;
         private bool canTrySkipNext = true;
         private SpeedType speedType = SpeedType.Normal;
         private bool isEnd = true;
         private bool isHiding = true;
         private bool daemon;
-        private bool isCommandDisabled;
 
         private void Update()
         {
@@ -125,7 +124,6 @@ namespace HegaCore.UI
         {
             this.isEnd = true;
             this.isHiding = true;
-            this.isCommandDisabled = false;
 
             base.OnShow(args);
 
@@ -171,17 +169,6 @@ namespace HegaCore.UI
         {
             Commands.RegisterSpeedUpCommand(ExecuteSpeedUp, DeactivateSpeedUp);
             Commands.RegisterSkipNextCommand(ExecuteSkipNextOrEnd, null);
-        }
-
-        void IPointerDownHandler.OnPointerDown(PointerEventData eventData)
-        {
-            if (!this.isCommandDisabled ||
-                this.isEnd || this.isHiding ||
-                !this.isInitialized)
-                return;
-
-            this.isCommandDisabled = false;
-            RegisterCommands();
         }
 
         public override void OnHide()
@@ -273,8 +260,8 @@ namespace HegaCore.UI
             this.AvatarAtlas = Settings.AvatarAtlasName;
             this.IsTyping = true;
 
-            this.areChoicesOnly = false;
-            this.showChoicesOnly = false;
+            this.nextDialogueHasMultipleChoices = false;
+            this.showNextDialogueMultipleChoices = false;
             this.canTrySkipNext = true;
             this.speedType = SpeedType.Normal;
 
@@ -336,12 +323,13 @@ namespace HegaCore.UI
             }
         }
 
-        private DialogueRow GetDialogue(string id)
+        private DialogueRow GetDialogue(string id, bool logging = true)
         {
             var dialogue = this.conversation.GetDialogue(id);
 
 #if UNITY_EDITOR
-            UnuLogger.Log($"[row={dialogue.Row}] dialogue_id={dialogue.Id}");
+            if (logging)
+                UnuLogger.Log($"Get [row={dialogue.Row}] dialogue_id={dialogue.Id}");
 #endif
 
             return dialogue;
@@ -436,11 +424,17 @@ namespace HegaCore.UI
                 return;
             }
 
-            if (this.areChoicesOnly)
+            if (this.nextDialogueHasMultipleChoices)
+            {
+                DeactivateSpeedUp();
+                PrintNonDefaultDialogue(false);
                 return;
+            }
 
             if (this.dialogue.Choices.Count <= 1)
+            {
                 Next();
+            }
         }
 
         private void TrySkipNext()
@@ -557,21 +551,14 @@ namespace HegaCore.UI
                 return;
             }
 
-            CheckNextDialogueAreChoicesOnly();
-
-            if (this.areChoicesOnly)
-            {
-                PrintNonDefaultDialogue(false);
-            }
-            else
-            {
-                PrintDefaultChoiceDialogue();
-            }
+            CheckNextDialogueHasMultipleChoices();
+            PrintDefaultChoiceDialogue();
         }
 
         private void ContentTyper_OnPrintCompleted()
         {
             this.IsTyping = false;
+
             PrintNonDefaultDialogue(true);
 
             if (this.speedType != SpeedType.Normal)
@@ -586,9 +573,8 @@ namespace HegaCore.UI
             if (invokeCommandsOnEnd)
                 Invoke(this.dialogue.CommandsOnEnd);
 
-            if (this.dialogue.Choices.Count > 0)
+            if (this.dialogue.Choices.Count > 1)
             {
-                this.isCommandDisabled = true;
                 Commands.RemoveCommands();
             }
 
@@ -653,9 +639,17 @@ namespace HegaCore.UI
                 return;
             }
 
-            UnuLogger.Log($"Select: {id}");
-            this.areChoicesOnly = false;
+            this.nextDialogueHasMultipleChoices = false;
             NextDialogue(choice.GoTo);
+
+            LateRegisterCommands(2).Forget();
+        }
+
+        private async UniTaskVoid LateRegisterCommands(int frameCount)
+        {
+            await UniTask.DelayFrame(frameCount);
+
+            RegisterCommands();
         }
 
         private void NextDialogue(string id)
@@ -676,38 +670,40 @@ namespace HegaCore.UI
             ShowActors();
         }
 
-        private void CheckNextDialogueAreChoicesOnly()
+        private void CheckNextDialogueHasMultipleChoices()
         {
-            this.areChoicesOnly = false;
-            this.showChoicesOnly = false;
+            this.nextDialogueHasMultipleChoices = false;
+            this.showNextDialogueMultipleChoices = false;
 
             if (this.defaultChoice.IsNullOrNone())
                 return;
 
-            var nextDialogue = GetDialogue(this.defaultChoice.GoTo);
+            var nextDialogue = GetDialogue(this.defaultChoice.GoTo, false);
 
             if (nextDialogue.IsNullOrNone() || nextDialogue.IsEnd())
                 return;
 
-            this.areChoicesOnly = nextDialogue.Choices.Count > 1;
-            this.showChoicesOnly = this.areChoicesOnly;
+            this.nextDialogueHasMultipleChoices = nextDialogue.Choices.Count > 1;
+            this.showNextDialogueMultipleChoices = this.nextDialogueHasMultipleChoices;
         }
 
         private void TryShowNextDialogueImmediately()
         {
-            if (!this.areChoicesOnly)
+            if (!this.nextDialogueHasMultipleChoices)
             {
                 if (this.speedType != SpeedType.Normal)
+                {
                     Next();
+                }
 
                 return;
             }
 
-            if (!this.showChoicesOnly)
+            if (!this.showNextDialogueMultipleChoices)
                 return;
 
             Next();
-            this.showChoicesOnly = false;
+            this.showNextDialogueMultipleChoices = false;
         }
 
         private void Next()
