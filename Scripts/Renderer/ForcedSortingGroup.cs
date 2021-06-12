@@ -14,7 +14,7 @@ namespace HegaCore
 
         private void Awake()
         {
-            this.renderers = GetComponentsInChildren<Renderer>();
+            this.renderers = GetComponentsInChildren<Renderer>().OrEmpty();
 
             foreach (var renderer in this.renderers)
             {

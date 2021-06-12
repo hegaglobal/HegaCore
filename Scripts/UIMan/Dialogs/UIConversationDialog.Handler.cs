@@ -115,10 +115,10 @@ namespace HegaCore.UI
         }
 
         private void FindAllCanvases()
-            => this.canvases = GetComponentsInChildren<Canvas>();
+            => this.canvases = GetComponentsInChildren<Canvas>().OrEmpty();
 
         private void FindAllRaycasters()
-            => this.raycasters = GetComponentsInChildren<GraphicRaycaster>();
+            => this.raycasters = GetComponentsInChildren<GraphicRaycaster>().OrEmpty();
 
         public override void OnShow(params object[] args)
         {

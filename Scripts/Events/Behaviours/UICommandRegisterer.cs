@@ -6,7 +6,7 @@ namespace HegaCore.Events.Commands
     {
         protected override IEnumerable<IEventCommand> GetCommands()
         {
-            return GetComponentsInChildren<UICommand>();
+            return GetComponentsInChildren<UICommand>().OrEmpty();
         }
     }
 }

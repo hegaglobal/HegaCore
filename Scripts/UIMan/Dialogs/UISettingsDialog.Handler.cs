@@ -34,8 +34,8 @@ namespace HegaCore.UI
 
         private void Awake()
         {
-            this.initializables = GetComponentsInChildren<IInitializable>();
-            this.deinitializables = GetComponentsInChildren<IDeinitializable>();
+            this.initializables = GetComponentsInChildren<IInitializable>().OrEmpty();
+            this.deinitializables = GetComponentsInChildren<IDeinitializable>().OrEmpty();
         }
 
         public override void OnShow(params object[] args)
