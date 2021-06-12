@@ -25,7 +25,7 @@ namespace HegaCore
         }
 
         private void FindAllCubismRenderControllers()
-            => this.cubismRenderControllers = GetComponentsInChildren<CubismRenderController>().OrEmpty();
+            => this.cubismRenderControllers = GetComponentsInChildren<CubismRenderController>(true).OrEmpty();
 
         protected override void OnSetColor(in Color value)
         {

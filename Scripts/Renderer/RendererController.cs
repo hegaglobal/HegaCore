@@ -75,10 +75,10 @@ namespace HegaCore
             => this.sortingGroup = GetComponent<SortingGroup>();
 
         private void FindAllRenderers()
-            => this.renderers = GetComponentsInChildren<Renderer>().OrEmpty();
+            => this.renderers = GetComponentsInChildren<Renderer>(true).OrEmpty();
 
         private void FindAllSpriteRenderers()
-            => this.spriteRenderers = GetComponentsInChildren<SpriteRenderer>().OrEmpty();
+            => this.spriteRenderers = GetComponentsInChildren<SpriteRenderer>(true).OrEmpty();
 
         public void SetDefaultColor(in Color value)
             => this.color = value;
