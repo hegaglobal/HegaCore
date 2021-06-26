@@ -72,6 +72,9 @@ namespace HegaCore
         public static implicit operator uint(in Uid value)
             => value.value;
 
+        public static explicit operator int(in Uid value)
+            => (int)value.value;
+
         public static explicit operator Uid(uint value)
             => new Uid(value);
 
