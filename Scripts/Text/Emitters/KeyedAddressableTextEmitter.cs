@@ -68,6 +68,11 @@ namespace HegaCore
             Initialize(silent);
         }
 
+        protected override void OnDeinitialize()
+        {
+            DeregisterAllPoolItems(DefaultReleaseHandlers.Asset);
+        }
+
         private void RegisterEmission(string key)
         {
             if (this.emissionMap.ContainsKey(key))
