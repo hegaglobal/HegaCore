@@ -11,6 +11,8 @@ namespace HegaCore.Events.Commands
     {
         public abstract string Key { get; }
 
+        public abstract bool Ignorable { get; }
+
         private readonly StringBuilder sb = new StringBuilder();
 
         protected bool ValidateParameters(in Segment<object> parameters, int paramCount, string command, bool silent = false)

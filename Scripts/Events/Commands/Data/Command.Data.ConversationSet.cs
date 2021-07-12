@@ -8,6 +8,8 @@ namespace HegaCore.Events.Commands.Data
     {
         public override string Key => "conv_set";
 
+        public override bool Ignorable => false;
+
         public override void Invoke(in Segment<object> parameters)
         {
             if (!ValidateParameters(parameters, 1, nameof(ConversationSet)))

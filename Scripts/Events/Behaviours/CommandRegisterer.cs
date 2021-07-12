@@ -12,6 +12,20 @@ namespace HegaCore.Events.Commands
             Register(GetCommands(), @override);
         }
 
+        protected void Register(IEventCommand[] commands, bool @override)
+        {
+            if (commands == null)
+                return;
+
+            var system = EventManager.Instance.CommandSystem;
+
+            for (var i = 0; i < commands.Length; i++)
+            {
+                var command = commands[i];
+                system.Register(command.Key, command, @override);
+            }
+        }
+
         protected void Register(IEnumerable<IEventCommand> commands, bool @override)
         {
             if (commands == null)

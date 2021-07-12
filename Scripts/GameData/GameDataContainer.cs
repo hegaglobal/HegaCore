@@ -1,6 +1,5 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Linq;
 using UnityEngine;
 
 namespace HegaCore
@@ -31,6 +30,10 @@ namespace HegaCore
 
         public bool ShowEndConversation { get; set; }
 
+        public string Music { get; set; }
+
+        public string Sound { get; set; }
+
         public ReadList<int> UnlockedMissions => this.unlockedMissions;
 
         public ReadList<int> PendingMissions => this.pendingMissions;
@@ -54,6 +57,8 @@ namespace HegaCore
             this.Conversation = string.Empty;
             this.ShowStartConversation = false;
             this.ShowEndConversation = false;
+            this.Music = string.Empty;
+            this.Sound = string.Empty;
         }
 
         public virtual void InitializeCurrentPlayer(int playerIndex, GameMode? mode = null)

@@ -10,8 +10,7 @@ using RedBlueGames.Tools.TextTyper;
 using VisualNovelData.Data;
 using Cysharp.Threading.Tasks;
 using Sirenix.OdinInspector;
-using HegaCore.Events.Commands.Data;
-using UnityEngine.EventSystems;
+using HegaCore.Events.Commands;
 
 namespace HegaCore.UI
 {
@@ -44,6 +43,9 @@ namespace HegaCore.UI
         private Panel panelConversation = null;
 
         [SerializeField]
+        private Button buttonEndConversation = null;
+
+        [SerializeField]
         private TMP_Text contentText = null;
 
         [SerializeField]
@@ -73,11 +75,14 @@ namespace HegaCore.UI
         [SerializeField]
         private Color colorDim = Color.white;
 
-        [SerializeField, PropertySpace(4)]
-        private GameObject[] daemons = null;
-
         [SerializeField, ShowIf("@UnityEngine.Application.isPlaying")]
         private Actor[] actors = new Actor[0];
+
+        [SerializeField]
+        private CommandIgnorableMapper commandIgnorableMapper = null;
+
+        [SerializeField, PropertySpace(4)]
+        private GameObject[] daemons = null;
 
         [UIManProperty]
         public ObservableList<DialogueChoiceViewModel> Choices { get; }
@@ -95,18 +100,19 @@ namespace HegaCore.UI
         private ConversationRow conversation;
         private DialogueRow defaultDialogue;
         private DialogueRow dialogue;
-        private DialogueRow badDialogue;
-        private DialogueRow goodDialogue;
         private ChoiceRow defaultChoice;
 
         private bool isInitialized = false;
         private bool nextDialogueHasMultipleChoices = false;
         private bool showNextDialogueMultipleChoices = false;
         private bool canTrySkipNext = true;
+        private bool canSkipToEnd = true;
         private SpeedType speedType = SpeedType.Normal;
         private bool isEnd = true;
         private bool isHiding = true;
         private bool daemon;
+        private int choice;
+        private float waitingSeconds;
 
         private void Update()
         {
@@ -169,6 +175,13 @@ namespace HegaCore.UI
         {
             Commands.RegisterSpeedUpCommand(ExecuteSpeedUp, DeactivateSpeedUp);
             Commands.RegisterSkipNextCommand(ExecuteSkipNextOrEnd, null);
+            this.buttonEndConversation.interactable = true;
+        }
+
+        private void RemoveCommands()
+        {
+            Commands.RemoveCommands();
+            this.buttonEndConversation.interactable = false;
         }
 
         public override void OnHide()
@@ -178,7 +191,7 @@ namespace HegaCore.UI
             this.isEnd = true;
             this.isHiding = true;
 
-            Commands.RemoveCommands();
+            RemoveCommands();
 
             ForceHideAllActors();
             base.OnHide();
@@ -264,6 +277,8 @@ namespace HegaCore.UI
             this.showNextDialogueMultipleChoices = false;
             this.canTrySkipNext = true;
             this.speedType = SpeedType.Normal;
+            this.choice = 0;
+            this.canSkipToEnd = true;
 
             if (this.conversation.IsNullOrNone())
             {
@@ -424,10 +439,18 @@ namespace HegaCore.UI
                 return;
             }
 
+            Invoke(this.dialogue.CommandsOnEnd);
+            DelaySkipNext().Forget();
+        }
+
+        private async UniTaskVoid DelaySkipNext()
+        {
+            await WaitSecondsAsync();
+
             if (this.nextDialogueHasMultipleChoices)
             {
                 DeactivateSpeedUp();
-                PrintNonDefaultDialogue(false);
+                PrintNonDefaultDialogueNoInvokeOnEnd();
                 return;
             }
 
@@ -498,6 +521,18 @@ namespace HegaCore.UI
             }
         }
 
+        private async UniTask WaitSecondsAsync()
+        {
+            if (this.waitingSeconds < 0f)
+                this.waitingSeconds = 0f;
+
+            if (Mathf.Approximately(this.waitingSeconds, 0f))
+                return;
+
+            await UniTask.Delay(TimeSpan.FromSeconds(this.waitingSeconds));
+            this.waitingSeconds = 0f;
+        }
+
         private async UniTaskVoid LockTrySkipNext(float seconds)
         {
             this.canTrySkipNext = false;
@@ -524,7 +559,7 @@ namespace HegaCore.UI
                 Invoke(this.dialogue.CommandsOnStart);
                 Invoke(this.dialogue.CommandsOnEnd);
 
-                Commands.RemoveCommands();
+                RemoveCommands();
                 ForceHideAllActors();
                 HideOnEnd();
 
@@ -544,10 +579,16 @@ namespace HegaCore.UI
             this.defaultChoice = this.dialogue.Choices.Count > 1 ? ChoiceRow.None : this.dialogue.GetChoice(0);
 
             Invoke(this.dialogue.CommandsOnStart);
+            DelayShowDialogue().Forget();
+        }
+
+        private async UniTaskVoid DelayShowDialogue()
+        {
+            await WaitSecondsAsync();
 
             if (this.defaultChoice.IsNullOrNone())
             {
-                PrintNonDefaultDialogue(false);
+                PrintNonDefaultDialogueNoInvokeOnEnd();
                 return;
             }
 
@@ -555,31 +596,42 @@ namespace HegaCore.UI
             PrintDefaultChoiceDialogue();
         }
 
+        private void PrintNonDefaultDialogueNoInvokeOnEnd()
+        {
+            if (this.dialogue.Choices.Count > 1)
+            {
+                RemoveCommands();
+            }
+
+            RefreshChoices(this.dialogue.Choices);
+            TryShowNextDialogueImmediately();
+        }
+
         private void ContentTyper_OnPrintCompleted()
         {
             this.IsTyping = false;
 
-            PrintNonDefaultDialogue(true);
+            Invoke(this.dialogue.CommandsOnEnd);
+            DelayPrintNonDefaultDialogue().Forget();
+        }
+
+        private async UniTaskVoid DelayPrintNonDefaultDialogue()
+        {
+            await WaitSecondsAsync();
+
+            if (this.dialogue.Choices.Count > 1)
+            {
+                RemoveCommands();
+            }
+
+            RefreshChoices(this.dialogue.Choices);
+            TryShowNextDialogueImmediately();
 
             if (this.speedType != SpeedType.Normal)
             {
                 this.speedType = SpeedType.RenewSpeedUp;
                 this.canTrySkipNext = true;
             }
-        }
-
-        private void PrintNonDefaultDialogue(bool invokeCommandsOnEnd)
-        {
-            if (invokeCommandsOnEnd)
-                Invoke(this.dialogue.CommandsOnEnd);
-
-            if (this.dialogue.Choices.Count > 1)
-            {
-                Commands.RemoveCommands();
-            }
-
-            RefreshChoices(this.dialogue.Choices);
-            TryShowNextDialogueImmediately();
         }
 
         private void PrintDefaultChoiceDialogue()
@@ -601,7 +653,9 @@ namespace HegaCore.UI
                 this.contentTyper.TypeText(content, this.speedTyperConfig);
             }
             else
+            {
                 this.contentTyper.TypeText(content);
+            }
         }
 
         private void Clear()
@@ -638,6 +692,13 @@ namespace HegaCore.UI
                 UnuLogger.LogError($"Cannot find any choice by id={id} in the dialogue {this.dialogue.Id} of the conversation {this.conversation.Id}");
                 return;
             }
+
+            DelayOnSelectChoice(choice).Forget();
+        }
+
+        private async UniTaskVoid DelayOnSelectChoice(ChoiceRow choice)
+        {
+            await WaitSecondsAsync();
 
             this.nextDialogueHasMultipleChoices = false;
             NextDialogue(choice.GoTo);
@@ -826,6 +887,27 @@ namespace HegaCore.UI
             Settings.CommandSystem.Invoke(commands.AsSegment(), progress);
         }
 
+        private void InvokeSkipEnd(IReadOnlyList<Command> commands)
+        {
+            if (commands == null)
+                return;
+
+            var progress = Settings.DataContainer.Player.ProgressPoint;
+
+            for (var i = 0; i < commands.Count; i++)
+            {
+                var command = commands[i];
+
+                if (command == null)
+                    continue;
+
+                if (this.commandIgnorableMapper.CanIgnore(command.Key))
+                    continue;
+
+                Settings.CommandSystem.Invoke(command, progress);
+            }
+        }
+
         private void ApplyLayerToAllActors()
         {
             for (var i = 0; i < this.actors.Length; i++)
@@ -843,93 +925,82 @@ namespace HegaCore.UI
                 actor.Controller.SetLayer(view.Layer);
         }
 
-        public void UI_Button_EndConversation()
+        private ChoiceRow GetChoice(DialogueRow dialogue, int choice)
         {
-            this.badDialogue = null;
-            this.goodDialogue = null;
+            var countChoice = dialogue.Choices.Count;
 
-            var pointBadAdd = new PointBadAdd();
-            var pointGoodAdd = new PointGoodAdd();
+            if (countChoice < 0)
+                return ChoiceRow.None;
 
-            bool Contains(ICommandList commands, string key)
+            if (countChoice == 1)
+                return dialogue.GetChoice(0);
+
+            if (choice < 1)
+                choice = 1;
+
+            return dialogue.GetChoice(choice);
+        }
+
+        private async UniTaskVoid EndConversation()
+        {
+            await UniTask.DelayFrame(0);
+
+            DialogueRow dialogue;
+
+            if (this.dialogue.IsNullOrNone())
             {
-                foreach (var command in commands)
-                {
-                    if (!string.IsNullOrEmpty(command.Key) &&
-                        command.Key.Equals(key))
-                        return true;
-                }
-
-                return false;
-            }
-
-            foreach (var dialog in this.conversation.Dialogues.Values)
-            {
-                if (Contains(dialog.CommandsOnStart, pointBadAdd.Key) ||
-                    Contains(dialog.CommandsOnEnd, pointBadAdd.Key))
-                {
-                    this.badDialogue = dialog;
-                }
-                else
-                if (Contains(dialog.CommandsOnStart, pointGoodAdd.Key) ||
-                    Contains(dialog.CommandsOnEnd, pointGoodAdd.Key))
-                {
-                    this.goodDialogue = dialog;
-                }
-            }
-
-            if (this.badDialogue == null || this.goodDialogue == null)
-            {
-                EndConversationInternal();
+                dialogue = GetDialogue(this.conversation.StartingDialogue, false);
             }
             else
             {
-                ShowGoodBadPanel();
+                var choice = GetChoice(this.dialogue, this.choice);
+
+                if (choice.IsNullOrNone())
+                {
+                    EndConversationCompleted();
+                    return;
+                }
+
+                dialogue = GetDialogue(choice.GoTo, false);
             }
-        }
 
-        private void ShowGoodBadPanel()
-        {
-        }
+            var count = this.conversation.Dialogues.Count;
+            var index = 0;
 
-        public void UI_Button_EndBad()
-        {
-            if (this.badDialogue != null)
+            while (!dialogue.IsNullOrNone() && !dialogue.IsEnd())
             {
-                Invoke(this.badDialogue.CommandsOnStart);
-                Invoke(this.badDialogue.CommandsOnEnd);
+                if (index >= count)
+                    break;
+
+                InvokeSkipEnd(dialogue.CommandsOnStart);
+                InvokeSkipEnd(dialogue.CommandsOnEnd);
+
+                var choice = GetChoice(dialogue, this.choice);
+
+                if (choice.IsNullOrNone())
+                    break;
+
+                dialogue = GetDialogue(choice.GoTo, false);
+                index += 1;
             }
 
-            EndConversationInternal();
+            EndConversationCompleted();
         }
 
-        public void UI_Button_EndGood()
+        private void EndConversationCompleted()
         {
-            if (this.goodDialogue != null)
-            {
-                Invoke(this.goodDialogue.CommandsOnStart);
-                Invoke(this.goodDialogue.CommandsOnEnd);
-            }
-
-            EndConversationInternal();
-        }
-
-        private void EndConversationInternal()
-        {
-            if (this.contentTyper.IsTyping)
-                this.contentTyper.Skip();
-
-            var endDialogue = GetDialogue(EndDialogueRow.Keyword);
+            var endDialogue = GetDialogue(EndDialogueRow.Keyword, false);
 
             if (endDialogue == null)
             {
                 UnuLogger.LogError("END dialogue is missing");
-                return;
+            }
+            else
+            {
+                Invoke(endDialogue.CommandsOnStart);
+                Invoke(endDialogue.CommandsOnEnd);
             }
 
-            Invoke(endDialogue.CommandsOnStart);
-            Invoke(endDialogue.CommandsOnEnd);
-            this.isEnd = true;
             BeginHide();
         }
 
@@ -965,6 +1036,77 @@ namespace HegaCore.UI
             return null;
         }
 
+        public void UI_Button_EndConversation()
+        {
+            if (!this.canSkipToEnd)
+                return;
+
+            this.isEnd = true;
+            this.canSkipToEnd = false;
+            this.contentTyper.PrintCompleted.RemoveAllListeners();
+
+            if (this.contentTyper.IsTyping)
+                this.contentTyper.Skip();
+
+            EndConversation().Forget();
+        }
+
+        private void ShowActorMove(int actorNumber, Transform fromPosition)
+        {
+            var id = GetActorId(actorNumber);
+            var character = this.characterData.GetCharacter(id);
+            var model = character?.P1 ?? string.Empty;
+
+            if (string.IsNullOrEmpty(model))
+                return;
+
+            var view = GetActorView(actorNumber);
+            var actor = GetActor(actorNumber);
+
+            if (view == null || actor == null ||
+                string.Equals(actor.Model, model))
+                return;
+
+            var from = fromPosition.position;
+            var to = view.Position.position;
+
+            actor.Model = model;
+            actor.Controller = CubismManager.Instance.Show(model, from, to, Settings.Durations.Show, view.Layer);
+        }
+
+        private void HideActorMove(int actorNumber, Transform toPosition)
+        {
+            var actor = GetActor(actorNumber);
+
+            if (actor == null || !actor.Controller)
+                return;
+
+            CubismManager.Instance.Hide(actor.Model, toPosition.position, Settings.Durations.Hide);
+
+            actor.Model = string.Empty;
+            actor.Controller = null;
+        }
+
+        private async UniTaskVoid DelayWaitSeconds()
+        {
+            await WaitSecondsAsync();
+
+            this.buttonEndConversation.interactable = true;
+            RegisterCommands();
+        }
+
+        public void UI_Event_Choice_Set(int choice)
+            => this.choice = choice;
+
+        public void UI_Event_WaitSeconds(float seconds)
+        {
+            this.waitingSeconds = seconds;
+
+            RemoveCommands();
+            StopSpeedUp();
+            DelayWaitSeconds().Forget();
+        }
+
         public void UI_Event_Actor_Show(int actorNumber)
         {
             var id = GetActorId(actorNumber);
@@ -991,29 +1133,6 @@ namespace HegaCore.UI
         public void UI_Event_Actor_Show_FromRight(int actorNumber)
             => ShowActorMove(actorNumber, this.positionRight);
 
-        private void ShowActorMove(int actorNumber, Transform fromPosition)
-        {
-            var id = GetActorId(actorNumber);
-            var character = this.characterData.GetCharacter(id);
-            var model = character?.P1 ?? string.Empty;
-
-            if (string.IsNullOrEmpty(model))
-                return;
-
-            var view = GetActorView(actorNumber);
-            var actor = GetActor(actorNumber);
-
-            if (view == null || actor == null ||
-                string.Equals(actor.Model, model))
-                return;
-
-            var from = fromPosition.position;
-            var to = view.Position.position;
-
-            actor.Model = model;
-            actor.Controller = CubismManager.Instance.Show(model, from, to, Settings.Durations.Show, view.Layer);
-        }
-
         public void UI_Event_Actor_Hide(int actorNumber)
         {
             var actor = GetActor(actorNumber);
@@ -1032,19 +1151,6 @@ namespace HegaCore.UI
 
         public void UI_Event_Actor_Hide_ToRight(int actorNumber)
             => HideActorMove(actorNumber, this.positionRight);
-
-        private void HideActorMove(int actorNumber, Transform toPosition)
-        {
-            var actor = GetActor(actorNumber);
-
-            if (actor == null || !actor.Controller)
-                return;
-
-            CubismManager.Instance.Hide(actor.Model, toPosition.position, Settings.Durations.Hide);
-
-            actor.Model = string.Empty;
-            actor.Controller = null;
-        }
 
         public void UI_Event_Actor_Hide_All()
         {
