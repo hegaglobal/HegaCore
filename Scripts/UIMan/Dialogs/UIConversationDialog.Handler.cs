@@ -88,6 +88,12 @@ namespace HegaCore.UI
         public ObservableList<DialogueChoiceViewModel> Choices { get; }
             = new ObservableList<DialogueChoiceViewModel>();
 
+        [ShowIf("@UnityEngine.Application.isPlaying")]
+        private IInitializable<UIConversationDialog>[] initializables;
+
+        [ShowIf("@UnityEngine.Application.isPlaying")]
+        private IDeinitializable<UIConversationDialog>[] deinitializables;
+
         private string conversationId;
         private Action onShow;
         private Action onShowCompleted;
@@ -113,6 +119,12 @@ namespace HegaCore.UI
         private bool daemon;
         private int choice;
         private float waitingSeconds;
+
+        private void Awake()
+        {
+            this.initializables = GetComponentsInChildren<IInitializable<UIConversationDialog>>().OrEmpty();
+            this.deinitializables = GetComponentsInChildren<IDeinitializable<UIConversationDialog>>().OrEmpty();
+        }
 
         private void Update()
         {
@@ -302,6 +314,14 @@ namespace HegaCore.UI
             var firstChoice = this.defaultDialogue.GetChoice(0);
             this.dialogue = GetDialogue(firstChoice.GoTo);
 
+            if (this.initializables != null && this.initializables.Length > 0)
+            {
+                for (var i = 0; i < this.initializables.Length; i++)
+                {
+                    this.initializables[i]?.Initialize(this);
+                }
+            }
+
             LateInitialize().Forget();
         }
 
@@ -328,6 +348,14 @@ namespace HegaCore.UI
             this.panelCover.Hide(true);
             this.panelBackground.Hide(true);
             this.panelConversation.Hide(true);
+
+            if (this.deinitializables != null && this.deinitializables.Length > 0)
+            {
+                for (var i = 0; i < this.deinitializables.Length; i++)
+                {
+                    this.deinitializables[i]?.Deinitialize(this);
+                }
+            }
         }
 
         private void InitializeDaemon(bool value)
