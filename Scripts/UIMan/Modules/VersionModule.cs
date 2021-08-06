@@ -7,7 +7,9 @@ namespace HegaCore.UI
     {
         private void Start()
         {
-            this.DataInstance.Version = Application.version;
+            var ver = Application.version;
+            this.DataInstance.Version = ver;
+            Debug.Log($"Version: {ver}");
         }
 
         public void SetGameMode(GameMode mode)

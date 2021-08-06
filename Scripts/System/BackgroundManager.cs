@@ -18,6 +18,9 @@ namespace HegaCore
         [SerializeField]
         private ImageSwitcherModule foreground = null;
 
+        [SerializeField] 
+        private GameObject BlurObject;
+        
         private void Awake()
         {
             if (this.findCameraOnAwake)
@@ -46,5 +49,10 @@ namespace HegaCore
 
         public void SetForeground(string name, Color? color = null, float? duration = null)
             => this.foreground.Switch(name, color, duration);
+
+        public void SetBlur(bool blur)
+        {
+            BlurObject.SetActive(blur);
+        }
     }
 }
