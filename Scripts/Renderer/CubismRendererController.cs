@@ -11,8 +11,8 @@ namespace HegaCore
     public sealed class CubismRendererController : RendererController
     {
         [Header("Cubism")]
-        [SerializeField, InlineButton(nameof(FindCubismRenderController), "Find")]
-        private CubismRenderController cubismRenderController = null;
+        [SerializeField, InlineButton(nameof(FindAllCubismRenderControllers), "Find")]
+        private CubismRenderController[] cubismRenderControllers = null;
 
         [SerializeField, Indent]
         private bool useOpacity = true;
@@ -21,38 +21,61 @@ namespace HegaCore
         {
             base.Awake();
 
-            FindCubismRenderController();
+            FindAllCubismRenderControllers();
         }
 
-        private void FindCubismRenderController()
-            => this.cubismRenderController = GetComponentInChildren<CubismRenderController>();
+        private void FindAllCubismRenderControllers()
+            => this.cubismRenderControllers = GetComponentsInChildren<CubismRenderController>(true).OrEmpty();
+
+        protected override void OnSetColor(in Color value)
+        {
+            foreach (var controller in this.cubismRenderControllers)
+            {
+                foreach (var renderer in controller.Renderers)
+                {
+                    if (!renderer)
+                        continue;
+
+                    renderer.Color = value;
+                }
+            }
+        }
 
         protected override void OnSetLayer(in SortingLayerId layerId)
         {
-            if (this.cubismRenderController)
-                this.cubismRenderController.SortingLayerId = layerId.id;
+            foreach (var controller in this.cubismRenderControllers)
+            {
+                controller.SortingLayerId = layerId.id;
+            }
         }
 
         protected override void OnSetAlpha(float value)
         {
-            if (!this.cubismRenderController)
+            if (this.cubismRenderControllers.Length <= 0)
                 return;
 
             value = Mathf.Clamp(value, 0f, 1f);
 
             if (this.useOpacity)
             {
-                this.cubismRenderController.Opacity = value;
+                foreach (var controller in this.cubismRenderControllers)
+                {
+                    controller.Opacity = value;
+                }
+
                 return;
             }
 
-            foreach (var renderer in this.cubismRenderController.Renderers)
+            foreach (var controller in this.cubismRenderControllers)
             {
-                if (!renderer)
-                    continue;
+                foreach (var renderer in controller.Renderers)
+                {
+                    if (!renderer)
+                        continue;
 
-                var color = renderer.Color.With(a: value);
-                renderer.Color = color;
+                    var color = renderer.Color.With(a: value);
+                    renderer.Color = color;
+                }
             }
         }
 
@@ -74,7 +97,7 @@ namespace HegaCore
 
                 var cubism = obj.AddComponent<CubismRendererController>();
                 cubism.Init(sortingLayer, sortingOrder);
-                cubism.FindCubismRenderController();
+                cubism.FindAllCubismRenderControllers();
 
                 EditorUtility.SetDirty(obj);
             }

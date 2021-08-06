@@ -6,6 +6,7 @@ using VisualNovelData.Data;
 using UnuGames;
 using DG.Tweening;
 using Cysharp.Threading.Tasks;
+using Sirenix.OdinInspector;
 
 namespace HegaCore.UI
 {
@@ -44,6 +45,12 @@ namespace HegaCore.UI
         [SerializeField]
         private SingleOrderLayer characterLayer = default;
 
+        [ShowIf("@UnityEngine.Application.isPlaying")]
+        private IInitializable<UIGalleryDialog>[] initializables;
+
+        [ShowIf("@UnityEngine.Application.isPlaying")]
+        private IDeinitializable<UIGalleryDialog>[] deinitializables;
+
         private Action onShow;
         private Action onShowCompleted;
         private Action onHide;
@@ -65,6 +72,9 @@ namespace HegaCore.UI
 
         private void Awake()
         {
+            this.initializables = GetComponentsInChildren<IInitializable<UIGalleryDialog>>().OrEmpty();
+            this.deinitializables = GetComponentsInChildren<IDeinitializable<UIGalleryDialog>>().OrEmpty();
+
             this.characterList.OnSelect += SelectCharacter;
             this.minimalPanel.OnShowComplete.AddListener(UnlockInput);
             this.fullPanel.OnShowComplete.AddListener(UnlockInput);
@@ -128,12 +138,28 @@ namespace HegaCore.UI
             this.characterList.Initialize(CharacterDataset.Map, this.dataContainer.CharacterImages);
             this.currentImageId = -1;
             this.currentImageIndex = -1;
+
+            if (this.initializables != null && this.initializables.Length > 0)
+            {
+                for (var i = 0; i < this.initializables.Length; i++)
+                {
+                    this.initializables[i]?.Initialize(this);
+                }
+            }
         }
 
         private void Deinitialize()
         {
             this.characterList.Deinitialize();
             HideCharacterModel();
+
+            if (this.deinitializables != null && this.deinitializables.Length > 0)
+            {
+                for (var i = 0; i < this.deinitializables.Length; i++)
+                {
+                    this.deinitializables[i]?.Deinitialize(this);
+                }
+            }
         }
 
         private void SelectCharacter(int characterId)

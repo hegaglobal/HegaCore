@@ -7,7 +7,7 @@ namespace HegaCore
     [Serializable, InlineProperty]
     public struct SingleOrderLayer
     {
-        [HorizontalGroup(PaddingLeft = 6), HideLabel]
+        [HorizontalGroup(PaddingLeft = 6), HideLabel, DrawWithUnity]
         public SingleLayer Layer;
 
         [HorizontalGroup, LabelWidth(35)]

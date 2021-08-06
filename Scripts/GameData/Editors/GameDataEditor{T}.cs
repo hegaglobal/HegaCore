@@ -65,7 +65,7 @@ namespace HegaCore.Editor
             }
 
             this.settings = GetComponentInChildren<TGameSettingsEditor>();
-            this.players = GetComponentsInChildren<TPlayerDataEditor>();
+            this.players = GetComponentsInChildren<TPlayerDataEditor>().OrEmpty();
             this.handler.Initialize(this.folderPath, this.fileName, this.extension, string.Empty);
         }
 

@@ -31,7 +31,15 @@ namespace HegaCore
             => this.value == other.value;
 
         public override int GetHashCode()
-            => 2108858624 + this.value.GetHashCode();
+        {
+#if USE_SYSTEM_HASHCODE
+            return HashCode.Combine(this.value);
+#endif
+
+#pragma warning disable CS0162 // Unreachable code detected
+            return 2108858624 + this.value.GetHashCode();
+#pragma warning restore CS0162 // Unreachable code detected
+        }
 
         public override string ToString()
             => this.value.ToString();
@@ -63,6 +71,9 @@ namespace HegaCore
 
         public static implicit operator uint(in Uid value)
             => value.value;
+
+        public static explicit operator int(in Uid value)
+            => (int)value.value;
 
         public static explicit operator Uid(uint value)
             => new Uid(value);

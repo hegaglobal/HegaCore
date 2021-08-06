@@ -109,16 +109,19 @@ namespace HegaCore
                 if (!TryGetCommand(input, out var commandId))
                     continue;
 
-                if (executed.Contains(input))
+                if (this.executed.Contains(input))
                 {
-                    executed.Remove(input);
+                    this.executed.Remove(input);
 
                     if (this.commandMap.TryGetCommand(commandId, out var command))
                         command.Deactivate();
+
+                    continue;
                 }
-                else if (CanInvoke(input))
+
+                if (CanInvoke(input))
                 {
-                    executed.Add(input);
+                    this.executed.Add(input);
 
                     if (this.commandMap.TryGetCommand(commandId, out var command))
                         command.Execute();

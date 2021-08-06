@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using UnityEngine;
 
 namespace HegaCore.Events.Commands.Data
 {
@@ -8,15 +9,43 @@ namespace HegaCore.Events.Commands.Data
     {
         public override string Key => "mission_pass";
 
+        public override bool Ignorable => false;
+
         public override void Invoke(in Segment<object> parameters)
         {
+            var data = EventManager.Instance.BaseDataContainer;
+
+            if (ValidateParameters(parameters, 4, nameof(MissionUnlock), true))
+            {
+                if (!this.converter.TryConvert(parameters[0], out int missionFrom) ||
+                    !this.converter.TryConvert(parameters[1], out int missionTo) ||
+                    !this.converter.TryConvert(parameters[2], out int startPoint) ||
+                    !this.converter.TryConvert(parameters[3], out int increasePoint))
+                    return;
+
+                var min = Mathf.Min(missionFrom, missionTo);
+                var max = Mathf.Max(missionFrom, missionTo);
+                var currentPoint = data.GetPlayerProgressPoint();
+
+                for (var mission = min; mission <= max; mission++)
+                {
+                    var point = startPoint + (increasePoint * (mission - 1));
+
+                    if (point > currentPoint)
+                        break;
+
+                    data.PassMission(mission);
+                }
+
+                Log(missionFrom, missionTo, startPoint, increasePoint);
+                return;
+            }
+
             if (!ValidateParameters(parameters, 1, nameof(MissionPass)))
                 return;
 
             if (!this.converter.TryConvert(parameters[0], out int value))
                 return;
-
-            var data = EventManager.Instance.BaseDataContainer;
 
             if (data.PassMission(value))
                 Log(value);

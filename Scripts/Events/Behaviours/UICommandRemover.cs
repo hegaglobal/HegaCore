@@ -10,7 +10,7 @@ namespace HegaCore.Events.Commands
                 return;
 
             var system = EventManager.Instance.CommandSystem;
-            var events = GetComponentsInChildren<UICommand>();
+            var events = GetComponentsInChildren<UICommand>().OrEmpty();
 
             foreach (var e in events)
             {

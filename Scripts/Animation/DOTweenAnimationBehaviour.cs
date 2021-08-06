@@ -6,13 +6,15 @@ using Sirenix.OdinInspector;
 
 namespace HegaCore
 {
-    public abstract class DOTweenAnimationBehaviour : MonoBehaviour
+    public abstract class DOTweenAnimationBehaviour : MonoBehaviour, IPlayState
     {
         [field: SerializeField, LabelText(nameof(Duration))]
         public float Duration { get; set; } = 1f;
 
         [field: SerializeField, LabelText(nameof(Ease))]
         public Ease Ease { get; set; } = Ease.Linear;
+
+        public PlayState PlayState { get; private set; }
 
         private readonly Dictionary<AnimatorStateEventBase, bool> events = new Dictionary<AnimatorStateEventBase, bool>();
         private Tweener tween;
@@ -154,5 +156,17 @@ namespace HegaCore
 
         public void RemoveAllEvents()
             => this.events.Clear();
+
+        public void SetPlayState(PlayState value)
+        {
+            this.PlayState = value;
+
+            switch (value)
+            {
+                case PlayState.Paused: Pause(); break;
+                case PlayState.Running: Play(); break;
+                case PlayState.Stopped: Stop(); break;
+            }
+        }
     }
 }

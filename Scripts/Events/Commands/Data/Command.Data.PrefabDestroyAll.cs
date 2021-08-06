@@ -8,6 +8,8 @@ namespace HegaCore.Events.Commands.Data
     {
         public override string Key => "prefab_destroy_all";
 
+        public override bool Ignorable => true;
+
         public override void Invoke(in Segment<object> parameters)
         {
             Log();

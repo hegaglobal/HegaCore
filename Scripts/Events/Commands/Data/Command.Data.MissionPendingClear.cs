@@ -8,6 +8,8 @@ namespace HegaCore.Events.Commands.Data
     {
         public override string Key => "mission_pending_clear";
 
+        public override bool Ignorable => false;
+
         public override void Invoke(in Segment<object> parameters)
         {
             var data = EventManager.Instance.BaseDataContainer;

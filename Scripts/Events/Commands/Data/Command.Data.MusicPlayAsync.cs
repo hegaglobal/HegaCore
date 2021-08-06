@@ -8,6 +8,8 @@ namespace HegaCore.Events.Commands.Data
     {
         public override string Key => "music_play_async";
 
+        public override bool Ignorable => true;
+
         public override void Invoke(in Segment<object> parameters)
         {
             if (!ValidateParameters(parameters, 1, nameof(MusicPlayAsync)))

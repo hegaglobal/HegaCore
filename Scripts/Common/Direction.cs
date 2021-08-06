@@ -51,10 +51,16 @@ namespace HegaCore
 
         public override int GetHashCode()
         {
+#if USE_SYSTEM_HASHCODE
+            return HashCode.Combine(this.Horizontal, this.Vertical);
+#endif
+
+#pragma warning disable CS0162 // Unreachable code detected
             var hashCode = 1238135884;
             hashCode = hashCode * -1521134295 + this.Horizontal.GetHashCode();
             hashCode = hashCode * -1521134295 + this.Vertical.GetHashCode();
             return hashCode;
+#pragma warning restore CS0162 // Unreachable code detected
         }
 
         public override string ToString()

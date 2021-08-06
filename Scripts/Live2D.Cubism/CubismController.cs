@@ -1,6 +1,7 @@
 ﻿using UnityEngine;
 using Live2D.Cubism.Rendering;
 using Cysharp.Threading.Tasks;
+using Sirenix.OdinInspector;
 
 namespace HegaCore
 {
@@ -20,10 +21,19 @@ namespace HegaCore
 
         [SerializeField]
         private bool setOrderOnAwake = false;
-        
+
+        [BoxGroup("Order & Layer")]
         [SerializeField]
-        private int orderInLayer = 0;
-        
+        private bool withLayer = false;
+
+        [BoxGroup("Order & Layer")]
+        [SerializeField, HideIf(nameof(withLayer))]
+        private int orderInLayer = default;
+
+        [BoxGroup("Order & Layer")]
+        [SerializeField, ShowIf(nameof(withLayer)), InlineProperty]
+        private SingleOrderLayer orderAndLayer = default;
+
         public Animator Animator => this.animator;
 
         public float TempAlpha { get; set; }
@@ -52,9 +62,19 @@ namespace HegaCore
             GetComponents();
 
             this.LocalScale = this.useScaleOne ? Vector3.one : this.transform.localScale;
-            
-            if (this.setOrderOnAwake)
+
+            if (!this.setOrderOnAwake)
+                return;
+
+            if (this.withLayer)
+            {
+                SetSortingOrder(this.orderAndLayer.Order);
+                SetLayer(this.orderAndLayer.Layer);
+            }
+            else
+            {
                 SetSortingOrder(this.orderInLayer);
+            }
         }
 
         public void Initialize(string id, bool hasIdAnim, bool hasBodyAnim, bool hasEmoAnim)
@@ -158,7 +178,7 @@ namespace HegaCore
             {
                 this.cubismRenderer.SortingOrder = sortingOrder;
             }
-            
+
             if (this.spriteRenderer)
             {
                 this.spriteRenderer.sortingOrder = sortingOrder;

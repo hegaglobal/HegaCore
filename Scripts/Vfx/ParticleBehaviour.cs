@@ -3,7 +3,7 @@
 namespace HegaCore
 {
     [RequireComponent(typeof(ParticleSystem))]
-    public class ParticleBehaviour : MonoBehaviour, IAlive, IPlayState
+    public class ParticleBehaviour : MonoBehaviour, IAlive, ISetActive, IPlayState
     {
         public ParticleSystem Particle { get; private set; }
 
@@ -11,14 +11,19 @@ namespace HegaCore
 
         public PlayState PlayState { get; private set; }
 
+        private GameObject m_gameObject;
+        private Transform m_transform;
+
         protected virtual void Awake()
         {
+            this.m_gameObject = this.gameObject;
+            this.m_transform = this.transform;
             this.Particle = GetComponent<ParticleSystem>();
         }
 
-        public virtual void Initialize(in Vector3 position)
+        public virtual void Set(in Vector3 position)
         {
-            this.transform.position = position;
+            this.m_transform.position = position;
         }
 
         public void Play()
@@ -29,6 +34,9 @@ namespace HegaCore
 
         public void Stop()
             => this.Particle.Stop(true, ParticleSystemStopBehavior.StopEmitting);
+
+        public void SetActive(bool value)
+            => this.m_gameObject.SetActive(value);
 
         public void SetPlayState(PlayState value)
         {

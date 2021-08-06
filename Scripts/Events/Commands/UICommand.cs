@@ -11,8 +11,12 @@ namespace HegaCore.Events.Commands
         [SerializeField]
         private string key = string.Empty;
 
-        public string Key
-            => this.key;
+        [SerializeField]
+        private bool ignorable = false;
+
+        public string Key => this.key;
+
+        public bool Ignorable => this.ignorable;
 
         protected Converter converter { get; } = new Converter();
 

@@ -27,15 +27,15 @@ namespace HegaCore.UI
             = new ObservableList<Language>();
 
         [ShowIf("@UnityEngine.Application.isPlaying")]
-        private IInitializable[] initializables;
+        private IInitializable<UISettingsDialog>[] initializables;
 
         [ShowIf("@UnityEngine.Application.isPlaying")]
-        private IDeinitializable[] deinitializables;
+        private IDeinitializable<UISettingsDialog>[] deinitializables;
 
         private void Awake()
         {
-            this.initializables = GetComponentsInChildren<IInitializable>();
-            this.deinitializables = GetComponentsInChildren<IDeinitializable>();
+            this.initializables = GetComponentsInChildren<IInitializable<UISettingsDialog>>().OrEmpty();
+            this.deinitializables = GetComponentsInChildren<IDeinitializable<UISettingsDialog>>().OrEmpty();
         }
 
         public override void OnShow(params object[] args)
@@ -100,7 +100,7 @@ namespace HegaCore.UI
             {
                 for (var i = 0; i < this.deinitializables.Length; i++)
                 {
-                    this.deinitializables[i]?.Deinitialize();
+                    this.deinitializables[i]?.Deinitialize(this);
                 }
             }
         }
