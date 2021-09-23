@@ -161,7 +161,8 @@ namespace HegaCore.UI
 
             this.panelBackground.Hide(true);
             this.panelConversation.Hide(true);
-            this.panelCover.Show(true);
+            // if(showCoverOnAwake)
+            //     this.panelCover.Show(true);
 
             this.onShow?.Invoke();
         }
@@ -176,11 +177,16 @@ namespace HegaCore.UI
         {
             await ResetUIAsync();
             await UniTask.WaitUntil(() => this.isInitialized);
-
-            this.panelCover.Hide();
+            
+            //Code Cu cua Tung, goi hide panel => complete thi show first dialogue.
+            //this.panelCover.Hide();
+            //End Code Cu ========================================================
+            
             this.onShowCompleted?.Invoke();
-
             RegisterCommands();
+            
+            //Code moi, Hide truc tiep. Muon show cover thi dung command.
+            ShowFirstDialogue();
         }
 
         private void RegisterCommands()
@@ -232,8 +238,13 @@ namespace HegaCore.UI
 
         private void BeginHide()
         {
-            this.panelCover.OnShowComplete.AddListener(OnActivityShowComplete);
-            this.panelCover.Show();
+            //Code Cu cua Tung, luon luôn show panel cover khi hide dialogue conv.
+            // this.panelCover.OnShowComplete.AddListener(OnActivityShowComplete);
+            // this.panelCover.Show();
+            //End Code Cu ========================================================
+            
+            //Code moi, Hide truc tiep. Muon show cover thi dung command.
+            Hide();
         }
 
         private void OnActivityShowComplete()
@@ -379,7 +390,7 @@ namespace HegaCore.UI
         }
 
         private void SetBackground(string name, float? duration = null)
-            => this.panelBackground.Switch(name, duration: duration);
+        => this.panelBackground.Switch(name, duration: duration);
 
         private async UniTask ResetUIAsync()
         {
@@ -458,6 +469,7 @@ namespace HegaCore.UI
             if (this.contentTyper.IsTyping)
             {
                 this.contentTyper.Skip();
+                Debug.Log("Skip Next Return: ====== Skip Typing ++++++++++++");
                 return;
             }
 
@@ -466,8 +478,6 @@ namespace HegaCore.UI
                 UnuLogger.LogWarning("Cannot skip null dialogue");
                 return;
             }
-
-            Invoke(this.dialogue.CommandsOnEnd);
             DelaySkipNext().Forget();
         }
 
@@ -525,6 +535,7 @@ namespace HegaCore.UI
             }
             else
             {
+                Invoke(this.dialogue.CommandsOnEnd);
                 TrySkipNext();
             }
         }
@@ -583,7 +594,6 @@ namespace HegaCore.UI
             if (this.dialogue.IsEnd())
             {
                 UnuLogger.Log($"Show dialogue: {this.dialogue.Id}");
-
                 Invoke(this.dialogue.CommandsOnStart);
                 Invoke(this.dialogue.CommandsOnEnd);
 
@@ -605,7 +615,7 @@ namespace HegaCore.UI
             canShowActors = true;
 
             this.defaultChoice = this.dialogue.Choices.Count > 1 ? ChoiceRow.None : this.dialogue.GetChoice(0);
-
+            Clear();
             Invoke(this.dialogue.CommandsOnStart);
             DelayShowDialogue().Forget();
         }
@@ -638,7 +648,6 @@ namespace HegaCore.UI
         private void ContentTyper_OnPrintCompleted()
         {
             this.IsTyping = false;
-
             Invoke(this.dialogue.CommandsOnEnd);
             DelayPrintNonDefaultDialogue().Forget();
         }
@@ -1230,6 +1239,33 @@ namespace HegaCore.UI
         private enum SpeedType
         {
             Normal, SpeedUp, RenewSpeedUp
+        }
+
+        public void UI_Event_ShowActivity(float duration, float hideDuration)
+        {
+            UI_Event_WaitSeconds(duration);
+            UIDefaultActivity.Show(duration,hideDuration);
+        }
+        
+        public void UI_Event_ShowActivity(float duration)
+        {
+            UI_Event_WaitSeconds(duration);
+            UIDefaultActivity.Show(duration);
+        }
+
+        public void UI_Event_HideActivity(float duration = 1f)
+        {
+            UIDefaultActivity.Hide();
+        }
+
+        public void UI_Event_Play_BGM(string bgm)
+        {
+            AudioManager.Instance.Player.PlayMusic(bgm);
+        }
+
+        public void UI_Event_Stop_BGM()
+        {
+            AudioManager.Instance.Player.StopMusic();
         }
     }
 }
