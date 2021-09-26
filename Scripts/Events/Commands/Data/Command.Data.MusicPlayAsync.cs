@@ -17,7 +17,7 @@ namespace HegaCore.Events.Commands.Data
 
             if (this.converter.TryConvert(parameters[0], out string value))
             {
-                AudioManager.Instance.Player.PlayMusicAsync(value).Forget();
+                AudioManager.Instance.Player.PlayMusicAsync(value);
                 Log(value);
             }
         }

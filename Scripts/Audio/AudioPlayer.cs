@@ -269,7 +269,11 @@ namespace HegaCore
             FadeMusicPlay();
         }
 
-        public async UniTaskVoid PlayMusicAsync(string key, bool silent = true)
+        public void PlayMusicAsync(string key)
+        {
+            PlayMusicAsync(key,true).Forget();
+        }
+        public async UniTaskVoid PlayMusicAsync(string key, bool silent)
         {
             await this.manager.PrepareMusicAsync(silent, key);
 
@@ -378,7 +382,6 @@ namespace HegaCore
 
             this.voice.Stop();
             this.voice.clip = null;
-
             if (this.manager.TryGetVoice(key, out var voiceClip))
             {
                 this.currentVoiceKey = key;
@@ -415,7 +418,6 @@ namespace HegaCore
         {
             if (!CanPlayVoiceBG(key))
                 return;
-
             if (this.manager.TryGetVoiceBG(key, out this.voiceBGClip))
             {
                 this.currentVoiceBGKey = key;

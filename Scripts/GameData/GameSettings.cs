@@ -34,7 +34,7 @@ namespace HegaCore
         {
             this.Revision = 1;
             this.Language = DefaultLanguage;
-            this.MusicVolume = 1f;
+            this.MusicVolume = 0.65f;
             this.SoundVolume = 1f;
             this.VoiceVolume = 1f;
             this.InterfaceVolume = 1f;

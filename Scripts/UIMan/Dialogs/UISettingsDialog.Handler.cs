@@ -1,3 +1,4 @@
+using System;
 using System.Collections.Generic;
 using Sirenix.OdinInspector;
 using UnityEngine;
@@ -8,9 +9,9 @@ namespace HegaCore.UI
 {
     public partial class UISettingsDialog : UIManDialog
     {
-        public static void Show()
+        public static void Show(Action onHideComplete = null)
         {
-            UIMan.Instance.ShowDialog<UISettingsDialog>();
+            UIMan.Instance.ShowDialog<UISettingsDialog>(onHideComplete);
         }
 
         public static void Hide(bool deactive = true)
@@ -32,6 +33,8 @@ namespace HegaCore.UI
         [ShowIf("@UnityEngine.Application.isPlaying")]
         private IDeinitializable<UISettingsDialog>[] deinitializables;
 
+        private Action onHideCompleted;
+        
         private void Awake()
         {
             this.initializables = GetComponentsInChildren<IInitializable<UISettingsDialog>>().OrEmpty();
@@ -41,7 +44,15 @@ namespace HegaCore.UI
         public override void OnShow(params object[] args)
         {
             base.OnShow(args);
+            var index = 0;
+            args.GetThenMoveNext(ref index, out this.onHideCompleted);
             Initialize();
+        }
+
+        public override void OnHideComplete()
+        {
+            base.OnHideComplete();
+            this.onHideCompleted?.Invoke();
         }
 
         public override void OnHide()

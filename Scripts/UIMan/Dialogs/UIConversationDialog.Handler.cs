@@ -208,7 +208,7 @@ namespace HegaCore.UI
 
             this.isEnd = true;
             this.isHiding = true;
-
+            AudioManager.Instance.Player.StopVoice();
             RemoveCommands();
 
             ForceHideAllActors();
@@ -469,7 +469,6 @@ namespace HegaCore.UI
             if (this.contentTyper.IsTyping)
             {
                 this.contentTyper.Skip();
-                Debug.Log("Skip Next Return: ====== Skip Typing ++++++++++++");
                 return;
             }
 
@@ -1266,6 +1265,11 @@ namespace HegaCore.UI
         public void UI_Event_Stop_BGM()
         {
             AudioManager.Instance.Player.StopMusic();
+        }
+
+        public void UI_Event_Voice(string voice)
+        {
+            AudioManager.Instance.Player.PlayVoice(voice);
         }
     }
 }

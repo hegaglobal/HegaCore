@@ -13,7 +13,7 @@ namespace HegaCore.Events.Commands.Data
         public override void Invoke(in Segment<object> parameters)
         {
             var value = EventManager.Instance.BaseDataContainer.Music;
-            AudioManager.Instance.Player.PlayMusicAsync(value).Forget();
+            AudioManager.Instance.Player.PlayMusicAsync(value);
             Log(value);
         }
     }
