@@ -396,6 +396,13 @@ namespace HegaCore
             }
         }
 
+        public async UniTaskVoid PlayVoiceLoopAsync(string key, bool silent = true)
+        {
+            await this.manager.PrepareVoiceAsync(silent, key);
+            
+            PlayVoiceLoop(key);
+        }
+        
         public async UniTaskVoid PlayVoiceAsync(string key, bool silent = true)
         {
             await this.manager.PrepareVoiceAsync(silent, key);
@@ -414,7 +421,7 @@ namespace HegaCore
             => !this.voiceBG.isPlaying ||
                !string.Equals(this.currentVoiceBGKey, key);
 
-        public void PlayVoiceBG(string key)
+        public void PlayVoiceBG(string key, bool once = false)
         {
             if (!CanPlayVoiceBG(key))
                 return;
@@ -422,6 +429,7 @@ namespace HegaCore
             {
                 this.currentVoiceBGKey = key;
                 FadeVoiceBGPlay();
+                this.voiceBG.loop = !once;
             }
             else
             {
@@ -446,11 +454,11 @@ namespace HegaCore
             FadeVoiceBGPlay();
         }
 
-        public async UniTaskVoid PlayVoiceBGAsync(string key, bool silent = true)
+        public async UniTaskVoid PlayVoiceBGAsync(string key, bool silent = true, bool loop = true)
         {
             await this.manager.PrepareVoiceBGAsync(silent, key);
 
-            PlayVoiceBG(key);
+            PlayVoiceBG(key, loop);
         }
 
         public void PlayVoiceBGAsync(string key, AudioClip clip, bool silent = true)
