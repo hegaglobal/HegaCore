@@ -218,11 +218,9 @@ namespace HegaCore.UI
         public override void OnHideComplete()
         {
             ToggleCanvases(false);
-
             base.OnHideComplete();
-
-            Deinitialize();
             this.onHideCompleted?.Invoke();
+            Deinitialize();
         }
 
         private void HideOnEnd()
