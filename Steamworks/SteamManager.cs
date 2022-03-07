@@ -68,6 +68,10 @@ public class SteamManager : MonoBehaviour {
 		}
 		s_instance = this;
 
+		#if UNITY_EDITOR
+		return;
+		#endif
+		
 		if(s_EverInitialized) {
 			// This is almost always an error.
 			// The most common case where this happens is when SteamManager gets destroyed because of Application.Quit(),
