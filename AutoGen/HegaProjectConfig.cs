@@ -24,13 +24,13 @@ namespace HegaCore.AutoGen
 
         [Space]
         [FoldoutGroup("Folders")]
-        [InfoBox("@\"Assets/\" + projectFolder + \"/\" + $value.Replace('\\\\','/')")]
+        [InfoBox("@\"Assets/\" + projectFolder + \"/Scripts/\" + $value.Replace('\\\\','/')")]
         [SerializeField, LabelText("Editor Scripts")]
         private string projectScriptEditor = "Editor";
 
         [Space]
         [FoldoutGroup("Folders")]
-        [InfoBox("@\"Assets/\" + projectFolder + \"/\" + $value.Replace('\\\\','/')")]
+        [InfoBox("@\"Assets/\" + projectFolder + \"/Scripts/\" + $value.Replace('\\\\','/')")]
         [SerializeField, LabelText("Runtime Scripts")]
         private string projectScriptRuntime = "Runtime";
 
