@@ -506,12 +506,12 @@ namespace HegaCore.UI
         private static void OnCompleted(UIActivity sender, params object[] args)
             => _onCompleted?.Invoke();
 
-        public static void Hide()
+        public static void Hide(float duration = 0)
         {
             TryInit();
 
             if (_activity)
-                _activity.Hide();
+                _activity.Hide(duration);
         }
 
         private static void TryInit()
