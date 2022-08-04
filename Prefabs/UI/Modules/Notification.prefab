@@ -225,15 +225,12 @@ MonoBehaviour:
   textField:
     label: Text
     member: Content
-    isNullable: 0
   colorField:
     label: Color
     member: 
-    isNullable: 1
   formatField:
     label: Format
     member: 
-    isNullable: 0
   textConverter:
     label: Text
     m_adapter: {fileID: 0}
@@ -302,7 +299,6 @@ MonoBehaviour:
   valueField:
     label: bool
     member: HasTitle
-    isNullable: 0
   valueConverter:
     label: bool
     m_adapter: {fileID: 0}
@@ -457,15 +453,12 @@ MonoBehaviour:
   textField:
     label: Text
     member: Content
-    isNullable: 0
   colorField:
     label: Color
     member: 
-    isNullable: 1
   formatField:
     label: Format
     member: 
-    isNullable: 0
   textConverter:
     label: Text
     m_adapter: {fileID: 0}
@@ -545,7 +538,7 @@ CanvasGroup:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 5910454337765111895}
   m_Enabled: 1
-  m_Alpha: 1
+  m_Alpha: 0
   m_Interactable: 1
   m_BlocksRaycasts: 1
   m_IgnoreParentGroups: 0
@@ -774,15 +767,12 @@ MonoBehaviour:
   textField:
     label: Text
     member: Title
-    isNullable: 0
   colorField:
     label: Color
     member: 
-    isNullable: 1
   formatField:
     label: Format
     member: 
-    isNullable: 0
   textConverter:
     label: Text
     m_adapter: {fileID: 0}

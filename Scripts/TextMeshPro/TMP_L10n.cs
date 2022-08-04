@@ -10,6 +10,8 @@ namespace HegaCore
         [SerializeField]
         private string key = string.Empty;
 
+        [SerializeField] private bool upperCase = false;
+        
         [SerializeField]
         private bool silent = false;
 
@@ -45,6 +47,14 @@ namespace HegaCore
         }
 
         public void Localize()
-            => this.text.SetText(L10n.Localize(this.key, this.silent));
+        {
+            var text = "";
+            if (upperCase)
+                text = L10n.Localize(this.key, this.silent).ToUpper();
+            else
+                text = L10n.Localize(this.key, this.silent);
+            
+            this.text.SetText(text);
+        }
     }
 }
