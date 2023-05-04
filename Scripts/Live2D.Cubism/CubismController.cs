@@ -2,6 +2,7 @@
 using Live2D.Cubism.Rendering;
 using Cysharp.Threading.Tasks;
 using Sirenix.OdinInspector;
+using Live2D.Cubism.Framework.MouthMovement;
 
 namespace HegaCore
 {
@@ -49,6 +50,9 @@ namespace HegaCore
         private bool hasEmoAnim;
         private Color color;
 
+        [BoxGroup("Lip syns")] public CubismMouthController MouthController;
+        [BoxGroup("Lip syns")] public CubismAudioMouthInput AudioMouthInput;
+        
         [ContextMenu("Get Components")]
         private void GetComponents()
         {
@@ -275,5 +279,32 @@ namespace HegaCore
             public const string Body = nameof(Body);
             public const string Emo = nameof(Emo);
         }
+        
+        #region Lip syns
+
+        public void InitLipsyns()
+        {
+            if (AudioMouthInput != null)
+                AudioMouthInput.AudioInput = AudioManager.Instance.VoiceSource;
+        }
+    
+        public void EnableLipsyns(bool enable)
+        {
+            UnuLogger.Log("Enable Lipsyns : "+ enable);
+            AudioMouthInput.enabled = enable;
+            MouthController.enabled = enable;
+        }
+    
+        public void SelectMouth(int mouthTypeValue)
+        {
+            //MouthController.currentMouthTypeValue = mouthTypeValue;
+        }
+
+        public void EnableControlMouthType(bool enable)
+        {
+            //MouthController.overrideMouthType = enable;
+        }
+    
+        #endregion
     }
 }

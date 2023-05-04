@@ -3,17 +3,17 @@
 // Where that dedication is not recognized you are granted a perpetual,
 // irrevocable license to copy and modify this file as you see fit.
 //
-// Version: 1.0.12
+// Version: 1.0.8
 
-#if !(UNITY_STANDALONE_WIN || UNITY_STANDALONE_LINUX || UNITY_STANDALONE_OSX || STEAMWORKS_WIN || STEAMWORKS_LIN_OSX)
+#if UNITY_ANDROID || UNITY_IOS || UNITY_TIZEN || UNITY_TVOS || UNITY_WEBGL || UNITY_WSA || UNITY_PS4 || UNITY_WII || UNITY_XBOXONE || UNITY_SWITCH
 #define DISABLESTEAMWORKS
 #endif
 
-using UnityEngine;
 #if !DISABLESTEAMWORKS
+
+using UnityEngine;
 using System.Collections;
 using Steamworks;
-#endif
 
 //
 // The SteamManager provides a base implementation of Steamworks.NET on which you can build upon.
@@ -21,8 +21,8 @@ using Steamworks;
 //
 [DisallowMultipleComponent]
 public class SteamManager : MonoBehaviour {
-#if !DISABLESTEAMWORKS
-	protected static bool s_EverInitialized = false;
+
+	public bool steamEnabled;
 
 	protected static SteamManager s_instance;
 	protected static SteamManager Instance {
@@ -36,7 +36,9 @@ public class SteamManager : MonoBehaviour {
 		}
 	}
 
-	protected bool m_bInitialized = false;
+	protected static bool s_EverInitialized;
+
+	protected bool m_bInitialized;
 	public static bool Initialized {
 		get {
 			return Instance.m_bInitialized;
@@ -44,23 +46,13 @@ public class SteamManager : MonoBehaviour {
 	}
 
 	protected SteamAPIWarningMessageHook_t m_SteamAPIWarningMessageHook;
-
-	[AOT.MonoPInvokeCallback(typeof(SteamAPIWarningMessageHook_t))]
 	protected static void SteamAPIDebugTextHook(int nSeverity, System.Text.StringBuilder pchDebugText) {
 		Debug.LogWarning(pchDebugText);
 	}
 
-#if UNITY_2019_3_OR_NEWER
-	// In case of disabled Domain Reload, reset static members before entering Play Mode.
-	[RuntimeInitializeOnLoadMethod(RuntimeInitializeLoadType.SubsystemRegistration)]
-	private static void InitOnPlayMode()
-	{
-		s_EverInitialized = false;
-		s_instance = null;
-	}
-#endif
-
 	protected virtual void Awake() {
+
+		
 		// Only one instance of SteamManager at a time!
 		if (s_instance != null) {
 			Destroy(gameObject);
@@ -68,11 +60,19 @@ public class SteamManager : MonoBehaviour {
 		}
 		s_instance = this;
 
-		#if UNITY_EDITOR
-		return;
-		#endif
+#if UNITY_EDITOR || CHEAT
+		steamEnabled = false;
+#endif
+
+		if (!steamEnabled)
+		{
+			gameObject.SetActive(false);
+			return;
+		}
+
+		Debug.Log("SteamMamager INIT SUCCESSFULLY !!!!!!!!!!!!!!!");
 		
-		if(s_EverInitialized) {
+		if (s_EverInitialized) {
 			// This is almost always an error.
 			// The most common case where this happens is when SteamManager gets destroyed because of Application.Quit(),
 			// and then some Steamworks code in some other OnDestroy gets called afterwards, creating a new SteamManager.
@@ -98,7 +98,7 @@ public class SteamManager : MonoBehaviour {
 			// Once you get a Steam AppID assigned by Valve, you need to replace AppId_t.Invalid with it and
 			// remove steam_appid.txt from the game depot. eg: "(AppId_t)480" or "new AppId_t(480)".
 			// See the Valve documentation for more information: https://partner.steamgames.com/doc/sdk/api#initialization_and_shutdown
-			if (SteamAPI.RestartAppIfNecessary(AppId_t.Invalid)) {
+			if (SteamAPI.RestartAppIfNecessary((AppId_t)1812060)) {
 				Application.Quit();
 				return;
 			}
@@ -172,11 +172,6 @@ public class SteamManager : MonoBehaviour {
 		// Run Steam client callbacks
 		SteamAPI.RunCallbacks();
 	}
-#else
-	public static bool Initialized {
-		get {
-			return false;
-		}
-	}
-#endif // !DISABLESTEAMWORKS
 }
+
+#endif // !DISABLESTEAMWORKS

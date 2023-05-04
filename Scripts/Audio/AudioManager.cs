@@ -58,6 +58,8 @@ namespace HegaCore
         private readonly KeyMap voiceBGKeyMap;
         private readonly RefValue<float> soundBufferIntervalRef;
 
+        public AudioSource VoiceSource => voiceSource;
+        
         public AudioManager()
         {
             this.musicMap = new AudioMap();
