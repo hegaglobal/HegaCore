@@ -24,7 +24,11 @@ namespace HegaCore
             }
 
             this.Settings = new GameSettings {
+                #if STOVE
+                Language = "kr"
+                #else
                 Language = "en"
+                #endif
             };
         }
 

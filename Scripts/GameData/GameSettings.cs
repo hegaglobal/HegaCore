@@ -8,7 +8,11 @@ namespace HegaCore
     {
         public const int CurrentRevision = 1;
 
+#if STOVE
+        public const string DefaultLanguage = "kr";
+#else
         public const string DefaultLanguage = "en";
+#endif
 
         public static ScreenResolution DefaultResolution { get; set; }
 

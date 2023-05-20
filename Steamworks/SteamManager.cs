@@ -56,7 +56,11 @@ public class SteamManager : MonoBehaviour {
 			return;
 		}
 		s_instance = this;
-
+		
+#if STOVE || UNITY_EDITOR
+		this.gameObject.SetActive(false);
+		return;
+#endif
 		if(s_EverInitialized) {
 			// This is almost always an error.
 			// The most common case where this happens is when SteamManager gets destroyed because of Application.Quit(),
