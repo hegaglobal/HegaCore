@@ -43,5 +43,21 @@ namespace HegaCore.UI
             get { return this.m_isProceed; }
             set { this.m_isProceed = value; OnPropertyChanged(nameof(this.IsProceed), value); }
         }
+        
+        private string m_okBtn = default;
+        [UIManAutoProperty]
+        public string OkBtn
+        {
+            get { return this.m_okBtn; }
+            set { this.m_okBtn = value; OnPropertyChanged(nameof(this.OkBtn), value); }
+        }
+        
+        private string m_cancelBtn = default;
+        [UIManAutoProperty]
+        public string CancelBtn
+        {
+            get { return this.m_cancelBtn; }
+            set { this.m_cancelBtn = value; OnPropertyChanged(nameof(this.CancelBtn), value); }
+        }
     }
 }
