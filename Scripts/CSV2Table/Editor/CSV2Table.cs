@@ -1,7 +1,6 @@
+#if UNITY_EDITOR
 using UnityEngine;
 using UnityEditor;
-using System.Collections;
-using System.Collections.Generic;
 using System.IO;
 
 public class CSV2Table : EditorWindow
@@ -96,3 +95,4 @@ public class CSV2Table : EditorWindow
         return AssetDatabase.LoadAssetAtPath(path, typeof(MonoScript)) as MonoScript;
 	}
 }
+#endif

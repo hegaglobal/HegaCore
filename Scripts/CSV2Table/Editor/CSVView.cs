@@ -1,7 +1,6 @@
-﻿using UnityEngine;
+﻿#if UNITY_EDITOR
+using UnityEngine;
 using UnityEditor;
-using System.Collections;
-using System.Collections.Generic;
 
 public class CSVView : EditorWindow 
 {
@@ -43,3 +42,4 @@ public class CSVView : EditorWindow
 		}
 	}
 }
+#endif
