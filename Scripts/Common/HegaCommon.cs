@@ -26,6 +26,20 @@ public static class HegaCommon
             Replace(",", "\",\"").
             Replace("}\",\"{", "},{");
     }
+
+    public static void TakeCapture(string filePath, string fileName)
+    {
+#if UNITY_EDITOR || DEV
+            var Now = System.DateTime.Now;
+            if (!Directory.Exists(filePath))
+            {
+                Directory.CreateDirectory(filePath);
+            }
+            string fullPath = $"{filePath}/{fileName}_{Now.Day}_{Now.Hour}h{Now.Minute}m{Now.Millisecond}ms.png";
+            ScreenCapture.CaptureScreenshot(fullPath);
+            UnuLogger.Log(fullPath);
+#endif
+    }
     
     /// <summary>
     /// Read File in streamingAssetsPath
