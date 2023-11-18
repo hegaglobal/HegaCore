@@ -31,9 +31,9 @@ namespace HegaCore
         [BoxGroup("Csv Files")]
         [SerializeField, ReadOnly, LabelText("Internal Path")]
         private string internalCsvPath = "Game/Database";
-
+        
         [BoxGroup("External Files")]
-        [SerializeField, LabelText("Daemon")]
+        [SerializeField, LabelText("Daemon") , Tooltip("IN-GAME CHEAT")]
         private string daemonFile = "daemon.dae";
 
         [BoxGroup("External Files")]
@@ -41,7 +41,7 @@ namespace HegaCore
         private string daemonFilePath = string.Empty;
 
         [BoxGroup("External Files")]
-        [SerializeField, LabelText("Overlord")]
+        [SerializeField, LabelText("Overlord"), Tooltip("ACHIEVEMENTS CHEAT")]
         private string overlordFile = "overlord.ove";
 
         [BoxGroup("External Files")]
@@ -49,7 +49,7 @@ namespace HegaCore
         private string overlordFilePath = string.Empty;
 
         [BoxGroup("Addressables Files")]
-        [SerializeField, LabelText("DarkLord")]
+        [SerializeField, LabelText("DarkLord"), Tooltip("R18 DLC")]
         private string darkLordFile = "darklord.dlc";
 
         [BoxGroup("Addressables Files")]
