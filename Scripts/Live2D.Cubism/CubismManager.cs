@@ -86,6 +86,7 @@ namespace HegaCore
             HideAll(this.hideDuration);
 
             await UniTask.Delay(System.TimeSpan.FromSeconds(this.hideDuration));
+            this.spawner.transform.position = Vector3.zero;
         }
 
         public void HideAll(bool instant = false)
@@ -342,5 +343,11 @@ namespace HegaCore
 
         private static float GetDuration(float? duration, float @default)
             => duration.HasValue && duration.Value > 0f ? duration.Value : @default;
+
+        [Button]
+        public void ShowTest(string modelId)
+        {
+            Show(modelId);
+        }
     }
 }

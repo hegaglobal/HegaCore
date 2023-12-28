@@ -9,9 +9,9 @@ namespace HegaCore.UI
 {
     public partial class UISettingsDialog : UIManDialog
     {
-        public static void Show(Action onHideComplete = null)
+        public static void Show(Action onHideComplete = null, Action onGiveUp = null)
         {
-            UIMan.Instance.ShowDialog<UISettingsDialog>(onHideComplete);
+            UIMan.Instance.ShowDialog<UISettingsDialog>(onHideComplete, onGiveUp);
         }
 
         public static void Hide(bool deactive = true)
@@ -34,6 +34,7 @@ namespace HegaCore.UI
         private IDeinitializable<UISettingsDialog>[] deinitializables;
 
         private Action onHideCompleted;
+        private Action onClickGiveUp;
         
         private void Awake()
         {
@@ -45,7 +46,18 @@ namespace HegaCore.UI
         {
             base.OnShow(args);
             var index = 0;
-            args.GetThenMoveNext(ref index, out this.onHideCompleted);
+            if (args.Length == 1)
+            {
+                args.GetThenMoveNext(ref index, out this.onHideCompleted);
+                HasGiveUp = false;
+            }
+            else if (args.Length == 2)
+            {
+                args.GetThenMoveNext(ref index, out this.onHideCompleted);
+                args.GetThenMoveNext(ref index, out this.onClickGiveUp);
+                HasGiveUp = true;
+            }
+
             Initialize();
         }
 
@@ -72,6 +84,12 @@ namespace HegaCore.UI
             Hide();
         }
 
+        public void UI_Button_GiveUp()
+        {
+            onClickGiveUp?.Invoke();
+            UI_Button_Close();
+        }
+        
         private void Initialize()
         {
             this.Music = Settings.Data.MusicVolume;

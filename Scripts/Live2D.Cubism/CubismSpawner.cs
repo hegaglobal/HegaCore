@@ -16,6 +16,7 @@ namespace HegaCore
 
         public async UniTask InitializeAsync(CharacterData data, bool darkLord)
         {
+            transform.position = new Vector3(-50, 0, 0);
             foreach (var character in data.Characters.Values)
             {
                 var key = character?.P1.OrDarkLord(darkLord);
