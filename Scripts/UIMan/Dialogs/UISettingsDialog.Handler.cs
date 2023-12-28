@@ -49,15 +49,13 @@ namespace HegaCore.UI
             if (args.Length == 1)
             {
                 args.GetThenMoveNext(ref index, out this.onHideCompleted);
-                HasGiveUp = false;
             }
             else if (args.Length == 2)
             {
                 args.GetThenMoveNext(ref index, out this.onHideCompleted);
                 args.GetThenMoveNext(ref index, out this.onClickGiveUp);
-                HasGiveUp = true;
             }
-
+            HasGiveUp = args.Length == 2;
             Initialize();
         }
 
