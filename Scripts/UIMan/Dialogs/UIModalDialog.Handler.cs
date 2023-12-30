@@ -98,6 +98,11 @@ namespace HegaCore.UI
             this.rootPanel.Show(true);
         }
 
+        public override void OnShowComplete()
+        {
+            base.OnShowComplete();
+        }
+
         public override void OnHideComplete()
         {
             base.OnHideComplete();
