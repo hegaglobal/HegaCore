@@ -23,10 +23,19 @@ namespace HegaCore
 
         public bool Initialized { get; private set; }
 
+        /// <summary>
+        /// DEV CHEAT
+        /// </summary>
         public bool Daemon { get; private set; }
 
+        /// <summary>
+        /// Achievement
+        /// </summary>
         public bool Overlord { get; private set; }
 
+        /// <summary>
+        /// R DLC
+        /// </summary>
         public bool DarkLord { get; private set; }
 
         public TTables Tables { get; }
