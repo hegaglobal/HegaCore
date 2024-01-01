@@ -61,7 +61,7 @@ namespace HegaCore.UI
             get { return this.m_selectedLanguage; }
             set { this.m_selectedLanguage = value; OnPropertyChanged(nameof(this.SelectedLanguage), value); }
         }
-        
+
         private bool m_hasGiveUp = default;
 
         [UIManAutoProperty]
@@ -69,6 +69,15 @@ namespace HegaCore.UI
         {
             get { return this.m_hasGiveUp; }
             set { this.m_hasGiveUp = value; OnPropertyChanged(nameof(this.HasGiveUp), value); }
+        }
+
+        private bool m_canGiveUp = default;
+
+        [UIManAutoProperty]
+        public bool CanGiveUp
+        {
+            get { return this.m_canGiveUp; }
+            set { this.m_canGiveUp = value; OnPropertyChanged(nameof(this.CanGiveUp), value); }
         }
     }
 }

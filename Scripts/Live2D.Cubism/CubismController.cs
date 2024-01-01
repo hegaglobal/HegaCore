@@ -1,4 +1,5 @@
-﻿using UnityEngine;
+﻿using System.Collections.Generic;
+using UnityEngine;
 using Live2D.Cubism.Rendering;
 using Cysharp.Threading.Tasks;
 using Sirenix.OdinInspector;
@@ -52,6 +53,10 @@ namespace HegaCore
 
         [BoxGroup("Lip syns")] public CubismMouthController MouthController;
         [BoxGroup("Lip syns")] public CubismAudioMouthInput AudioMouthInput;
+        
+        [BoxGroup("Custom Parameters")]
+        [ShowInInspector, ReadOnly]
+        private List<CubismParameterCustomControl> parameterControls = new List<CubismParameterCustomControl>();
         
         [ContextMenu("Get Components")]
         private void GetComponents()
@@ -305,6 +310,34 @@ namespace HegaCore
             //MouthController.overrideMouthType = enable;
         }
     
+        #endregion
+        
+        #region Control Parameters
+        public void AddParameterCustomControl(CubismParameterCustomControl customControl)
+        {
+            parameterControls.Add(customControl);
+        }
+
+        public void BlendParamToValue(string paramName, float value, float duration = 0f, float delay = 0f)
+        {
+            var custom = GetParameterControl(paramName);
+            custom?.BlendToValue(value,duration , delay);
+        }
+    
+        private CubismParameterCustomControl GetParameterControl(string parameterName)
+        {
+            for (int i = 0; i < parameterControls.Count; i++)
+            {
+                if (string.Equals(parameterName, parameterControls[i].name))
+                {
+                    return parameterControls[i];
+                }
+            }
+            
+            Debug.Log($"NO PARAM NAME: {parameterName}");
+            return null;
+        }
+
         #endregion
     }
 }
