@@ -44,6 +44,7 @@ namespace HegaCore
                     }
 
                     var go = result.Value;
+                    go.name = key;
                     var component = go.GetComponent<CubismController>();
                     this.map[key] = component;
                 }
