@@ -50,7 +50,6 @@ namespace HegaCore.UI
             args.GetThenMoveNext(ref index, out this.onHideCompleted);
             args.GetThenMoveNext(ref index, out this.onClickGiveUp);
             CanGiveUp = (onClickGiveUp != null);
-            Debug.Log(CanGiveUp + "==============================================");
             Initialize();
         }
 
