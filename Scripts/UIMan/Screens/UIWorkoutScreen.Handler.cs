@@ -25,8 +25,14 @@ public partial class UIWorkoutScreen : UIManScreen
 	public static void Show(int girlIndex, Action onShowCompleted = null, Action onHide = null,
 		Action onHideCompleted = null)
 	{
+		if (!GameConfigManager.Instance.DarkLord)
+		{
+			return;
+		}
+		
 		BackgroundManager.Instance.Deinitialize();
 		AudioManager.Instance.Player.StopMusic();
+		
 		UIDefaultActivity.Show(1, false,
 			() =>
 			{
@@ -83,12 +89,14 @@ public partial class UIWorkoutScreen : UIManScreen
 		needClick = false;
 		#endif
 		
-		// G4DataManager.Instance.GetWorkoutData(currentSceneData.dataPath, (work, worktext) =>
-		// {
-		// 	currentWorkoutData = work;
-		// 	currentWorkoutTextData = worktext;
-		// 	PrepareHscene().Forget();
-		// });
+		Debug.Log("Get Data");
+		DataManager.Instance.GetWorkoutData(currentSceneData.dataPath, (work, worktext) =>
+		{
+			Debug.Log("Get Data Done");
+			currentWorkoutData = work;
+			currentWorkoutTextData = worktext;
+			PrepareHscene().Forget();
+		});
 	}
 
 	public override void OnShowComplete()
@@ -383,7 +391,7 @@ public partial class UIWorkoutScreen : UIManScreen
 
 #if UNITY_EDITOR
 			voiceText.text =
-				$"[{currentRow.id}] - {currentRow.voice} - {currentWorkoutTextData.GetTextByVoiceID(currentRow.voice, _gameSettings.Language)}"; // - [{currentRow.voice}]  // .Text()
+				$"[{currentRow.id}] - {currentRow.voice}";//- {currentWorkoutTextData.GetTextByVoiceID(currentRow.voice, _gameSettings.Language)}"; // - [{currentRow.voice}]  // .Text()
 #else
 			voiceText.text = currentWorkoutTextData.GetTextByVoiceID(currentRow.voice,_gameSettings.Language);
 #endif

@@ -10,23 +10,7 @@ public class HPoseController : MonoBehaviour
     [ShowIf("hasBG"), ReadOnly] public Sprite BG;
     public bool hasFG;
     [ShowIf("hasFG"), ReadOnly] public Sprite FG;
-
-    // public void ShowBG(bool show)
-    // {
-    //     if (BG != null)
-    //     {
-    //         BG.enabled = show;
-    //     }
-    // }
-    //
-    // public void ShowFG(bool show)
-    // {
-    //     if (FG != null)
-    //     {
-    //         FG.enabled = show;
-    //     }
-    // }
-
+    
     public void LoadBG(string ID)
     {
         UIManLoader.Load<Sprite>(ID, (s, o) =>
