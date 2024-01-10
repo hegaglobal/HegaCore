@@ -358,7 +358,7 @@ public class WorkoutCommandProcessor : MonoBehaviour
 	{
 		if (hPoseControllers.ContainsKey(target))
 		{
-			hPoseControllers[target].transform.position = new Vector3(10, 10, 10);
+			hPoseControllers[target].transform.position = new Vector3(50, 50, 0);
 		}
 	}
 

@@ -7,6 +7,7 @@ public class  WorkoutData
 	public class Row
 	{
 		public string id;
+		public string textID;
 		public string voice;
 		public string sfx;
 		public string commands;
@@ -43,16 +44,17 @@ public class  WorkoutData
 		{
 			Row row = new Row();
 			row.id = grid[i][0];
-			row.voice = grid[i][1];
-			row.sfx = grid[i][2];
-			row.commands = grid[i][3];
-			row.phase = grid[i][4];
-			row.show = grid[i][5];
-			row.hide = grid[i][6];
-			row.zoom = grid[i][7];
-			row.position = grid[i][8];
-			row.zoomDelay = grid[i][9];
-			row.positionDelay = grid[i][10];
+			row.textID = grid[i][1];
+			row.voice = grid[i][2];
+			row.sfx = grid[i][3];
+			row.commands = grid[i][4];
+			row.phase = grid[i][5];
+			row.show = grid[i][6];
+			row.hide = grid[i][7];
+			row.zoom = grid[i][8];
+			row.position = grid[i][9];
+			row.zoomDelay = grid[i][10];
+			row.positionDelay = grid[i][11];
 
 			rowList.Add(row);
 		}

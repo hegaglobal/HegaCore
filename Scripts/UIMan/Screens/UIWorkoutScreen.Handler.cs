@@ -60,8 +60,6 @@ public partial class UIWorkoutScreen : UIManScreen
 	private bool needClick = true;
 	public List<WorkOutSceneData> scenesDatas;
 
-	private GameSettings _gameSettings;
-	
 	#endregion
 
 	#region Built-in Events
@@ -69,6 +67,7 @@ public partial class UIWorkoutScreen : UIManScreen
 	public override void OnShow(params object[] args)
 	{
 		base.OnShow(args);
+		
 		CommandProcessor.Init();
 		busy = true;
 		//Live2DCharControl.Instance.DisableAll();
@@ -391,7 +390,7 @@ public partial class UIWorkoutScreen : UIManScreen
 
 #if UNITY_EDITOR
 			voiceText.text =
-				$"[{currentRow.id}] - {currentRow.voice}";//- {currentWorkoutTextData.GetTextByVoiceID(currentRow.voice, _gameSettings.Language)}"; // - [{currentRow.voice}]  // .Text()
+				$"[{currentRow.id}] - {currentRow.textID} - {currentWorkoutTextData.GetTextByVoiceID(currentRow.textID, GameConfigManager.Instance.GameSettings.Language)}"; // - [{currentRow.voice}]  // .Text()
 #else
 			voiceText.text = currentWorkoutTextData.GetTextByVoiceID(currentRow.voice,_gameSettings.Language);
 #endif

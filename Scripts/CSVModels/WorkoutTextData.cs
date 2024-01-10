@@ -8,7 +8,7 @@ public class WorkoutTextData
 	public class Row
 	{
 		public string id;
-		public string voice_id;
+		public string textID;
 		public string EN;
 		public string CN;
 		public string ZH;
@@ -52,11 +52,11 @@ public class WorkoutTextData
 		{
 			Row row = new Row();
 			row.id = grid[i][0];
-			row.voice_id = grid[i][1];
+			row.textID = grid[i][1];
 			row.EN = grid[i][2];
 			row.CN = grid[i][3];
 			row.ZH = grid[i][4];
-
+			Debug.Log(row.textID);
 			rowList.Add(row);
 		}
 		isLoaded = true;
@@ -76,7 +76,7 @@ public class WorkoutTextData
 	
 	public string GetTextByVoiceID(string voice, string langID)
 	{
-		var find = rowList.Find(x => x.voice_id == voice);
+		var find = rowList.Find(x => x.textID == voice);
 		return find != null ? find.Text(langID.ToLower()) : $"Null voice ID: {voice}" ;
 	}
 }
