@@ -329,6 +329,7 @@ public class WorkoutCommandProcessor : MonoBehaviour
 			if (pose.hasBG)
 			{
 				BG.sprite = pose.BG;
+				BG.SetNativeSize();
 			}
 			
 			FG.enabled = pose.hasFG;
