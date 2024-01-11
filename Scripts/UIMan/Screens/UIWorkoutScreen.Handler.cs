@@ -392,7 +392,7 @@ public partial class UIWorkoutScreen : UIManScreen
 			voiceText.text =
 				$"[{currentRow.id}] - {currentRow.textID} - {currentWorkoutTextData.GetTextByVoiceID(currentRow.textID, GameConfigManager.Instance.GameSettings.Language)}"; // - [{currentRow.voice}]  // .Text()
 #else
-			voiceText.text = currentWorkoutTextData.GetTextByVoiceID(currentRow.voice,_gameSettings.Language);
+			voiceText.text = currentWorkoutTextData.GetTextByVoiceID(currentRow.voice,GameConfigManager.Instance.GameSettings.Language);
 #endif
 			
 			yield return new WaitUntil(() => CommandProcessor.waitForSeconds <= 0);
