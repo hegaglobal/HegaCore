@@ -56,7 +56,6 @@ public class WorkoutTextData
 			row.EN = grid[i][2];
 			row.CN = grid[i][3];
 			row.ZH = grid[i][4];
-			Debug.Log(row.textID);
 			rowList.Add(row);
 		}
 		isLoaded = true;
