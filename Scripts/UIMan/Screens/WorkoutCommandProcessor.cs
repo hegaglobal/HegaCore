@@ -324,12 +324,11 @@ public class WorkoutCommandProcessor : MonoBehaviour
 			var pose = hPoseControllers[target];
 			pose.transform.position = Vector3.zero;
 			
-			
 			BG.enabled = pose.hasBG;
 			if (pose.hasBG)
 			{
 				BG.sprite = pose.BG;
-				BG.SetNativeSize();
+				//BG.SetNativeSize();
 			}
 			
 			FG.enabled = pose.hasFG;

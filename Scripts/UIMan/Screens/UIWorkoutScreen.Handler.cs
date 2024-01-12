@@ -283,7 +283,6 @@ public partial class UIWorkoutScreen : UIManScreen
 		AudioManager.Instance.Player.PlayAsync(currentSceneData.BGMusic, AudioType.Music);
 		onShowCompleted?.Invoke();
 		currentRowIndex = 0;
-		
 		RunHscene();
 		await AudioManager.Instance.PrepareVoiceAsync(true, followAudio.ToArray());
 	}
