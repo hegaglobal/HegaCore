@@ -78,8 +78,8 @@ namespace HegaCore.UI
 
         public void UI_Button_GiveUp()
         {
-            onClickGiveUp?.Invoke();
             UI_Button_Close();
+            onClickGiveUp?.Invoke();
         }
         
         private void Initialize()

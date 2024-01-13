@@ -30,7 +30,7 @@ public partial class UIWorkoutScreen : UIManScreen
 			return;
 		}
 		
-		BackgroundManager.Instance.Deinitialize();
+		//BackgroundManager.Instance.Deinitialize();
 		AudioManager.Instance.Player.StopMusic();
 		
 		UIDefaultActivity.Show(1, false,

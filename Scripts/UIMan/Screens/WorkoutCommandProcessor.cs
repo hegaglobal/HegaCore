@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using HegaCore;
 using UnityEngine;
 using UnityEngine.UI;
+using UnuGames;
 
 public class DelayCommandData
 {
@@ -15,7 +16,7 @@ public class WorkoutCommandProcessor : MonoBehaviour
 	private readonly string H_POSE_ANIMATOR_PHASE_ID = "ID";
 	public Image BG;
 	public Image FG;
-	
+	public RawImage charRenderImage;
 	public MoveTweener MoveTweener;
 	public ZoomTweener ZoomTweener;
 	public ShakeTweener ShakeTweener;
@@ -45,6 +46,7 @@ public class WorkoutCommandProcessor : MonoBehaviour
 		waitForSeconds = 0;
 		forceWait = 0;
 		autoNextSeconds = 0;
+		charRenderImage.texture = Live2DManager.Instance.RenderTexture;
 	}
 
 	public void UpdateProcessor()
