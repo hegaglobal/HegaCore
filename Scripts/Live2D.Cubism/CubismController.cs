@@ -51,6 +51,8 @@ namespace HegaCore
         private bool hasEmoAnim;
         private Color color;
 
+        [BoxGroup("Clothes")] public int curClothesID;
+        
         [BoxGroup("Lip syns")] public CubismMouthController MouthController;
         [BoxGroup("Lip syns")] public CubismAudioMouthInput AudioMouthInput;
         
@@ -69,7 +71,7 @@ namespace HegaCore
         private void Awake()
         {
             GetComponents();
-
+            curClothesID = -1;
             this.LocalScale = this.useScaleOne ? Vector3.one : this.transform.localScale;
 
             if (!this.setOrderOnAwake)
@@ -337,6 +339,22 @@ namespace HegaCore
             Debug.Log($"NO PARAM NAME: {parameterName}");
             return null;
         }
+
+        #endregion
+
+        #region Clothes
+        
+        public void ChangeClothes(int clothesID)
+        {
+            if (curClothesID == clothesID)
+            {
+                return;
+            }
+            
+            curClothesID = clothesID;
+            BlendParamToValue("Var", clothesID);
+        }
+        
 
         #endregion
     }
