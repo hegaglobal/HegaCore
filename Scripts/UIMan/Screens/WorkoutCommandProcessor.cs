@@ -147,6 +147,9 @@ public class WorkoutCommandProcessor : MonoBehaviour
 				else
 					PlaySFX(strings[1]);
 				break;
+			case "VoiceBG":
+					PlaySFX(strings[1], true);
+				break;
 			case "Position":
 				int plen = strings.Length;
 				if (plen == 3)
@@ -273,7 +276,10 @@ public class WorkoutCommandProcessor : MonoBehaviour
 		if (!string.IsNullOrEmpty(sfx))
 		{
 			if (string.Equals("stop", sfx))
+			{
 				AudioManager.Instance.Player.StopVoiceBG();
+				AudioManager.Instance.Player.StopVoice();
+			}
 			else
 				AudioManager.Instance.Player.PlayVoiceBG(sfx,!loop);
 		}

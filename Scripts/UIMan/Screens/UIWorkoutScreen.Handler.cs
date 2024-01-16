@@ -379,12 +379,12 @@ public partial class UIWorkoutScreen : UIManScreen
 				else
 				{
 					UnuLogger.Log("Addressable Load Voice Failed: " + currentRow.voice);
-					CommandProcessor.autoNextSeconds = 3.5f;
+					CommandProcessor.autoNextSeconds = 5.5f;
 				}
 			}
 			else
 			{
-				CommandProcessor.autoNextSeconds = 3.5f;
+				CommandProcessor.autoNextSeconds = 5.5f;
 			}
 
 #if UNITY_EDITOR
