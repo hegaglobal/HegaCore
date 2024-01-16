@@ -5,6 +5,7 @@ using UnityEngine;
 
 public class GameConfigManager : SingletonBehaviour<GameConfigManager>
 {
+    public Camera live2DCamera;
     /// <summary>
     /// R DLC
     /// </summary>
@@ -18,13 +19,16 @@ public class GameConfigManager : SingletonBehaviour<GameConfigManager>
     /// </summary>
     public bool Daemon { get; private set; }
 
-    public void SetConfig(bool dl, bool ol, bool dm, GameSettings setting)
+    public static GameDataContainer DataContainer { get; private set; }
+    public static GameSettings GameSettings { get; private set; }
+
+    public string CurCharID => $"Char{DataContainer.Player.CurCharIndex + 1}Stand";
+    public void SetConfig(bool dl, bool ol, bool dm, GameSettings setting, GameDataContainer container)
     {
         DarkLord = dl;
         OverLord = ol;
         Daemon = dm;
         GameSettings = setting;
+        DataContainer = container;
     }
-    
-    public GameSettings GameSettings { get; private set; }
 }

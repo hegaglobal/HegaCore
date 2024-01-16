@@ -29,10 +29,14 @@ namespace HegaCore
 
         public int CharacterId;
 
+        public int CurCharIndex;
+        
         public GameMode GameMode;
 
         public CharacterProgressMap CharacterProgressMap = new CharacterProgressMap();
 
+        Dictionary<string, UserCharacter> UserCharacterDict = new Dictionary<string, UserCharacter>();
+        
         protected PlayerData()
         {
             this.Revision = 1;
@@ -50,8 +54,10 @@ namespace HegaCore
             this.BadPoint = 0;
             this.LastTime = string.Empty;
             this.CharacterId = 0;
+            this.CurCharIndex = 0;
             this.CharacterProgressMap.Clear();
             this.GameMode = GameMode.Normal;
+            this.UserCharacterDict.Clear();
         }
 
         protected void CopyFrom(PlayerData data)
@@ -79,11 +85,27 @@ namespace HegaCore
             this.BadPoint = data.BadPoint;
             this.LastTime = data.LastTime ?? string.Empty;
             this.CharacterId = data.CharacterId;
+            this.CurCharIndex = data.CurCharIndex;
             this.GameMode = data.GameMode;
-
+            
+            Copy(this.UserCharacterDict, data.UserCharacterDict);
             Copy(this.CharacterProgressMap, data.CharacterProgressMap);
         }
 
+        public UserCharacter GetUserCharacter(string id)
+        {
+            if (!UserCharacterDict.ContainsKey(id))
+            {
+                UserCharacter newChar = new UserCharacter
+                {
+                    standClothesID = GameConfigManager.Instance.DarkLord ? 1 : 0
+                };
+                UserCharacterDict.Add(id, newChar);
+            }
+
+            return UserCharacterDict[id];
+        }
+        
         public void Copy<TKey, TValue>(Dictionary<TKey, TValue> dest, Dictionary<TKey, TValue> source)
         {
             if (dest == null)
@@ -130,4 +152,30 @@ namespace HegaCore
 
     [Serializable]
     public sealed class CharacterProgressMap : SerializableDictionary<int, int> { }
+    
+    [Serializable]
+    public class UserCharacter
+    {
+        public int HeartEXP;
+        public int HeartLevel;
+        public int standClothesID;
+        public Dictionary<string, float> interactValues;
+        public bool hasBeenRewardedByInteract = false;
+
+        public UserCharacter(int heartLevel, int heartExp)
+        {
+            HeartEXP = heartExp;
+            HeartLevel = heartLevel;
+            standClothesID = 1;
+            interactValues = new Dictionary<string, float>();
+        }
+        public UserCharacter()
+        {
+            HeartEXP = 0;
+            HeartLevel = 1;
+            standClothesID = 1;
+            interactValues = new Dictionary<string, float>();
+            hasBeenRewardedByInteract = false;
+        }
+    }
 }

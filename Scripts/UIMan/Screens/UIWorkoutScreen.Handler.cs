@@ -389,9 +389,9 @@ public partial class UIWorkoutScreen : UIManScreen
 
 #if UNITY_EDITOR
 			voiceText.text =
-				$"[{currentRow.id}] - {currentRow.textID} - {currentWorkoutTextData.GetTextByVoiceID(currentRow.textID, GameConfigManager.Instance.GameSettings.Language)}"; // - [{currentRow.voice}]  // .Text()
+				$"[{currentRow.id}] - {currentRow.textID} - {currentWorkoutTextData.GetTextByVoiceID(currentRow.textID, GameConfigManager.GameSettings.Language)}"; // - [{currentRow.voice}]  // .Text()
 #else
-			voiceText.text = currentWorkoutTextData.GetTextByVoiceID(currentRow.textID,GameConfigManager.Instance.GameSettings.Language);
+			voiceText.text = currentWorkoutTextData.GetTextByVoiceID(currentRow.textID,GameConfigManager.GameSettings.Language);
 #endif
 			
 			yield return new WaitUntil(() => CommandProcessor.waitForSeconds <= 0);

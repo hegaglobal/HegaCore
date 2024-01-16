@@ -40,6 +40,9 @@ namespace HegaCore
 
         private bool darkLord;
 
+        [HideInInspector]
+        public CubismController CurCharacter; // Just use it for interact
+
         public CubismManager()
         {
             this.models = new Dictionary<string, CubismController>();
@@ -100,12 +103,13 @@ namespace HegaCore
 
                 return;
             }
-
+            
             HideAll(this.hideDuration);
         }
 
         public void HideAll(float? duration)
         {
+            CurCharacter = null;
             foreach (var id in this.models.Keys)
             {
                 Hide(id, duration);

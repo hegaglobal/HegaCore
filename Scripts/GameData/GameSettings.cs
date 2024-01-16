@@ -30,6 +30,8 @@ namespace HegaCore
 
         public int Framerate;
 
+        public bool allowDragPreview;
+        
         protected GameSettings()
         {
             this.Revision = 1;
@@ -41,6 +43,7 @@ namespace HegaCore
             this.Resolution = default;
             this.Fullscreen = true;
             this.Framerate = 200;
+            this.allowDragPreview = true;
         }
 
         public void CopyFrom(GameSettings data)
@@ -58,6 +61,7 @@ namespace HegaCore
                 this.Resolution = data.Resolution;
                 this.Fullscreen = data.Fullscreen;
                 this.Framerate = data.Framerate;
+                this.allowDragPreview = data.allowDragPreview;
             }
 
             if (string.IsNullOrEmpty(this.Language))
