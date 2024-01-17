@@ -98,7 +98,7 @@ namespace HegaCore
             {
                 UserCharacter newChar = new UserCharacter
                 {
-                    standClothesID = GameConfigManager.Instance.DarkLord ? 1 : 0
+                    standClothesID = DataManager.Instance.DarkLord ? 1 : 0
                 };
                 UserCharacterDict.Add(id, newChar);
             }

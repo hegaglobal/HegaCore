@@ -14,25 +14,24 @@ public class UIPreviewDraggable : MonoBehaviour, IDragHandler, IPointerDownHandl
     void Start()
     {
         if (dragToggle)
-            dragToggle.isOn = GameConfigManager.GameSettings.allowDragPreview;
+            dragToggle.isOn = DataManager.GameSettings.allowDragPreview;
     }
     
     public void OnDrag(PointerEventData eventData)
     {
         if (isInteracting)
             CubismManager.Instance.CurCharacter.UpdateInteractDrag(eventData.delta);
-        else if (GameConfigManager.GameSettings.allowDragPreview)
+        else if (DataManager.GameSettings.allowDragPreview)
             CubismManager.Instance.CurCharacter.transform.position += (Vector3) eventData.delta * Multiplier;
     }
 
     public void OnPointerDown(PointerEventData eventData)
     {
         CubismRaycastHit[] Results = new CubismRaycastHit[5]; // init 5 slot
-        int castCount = CubismManager.Instance.CurCharacter.GetRayCastDrawableArtMesh(ref Results);
+        int castCount = CubismManager.Instance.CurCharacter.live2DCharInteract.GetRayCastDrawableArtMesh(ref Results);
         if (castCount > 0)
         {
-            isInteracting = true;
-            CubismManager.Instance.CurCharacter.StartInteract(Results);
+            isInteracting = CubismManager.Instance.CurCharacter.StartInteract(Results);
         }
         else
         {
@@ -47,9 +46,9 @@ public class UIPreviewDraggable : MonoBehaviour, IDragHandler, IPointerDownHandl
 
     public void OnClickToggleMove()
     {
-        GameConfigManager.GameSettings.allowDragPreview = !GameConfigManager.GameSettings.allowDragPreview;
+        DataManager.GameSettings.allowDragPreview = !DataManager.GameSettings.allowDragPreview;
         
         if (dragToggle)
-            dragToggle.isOn = !GameConfigManager.GameSettings.allowDragPreview;
+            dragToggle.isOn = !DataManager.GameSettings.allowDragPreview;
     }
 }

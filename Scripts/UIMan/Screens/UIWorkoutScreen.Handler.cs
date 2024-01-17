@@ -25,7 +25,7 @@ public partial class UIWorkoutScreen : UIManScreen
 	public static void Show(int girlIndex, Action onShowCompleted = null, Action onHide = null,
 		Action onHideCompleted = null)
 	{
-		if (!GameConfigManager.Instance.DarkLord)
+		if (!DataManager.Instance.DarkLord)
 		{
 			return;
 		}
@@ -389,9 +389,9 @@ public partial class UIWorkoutScreen : UIManScreen
 
 #if UNITY_EDITOR
 			voiceText.text =
-				$"[{currentRow.id}] - {currentRow.textID} - {currentWorkoutTextData.GetTextByVoiceID(currentRow.textID, GameConfigManager.GameSettings.Language)}"; // - [{currentRow.voice}]  // .Text()
+				$"[{currentRow.id}] - {currentRow.textID} - {currentWorkoutTextData.GetTextByVoiceID(currentRow.textID, DataManager.GameSettings.Language)}"; // - [{currentRow.voice}]  // .Text()
 #else
-			voiceText.text = currentWorkoutTextData.GetTextByVoiceID(currentRow.textID,GameConfigManager.GameSettings.Language);
+			voiceText.text = currentWorkoutTextData.GetTextByVoiceID(currentRow.textID,DataManager.GameSettings.Language);
 #endif
 			
 			yield return new WaitUntil(() => CommandProcessor.waitForSeconds <= 0);

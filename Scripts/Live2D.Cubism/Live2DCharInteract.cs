@@ -18,6 +18,8 @@ namespace HegaCore
 
         public List<InteractPart> InteractParts;
 
+        
+        private CubismRaycaster cubismRaycaster;
         private bool isInteracting = false;
         private bool needReset = false;
         private InteractPart curPart;
@@ -27,6 +29,7 @@ namespace HegaCore
         void Start()
         {
             _cubismController = GetComponent<CubismController>();
+            cubismRaycaster = GetComponent<CubismRaycaster>();
         }
 
         void OnEnable()
@@ -64,7 +67,7 @@ namespace HegaCore
             }
         }
 
-        public void StartInteract(CubismRaycastHit[] hits)
+        public bool StartInteract(CubismRaycastHit[] hits)
         {
             foreach (var part in InteractParts)
             {
@@ -81,13 +84,15 @@ namespace HegaCore
                                     isInteracting = true;
                                     curPart = part;
                                     curPart.StartDrag();
-                                    return;
+                                    return true;
                                 }
                             }
                         }
                     }
                 }
             }
+
+            return false;
         }
 
         public void UpdateInteractDrag(Vector2 delta)
@@ -112,7 +117,7 @@ namespace HegaCore
 
             foreach (var part in InteractParts)
             {
-                if (part.returnWeight <= 0)
+                if (part.returnWeight <= 0 && part.allowedClotheIDs.Contains(_cubismController.curClothesID))
                 {
                     result.Add(part.Parameter.name, part.currentParamValue);
                 }
@@ -138,7 +143,7 @@ namespace HegaCore
             {
                 foreach (var part in InteractParts)
                 {
-                    if (part.returnWeight > 0)
+                    if (part.returnWeight > 0 || !part.allowedClotheIDs.Contains(_cubismController.curClothesID))
                     {
                         continue;
                     }
@@ -150,17 +155,36 @@ namespace HegaCore
                 }
             }
         }
+        
+        public int GetRayCastDrawableArtMesh(ref CubismRaycastHit[] Results)
+        {
+            if (!DataManager.Instance.DarkLord)
+            {
+                return 0;
+            }
+
+            var mouse = Input.mousePosition;
+            var camera = Camera.main;
+            Vector2 screen = new Vector2(camera.pixelRect.width, camera.pixelRect.height);
+            Vector2 mouseConvert = new Vector2(mouse.x / screen.x * 1920, mouse.y / screen.y * 1080);
+
+            var ray = DataManager.Instance.live2DCamera.ScreenPointToRay(mouseConvert);
+            //Debug.DrawRay(ray.origin, ray.direction * 20,Color.green, 20);
+            var hitCount = cubismRaycaster.Raycast(ray, Results);
+            return hitCount;
+        }
     }
 }
 
 [Serializable]
 public class InteractPart
 {
-    [Title("==================")]
-    public string partName;
+    [Title("$partName", " ============================== ",TitleAlignments.Centered)]
+    public string partName = string.Empty;
     
     [Title("Ref")]
     public List<string> artMeshNames;
+    [InlineButton("Rename")]
     public CubismParameter Parameter;
     public List<int> allowedClotheIDs;
     
@@ -244,5 +268,10 @@ public class InteractPart
     {
         currentParamValue = newValue;
         BlendPrameter();
+    }
+
+    public void Rename()
+    {
+        partName = Parameter != null ? Parameter.gameObject.name : string.Empty;
     }
 }

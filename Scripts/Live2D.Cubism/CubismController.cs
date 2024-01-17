@@ -6,6 +6,7 @@ using HegaCore.UI;
 using Sirenix.OdinInspector;
 using Live2D.Cubism.Framework.MouthMovement;
 using Live2D.Cubism.Framework.Raycasting;
+using UnityEngine.Serialization;
 
 namespace HegaCore
 {
@@ -45,14 +46,12 @@ namespace HegaCore
         private bool hasEmoAnim;
         private Color color;
         
-        [BoxGroup("Interact")]
-        public Live2DCharInteract _live2DCharInteract;
-        [BoxGroup("Interact")]
-        public CubismRaycaster CubismRaycaster;
+        [FormerlySerializedAs("_live2DCharInteract")] [BoxGroup("Interact")]
+        public Live2DCharInteract live2DCharInteract;
         [BoxGroup("Interact")] 
         public int curClothesID;
-        [BoxGroup("Interact")]
-        public List<int> allowClothesID;
+        // [BoxGroup("Interact")]
+        // public List<int> allowClothesID;
 
 
         [BoxGroup("Lip syns")] public CubismMouthController MouthController;
@@ -362,26 +361,26 @@ namespace HegaCore
 
         #region Interact
 
-        public void StartInteract(CubismRaycastHit[] hits)
+        public bool StartInteract(CubismRaycastHit[] hits)
         {
-            _live2DCharInteract?.StartInteract(hits);
+            return live2DCharInteract != null && live2DCharInteract.StartInteract(hits);
         }
 
         public void UpdateInteractDrag(Vector2 delta)
         {
-            _live2DCharInteract?.UpdateInteractDrag(delta);
+            live2DCharInteract?.UpdateInteractDrag(delta);
         }
 
         public void EndInteract()
         {
-            _live2DCharInteract?.EndInteract();
+            live2DCharInteract?.EndInteract();
         }
 
         public Dictionary<string, float> GetInteractPartValues()
         {
-            if (allowClothesID.Contains(curClothesID) && _live2DCharInteract != null)
+            if (/*allowClothesID.Contains(curClothesID) && */ live2DCharInteract != null)
             {
-                return _live2DCharInteract.GetInteractPartValues();
+                return live2DCharInteract.GetInteractPartValues();
             }
 
             return null;
@@ -390,35 +389,15 @@ namespace HegaCore
         public void LoadInteractPartValues()
         {
             //Debug.Log("LoadInteractPartValues: "  + curClothesID);
-            if (GameConfigManager.Instance.DarkLord && allowClothesID.Contains(curClothesID))
+            if (DataManager.Instance.DarkLord)// && allowClothesID.Contains(curClothesID))
             {
-                var userCharacterData = GameConfigManager.DataContainer.Player.GetUserCharacter(Id);
-                _live2DCharInteract?.LoadInteractPartValues(userCharacterData.interactValues);
+                var userCharacterData = DataManager.DataContainer.Player.GetUserCharacter(Id);
+                live2DCharInteract?.LoadInteractPartValues(userCharacterData.interactValues);
             }
             else
-                _live2DCharInteract?.ResetInteractValue();
+                live2DCharInteract?.ResetInteractValue();
         }
-
-        public int GetRayCastDrawableArtMesh(ref CubismRaycastHit[] Results)
-        {
-            if (!GameConfigManager.Instance.DarkLord 
-                || CubismRaycaster == null
-                || !allowClothesID.Contains(curClothesID))
-            {
-                return 0;
-            }
-
-            var mouse = Input.mousePosition;
-            var camera = Camera.main;
-            Vector2 screen = new Vector2(camera.pixelRect.width, camera.pixelRect.height);
-            Vector2 mouseConvert = new Vector2(mouse.x / screen.x * 1920, mouse.y / screen.y * 1080);
-
-            var ray = GameConfigManager.Instance.live2DCamera.ScreenPointToRay(mouseConvert);
-            //Debug.DrawRay(ray.origin, ray.direction * 20,Color.green, 20);
-            var hitCount = CubismRaycaster.Raycast(ray, Results);
-            return hitCount;
-        }
-
+        
         #endregion
     }
 }

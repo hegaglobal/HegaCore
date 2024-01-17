@@ -1,82 +1,120 @@
 ﻿using System;
 using System.Collections.Generic;
+using HegaCore;
 using UnityEngine;
 using UnityEngine.AddressableAssets;
 
-public class DataManager : SingletonBehaviour<DataManager>
+namespace HegaCore
 {
-    private Dictionary<string, WorkoutData> workoutDict;
-    private Dictionary<string, WorkoutTextData> workoutTextDict;
-    private Dictionary<string, WorkoutLiteData> workoutLiteDict;
 
-    private Dictionary<Type, Dictionary<string, Type>> DataDict;
 
-    protected override void OnAwake()
+
+    public class DataManager : SingletonBehaviour<DataManager>
     {
-        base.OnAwake();
-        DataDict = new Dictionary<Type, Dictionary<string, Type>>();
-        //LoadLevelsTable();
-        workoutDict = new Dictionary<string, WorkoutData>();
-        workoutTextDict = new Dictionary<string, WorkoutTextData>();
-        workoutLiteDict = new Dictionary<string, WorkoutLiteData>();
-    }
-    
-    #region R18
+        private Dictionary<string, WorkoutData> workoutDict;
+        private Dictionary<string, WorkoutTextData> workoutTextDict;
+        private Dictionary<string, WorkoutLiteData> workoutLiteDict;
 
-    public void GetWorkoutLiteData(string workoutLiteID, Action<WorkoutLiteData> callback)
-    {
-        if (workoutLiteDict.ContainsKey(workoutLiteID))
+        private Dictionary<Type, Dictionary<string, Type>> DataDict;
+
+        protected override void OnAwake()
         {
-            callback(workoutLiteDict[workoutLiteID]);
-            return;
+            base.OnAwake();
+            DataDict = new Dictionary<Type, Dictionary<string, Type>>();
+            //LoadLevelsTable();
+            workoutDict = new Dictionary<string, WorkoutData>();
+            workoutTextDict = new Dictionary<string, WorkoutTextData>();
+            workoutLiteDict = new Dictionary<string, WorkoutLiteData>();
         }
 
-        //Load Work Out Lite Data by Addressable
-        AddressablesManager.LoadAsset<TextAsset>(workoutLiteID, ((s, asset) =>
-        {
-            WorkoutLiteData newWorkoutLite = new WorkoutLiteData();
-            newWorkoutLite.Load(asset);
-            workoutLiteDict.Add(workoutLiteID, newWorkoutLite);
-            callback(newWorkoutLite);
-        }));
-    }
+        #region R18
 
-    public void GetWorkoutData(string workoutID, Action<WorkoutData, WorkoutTextData> callback)
-    {
-        if (workoutDict.ContainsKey(workoutID) && workoutTextDict.ContainsKey(workoutID))
+        public void GetWorkoutLiteData(string workoutLiteID, Action<WorkoutLiteData> callback)
         {
-            callback(workoutDict[workoutID], workoutTextDict[workoutID]);
-            return;
+            if (workoutLiteDict.ContainsKey(workoutLiteID))
+            {
+                callback(workoutLiteDict[workoutLiteID]);
+                return;
+            }
+
+            //Load Work Out Lite Data by Addressable
+            AddressablesManager.LoadAsset<TextAsset>(workoutLiteID, ((s, asset) =>
+            {
+                WorkoutLiteData newWorkoutLite = new WorkoutLiteData();
+                newWorkoutLite.Load(asset);
+                workoutLiteDict.Add(workoutLiteID, newWorkoutLite);
+                callback(newWorkoutLite);
+            }));
         }
 
-        //Load Work Out Data by Addressable
-        AddressablesManager.LoadAsset<TextAsset>(workoutID, ((s, asset) =>
+        public void GetWorkoutData(string workoutID, Action<WorkoutData, WorkoutTextData> callback)
         {
-            WorkoutData newWorkout = new WorkoutData();
-            newWorkout.Load(asset);
-            workoutDict.Add(workoutID, newWorkout);
+            if (workoutDict.ContainsKey(workoutID) && workoutTextDict.ContainsKey(workoutID))
+            {
+                callback(workoutDict[workoutID], workoutTextDict[workoutID]);
+                return;
+            }
 
-            GetWorkoutTextData(workoutID, data => { callback(newWorkout, data); });
-        }));
-    }
+            //Load Work Out Data by Addressable
+            AddressablesManager.LoadAsset<TextAsset>(workoutID, ((s, asset) =>
+            {
+                WorkoutData newWorkout = new WorkoutData();
+                newWorkout.Load(asset);
+                workoutDict.Add(workoutID, newWorkout);
 
-    private void GetWorkoutTextData(string workoutID, Action<WorkoutTextData> callback)
-    {
-        if (workoutTextDict.ContainsKey(workoutID))
-        {
-            callback(workoutTextDict[workoutID]);
-            return;
+                GetWorkoutTextData(workoutID, data => { callback(newWorkout, data); });
+            }));
         }
 
-        //Load Work Out Text Data by Addressable
-        AddressablesManager.LoadAsset<TextAsset>(workoutID + "_Text", ((s, asset) =>
+        private void GetWorkoutTextData(string workoutID, Action<WorkoutTextData> callback)
         {
-            WorkoutTextData newWorkoutText = new WorkoutTextData();
-            newWorkoutText.Load(asset);
-            workoutTextDict.Add(workoutID, newWorkoutText);
-            callback(newWorkoutText);
-        }));
-    }
+            if (workoutTextDict.ContainsKey(workoutID))
+            {
+                callback(workoutTextDict[workoutID]);
+                return;
+            }
 
-    #endregion
+            //Load Work Out Text Data by Addressable
+            AddressablesManager.LoadAsset<TextAsset>(workoutID + "_Text", ((s, asset) =>
+            {
+                WorkoutTextData newWorkoutText = new WorkoutTextData();
+                newWorkoutText.Load(asset);
+                workoutTextDict.Add(workoutID, newWorkoutText);
+                callback(newWorkoutText);
+            }));
+        }
+
+        #endregion
+
+        public Camera live2DCamera;
+
+        /// <summary>
+        /// R DLC
+        /// </summary>
+        public bool DarkLord { get; private set; }
+
+        /// <summary>
+        /// ACHIEVEMENT
+        /// </summary>
+        public bool OverLord { get; private set; }
+
+        /// <summary>
+        /// DEV CHEAT
+        /// </summary>
+        public bool Daemon { get; private set; }
+
+        public static GameDataContainer DataContainer { get; private set; }
+        public static GameSettings GameSettings { get; private set; }
+
+        public string CurCharID => $"Char{DataContainer.Player.CurCharIndex + 1}Stand";
+
+        public void SetConfig(bool dl, bool ol, bool dm, GameSettings setting, GameDataContainer container)
+        {
+            DarkLord = dl;
+            OverLord = ol;
+            Daemon = dm;
+            GameSettings = setting;
+            DataContainer = container;
+        }
+    }
 }
