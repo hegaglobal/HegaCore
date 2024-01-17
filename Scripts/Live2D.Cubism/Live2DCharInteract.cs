@@ -28,7 +28,7 @@ namespace HegaCore
 
         void Start()
         {
-            _cubismController = GetComponent<CubismController>();
+            _cubismController = GetComponentInParent<CubismController>();
             cubismRaycaster = GetComponent<CubismRaycaster>();
         }
 
@@ -167,9 +167,10 @@ namespace HegaCore
             var camera = Camera.main;
             Vector2 screen = new Vector2(camera.pixelRect.width, camera.pixelRect.height);
             Vector2 mouseConvert = new Vector2(mouse.x / screen.x * 1920, mouse.y / screen.y * 1080);
-
+            
             var ray = DataManager.Instance.live2DCamera.ScreenPointToRay(mouseConvert);
-            //Debug.DrawRay(ray.origin, ray.direction * 20,Color.green, 20);
+            //Debug.DrawRay(ray.origin, ray.direction * 2000,Color.green, 20);
+            
             var hitCount = cubismRaycaster.Raycast(ray, Results);
             return hitCount;
         }

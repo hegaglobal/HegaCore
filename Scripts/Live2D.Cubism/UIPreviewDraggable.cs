@@ -1,11 +1,15 @@
-﻿using HegaCore;
+﻿using System.Collections.Generic;
+using HegaCore;
+using Live2D.Cubism.Core;
 using Live2D.Cubism.Framework.Raycasting;
+using Sirenix.OdinInspector;
 using UnityEngine;
 using UnityEngine.EventSystems;
 using UnityEngine.UI;
 
 public class UIPreviewDraggable : MonoBehaviour, IDragHandler, IPointerDownHandler, IPointerUpHandler
 {
+    [ShowInInspector]
     private bool isInteracting = true;
     
     public float Multiplier = 1;
@@ -25,22 +29,25 @@ public class UIPreviewDraggable : MonoBehaviour, IDragHandler, IPointerDownHandl
             CubismManager.Instance.CurCharacter.transform.position += (Vector3) eventData.delta * Multiplier;
     }
 
+    //public List<CubismDrawable> Drawables = new List<CubismDrawable>();
     public void OnPointerDown(PointerEventData eventData)
     {
+        //Drawables.Clear();
         CubismRaycastHit[] Results = new CubismRaycastHit[5]; // init 5 slot
         int castCount = CubismManager.Instance.CurCharacter.live2DCharInteract.GetRayCastDrawableArtMesh(ref Results);
-        if (castCount > 0)
-        {
-            isInteracting = CubismManager.Instance.CurCharacter.StartInteract(Results);
-        }
-        else
-        {
-            isInteracting = false;
-        }
+        isInteracting = castCount > 0 && CubismManager.Instance.CurCharacter.StartInteract(Results);
+        // if (castCount > 0)
+        // {
+        //     foreach (var hit in Results)
+        //     {
+        //         Drawables.Add(hit.Drawable);
+        //     }
+        // }
     }
 
     public void OnPointerUp(PointerEventData eventData)
     {
+        isInteracting = false;
         CubismManager.Instance.CurCharacter.EndInteract();
     }
 

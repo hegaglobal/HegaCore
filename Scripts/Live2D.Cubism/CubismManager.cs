@@ -40,7 +40,7 @@ namespace HegaCore
 
         private bool darkLord;
 
-        [HideInInspector]
+        //[HideInInspector]
         public CubismController CurCharacter; // Just use it for interact
 
         public CubismManager()

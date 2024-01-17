@@ -91,17 +91,17 @@ namespace HegaCore
         /// <summary>
         /// R DLC
         /// </summary>
-        public bool DarkLord { get; private set; }
+        public bool DarkLord;// { get; private set; }
 
         /// <summary>
         /// ACHIEVEMENT
         /// </summary>
-        public bool OverLord { get; private set; }
+        public bool OverLord;// { get; private set; }
 
         /// <summary>
         /// DEV CHEAT
         /// </summary>
-        public bool Daemon { get; private set; }
+        public bool Daemon;// { get; private set; }
 
         public static GameDataContainer DataContainer { get; private set; }
         public static GameSettings GameSettings { get; private set; }
