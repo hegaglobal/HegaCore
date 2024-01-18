@@ -116,5 +116,16 @@ namespace HegaCore
             GameSettings = setting;
             DataContainer = container;
         }
+
+        public UserCharacter GetUserCharacter(int index)
+        {
+            return DataContainer.Player.GetUserCharacter($"Char{index}Stand");
+        }
+
+        public UserCharacter GetCurrentUserCharacter()
+        {
+            return DataContainer.Player.GetUserCharacter(CurCharID);
+
+        }
     }
 }

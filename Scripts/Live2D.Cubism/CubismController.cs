@@ -378,7 +378,7 @@ namespace HegaCore
 
         public Dictionary<string, float> GetInteractPartValues()
         {
-            if (/*allowClothesID.Contains(curClothesID) && */ live2DCharInteract != null)
+            if (live2DCharInteract != null)
             {
                 return live2DCharInteract.GetInteractPartValues();
             }

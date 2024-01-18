@@ -42,7 +42,8 @@ namespace HegaCore
 
         //[HideInInspector]
         public CubismController CurCharacter; // Just use it for interact
-
+        public ParticleSystem heartFX;
+        
         public CubismManager()
         {
             this.models = new Dictionary<string, CubismController>();

@@ -91,7 +91,7 @@ namespace HegaCore
             Copy(this.UserCharacterDict, data.UserCharacterDict);
             Copy(this.CharacterProgressMap, data.CharacterProgressMap);
         }
-
+        
         public UserCharacter GetUserCharacter(string id)
         {
             if (!UserCharacterDict.ContainsKey(id))
@@ -166,14 +166,14 @@ namespace HegaCore
         {
             HeartEXP = heartExp;
             HeartLevel = heartLevel;
-            standClothesID = 1;
+            standClothesID = 0;
             interactValues = new Dictionary<string, float>();
         }
         public UserCharacter()
         {
             HeartEXP = 0;
             HeartLevel = 1;
-            standClothesID = 1;
+            standClothesID = 0;
             interactValues = new Dictionary<string, float>();
             hasBeenRewardedByInteract = false;
         }

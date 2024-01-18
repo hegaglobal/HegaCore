@@ -25,8 +25,8 @@ public class UIPreviewDraggable : MonoBehaviour, IDragHandler, IPointerDownHandl
     {
         if (isInteracting)
             CubismManager.Instance.CurCharacter.UpdateInteractDrag(eventData.delta);
-        else if (DataManager.GameSettings.allowDragPreview)
-            CubismManager.Instance.CurCharacter.transform.position += (Vector3) eventData.delta * Multiplier;
+        // else if (DataManager.GameSettings.allowDragPreview)
+        //     CubismManager.Instance.CurCharacter.transform.position += (Vector3) eventData.delta * Multiplier;
     }
 
     //public List<CubismDrawable> Drawables = new List<CubismDrawable>();

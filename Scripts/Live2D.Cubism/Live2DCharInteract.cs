@@ -42,6 +42,14 @@ namespace HegaCore
             if (isInteracting)
             {
                 curPart.DoDrag(dragDelta);
+
+                if (curPart.NeedReact())
+                {
+                    EndInteract();
+                    _cubismController.Animator.SetTrigger("Interact");
+                    return;
+                }
+                
                 if (curPart.currentParamValue >= 0.8f)
                 {
                     OnInteractEnoughToGetReward?.Invoke();
@@ -183,10 +191,9 @@ public class InteractPart
     [Title("$partName", " ============================== ",TitleAlignments.Centered)]
     public string partName = string.Empty;
     
-    [Title("Ref")]
-    public List<string> artMeshNames;
     [InlineButton("Rename")]
     public CubismParameter Parameter;
+    public List<string> artMeshNames;
     public List<int> allowedClotheIDs;
     
     [Title("Stats")]
@@ -194,8 +201,11 @@ public class InteractPart
     public float dragValue = 1;
     public Vector2 dragDirection;
     public float dragMultiplier = 0.01f;
+
+    [Title("React")] 
+    public float reactValue;
     
-    
+    [Title("Return")] 
     //Use Anim to Return part to normal
     [InfoBox("Set returnWeight to 0 to reject return and save value.")]
     [Space(10)]
@@ -249,6 +259,26 @@ public class InteractPart
         BlendPrameter();
     }
 
+    public bool NeedReact()
+    {
+        if (reactValue < normalValue && reactValue > dragValue)
+        {
+            if (currentParamValue > reactValue)
+            {
+                return true;
+            }
+        }
+        else if (reactValue > normalValue && reactValue < dragValue)
+        {
+            if (currentParamValue > reactValue)
+            {
+                return true;
+            }
+        }
+
+        return false;
+    }
+    
     public void EndDrag()
     {
         returnSpeed = dragMultiplier * returnWeight * (normalValue - dragValue);
