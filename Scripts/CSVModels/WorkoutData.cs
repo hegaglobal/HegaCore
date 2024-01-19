@@ -9,7 +9,7 @@ public class  WorkoutData
 		public string id;
 		public string textID;
 		public string voice;
-		public string sfx;
+		public string bgvoice;
 		public string commands;
 		public string phase;
 		public string show;
@@ -46,7 +46,7 @@ public class  WorkoutData
 			row.id = grid[i][0];
 			row.textID = grid[i][1];
 			row.voice = grid[i][2];
-			row.sfx = grid[i][3];
+			row.bgvoice = grid[i][3];
 			row.commands = grid[i][4];
 			row.phase = grid[i][5];
 			row.show = grid[i][6];

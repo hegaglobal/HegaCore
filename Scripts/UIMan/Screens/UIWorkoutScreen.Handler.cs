@@ -264,9 +264,9 @@ public partial class UIWorkoutScreen : UIManScreen
 		{
 			var row_i = currentWorkoutData.GetAt(i);
 			firstAudio.Add(row_i.voice);
-			if (!string.IsNullOrEmpty(row_i.sfx) && !string.Equals(row_i.sfx, "stop"))
+			if (!string.IsNullOrEmpty(row_i.bgvoice) && !string.Equals(row_i.bgvoice, "stop"))
 			{
-				firstAudio.Add(row_i.sfx);
+				firstAudio.Add(row_i.bgvoice);
 			}
 		}
 		await AudioManager.Instance.PrepareVoiceAsync(true, firstAudio.ToArray());
@@ -276,9 +276,9 @@ public partial class UIWorkoutScreen : UIManScreen
 		{
 			var row_i = currentWorkoutData.GetAt(i);
 			followAudio.Add(row_i.voice);
-			if (!string.IsNullOrEmpty(row_i.sfx) && !string.Equals(row_i.sfx, "stop"))
+			if (!string.IsNullOrEmpty(row_i.bgvoice) && !string.Equals(row_i.bgvoice, "stop"))
 			{
-				followAudio.Add(row_i.sfx);
+				followAudio.Add(row_i.bgvoice);
 			}
 		}
 		
@@ -330,8 +330,8 @@ public partial class UIWorkoutScreen : UIManScreen
 			if (isQuiting)
 				break;
 			
-			// SFX
-			CommandProcessor.PlaySFX(currentRow.sfx);
+			// voiceBG
+			CommandProcessor.PlaySFX(currentRow.bgvoice);
 
 			//Commands
 			if (!string.IsNullOrEmpty(currentRow.commands))
