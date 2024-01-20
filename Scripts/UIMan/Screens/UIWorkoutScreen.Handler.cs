@@ -398,7 +398,7 @@ public partial class UIWorkoutScreen : UIManScreen
 			}
 			else
 			{
-				CommandProcessor.autoNextSeconds = 5.5f;
+				CommandProcessor.autoNextSeconds = 10.5f;
 				StartCoroutine(VoiceBGTextCO());
 			}
 

@@ -51,11 +51,11 @@ namespace HegaCore
         private readonly AudioMap musicMap;
         private readonly AudioMap soundMap;
         private readonly AudioMap voiceMap;
-        private readonly AudioMap voiceBGMap;
+        //private readonly AudioMap voiceBGMap;
         private readonly KeyMap musicKeyMap;
         private readonly KeyMap soundKeyMap;
         private readonly KeyMap voiceKeyMap;
-        private readonly KeyMap voiceBGKeyMap;
+        //private readonly KeyMap voiceBGKeyMap;
         private readonly RefValue<float> soundBufferIntervalRef;
 
         public AudioSource VoiceSource => voiceSource;
@@ -65,11 +65,11 @@ namespace HegaCore
             this.musicMap = new AudioMap();
             this.soundMap = new AudioMap();
             this.voiceMap = new AudioMap();
-            this.voiceBGMap = new AudioMap();
+            //this.voiceBGMap = new AudioMap();
             this.musicKeyMap = new KeyMap();
             this.soundKeyMap = new KeyMap();
             this.voiceKeyMap = new KeyMap();
-            this.voiceBGKeyMap = new KeyMap();
+            //this.voiceBGKeyMap = new KeyMap();
             this.soundBufferIntervalRef = RefValue.Create(() => this.soundBufferInterval, value => this.soundBufferInterval = value);
         }
 
@@ -246,7 +246,7 @@ namespace HegaCore
                 case AudioType.Music: audioMap = this.musicMap; keyMap = this.musicKeyMap; break;
                 case AudioType.Sound: audioMap = this.soundMap; keyMap = this.soundKeyMap; break;
                 case AudioType.Voice: audioMap = this.voiceMap; keyMap = this.voiceKeyMap; break;
-                case AudioType.VoiceBG: audioMap = this.voiceBGMap; keyMap = this.voiceBGKeyMap; break;
+                //case AudioType.VoiceBG: audioMap = this.voiceBGMap; keyMap = this.voiceBGKeyMap; break;
                 default: audioMap = null; keyMap = null; break;
             }
         }
@@ -268,7 +268,7 @@ namespace HegaCore
             => await PrepareAsync(this.voiceMap, AudioType.Voice, silent, references);
 
         public async UniTask PrepareVoiceBGAsync(bool silent, params AssetReferenceAudioClip[] references)
-            => await PrepareAsync(this.voiceBGMap, AudioType.VoiceBG, silent, references);
+            => await PrepareAsync(this.voiceMap, AudioType.VoiceBG, silent, references);
 
         private async UniTask PrepareAsync(AudioMap map, AudioType type, bool silent, params AssetReferenceAudioClip[] references)
         {
@@ -319,7 +319,7 @@ namespace HegaCore
             => await PrepareAsync(this.voiceMap, AudioType.Voice, silent, keys);
 
         public async UniTask PrepareVoiceBGAsync(bool silent, params string[] keys)
-            => await PrepareAsync(this.voiceBGMap, AudioType.VoiceBG, silent, keys);
+            => await PrepareAsync(this.voiceMap, AudioType.VoiceBG, silent, keys);
 
         private async UniTask PrepareAsync(AudioMap map, AudioType type, bool silent, params string[] keys)
         {
@@ -379,8 +379,8 @@ namespace HegaCore
         public void ReleaseVoice(params AssetReferenceAudioClip[] references)
             => Release(this.voiceMap, references);
 
-        public void ReleaseVoiceBG(params AssetReferenceAudioClip[] references)
-            => Release(this.voiceBGMap, references);
+        // public void ReleaseVoiceBG(params AssetReferenceAudioClip[] references)
+        //     => Release(this.voiceMap, references);
 
         private void Release(AudioMap map, params AssetReferenceAudioClip[] references)
         {
@@ -417,8 +417,8 @@ namespace HegaCore
         public void ReleaseVoice(params string[] keys)
             => Release(this.voiceKeyMap, this.voiceMap, keys);
 
-        public void ReleaseVoicBG(params string[] keys)
-            => Release(this.voiceBGKeyMap, this.voiceBGMap, keys);
+        // public void ReleaseVoicBG(params string[] keys)
+        //     => Release(this.voiceBGKeyMap, this.voiceBGMap, keys);
 
         private void Release(KeyMap keyMap, AudioMap audioMap, params string[] keys)
         {
@@ -460,7 +460,7 @@ namespace HegaCore
             => TryGetAudio(reference, this.voiceMap, out voice);
 
         public bool TryGetVoiceBG(AssetReferenceAudioClip reference, out AudioClip voice)
-            => TryGetAudio(reference, this.voiceBGMap, out voice);
+            => TryGetAudio(reference, this.voiceMap, out voice);
 
         private bool TryGetAudio(AssetReferenceAudioClip reference, AudioMap map, out AudioClip clip)
         {
@@ -492,8 +492,8 @@ namespace HegaCore
         public bool TryGetVoice(string key, out AudioClip voice)
             => TryGetAudio(key, this.voiceKeyMap, this.voiceMap, out voice);
 
-        public bool TryGetVoiceBG(string key, out AudioClip voice)
-            => TryGetAudio(key, this.voiceBGKeyMap, this.voiceBGMap, out voice);
+        // public bool TryGetVoiceBG(string key, out AudioClip voice)
+        //     => TryGetAudio(key, this.voiceKeyMap, this.voiceMap, out voice);
 
         private bool TryGetAudio(string key, KeyMap keyMap, AudioMap audioMap, out AudioClip clip)
         {

@@ -425,7 +425,7 @@ namespace HegaCore
         {
             if (!CanPlayVoiceBG(key))
                 return;
-            if (this.manager.TryGetVoiceBG(key, out this.voiceBGClip))
+            if (this.manager.TryGetVoice(key, out this.voiceBGClip))
             {
                 this.currentVoiceBGKey = key;
                 FadeVoiceBGPlay();
