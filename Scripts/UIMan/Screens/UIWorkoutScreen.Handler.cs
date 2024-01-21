@@ -308,6 +308,7 @@ public partial class UIWorkoutScreen : UIManScreen
 		soundBGText.gameObject.SetActive(false);
 	}
 
+	[SerializeField]
 	private int currentRowIndex = 0;
 	private WorkoutData.Row currentRow;
 	#if UNITY_EDITOR
