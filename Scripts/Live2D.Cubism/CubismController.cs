@@ -59,9 +59,8 @@ namespace HegaCore
 
         [BoxGroup("Custom Parameters")] [ShowInInspector, ReadOnly]
         private List<CubismParameterCustomControl> parameterControls = new List<CubismParameterCustomControl>();
-
-        [ContextMenu("Get Components")]
-        private void GetComponents()
+        
+        private void GetRef()
         {
             this.animator = GetComponentInChildren<Animator>();
             this.cubismRenderer = GetComponentInChildren<CubismRenderController>();
@@ -70,7 +69,7 @@ namespace HegaCore
 
         private void Awake()
         {
-            GetComponents();
+            GetRef();
             curClothesID = -1;
             this.LocalScale = this.useScaleOne ? Vector3.one : this.transform.localScale;
 
