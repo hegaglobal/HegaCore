@@ -60,6 +60,7 @@ namespace HegaCore
         [BoxGroup("Custom Parameters")] [ShowInInspector, ReadOnly]
         private List<CubismParameterCustomControl> parameterControls = new List<CubismParameterCustomControl>();
         
+        [Button(ButtonSizes.Large)]
         private void GetRef()
         {
             this.animator = GetComponentInChildren<Animator>();
