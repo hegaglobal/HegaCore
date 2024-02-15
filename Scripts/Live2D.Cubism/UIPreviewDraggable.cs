@@ -32,17 +32,14 @@ public class UIPreviewDraggable : MonoBehaviour, IDragHandler, IPointerDownHandl
     //public List<CubismDrawable> Drawables = new List<CubismDrawable>();
     public void OnPointerDown(PointerEventData eventData)
     {
-        //Drawables.Clear();
+        if (CubismManager.Instance.CurCharacter == null || CubismManager.Instance.CurCharacter.live2DCharInteract == null)
+        {
+            return;
+        }
+        
         CubismRaycastHit[] Results = new CubismRaycastHit[5]; // init 5 slot
         int castCount = CubismManager.Instance.CurCharacter.live2DCharInteract.GetRayCastDrawableArtMesh(ref Results);
         isInteracting = castCount > 0 && CubismManager.Instance.CurCharacter.StartInteract(Results);
-        // if (castCount > 0)
-        // {
-        //     foreach (var hit in Results)
-        //     {
-        //         Drawables.Add(hit.Drawable);
-        //     }
-        // }
     }
 
     public void OnPointerUp(PointerEventData eventData)
