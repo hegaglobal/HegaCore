@@ -6,9 +6,6 @@ using UnityEngine.AddressableAssets;
 
 namespace HegaCore
 {
-
-
-
     public class DataManager : SingletonBehaviour<DataManager>
     {
         private Dictionary<string, WorkoutData> workoutDict;
