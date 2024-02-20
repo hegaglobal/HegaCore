@@ -188,7 +188,7 @@ namespace HegaCore
 [Serializable]
 public class InteractPart
 {
-    [Title("$partName", " ============================== ",TitleAlignments.Centered)]
+    [Title("$partName", " ============================== ",TitleAlignments.Centered),GUIColor(0.3f, 0.8f, 0.8f, 1f)]
     public string partName = string.Empty;
     
     [InlineButton("Rename")]

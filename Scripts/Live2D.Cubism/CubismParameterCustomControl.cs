@@ -9,6 +9,7 @@ namespace HegaCore
     [RequireComponent(typeof(CubismParameter))]
     public class CubismParameterCustomControl : MonoBehaviour
     {
+        public string customParamName;
         private CubismParameter cubismParameter;
 
         [ShowInInspector, ReadOnly] private float currentValue;

@@ -329,11 +329,15 @@ namespace HegaCore
 
         private CubismParameterCustomControl GetParameterControl(string parameterName)
         {
-            for (int i = 0; i < parameterControls.Count; i++)
+            if (!string.IsNullOrEmpty(parameterName))
             {
-                if (string.Equals(parameterName, parameterControls[i].name))
+                for (int i = 0; i < parameterControls.Count; i++)
                 {
-                    return parameterControls[i];
+                    if (string.Equals(parameterName, parameterControls[i].name) ||
+                        string.Equals(parameterName, parameterControls[i].customParamName))
+                    {
+                        return parameterControls[i];
+                    }
                 }
             }
 
