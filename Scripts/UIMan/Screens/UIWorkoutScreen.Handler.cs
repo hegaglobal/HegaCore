@@ -221,7 +221,7 @@ public partial class UIWorkoutScreen : UIManScreen
 		{
 			return;
 		}
-		UIDefaultActivity.Show();
+		UIDefaultActivity.Show(showDuration:0.5f);
 		CommandProcessor.forceWait = 100;
 		isQuiting = true;
 		StopAllCoroutines();
@@ -302,7 +302,9 @@ public partial class UIWorkoutScreen : UIManScreen
 		soundBGText.gameObject.SetActive(true);
 		do
 		{
+#if UNITY_EDITOR
 			soundBGText.text = $"<color=red>{stage}</color> sound background: {(int)CommandProcessor.autoNextSeconds}";
+#endif
 			yield return new WaitForSeconds(1f);
 		} while (CommandProcessor.autoNextSeconds > 0);
 		soundBGText.gameObject.SetActive(false);
@@ -399,7 +401,7 @@ public partial class UIWorkoutScreen : UIManScreen
 			}
 			else
 			{
-				CommandProcessor.autoNextSeconds = 10.5f;
+				CommandProcessor.autoNextSeconds = 5.5f;
 				StartCoroutine(VoiceBGTextCO());
 			}
 
