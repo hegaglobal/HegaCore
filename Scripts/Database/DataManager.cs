@@ -86,10 +86,15 @@ namespace HegaCore
         public Camera live2DCamera;
 
         /// <summary>
-        /// R DLC
+        /// Has Patch
         /// </summary>
         public bool DarkLord;// { get; private set; }
-
+        
+        /// <summary>
+        /// Has Patch
+        /// </summary>
+        public bool Steam_DLC => DarkLord;
+        
         /// <summary>
         /// ACHIEVEMENT
         /// </summary>
