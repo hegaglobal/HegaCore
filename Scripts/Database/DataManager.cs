@@ -91,9 +91,14 @@ namespace HegaCore
         public bool DarkLord;// { get; private set; }
         
         /// <summary>
-        /// Has Patch
+        /// Has Steam DLC or R18 Build
         /// </summary>
+#if DEMO
         public bool Steam_DLC => DarkLord;
+#else
+        public bool Steam_DLC => false; //Todo: check later
+#endif
+        
         
         /// <summary>
         /// ACHIEVEMENT
