@@ -2,7 +2,15 @@
 using Steamworks;
 using UnityEngine;
 
-// Create a class that handles the leaderboard operations
+[System.Serializable]
+public class LeaderBoardEntryF
+{
+    public string userName; 
+    public int m_nGlobalRank;	
+    public int m_nScore;
+}
+
+
 public class LeaderboardManager : MonoBehaviour
 {
 // The name of the leaderboard
