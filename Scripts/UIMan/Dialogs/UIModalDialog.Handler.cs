@@ -115,8 +115,8 @@ namespace HegaCore.UI
         /// </summary>
         public void UI_Button_Proceed()
         {
-            this.onProceed?.Invoke();
             Hide();
+            this.onProceed?.Invoke();
         }
 
         /// <summary>
@@ -124,8 +124,8 @@ namespace HegaCore.UI
         /// </summary>
         public void UI_Button_ConfirmCancel()
         {
-            this.onConfirmCancel?.Invoke();
             Hide();
+            this.onConfirmCancel?.Invoke();
         }
 
         void Update()
