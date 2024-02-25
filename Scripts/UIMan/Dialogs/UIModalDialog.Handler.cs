@@ -1,5 +1,8 @@
 using System;
+using System.Collections;
+using Sirenix.OdinInspector;
 using UnityEngine;
+using UnityEngine.UI;
 using UnuGames;
 
 namespace HegaCore.UI
@@ -47,6 +50,9 @@ namespace HegaCore.UI
         [SerializeField]
         private Panel rootPanel = null;
 
+        [InlineButton("GetContentSizeFitters", "Get")]
+        public ContentSizeFitter[] sizeFitters; 
+        
         private Action onProceed;
         private Action onConfirmCancel;
 
@@ -56,7 +62,8 @@ namespace HegaCore.UI
         public override void OnShow(params object[] args)
         {
             base.OnShow(args);
-
+            EnableFilters(false);
+            
             var index = 0;
 
             args.GetThenMoveNext(ref index, out bool isProceed)
@@ -95,7 +102,8 @@ namespace HegaCore.UI
                 OkBtn = (string.IsNullOrEmpty(customOkBtn) ? L10n.Localize("btn-ok") : customOkBtn) + yesStr;
             }
 
-            this.rootPanel.Show(true);
+            this.rootPanel.Show();
+            StartCoroutine(RecalculatingSize());
         }
 
         public override void OnShowComplete()
@@ -148,6 +156,28 @@ namespace HegaCore.UI
                     }
                 }
             }
+        }
+
+        void GetContentSizeFitters()
+        {
+            sizeFitters = GetComponentsInChildren<ContentSizeFitter>();
+        }
+
+        void EnableFilters(bool enable)
+        {
+            if (sizeFitters!= null && sizeFitters.Length >0)
+            {
+                foreach (var filter in sizeFitters)
+                {
+                    filter.enabled = enable;
+                }
+            }
+        }
+
+        IEnumerator RecalculatingSize()
+        {
+            yield return new WaitForSeconds(0.1f);
+            EnableFilters(true);
         }
     }
 }
