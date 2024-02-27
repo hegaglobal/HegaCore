@@ -22,11 +22,11 @@ public partial class UIWorkoutLiteScreen : UIManScreen
 	public static void Show(int girlIndex, Action onShowCompleted = null, Action onHide = null,
 		Action onHideCompleted = null)
 	{
-		// if (!G4Database.Instance.DarkLord)
-		// {
-		// 	return;
-		// }
-		//BackgroundManager.Instance.Deinitialize();
+		if (!DataManager.Instance.DarkLord)
+		{
+			return;
+		}
+		
 		AudioManager.Instance.Player.StopMusic();
 		UIDefaultActivity.Show(1, false,
 			() =>
@@ -87,13 +87,13 @@ public partial class UIWorkoutLiteScreen : UIManScreen
 		
 		isQuiting = false;
 
-		// G4DataManager.Instance.GetWorkoutLiteData(currentSceneData.dataPath, (result) =>
-		// {
-		// 	UnuLogger.Log("Loaded Workoutlite: "  + currentSceneData.dataPath);
-		// 	currentWorkoutLiteData = result;
-		// 	rowCount = currentWorkoutLiteData.NumRows();
-		// 	PrepareHscene().Forget();
-		// });
+		DataManager.Instance.GetWorkoutLiteData(currentSceneData.dataPath, (result) =>
+		{
+			UnuLogger.Log("Loaded Workoutlite: "  + currentSceneData.dataPath);
+			currentWorkoutLiteData = result;
+			rowCount = currentWorkoutLiteData.NumRows();
+			PrepareHscene().Forget();
+		});
 	}
 
 	public override void OnShowComplete()
@@ -161,7 +161,7 @@ public partial class UIWorkoutLiteScreen : UIManScreen
 		{
 			return;
 		}
-		UIDefaultActivity.Show();
+		UIDefaultActivity.Show(0.5f);
 		CommandProcessor.forceWait = 100;
 		isQuiting = true;
 		StopAllCoroutines();
@@ -172,7 +172,7 @@ public partial class UIWorkoutLiteScreen : UIManScreen
 	{
 		AudioManager.Instance.Player.StopMusic();
 		AudioManager.Instance.Player.StopAllVoices();
-		onHide?.Invoke(); // call ham truoc de show cover
+		onHide?.Invoke();
 		yield return new WaitForSeconds(0.8f);// cho cover
 		HideMe();
 		
@@ -183,8 +183,6 @@ public partial class UIWorkoutLiteScreen : UIManScreen
 	{
 		yield return new WaitForSeconds(1f);
 		onHideCompleted?.Invoke();
-		
-		UIDefaultActivity.Hide();
 	}
 
 	async UniTaskVoid PrepareHscene()
@@ -316,7 +314,7 @@ public partial class UIWorkoutLiteScreen : UIManScreen
 			string vID = GetRandomVoiceAddress();
 			if (string.IsNullOrEmpty(vID))
 			{
-				CommandProcessor.waitForSeconds = 3f;
+				CommandProcessor.waitForSeconds = 1f;
 			}
 			else
 			{

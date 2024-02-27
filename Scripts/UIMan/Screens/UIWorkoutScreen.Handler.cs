@@ -232,7 +232,7 @@ public partial class UIWorkoutScreen : UIManScreen
 	{
 		AudioManager.Instance.Player.StopAllVoices();
 		AudioManager.Instance.Player.StopMusic();
-		onHide?.Invoke(); // call ham truoc de show cover
+		onHide?.Invoke();
 		yield return new WaitForSeconds(0.8f);// cho cover
 		HideMe();
 
@@ -247,7 +247,6 @@ public partial class UIWorkoutScreen : UIManScreen
 	{
 		yield return new WaitForSeconds(1f);
 		onHideCompleted?.Invoke();
-		UIDefaultActivity.Hide();
 	}
 
 	async UniTaskVoid PrepareHscene()
