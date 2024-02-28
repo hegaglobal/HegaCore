@@ -18,6 +18,8 @@ namespace HegaCore.UI
         private Panel showPanel;
         private Panel hidePanel;
 
+        public RectTransform RectTransform;
+        
         private void Awake()
         {
             this.panel = GetComponent<Panel>();

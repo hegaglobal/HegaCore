@@ -17,9 +17,13 @@ public class WorkoutCommandProcessor : MonoBehaviour
 	public Image BG;
 	public Image FG;
 	public RawImage charRenderImage;
-	public MoveTweener MoveTweener;
-	public ZoomTweener ZoomTweener;
-	public ShakeTweener ShakeTweener;
+
+	public MoveTweener MoveTweener => BackgroundManager.Instance.MoveTweener;
+	public ZoomTweener ZoomTweener=> BackgroundManager.Instance.ZoomTweener;
+	public ShakeTweener ShakeTweener=> BackgroundManager.Instance.ShakeTweener;
+	
+	public RotateTweener RotateTweener=> BackgroundManager.Instance.RotateTweener;
+	
 	public EyeBlinkTweener EyeBlinkTweener;
 
 	public float autoNextSeconds;
@@ -46,7 +50,7 @@ public class WorkoutCommandProcessor : MonoBehaviour
 		waitForSeconds = 0;
 		forceWait = 0;
 		autoNextSeconds = 0;
-		charRenderImage.texture = Live2DManager.Instance.RenderTexture;
+		//charRenderImage.texture = Live2DManager.Instance.RenderTexture;
 	}
 
 	public void UpdateProcessor()
@@ -120,36 +124,46 @@ public class WorkoutCommandProcessor : MonoBehaviour
 			case "PoseLoad":
 				LoadHPose(strings[1]);
 				break;
+			
 			case "PoseShow":
 				PoseShow(strings[1]);
 				break;
+			
 			case "PoseHide":
 				PoseHide(strings[1]);
 				break;
+			
 			case "PosePhase":
 				PosePhase(strings[1], strings[2]);
 				break;
+			
 			case "PoseTrigger":
 				PoseTrigger(strings[1], strings[2]);
 				break;
+			
 			case "PoseBool":
 				PoseBool(strings[1], strings[2], string.Equals(strings[3], "true"));
 				break;
+			
 			case "PoseInt":
 				PoseInt(strings[1], strings[2], int.Parse(strings[3]));
 				break;
+			
 			case "ResetState":
 				ResetState(strings[1]);
 				break;
+			
 			case "PlaySFX":
 				if (strings.Length == 3)
 					PlaySFX(strings[1], !string.IsNullOrEmpty(strings[2]));
 				else
 					PlaySFX(strings[1]);
 				break;
+			
 			case "VoiceBG":
 					PlaySFX(strings[1], true);
 				break;
+			
 			case "Position":
 				int plen = strings.Length;
 				if (plen == 3)
@@ -157,13 +171,17 @@ public class WorkoutCommandProcessor : MonoBehaviour
 				else if (plen == 4)
 					RenderPosition(new Vector2(strings[1].ParseFloatUS(), strings[2].ParseFloatUS()), strings[3].ParseFloatUS());
 				break;
+			
 			case "Zoom":
 				int zlen = strings.Length;
 				if(zlen == 2)
 					RenderZoom(strings[1].ParseFloatUS());
 				else if(zlen == 3)
 					RenderZoom(strings[1].ParseFloatUS(), strings[2].ParseFloatUS());
+				else if(zlen == 4)
+					RenderZoom(strings[1].ParseFloatUS(), strings[2].ParseFloatUS(),strings[3].ParseFloatUS() );
 				break;
+			
 			case "Shake":
 				Vector2 from = new Vector2(strings[1].ParseFloatUS(), strings[2].ParseFloatUS());
 				Vector2 to = new Vector2(strings[3].ParseFloatUS(), strings[4].ParseFloatUS());
@@ -175,11 +193,20 @@ public class WorkoutCommandProcessor : MonoBehaviour
 				}
 				else
 					Shake(from, to, time);
-
 				break;
+			
+			case "Rotate":
+				Vector3 rotate = new Vector3(strings[1].ParseFloatUS(), strings[2].ParseFloatUS(),strings[3].ParseFloatUS());
+				float rotateDuration = -1f;
+				if (strings.Length > 4)
+					rotateDuration = strings[4].ParseFloatUS();
+				Rotate(rotate, rotateDuration);
+				break;
+			
 			case "StopShake":
 				StopShake(true);
 				break;
+			
 			case "EyeClose":
 				EyeBlinkTweener?.EyeClose();
 				break;
@@ -249,9 +276,19 @@ public class WorkoutCommandProcessor : MonoBehaviour
 		ZoomTweener.Zoom(zoom, duration);
 	}
 
+	public void RenderZoom(float from, float to, float duration)
+	{
+		ZoomTweener.Zoom(from,to,duration);
+	}
+
 	public void Shake(Vector2 from, Vector2 to, float frequency, float zoomTo = 1f)
 	{
 		ShakeTweener.Shake(from, to, frequency, zoomTo);
+	}
+
+	public void Rotate(Vector3 rotateTo, float duration = 0)
+	{
+		RotateTweener.Rotate(rotateTo, duration);
 	}
 
 	public void StopShake(bool reset = false)
@@ -324,7 +361,7 @@ public class WorkoutCommandProcessor : MonoBehaviour
 			}
 			
 			if(hideCurrent)
-				currentPose.transform.position = new Vector3(10,10,10);
+				currentPose.transform.position = new Vector3(10,50,10);
 		}
 
 		if (hPoseControllers.ContainsKey(target))
@@ -332,17 +369,18 @@ public class WorkoutCommandProcessor : MonoBehaviour
 			var pose = hPoseControllers[target];
 			pose.transform.position = Vector3.zero;
 			
-			BG.enabled = pose.hasBG;
+			//BG.enabled = pose.hasBG;
 			if (pose.hasBG)
 			{
-				BG.sprite = pose.BG;
-				//BG.SetNativeSize();
+				//BG.sprite = pose.BG;
+				BackgroundManager.Instance.SetBackground(target + "_BG", Color.white, 0f);
 			}
 			
-			FG.enabled = pose.hasFG;
+			//FG.enabled = pose.hasFG;
 			if (pose.hasFG)
 			{
-				FG.sprite = pose.FG;
+				//FG.sprite = pose.FG;
+				BackgroundManager.Instance.SetForeground(target + "_FG", Color.white, 0f);
 			}
 			
 			currentPose = pose;

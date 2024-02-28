@@ -20,6 +20,11 @@ namespace HegaCore
 
         [SerializeField] 
         private GameObject BlurObject;
+
+        public MoveTweener MoveTweener;
+        public ShakeTweener ShakeTweener;
+        public ZoomTweener ZoomTweener;
+        public RotateTweener RotateTweener;
         
         private void Awake()
         {

@@ -35,6 +35,17 @@ public class ZoomTweener : MonoBehaviour
         }
     }
 
+    public void Zoom(float from, float zoom, float duration)
+    {
+        UnuLogger.Log($"Zoom: <color=yellow>{gameObject.name}</color>  {zoom} -- {duration}");
+        zoomTweener?.Kill();
+        
+        _rectTransform.localScale = new Vector3(from, from, from);
+        zoomTweener = _rectTransform.DOScale(zoom, duration)
+            .OnKill(() => zoomTweener = null)
+            .OnComplete(() => zoomTweener = null);
+    }
+
     void OnDisable()
     {
         zoomTweener?.Kill();
