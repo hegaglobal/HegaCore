@@ -149,6 +149,10 @@ public class WorkoutCommandProcessor : MonoBehaviour
 				PoseInt(strings[1], strings[2], int.Parse(strings[3]));
 				break;
 			
+			case "PoseFloat":
+				PoseFloat(strings[1], strings[2], strings[3].ParseFloatUS());
+				break;
+			
 			case "ResetState":
 				ResetState(strings[1]);
 				break;
@@ -437,6 +441,12 @@ public class WorkoutCommandProcessor : MonoBehaviour
 	{
 		if (hPoseControllers.ContainsKey(target))
 			hPoseControllers[target].CubismController.Animator.SetInteger(boolName, value);
+	}
+	
+	public void PoseFloat(string target, string boolName, float value)
+	{
+		if (hPoseControllers.ContainsKey(target))
+			hPoseControllers[target].CubismController.Animator.SetFloat(boolName, value);
 	}
 
 	private void EnableLipsyns(string targetName, bool enable)

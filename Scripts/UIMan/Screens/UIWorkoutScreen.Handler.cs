@@ -253,6 +253,7 @@ public partial class UIWorkoutScreen : UIManScreen
 	{
 		CommandProcessor.RenderPosition(Vector2.zero);
 		CommandProcessor.RenderZoom(1f);
+		CommandProcessor.Rotate(Vector3.zero);
 		CommandProcessor.LoadHPose(currentSceneData.firstPoseID);
 		voiceText.text = string.Empty;
 		
