@@ -195,10 +195,11 @@ public partial class UIWorkoutLiteScreen : UIManScreen
 			var row_i = currentWorkoutLiteData.GetAt(i);
 			foreach (var id in row_i.voices)
 			{
-				firstAudioList.Add(id);
+				if (!firstAudioList.Contains(id))
+					firstAudioList.Add(id);
 			}
 
-			if (!string.IsNullOrEmpty(row_i.sfx) && !string.Equals(row_i.sfx, "stop"))
+			if (!firstAudioList.Contains(row_i.sfx) && !string.IsNullOrEmpty(row_i.sfx) && !string.Equals(row_i.sfx, "stop"))
 			{
 				firstAudioList.Add(row_i.sfx);
 			}
@@ -211,12 +212,13 @@ public partial class UIWorkoutLiteScreen : UIManScreen
 		for (int i = 5; i < rowCount; i++)
 		{
 			var row_i = currentWorkoutLiteData.GetAt(i);
-			foreach (var voice in row_i.voices)
+			foreach (var id in row_i.voices)
 			{
-				followAudio.Add(voice);
+				if (!followAudio.Contains(id))
+					followAudio.Add(id);
 			}
 
-			if (!string.IsNullOrEmpty(row_i.sfx) && !string.Equals(row_i.sfx, "stop"))
+			if (!followAudio.Contains(row_i.sfx) && !string.IsNullOrEmpty(row_i.sfx) && !string.Equals(row_i.sfx, "stop"))
 			{
 				followAudio.Add(row_i.sfx);
 			}
