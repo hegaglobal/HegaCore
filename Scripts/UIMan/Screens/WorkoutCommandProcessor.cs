@@ -34,6 +34,7 @@ public class WorkoutCommandProcessor : MonoBehaviour
 	private HPoseController currentPose;
 	
 	private List<DelayCommandData> DelayCommandDatas;
+	[SerializeField]
 	private float currentDelayCharged;
 	
 #if UNITY_EDITOR
