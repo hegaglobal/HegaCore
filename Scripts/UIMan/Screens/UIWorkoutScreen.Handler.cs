@@ -328,8 +328,9 @@ public partial class UIWorkoutScreen : UIManScreen
 			UnuLogger.Log("ROW: ==================================== " + currentRowIndex);
 			CommandProcessor.waitForSeconds = 0;
 			CommandProcessor.forceWait = 0;
+			CommandProcessor.forceNext = 1000f;
 			CommandProcessor.ClearDelayCommands();
-			
+			Debug.Log(CommandProcessor.forceNext);
 			if (isQuiting)
 				break;
 			
@@ -416,7 +417,7 @@ public partial class UIWorkoutScreen : UIManScreen
 			yield return new WaitUntil(() => !busy);
 
 			waitForClick = true;
-			yield return new WaitUntil(() => !waitForClick || (!needClick && CommandProcessor.autoNextSeconds <= 0));
+			yield return new WaitUntil(() => !waitForClick || (!needClick && CommandProcessor.autoNextSeconds <= 0) || CommandProcessor.forceNext <= 0);
 			yield return new WaitUntil(() => CommandProcessor.forceWait <= 0);
 
 			currentRowIndex++;
@@ -425,6 +426,7 @@ public partial class UIWorkoutScreen : UIManScreen
 			{
 				break;
 			}
+			Debug.Log(CommandProcessor.forceNext);
 		}
 
 		busy = true;

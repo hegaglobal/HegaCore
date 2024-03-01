@@ -29,6 +29,7 @@ public class WorkoutCommandProcessor : MonoBehaviour
 	public float autoNextSeconds;
 	public float waitForSeconds;
 	public float forceWait;
+	public float forceNext;
 	
 	private Dictionary<string, HPoseController> hPoseControllers;
 	private HPoseController currentPose;
@@ -50,6 +51,7 @@ public class WorkoutCommandProcessor : MonoBehaviour
 		waitForSeconds = 0;
 		forceWait = 0;
 		autoNextSeconds = 0;
+		forceNext = 0;
 		//charRenderImage.texture = Live2DManager.Instance.RenderTexture;
 	}
 
@@ -64,6 +66,8 @@ public class WorkoutCommandProcessor : MonoBehaviour
 			autoNextSeconds -= deltaTime;
 		else if (forceWait > 0)
 			forceWait -= deltaTime;
+
+		forceNext -= deltaTime;
 		
 		currentDelayCharged += Time.deltaTime;
 		if (DelayCommandDatas.Count > 0)
@@ -227,7 +231,7 @@ public class WorkoutCommandProcessor : MonoBehaviour
 				waitForSeconds = strings[1].ParseFloatUS();
 				break;
 			case "AutoNext":
-				autoNextSeconds = strings[1].ParseFloatUS();
+				forceNext = strings[1].ParseFloatUS();
 				break;
 			case "EnableLipsyns":
 				EnableLipsyns(strings[1], string.Equals(strings[2], "true"));
