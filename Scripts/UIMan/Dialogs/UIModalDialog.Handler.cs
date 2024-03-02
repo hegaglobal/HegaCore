@@ -103,7 +103,7 @@ namespace HegaCore.UI
             }
 
             this.rootPanel.Show();
-            StartCoroutine(RecalculatingSize());
+            EnableFilters(true);
         }
 
         public override void OnShowComplete()
