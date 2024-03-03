@@ -9,6 +9,14 @@ namespace HegaCore.UI
 {
     public partial class UIModalDialog : UIManDialog
     {
+        /// <summary>
+        /// JUST OK
+        /// </summary>
+        /// <param name="title"></param>
+        /// <param name="content"></param>
+        /// <param name="onConfirm"></param>
+        /// <param name="okBtn"></param>
+        /// <param name="yesKey"></param>
         public static void ShowConfirm(string title = "", 
             string content = "", 
             Action onConfirm = null, 
@@ -23,6 +31,17 @@ namespace HegaCore.UI
                 yesKey);
         }
 
+        /// <summary>
+        /// OK OR CANCEL
+        /// </summary>
+        /// <param name="title"></param>
+        /// <param name="content"></param>
+        /// <param name="onProceed"></param>
+        /// <param name="onCancel"></param>
+        /// <param name="okBtn"></param>
+        /// <param name="cancelBtn"></param>
+        /// <param name="yesKey"></param>
+        /// <param name="cancelKey"></param>
         public static void ShowProceed(string title = "", 
             string content = "", 
             Action onProceed = null, 

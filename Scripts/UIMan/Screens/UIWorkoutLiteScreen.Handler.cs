@@ -144,12 +144,18 @@ public partial class UIWorkoutLiteScreen : UIManScreen
 	public void UIButton_Close()
 	{
 		busy = true;
-		UIMan.Instance.ShowPopup(L10n.Localize("alert"),
-			L10n.Localize("exit-hscene"),
-			L10n.Localize("yes"),
-			L10n.Localize("no"),
-			(agrs) => { UIButton_Back(); },
-			(objects => busy = false));
+		// UIMan.Instance.ShowPopup(L10n.Localize("alert"),
+		// 	L10n.Localize("exit-hscene"),
+		// 	L10n.Localize("yes"),
+		// 	L10n.Localize("no"),
+		// 	(agrs) => { UIButton_Back(); },
+		// 	(objects => busy = false));
+		UIModalDialog.ShowProceed("",
+			"Are you sure to exit the scene?", //L10n.Localize("exit-hscene"),
+			UIButton_Back,
+			() => busy = false,
+			"YES", //L10n.Localize("yes"),
+			"CANCEL"); //L10n.Localize("no"));
 	}
 	
 	public void UIButton_Back()
@@ -174,8 +180,10 @@ public partial class UIWorkoutLiteScreen : UIManScreen
 		AudioManager.Instance.Player.StopAllVoices();
 		onHide?.Invoke();
 		yield return new WaitForSeconds(0.8f);// cho cover
+		CommandProcessor.RenderZoom(1);
+		CommandProcessor.Rotate(Vector3.zero);
+		CommandProcessor.RenderPosition(Vector2.zero);
 		HideMe();
-		
 		yield return StartCoroutine(CommandProcessor.HidePoses());
 	}
 
@@ -237,12 +245,13 @@ public partial class UIWorkoutLiteScreen : UIManScreen
 
 	void RunHscene(params object[] args)
 	{
+		AudioManager.Instance.Player.PlayMusicAsync("audiostock_825440");
 		RunCurrentRow();
 		//AudioControl.Instance.CheckAndPlayBGM("H_BGM");
 		// Random Voice
 		StartCoroutine(RandomVoiceCO());
 		busy = false;
-		UIDefaultActivity.Hide();
+		UIDefaultActivity.Hide(0.5f);
 	}
 	
 	void RunCurrentRow()
@@ -380,6 +389,7 @@ public partial class UIWorkoutLiteScreen : UIManScreen
 		CommandProcessor.waitForSeconds = 0;
 		newRow = true;
 	}
+	
 	#endregion
 
 }

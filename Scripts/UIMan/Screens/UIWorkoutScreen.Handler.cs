@@ -201,12 +201,19 @@ public partial class UIWorkoutScreen : UIManScreen
 	public void UIButton_Close()
 	{
 		busy = true;
-		UIMan.Instance.ShowPopup(L10n.Localize("alert"),
-			L10n.Localize("exit-hscene"),
-			L10n.Localize("yes"),
-			L10n.Localize("no"),
-			(agrs) => { UIButton_Back(); },
-			(objects => busy = false));
+		UIModalDialog.ShowProceed("",
+			"Are you sure to exit the scene?", //L10n.Localize("exit-hscene"),
+			UIButton_Back,
+			() => busy = false,
+			"YES", //L10n.Localize("yes"),
+			"CANCEL"); //L10n.Localize("no"));
+
+		// UIMan.Instance.ShowPopup(L10n.Localize("alert"),
+		// 	L10n.Localize("exit-hscene"),
+		// 	L10n.Localize("yes"),
+		// 	L10n.Localize("no"),
+		// 	(agrs) => { UIButton_Back(); },
+		// 	(objects => busy = false));
 	}
 	
 	/// <summary>
@@ -234,6 +241,9 @@ public partial class UIWorkoutScreen : UIManScreen
 		AudioManager.Instance.Player.StopMusic();
 		onHide?.Invoke();
 		yield return new WaitForSeconds(0.8f);// cho cover
+		CommandProcessor.RenderZoom(1);
+		CommandProcessor.Rotate(Vector3.zero);
+		CommandProcessor.RenderPosition(Vector2.zero);
 		HideMe();
 
 		yield return StartCoroutine(CommandProcessor.HidePoses());
@@ -293,7 +303,8 @@ public partial class UIWorkoutScreen : UIManScreen
 
 	void RunHscene(params object[] args)
 	{
-		UIDefaultActivity.Hide();
+		UIDefaultActivity.Hide(0.5f);
+		AudioManager.Instance.Player.PlayMusicAsync("audiostock_825440");
 		StartCoroutine(RunHsceneCO());
 	}
 
@@ -330,7 +341,6 @@ public partial class UIWorkoutScreen : UIManScreen
 			CommandProcessor.forceWait = 0;
 			CommandProcessor.forceNext = 1000f;
 			CommandProcessor.ClearDelayCommands();
-			Debug.Log(CommandProcessor.forceNext);
 			if (isQuiting)
 				break;
 			
@@ -391,18 +401,18 @@ public partial class UIWorkoutScreen : UIManScreen
 					curClip = voiceClip;
 #endif
 					AudioManager.Instance.Player.PlayVoice(currentRow.voice);
-					CommandProcessor.autoNextSeconds = voiceClip.length + 0.25f;
+					CommandProcessor.autoNextSeconds = voiceClip.length + 0.15f;
 					soundBGText.gameObject.SetActive(false);
 				}
 				else
 				{
 					UnuLogger.Log("Addressable Load Voice Failed: " + currentRow.voice);
-					CommandProcessor.autoNextSeconds = 5.5f;
+					CommandProcessor.autoNextSeconds = 3.5f;
 				}
 			}
 			else
 			{
-				CommandProcessor.autoNextSeconds = 5.5f;
+				CommandProcessor.autoNextSeconds = 3.5f;
 				StartCoroutine(VoiceBGTextCO());
 			}
 
@@ -426,7 +436,6 @@ public partial class UIWorkoutScreen : UIManScreen
 			{
 				break;
 			}
-			Debug.Log(CommandProcessor.forceNext);
 		}
 
 		busy = true;

@@ -231,7 +231,7 @@ public class WorkoutCommandProcessor : MonoBehaviour
 			case "MustWait":
 				waitForSeconds = strings[1].ParseFloatUS();
 				break;
-			case "AutoNext":
+			case "ForceNext":
 				forceNext = strings[1].ParseFloatUS();
 				break;
 			case "EnableLipsyns":
