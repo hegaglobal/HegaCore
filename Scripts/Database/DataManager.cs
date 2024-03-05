@@ -93,7 +93,7 @@ namespace HegaCore
         /// <summary>
         /// Has Steam DLC or R18 Build
         /// </summary>
-#if DEMO
+#if DEMO || CURATOR
         public bool Steam_DLC => DarkLord;
 #else
         public bool Steam_DLC => false; //Todo: check later
