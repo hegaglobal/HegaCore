@@ -58,17 +58,17 @@ public class SteamManager : MonoBehaviour {
 		}
 		s_instance = this;
 
-#if UNITY_EDITOR || CHEAT
+#if (UNITY_EDITOR && !CURATOR ) || CHEAT
 		steamEnabled = false;
 #endif
-
+		
 		if (!steamEnabled)
 		{
 			gameObject.SetActive(false);
 			return;
 		}
 		
-		Debug.Log("SteamMamager INIT SUCCESSFULLY !!!!!!!!!!!!!!!");
+		
 		
 		if (s_EverInitialized) {
 			// This is almost always an error.
@@ -98,6 +98,7 @@ public class SteamManager : MonoBehaviour {
 			// See the Valve documentation for more information: https://partner.steamgames.com/doc/sdk/api#initialization_and_shutdown
 			if (SteamAPI.RestartAppIfNecessary(AppId_t.Invalid)) 
 			{
+				Debug.LogError("Reset App: " + AppId_t.Invalid);
 #if DEMO || CURATOR
 				gameObject.SetActive(false);		
 #else
@@ -132,8 +133,12 @@ public class SteamManager : MonoBehaviour {
 
 			return;
 		}
-
+		
+		Debug.Log("SteamMamager INIT SUCCESSFULLY !!!!!!!!!!!!!!!");
 		s_EverInitialized = true;
+		
+		//for Leaderboard
+		LeaderboardManager.Instance.Init();
 	}
 
 	// This should only ever get called on first load and after an Assembly reload, You should never Disable the Steamworks Manager yourself.
