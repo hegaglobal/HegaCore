@@ -4,16 +4,7 @@ using System.Collections.Generic;
 using Steamworks;
 using UnityEngine;
 using System;
-using System.Collections;
-
-[System.Serializable]
-public class LeaderBoardEntryF
-{
-    public string userName; 
-    public int m_nGlobalRank;	
-    public int m_nScore;
-}
-
+using System.Runtime.CompilerServices;
 
 public class LeaderboardManager : MonoBehaviour
 {
@@ -42,9 +33,8 @@ public class LeaderboardManager : MonoBehaviour
     private CallResult<LeaderboardScoresDownloaded_t> downloadResult;
     
     private int entryCount = 10;
-    private Dictionary<string, int> leaderboardHash = new Dictionary<string, int>();
-    private Dictionary<int, SteamLeaderboard_t> SteamLeaderboards = new Dictionary<int, SteamLeaderboard_t>();
-    private Dictionary<int,LeaderboardEntry_t[]> leaderboardEntriesDictionary = new Dictionary<int, LeaderboardEntry_t[]>();
+    private Dictionary<string,List<LeaderBoardEntryData>> LeaderBoardEntryDataDict = new Dictionary<string, List<LeaderBoardEntryData>>();
+    private Dictionary<string, List<Action<List<LeaderBoardEntryData>>>> onDownloadedLeaderBoardCallbackDict = new Dictionary<string, List<Action<List<LeaderBoardEntryData>>>>();
     
     public void Init()
     {
@@ -52,43 +42,33 @@ public class LeaderboardManager : MonoBehaviour
         gameObject.SetActive(s_initialized);
     }
 
-    public void FindOrCreateLeaderboard(string leaderboardName, ELeaderboardSortMethod sort,
-        ELeaderboardDisplayType type,
-        Action<SteamLeaderboard_t> onCompleted, Action onFailed)
+    public void FindOrCreateLeaderboard(string leaderboardName,
+        ELeaderboardSortMethod sort = ELeaderboardSortMethod.k_ELeaderboardSortMethodDescending,
+        ELeaderboardDisplayType type = ELeaderboardDisplayType.k_ELeaderboardDisplayTypeNumeric,
+        Action<string,SteamLeaderboard_t> onCompleted = null, Action onFailed = null)
     {
         if (!Initialized)
         {
             Debug.Log("Steam SDK not Initialized");
             return;
         }
-
-        if (leaderboardHash.ContainsKey(leaderboardName))
+        
+        // Find or create the leaderboard
+        SteamAPICall_t findCall = SteamUserStats.FindOrCreateLeaderboard(leaderboardName, sort, type);
+        findResult = CallResult<LeaderboardFindResult_t>.Create(((t, failure) =>
         {
-            Debug.Log("Cached ------- " + leaderboardName);
-            onCompleted?.Invoke(SteamLeaderboards[leaderboardHash[leaderboardName]]);
-        }
-        else
-        {
-            // Find or create the leaderboard
-            SteamAPICall_t findCall = SteamUserStats.FindOrCreateLeaderboard(leaderboardName, sort, type);
-            findResult = CallResult<LeaderboardFindResult_t>.Create(((t, failure) =>
+            if (failure || t.m_bLeaderboardFound == 0)
             {
-                if (failure || t.m_bLeaderboardFound == 0)
-                {
-                    onFailed?.Invoke();
-                }
-                else
-                {
-                    Debug.Log("New ------- " + leaderboardName);
-                    int hash = t.m_hSteamLeaderboard.GetHashCode();
-                    SteamLeaderboards.Add(hash, t.m_hSteamLeaderboard);
-                    leaderboardHash.Add(leaderboardName, hash);
-                    onCompleted?.Invoke(t.m_hSteamLeaderboard);
-                }
-            }));
+                onFailed?.Invoke();
+            }
+            else
+            {
+                Debug.Log("New ------- " + leaderboardName);
+                onCompleted?.Invoke(leaderboardName , t.m_hSteamLeaderboard);
+            }
+        }));
 
-            findResult.Set(findCall);
-        }
+        findResult.Set(findCall);
     }
 
     [Sirenix.OdinInspector.Button]
@@ -101,7 +81,7 @@ public class LeaderboardManager : MonoBehaviour
     }
 
     public void UploadToLeaderboard(string leaderboardName, ELeaderboardSortMethod sort,
-        ELeaderboardDisplayType type, int valueToUpload, bool updateGlobalRank = false)
+        ELeaderboardDisplayType type, int valueToUpload)
     {
         if (!Initialized)
         {
@@ -109,19 +89,24 @@ public class LeaderboardManager : MonoBehaviour
             return;
         }
 
-        FindOrCreateLeaderboard(leaderboardName, sort, type, (t => { UploadToLeaderboard(t, valueToUpload); }),
+        FindOrCreateLeaderboard(leaderboardName, sort, type, (
+                (n,t) => { UploadToLeaderboard(n, t, valueToUpload); }),
             () => { Debug.Log("Failed to upload score to Leaderboard: " + leaderboardName); });
     }
 
-    private void UploadToLeaderboard(SteamLeaderboard_t steamLeaderboardT, int score)
+    private void UploadToLeaderboard(string leaderboardName, SteamLeaderboard_t steamLeaderboardT, int score)
     {
         SteamAPICall_t uploadCall = SteamUserStats.UploadLeaderboardScore(steamLeaderboardT,
             ELeaderboardUploadScoreMethod.k_ELeaderboardUploadScoreMethodKeepBest, score, null, 0);
-        uploadResult = CallResult<LeaderboardScoreUploaded_t>.Create(OnDownloadLeaderboardAfterUpdateScore);
+        uploadResult = CallResult<LeaderboardScoreUploaded_t>.Create((t, failure) =>
+            {
+                OnDownloadLeaderboardAfterUpdateScore(leaderboardName, t, failure);
+            });
+            
         uploadResult.Set(uploadCall);
     }
 
-    private void OnDownloadLeaderboardAfterUpdateScore(LeaderboardScoreUploaded_t result, bool failure)
+    private void OnDownloadLeaderboardAfterUpdateScore(string leaderBoardName, LeaderboardScoreUploaded_t result, bool failure)
     {
         if (failure || result.m_bSuccess != 1)
         {
@@ -129,10 +114,13 @@ public class LeaderboardManager : MonoBehaviour
             return;
         }
 
-        DownLoadGlobalRank(result.m_hSteamLeaderboard);
+        DownLoadGlobalRank(leaderBoardName, result.m_hSteamLeaderboard);
     }
-
-    public void DownLoadGlobalRank(string leaderboardName, ELeaderboardSortMethod sort, ELeaderboardDisplayType type)
+    
+    public void DownLoadGlobalRank(string leaderboardName, 
+        ELeaderboardSortMethod sort = ELeaderboardSortMethod.k_ELeaderboardSortMethodDescending, 
+        ELeaderboardDisplayType type = ELeaderboardDisplayType.k_ELeaderboardDisplayTypeNumeric, 
+        Action<List<LeaderBoardEntryData>> callback = null)
     {
         if (!Initialized)
         {
@@ -140,23 +128,38 @@ public class LeaderboardManager : MonoBehaviour
             return;
         }
 
+        if (LeaderBoardEntryDataDict.ContainsKey(leaderboardName))
+        {
+            callback.Invoke(LeaderBoardEntryDataDict[leaderboardName]);
+            return;
+        }
+        
+        if (!onDownloadedLeaderBoardCallbackDict.ContainsKey(leaderboardName))
+        {
+            onDownloadedLeaderBoardCallbackDict.Add(leaderboardName, new List<Action<List<LeaderBoardEntryData>>>());
+        }
+        onDownloadedLeaderBoardCallbackDict[leaderboardName].Add(callback);
+        
         FindOrCreateLeaderboard(leaderboardName, sort, type, DownLoadGlobalRank,
             () => { Debug.Log("Failed to download leaderboard: " + leaderboardName); });
     }
 
-    void DownLoadGlobalRank(SteamLeaderboard_t leaderboardHandle)
+    void DownLoadGlobalRank(string leaderboardName, SteamLeaderboard_t leaderboardHandle)
     {
         SteamAPICall_t downloadCall = SteamUserStats.DownloadLeaderboardEntries(leaderboardHandle,
             ELeaderboardDataRequest.k_ELeaderboardDataRequestGlobal, 1, entryCount);
-        downloadResult = CallResult<LeaderboardScoresDownloaded_t>.Create(OnScoresDownloaded);
+        downloadResult = CallResult<LeaderboardScoresDownloaded_t>.Create( ((t, failure) =>
+            {
+                OnScoresDownloaded(leaderboardName, t, failure);
+            }));
         downloadResult.Set(downloadCall);
     }
 
-    private void OnScoresDownloaded(LeaderboardScoresDownloaded_t result, bool failure)
+    private void OnScoresDownloaded(string leaderboardName, LeaderboardScoresDownloaded_t result, bool failure)
     {
         if (failure)
         {
-            Debug.LogError("Failed to download scores");
+            Debug.LogError("Failed to download scores: " );
             return;
         }
 
@@ -168,28 +171,45 @@ public class LeaderboardManager : MonoBehaviour
                 out leaderboardEntries[i], null, 0);
         }
 
-        int hash = result.m_hSteamLeaderboard.GetHashCode();
-        if (leaderboardEntriesDictionary.ContainsKey(hash))
+        var leaderboardEntriesData = new List<LeaderBoardEntryData>();
+        for (int i = 0; i < leaderboardEntries.Length; i++)
         {
-            leaderboardEntriesDictionary[hash] = leaderboardEntries;
+            var entry = leaderboardEntries[i];
+            // Debug.Log("User: " + SteamFriends.GetFriendPersonaName(entry.m_steamIDUser) + ", Rank: " +
+            //           entry.m_nGlobalRank + ", Score: " + entry.m_nScore);
+            LeaderBoardEntryData data = new LeaderBoardEntryData
+            {
+                userName = SteamFriends.GetFriendPersonaName(entry.m_steamIDUser),
+                m_nGlobalRank = entry.m_nGlobalRank,
+                m_oGlobalRank = entry.m_nGlobalRank,
+                m_nScore = entry.m_nScore
+            };
+            leaderboardEntriesData.Add(data);
+        }
+        
+        
+        if (LeaderBoardEntryDataDict.ContainsKey(leaderboardName))
+        {
+            Debug.Log("Update Existed Cache");
+            LeaderBoardEntryDataDict[leaderboardName] = leaderboardEntriesData;
         }
         else
         {
-            leaderboardEntriesDictionary.Add(hash, leaderboardEntries);
+            Debug.Log("Init New cache");
+            LeaderBoardEntryDataDict.Add(leaderboardName, leaderboardEntriesData);
         }
-        
-        // foreach (LeaderboardEntry_t entry in leaderboardEntries)
-        // {
-        //     Debug.Log("User: " + SteamFriends.GetFriendPersonaName(entry.m_steamIDUser) + ", Rank: " +
-        //               entry.m_nGlobalRank + ", Score: " + entry.m_nScore);
-        // }
-    }
 
-    public void InitGlobalList(string leaderboardName)
-    {
-        
+        if (onDownloadedLeaderBoardCallbackDict.ContainsKey(leaderboardName))
+        {
+            var list = onDownloadedLeaderBoardCallbackDict[leaderboardName];
+            foreach (var callback in list)
+            {
+                callback.Invoke(LeaderBoardEntryDataDict[leaderboardName]);
+            }
+
+            onDownloadedLeaderBoardCallbackDict.Remove(leaderboardName);
+        }
     }
-    
 }
 //     void Start()
 //     {

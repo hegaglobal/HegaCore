@@ -70,7 +70,10 @@ namespace HegaCore.UI
         private Panel rootPanel = null;
 
         [InlineButton("GetContentSizeFitters", "Get")]
-        public ContentSizeFitter[] sizeFitters; 
+        public ContentSizeFitter[] sizeFitters;
+        
+        [InlineButton("GetGroups", "Get")]
+        public LayoutGroup[] groups;
         
         private Action onProceed;
         private Action onConfirmCancel;
@@ -120,20 +123,18 @@ namespace HegaCore.UI
                 
                 OkBtn = (string.IsNullOrEmpty(customOkBtn) ? L10n.Localize("btn-ok") : customOkBtn) + yesStr;
             }
-
-            this.rootPanel.Show();
-            EnableFilters(true);
         }
 
         public override void OnShowComplete()
         {
             base.OnShowComplete();
+            this.rootPanel.Show();
+            EnableFilters(true);
         }
 
         public override void OnHideComplete()
         {
             base.OnHideComplete();
-
             this.rootPanel.Hide(true);
         }
 
@@ -182,21 +183,46 @@ namespace HegaCore.UI
             sizeFitters = GetComponentsInChildren<ContentSizeFitter>();
         }
 
+        void GetGroups()
+        {
+            groups = GetComponentsInChildren<LayoutGroup>();
+        }
+
         void EnableFilters(bool enable)
         {
-            if (sizeFitters!= null && sizeFitters.Length >0)
+            if (groups != null && groups.Length > 0)
+            {
+                foreach (var group in groups)
+                {
+                    if (group == null || !group.gameObject.activeSelf)
+                    {
+                        continue;
+                    }
+
+                    group.enabled = enable;
+                    if (enable)
+                    {
+                        group.SetLayoutHorizontal();
+                        group.SetLayoutVertical();
+                    }
+                }
+            }
+            
+            if (sizeFitters != null && sizeFitters.Length >0)
             {
                 foreach (var filter in sizeFitters)
                 {
+                    if (filter == null || !filter.gameObject.activeSelf)
+                    {
+                        continue;
+                    }
+                    
                     filter.enabled = enable;
+                    
+                    if (enable)
+                        LayoutRebuilder.ForceRebuildLayoutImmediate(filter.GetComponent<RectTransform>());
                 }
             }
-        }
-
-        IEnumerator RecalculatingSize()
-        {
-            yield return new WaitForSeconds(0.1f);
-            EnableFilters(true);
         }
     }
 }
