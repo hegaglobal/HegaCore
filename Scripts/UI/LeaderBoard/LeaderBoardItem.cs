@@ -8,6 +8,7 @@ public class LeaderBoardEntryData
     public int m_nGlobalRank; // newest global rank
     public int m_oGlobalRank; // previous rank, before the last update
     public int m_nScore;
+    public bool m_isMine = false;
 }
 
 public class LeaderBoardItem : ViewModelBehaviour

@@ -5,8 +5,9 @@ using Steamworks;
 using UnityEngine;
 using System;
 using System.Runtime.CompilerServices;
+using Sirenix.OdinInspector;
 
-public class LeaderboardManager : MonoBehaviour
+public class LeaderboardManager : SerializedMonoBehaviour
 {
     protected static LeaderboardManager s_instance;
 
@@ -25,6 +26,11 @@ public class LeaderboardManager : MonoBehaviour
         }
     }
 
+    private void Awake()
+    {
+        s_instance = this;
+    }
+
     private static bool s_initialized = false;
     public static bool Initialized => s_initialized;
 
@@ -35,11 +41,14 @@ public class LeaderboardManager : MonoBehaviour
     private int entryCount = 10;
     private Dictionary<string,List<LeaderBoardEntryData>> LeaderBoardEntryDataDict = new Dictionary<string, List<LeaderBoardEntryData>>();
     private Dictionary<string, List<Action<List<LeaderBoardEntryData>>>> onDownloadedLeaderBoardCallbackDict = new Dictionary<string, List<Action<List<LeaderBoardEntryData>>>>();
-    
+    public Dictionary<string, LeaderBoardEntryData> userRankDict = new Dictionary<string, LeaderBoardEntryData>();
     public void Init()
     {
         s_initialized = SteamManager.Initialized;
         gameObject.SetActive(s_initialized);
+        userRankDict.Add("classic", new LeaderBoardEntryData(){ m_nGlobalRank = 0, m_oGlobalRank = 0, m_nScore = 0, userName = string.Empty});
+        userRankDict.Add("speed", new LeaderBoardEntryData(){ m_nGlobalRank = 0, m_oGlobalRank = 0, m_nScore = 0, userName = string.Empty});
+        userRankDict.Add("challenge", new LeaderBoardEntryData(){ m_nGlobalRank = 0, m_oGlobalRank = 0, m_nScore = 0, userName = string.Empty});
     }
 
     public void FindOrCreateLeaderboard(string leaderboardName,
@@ -63,7 +72,6 @@ public class LeaderboardManager : MonoBehaviour
             }
             else
             {
-                Debug.Log("New ------- " + leaderboardName);
                 onCompleted?.Invoke(leaderboardName , t.m_hSteamLeaderboard);
             }
         }));
@@ -114,6 +122,17 @@ public class LeaderboardManager : MonoBehaviour
             return;
         }
 
+        if (!userRankDict.ContainsKey(leaderBoardName))
+        {
+            userRankDict.Add(leaderBoardName, new LeaderBoardEntryData());
+        }
+
+        userRankDict[leaderBoardName].userName = SteamFriends.GetPersonaName();
+        userRankDict[leaderBoardName].m_nScore = result.m_nScore;
+        userRankDict[leaderBoardName].m_nGlobalRank = result.m_nGlobalRankNew;
+        userRankDict[leaderBoardName].m_oGlobalRank = result.m_nGlobalRankPrevious;
+        userRankDict[leaderBoardName].m_isMine = true;
+        
         DownLoadGlobalRank(leaderBoardName, result.m_hSteamLeaderboard);
     }
     
@@ -170,13 +189,27 @@ public class LeaderboardManager : MonoBehaviour
             SteamUserStats.GetDownloadedLeaderboardEntry(result.m_hSteamLeaderboardEntries, i,
                 out leaderboardEntries[i], null, 0);
         }
-
+        var myID = SteamUser.GetSteamID(); 
         var leaderboardEntriesData = new List<LeaderBoardEntryData>();
         for (int i = 0; i < leaderboardEntries.Length; i++)
         {
             var entry = leaderboardEntries[i];
-            // Debug.Log("User: " + SteamFriends.GetFriendPersonaName(entry.m_steamIDUser) + ", Rank: " +
-            //           entry.m_nGlobalRank + ", Score: " + entry.m_nScore);
+            
+            // My score is in top 10
+            if (myID.Equals(entry.m_steamIDUser))
+            {
+                if (!userRankDict.ContainsKey(leaderboardName))
+                {
+                    userRankDict.Add(leaderboardName, new LeaderBoardEntryData());
+                }
+
+                userRankDict[leaderboardName].userName = SteamFriends.GetPersonaName();
+                userRankDict[leaderboardName].m_nScore = entry.m_nScore;
+                userRankDict[leaderboardName].m_nGlobalRank = entry.m_nGlobalRank;
+                userRankDict[leaderboardName].m_oGlobalRank = 0;
+                userRankDict[leaderboardName].m_isMine = true;
+            }
+            
             LeaderBoardEntryData data = new LeaderBoardEntryData
             {
                 userName = SteamFriends.GetFriendPersonaName(entry.m_steamIDUser),
@@ -211,130 +244,5 @@ public class LeaderboardManager : MonoBehaviour
         }
     }
 }
-//     void Start()
-//     {
-// // Initialize the call result objects
-//         findResult = new CallResult<LeaderboardFindResult_t>();
-//         uploadResult = new CallResult<LeaderboardScoreUploaded_t>();
-//
-// // Find the leaderboard
-//         SteamAPICall_t findCall = SteamUserStats.FindLeaderboard(leaderboardName);
-//         findResult.Set(findCall, OnLeaderboardFindResult);
-//     }
-//
-//     void OnLeaderboardFindResult(LeaderboardFindResult_t result, bool failure)
-//     {
-// // Check for errors
-//         if (failure || result.m_bLeaderboardFound == 0)
-//         {
-//             Debug.LogError("Leaderboard not found");
-//             return;
-//         }
-//
-// // Store the leaderboard handle
-//         leaderboardHandle = result.m_hSteamLeaderboard;
-//
-// // Upload the score
-//         int score = 100; // Your score here
-//         SteamAPICall_t uploadCall = SteamUserStats.UploadLeaderboardScore(leaderboardHandle, uploadMethod, score, null, 0);
-//         uploadResult.Set(uploadCall, OnLeaderboardUploadResult);
-//     }
-//
-//     void OnLeaderboardUploadResult(LeaderboardScoreUploaded_t result, bool failure)
-//     {
-// // Check for errors
-//         if (failure || result.m_bSuccess == 0)
-//         {
-//             Debug.LogError("Score upload failed");
-//             return;
-//         }
-//
-// // Print the result
-//         Debug.Log("Score uploaded successfully");
-//         Debug.Log("Leaderboard handle: " + result.m_hSteamLeaderboard);
-//         Debug.Log("Score: " + result.m_nScore);
-//         Debug.Log("Rank: " + result.m_nGlobalRankNew);
-//         Debug.Log("Score changed: " + result.m_bScoreChanged);
-//     }
-//     
-//     public IEnumerator OnLevelEnd(int score)
-//     {
-//         if (!SteamManager.Initialized)
-//         {
-//             leaderboardStatusText.text = "SteamManager is not initialized.";
-//             yield break;
-//         }
-//
-//         leaderboardStatusText.text = "Finding High Score leaderboard.";
-//
-//         bool error = false;
-//
-//         SteamLeaderboard_t highScoreLeaderboard = new SteamLeaderboard_t();
-//         bool findLeaderboardCallCompleted = false;
-//
-//         var findLeaderboardCall = SteamUserStats.FindLeaderboard("High Score");
-//         var findLeaderboardCallResult = CallResult<LeaderboardFindResult_t>.Create();
-//         findLeaderboardCallResult.Set(findLeaderboardCall, (leaderboardFindResult, failure) =>
-//         {
-//             if (!failure && leaderboardFindResult.m_bLeaderboardFound == 1)
-//             {
-//                 highScoreLeaderboard = leaderboardFindResult.m_hSteamLeaderboard;
-//             }
-//             else
-//             {
-//                 error = true;
-//             }
-//
-//             findLeaderboardCallCompleted = true;
-//         });
-//
-//         while (!findLeaderboardCallCompleted) yield return null;
-//
-//         if (error)
-//         {
-//             leaderboardStatusText.text = "Error finding High Score leaderboard.";
-//             yield break;
-//         }
-//
-//         leaderboardStatusText.text = "Uploading score to High Score leaderboard.";
-//
-//         LeaderboardScoreUploaded_t leaderboardScore = new LeaderboardScoreUploaded_t();
-//         bool uploadLeaderboardScoreCallCompleted = false;
-//
-//         var uploadLeaderboardScoreCall = SteamUserStats.UploadLeaderboardScore(highScoreLeaderboard,
-//             ELeaderboardUploadScoreMethod.k_ELeaderboardUploadScoreMethodKeepBest, score, new int[0], 0);
-//         var uploadLeaderboardScoreCallResult = CallResult<LeaderboardScoreUploaded_t>.Create();
-//         uploadLeaderboardScoreCallResult.Set(uploadLeaderboardScoreCall, (scoreUploadedResult, failure) =>
-//             {
-//                 if (!failure && scoreUploadedResult.m_bSuccess == 1)
-//                 {
-//                     leaderboardScore = scoreUploadedResult;
-//                 }
-//                 else
-//                 {
-//                     error = true;
-//                 }
-//
-//                 uploadLeaderboardScoreCallCompleted = true;
-//             });
-//
-//         while (!uploadLeaderboardScoreCallCompleted) yield return null;
-//
-//         if (error)
-//         {
-//             leaderboardStatusText.text = "Error uploading to High Score leaderboard.";
-//             yield break;
-//         }
-//
-//         if (leaderboardScore.m_bScoreChanged == 1)
-//         {
-//             leaderboardStatusText.text =
-//               String.Format("New high score! Global rank #{0}.", leaderboardScore.m_nGlobalRankNew);
-//         }
-//         else
-//         {
-//             leaderboardStatusText.text =
-//               String.Format("A previous score was better. Global rank #{0}.", leaderboardScore.m_nGlobalRankNew);
-//         }
-//     }
+
     
