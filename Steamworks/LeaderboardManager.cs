@@ -4,7 +4,6 @@ using System.Collections.Generic;
 using Steamworks;
 using UnityEngine;
 using System;
-using System.Runtime.CompilerServices;
 using Sirenix.OdinInspector;
 
 public class LeaderboardManager : SerializedMonoBehaviour
@@ -87,7 +86,7 @@ public class LeaderboardManager : SerializedMonoBehaviour
             ELeaderboardSortMethod.k_ELeaderboardSortMethodDescending,
             ELeaderboardDisplayType.k_ELeaderboardDisplayTypeNumeric, score);
     }
-
+    
     public void UploadToLeaderboard(string leaderboardName, ELeaderboardSortMethod sort,
         ELeaderboardDisplayType type, int valueToUpload)
     {
@@ -108,13 +107,13 @@ public class LeaderboardManager : SerializedMonoBehaviour
             ELeaderboardUploadScoreMethod.k_ELeaderboardUploadScoreMethodKeepBest, score, null, 0);
         uploadResult = CallResult<LeaderboardScoreUploaded_t>.Create((t, failure) =>
             {
-                OnDownloadLeaderboardAfterUpdateScore(leaderboardName, t, failure);
+                OnUploadToLeaderBoardCompleted(leaderboardName, t, failure);
             });
             
         uploadResult.Set(uploadCall);
     }
 
-    private void OnDownloadLeaderboardAfterUpdateScore(string leaderBoardName, LeaderboardScoreUploaded_t result, bool failure)
+    private void OnUploadToLeaderBoardCompleted(string leaderBoardName, LeaderboardScoreUploaded_t result, bool failure)
     {
         if (failure || result.m_bSuccess != 1)
         {
