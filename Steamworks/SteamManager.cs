@@ -58,7 +58,7 @@ public class SteamManager : MonoBehaviour {
 		}
 		s_instance = this;
 
-#if CHEAT
+#if CHEAT || DISABLESTEAMWORKS
 		steamEnabled = false;
 #endif
 		

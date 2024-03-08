@@ -198,6 +198,7 @@ public class LeaderboardManager : MonoBehaviour
             return;
         }
 
+        Debug.Log("Download Global Rank Completed");
         // Store the leaderboard entries
         var leaderboardEntries = new LeaderboardEntry_t[result.m_cEntryCount];
         for (int i = 0; i < result.m_cEntryCount; i++)
