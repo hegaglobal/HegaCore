@@ -4,14 +4,14 @@ using UnuGames.MVVM;
 [System.Serializable]
 public class LeaderBoardEntryData
 {
-    public string userName; 
+    public string userName;
     public int m_nGlobalRank; // newest global rank
     public int m_oGlobalRank; // previous rank, before the last update
     public int m_nScore;
     public bool m_isMine = false;
 }
 
-public class LeaderBoardItem : ViewModelBehaviour
+public class LeaderBoardItem : UIManModule<LeaderBoardEntryData>
 {
     private int m_rank = default;
     [UIManAutoProperty]
@@ -39,8 +39,19 @@ public class LeaderBoardItem : ViewModelBehaviour
     
     public void FillData(LeaderBoardEntryData entry)
     {
-        Rank = entry.m_nGlobalRank;
-        UserName = entry.userName;
-        EntryValue = entry.m_nScore;
+        DataInstance = entry;
+        Refresh();
+    }
+
+    private void Refresh()
+    {
+        Rank = DataInstance.m_nGlobalRank;
+        UserName = DataInstance.userName;
+        EntryValue = DataInstance.m_nScore;
+    }
+
+    public void UpdateScore()
+    {
+        EntryValue = DataInstance.m_nScore;
     }
 }

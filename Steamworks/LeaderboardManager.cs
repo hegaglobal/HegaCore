@@ -6,7 +6,7 @@ using UnityEngine;
 using System;
 using Sirenix.OdinInspector;
 
-public class LeaderboardManager : SerializedMonoBehaviour
+public class LeaderboardManager : MonoBehaviour
 {
     protected static LeaderboardManager s_instance;
 
@@ -36,11 +36,13 @@ public class LeaderboardManager : SerializedMonoBehaviour
     private CallResult<LeaderboardFindResult_t> findResult;
     private CallResult<LeaderboardScoreUploaded_t> uploadResult;
     private CallResult<LeaderboardScoresDownloaded_t> downloadResult;
-    
     private int entryCount = 10;
+    
+    
     private Dictionary<string,List<LeaderBoardEntryData>> LeaderBoardEntryDataDict = new Dictionary<string, List<LeaderBoardEntryData>>();
-    private Dictionary<string, List<Action<List<LeaderBoardEntryData>>>> onDownloadedLeaderBoardCallbackDict = new Dictionary<string, List<Action<List<LeaderBoardEntryData>>>>();
     public Dictionary<string, LeaderBoardEntryData> userRankDict = new Dictionary<string, LeaderBoardEntryData>();
+    private Dictionary<string, List<Action<string>>> onLeaderBoardUpdated = new Dictionary<string, List<Action<string>>>();
+    
     public void Init()
     {
         s_initialized = SteamManager.Initialized;
@@ -49,7 +51,7 @@ public class LeaderboardManager : SerializedMonoBehaviour
         userRankDict.Add("speed", new LeaderBoardEntryData(){ m_nGlobalRank = 0, m_oGlobalRank = 0, m_nScore = 0, userName = string.Empty});
         userRankDict.Add("challenge", new LeaderBoardEntryData(){ m_nGlobalRank = 0, m_oGlobalRank = 0, m_nScore = 0, userName = string.Empty});
     }
-
+    
     public void FindOrCreateLeaderboard(string leaderboardName,
         ELeaderboardSortMethod sort = ELeaderboardSortMethod.k_ELeaderboardSortMethodDescending,
         ELeaderboardDisplayType type = ELeaderboardDisplayType.k_ELeaderboardDisplayTypeNumeric,
@@ -78,21 +80,33 @@ public class LeaderboardManager : SerializedMonoBehaviour
         findResult.Set(findCall);
     }
 
-    [Sirenix.OdinInspector.Button]
+    [Button]
     public void TestUploadScoreToLeaderBoard(int score)
     {
         Debug.Log("try upload score: " + score);
-        UploadToLeaderboard("classic",
+        TryUploadToLeaderboard("classic",
             ELeaderboardSortMethod.k_ELeaderboardSortMethodDescending,
             ELeaderboardDisplayType.k_ELeaderboardDisplayTypeNumeric, score);
     }
+
+    #region Get Data
+
+    public List<LeaderBoardEntryData> GetLeaderBoardEntryData(string board)
+    {
+        return LeaderBoardEntryDataDict.TryGetValue(board, out var data) ? data : null;
+    }
+
+    #endregion
     
-    public void UploadToLeaderboard(string leaderboardName, ELeaderboardSortMethod sort,
+    
+    #region Upload Score To Leaderboard
+    public void TryUploadToLeaderboard(string leaderboardName, ELeaderboardSortMethod sort,
         ELeaderboardDisplayType type, int valueToUpload)
     {
         if (!Initialized)
         {
             Debug.Log("Steam SDK not Initialized");
+            InvokeCallBack(leaderboardName);
             return;
         }
 
@@ -106,9 +120,9 @@ public class LeaderboardManager : SerializedMonoBehaviour
         SteamAPICall_t uploadCall = SteamUserStats.UploadLeaderboardScore(steamLeaderboardT,
             ELeaderboardUploadScoreMethod.k_ELeaderboardUploadScoreMethodKeepBest, score, null, 0);
         uploadResult = CallResult<LeaderboardScoreUploaded_t>.Create((t, failure) =>
-            {
-                OnUploadToLeaderBoardCompleted(leaderboardName, t, failure);
-            });
+        {
+            OnUploadToLeaderBoardCompleted(leaderboardName, t, failure);
+        });
             
         uploadResult.Set(uploadCall);
     }
@@ -131,53 +145,56 @@ public class LeaderboardManager : SerializedMonoBehaviour
         userRankDict[leaderBoardName].m_nGlobalRank = result.m_nGlobalRankNew;
         userRankDict[leaderBoardName].m_oGlobalRank = result.m_nGlobalRankPrevious;
         userRankDict[leaderBoardName].m_isMine = true;
-        
-        DownLoadGlobalRank(leaderBoardName, result.m_hSteamLeaderboard);
+
+        if (result.m_bScoreChanged == 1 || !LeaderBoardEntryDataDict.ContainsKey(leaderBoardName))
+        {
+            DownloadGlobalRank(leaderBoardName, result.m_hSteamLeaderboard);
+        }
     }
-    
-    public void DownLoadGlobalRank(string leaderboardName, 
+    #endregion
+
+    #region Download LeaderBoard
+    public void TryGetGlobalRank(string leaderboardName, 
         ELeaderboardSortMethod sort = ELeaderboardSortMethod.k_ELeaderboardSortMethodDescending, 
-        ELeaderboardDisplayType type = ELeaderboardDisplayType.k_ELeaderboardDisplayTypeNumeric, 
-        Action<List<LeaderBoardEntryData>> callback = null)
+        ELeaderboardDisplayType type = ELeaderboardDisplayType.k_ELeaderboardDisplayTypeNumeric) 
+        //Action<List<LeaderBoardEntryData>> callback = null)
     {
         if (!Initialized)
         {
             Debug.Log("Steam SDK not Initialized");
+            InvokeCallBack(leaderboardName); 
             return;
         }
 
         if (LeaderBoardEntryDataDict.ContainsKey(leaderboardName))
         {
-            callback.Invoke(LeaderBoardEntryDataDict[leaderboardName]);
+            InvokeCallBack(leaderboardName); 
             return;
         }
         
-        if (!onDownloadedLeaderBoardCallbackDict.ContainsKey(leaderboardName))
-        {
-            onDownloadedLeaderBoardCallbackDict.Add(leaderboardName, new List<Action<List<LeaderBoardEntryData>>>());
-        }
-        onDownloadedLeaderBoardCallbackDict[leaderboardName].Add(callback);
-        
-        FindOrCreateLeaderboard(leaderboardName, sort, type, DownLoadGlobalRank,
+        FindOrCreateLeaderboard(leaderboardName, sort, type, DownloadGlobalRank,
             () => { Debug.Log("Failed to download leaderboard: " + leaderboardName); });
     }
 
-    void DownLoadGlobalRank(string leaderboardName, SteamLeaderboard_t leaderboardHandle)
+    private void DownloadGlobalRank(string leaderboardName, SteamLeaderboard_t leaderboardHandle)
     {
+        Debug.Log("DownloadGlobalRank");
+        
         SteamAPICall_t downloadCall = SteamUserStats.DownloadLeaderboardEntries(leaderboardHandle,
             ELeaderboardDataRequest.k_ELeaderboardDataRequestGlobal, 1, entryCount);
         downloadResult = CallResult<LeaderboardScoresDownloaded_t>.Create( ((t, failure) =>
             {
-                OnScoresDownloaded(leaderboardName, t, failure);
+                OnGlobalRankDownloaded(leaderboardName, t, failure);
             }));
         downloadResult.Set(downloadCall);
     }
 
-    private void OnScoresDownloaded(string leaderboardName, LeaderboardScoresDownloaded_t result, bool failure)
+    private void OnGlobalRankDownloaded(string leaderboardName, LeaderboardScoresDownloaded_t result, bool failure)
     {
         if (failure)
         {
             Debug.LogError("Failed to download scores: " );
+            InvokeCallBack(leaderboardName);
             return;
         }
 
@@ -190,10 +207,8 @@ public class LeaderboardManager : SerializedMonoBehaviour
         }
         var myID = SteamUser.GetSteamID(); 
         var leaderboardEntriesData = new List<LeaderBoardEntryData>();
-        for (int i = 0; i < leaderboardEntries.Length; i++)
+        foreach (var entry in leaderboardEntries)
         {
-            var entry = leaderboardEntries[i];
-            
             // My score is in top 10
             if (myID.Equals(entry.m_steamIDUser))
             {
@@ -230,18 +245,39 @@ public class LeaderboardManager : SerializedMonoBehaviour
             Debug.Log("Init New cache");
             LeaderBoardEntryDataDict.Add(leaderboardName, leaderboardEntriesData);
         }
-
-        if (onDownloadedLeaderBoardCallbackDict.ContainsKey(leaderboardName))
+        
+        InvokeCallBack(leaderboardName);
+    }
+    
+    public void SubcribeLeaderBoardUpdated(string board, Action<string> callback)
+    {
+        if (!onLeaderBoardUpdated.ContainsKey(board))
         {
-            var list = onDownloadedLeaderBoardCallbackDict[leaderboardName];
-            foreach (var callback in list)
-            {
-                callback.Invoke(LeaderBoardEntryDataDict[leaderboardName]);
-            }
+            onLeaderBoardUpdated.Add(board, new List<Action<string>>());
+        }
+        onLeaderBoardUpdated[board].Add(callback);
+    }
 
-            onDownloadedLeaderBoardCallbackDict.Remove(leaderboardName);
+    public void UnsubcribeLeaderBoardUpdated(string board, Action<string> callback)
+    {
+        if (onLeaderBoardUpdated.ContainsKey(board))
+        {
+            onLeaderBoardUpdated[board].Remove(callback);
         }
     }
+
+    private void InvokeCallBack(string board)
+    {
+        if (onLeaderBoardUpdated.TryGetValue(board, out var actions))
+        {
+            foreach (var action in actions)
+            {
+                action?.Invoke(board);
+            }
+        }
+    }
+
+    #endregion
 }
 
     

@@ -58,7 +58,7 @@ public class SteamManager : MonoBehaviour {
 		}
 		s_instance = this;
 
-#if (UNITY_EDITOR && !CURATOR ) || CHEAT
+#if CHEAT
 		steamEnabled = false;
 #endif
 		
