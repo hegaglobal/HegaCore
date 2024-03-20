@@ -125,8 +125,12 @@ namespace HegaCore
 
             dest.Clear();
 
-            if (source != null)
-                dest.AddRange(source);
+            // if (source != null)
+            //     dest.AddRange(source);
+            foreach (var item in source)
+            {
+                dest.Add(item);
+            }
         }
 
         public void Copy<TValue>(TValue[] dest, TValue[] source)
