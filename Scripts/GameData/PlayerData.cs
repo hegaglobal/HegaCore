@@ -35,11 +35,12 @@ namespace HegaCore
 
         public CharacterProgressMap CharacterProgressMap = new CharacterProgressMap();
 
-        Dictionary<string, UserCharacter> UserCharacterDict = new Dictionary<string, UserCharacter>();
+        Dictionary<int, UserCharacter> UserCharacterDict = new Dictionary<int, UserCharacter>();
         
         protected PlayerData()
         {
             this.Revision = 1;
+            this.CurCharIndex = 0;
         }
 
         public virtual void Reset()
@@ -92,18 +93,18 @@ namespace HegaCore
             Copy(this.CharacterProgressMap, data.CharacterProgressMap);
         }
         
-        public UserCharacter GetUserCharacter(string id)
+        public UserCharacter GetUserCharacter(int index)
         {
-            if (!UserCharacterDict.ContainsKey(id))
+            if (!UserCharacterDict.ContainsKey(index))
             {
                 UserCharacter newChar = new UserCharacter
                 {
                     standClothesID = DataManager.Instance.DarkLord ? 1 : 0
                 };
-                UserCharacterDict.Add(id, newChar);
+                UserCharacterDict.Add(index, newChar);
             }
 
-            return UserCharacterDict[id];
+            return UserCharacterDict[index];
         }
         
         public void Copy<TKey, TValue>(Dictionary<TKey, TValue> dest, Dictionary<TKey, TValue> source)

@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using UnityEngine;
 using Live2D.Cubism.Rendering;
 using Cysharp.Threading.Tasks;
@@ -10,6 +11,13 @@ using UnityEngine.Serialization;
 
 namespace HegaCore
 {
+    [Serializable]
+    public class IntMap
+    {
+        public int key;
+        public int value;
+    }
+    
     public sealed class CubismController : MonoBehaviour
     {
         [SerializeField] private bool useScaleOne = true;
@@ -37,8 +45,7 @@ namespace HegaCore
 
         public Vector3 LocalScale { get; private set; }
 
-        public string Id; //{ get; private set; }
-
+        public string Id { get; private set; }
         public bool IsActive => this.gameObject && this.gameObject.activeSelf;
 
         private bool hasIdAnim;
@@ -46,10 +53,16 @@ namespace HegaCore
         private bool hasEmoAnim;
         private Color color;
         
-        [FormerlySerializedAs("_live2DCharInteract")] [BoxGroup("Interact")]
+        [BoxGroup("Interact")]
+        public int CharIndex;
+        [BoxGroup("Interact")]
         public Live2DCharInteract live2DCharInteract;
         [BoxGroup("Interact")] 
         public int curClothesID;
+        [BoxGroup("Interact")] 
+        [TableList]
+        public List<IntMap> clothesMap;
+        
         // [BoxGroup("Interact")]
         // public List<int> allowClothesID;
 
@@ -357,7 +370,7 @@ namespace HegaCore
             }
 
             curClothesID = clothesID;
-            BlendParamToValue("Var", clothesID);
+            BlendParamToValue("Var", clothesMap[curClothesID].value);
         }
 
 
@@ -395,7 +408,7 @@ namespace HegaCore
             //Debug.Log("LoadInteractPartValues: "  + curClothesID);
             if (DataManager.Instance.DarkLord)// && allowClothesID.Contains(curClothesID))
             {
-                var userCharacterData = DataManager.DataContainer.Player.GetUserCharacter(Id);
+                var userCharacterData = DataManager.DataContainer.Player.GetUserCharacter(CharIndex);
                 live2DCharInteract?.LoadInteractPartValues(userCharacterData.interactValues);
             }
             else

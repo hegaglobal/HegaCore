@@ -126,13 +126,12 @@ namespace HegaCore
 
         public UserCharacter GetUserCharacter(int index)
         {
-            return DataContainer.Player.GetUserCharacter($"Char{index}Stand");
+            return DataContainer.Player.GetUserCharacter(index);
         }
 
         public UserCharacter GetCurrentUserCharacter()
         {
-            return DataContainer.Player.GetUserCharacter(CurCharID);
-
+            return DataContainer.Player.GetUserCharacter(DataContainer.Player.CurCharIndex);
         }
     }
 }
