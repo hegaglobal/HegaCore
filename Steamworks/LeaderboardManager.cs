@@ -4,6 +4,7 @@ using System.Collections.Generic;
 using Steamworks;
 using UnityEngine;
 using System;
+using System.Collections;
 using Sirenix.OdinInspector;
 
 public class LeaderboardManager : MonoBehaviour
@@ -43,13 +44,21 @@ public class LeaderboardManager : MonoBehaviour
     public Dictionary<string, LeaderBoardEntryData> userRankDict = new Dictionary<string, LeaderBoardEntryData>();
     private Dictionary<string, List<Action<string>>> onLeaderBoardUpdated = new Dictionary<string, List<Action<string>>>();
     
-    public void Init()
+    public void Start()
     {
+        Debug.Log("Leader Board Manager Init");
+        StartCoroutine(InitCO());
+    }
+
+    private IEnumerator InitCO()
+    {
+        yield return new WaitForSeconds(1f); // Wait Steam Manager
         s_initialized = SteamManager.Initialized;
         gameObject.SetActive(s_initialized);
-        userRankDict.Add("classic", new LeaderBoardEntryData(){ m_nGlobalRank = 0, m_oGlobalRank = 0, m_nScore = 0, userName = string.Empty});
-        userRankDict.Add("speed", new LeaderBoardEntryData(){ m_nGlobalRank = 0, m_oGlobalRank = 0, m_nScore = 0, userName = string.Empty});
-        userRankDict.Add("challenge", new LeaderBoardEntryData(){ m_nGlobalRank = 0, m_oGlobalRank = 0, m_nScore = 0, userName = string.Empty});
+        
+        if (!s_initialized)
+            yield break;
+        Debug.Log("Leader Board Manager Init DONE ===");
     }
     
     public void FindOrCreateLeaderboard(string leaderboardName,
@@ -91,6 +100,16 @@ public class LeaderboardManager : MonoBehaviour
 
     #region Get Data
 
+    public LeaderBoardEntryData GetUserRank(string board)
+    {
+        if (!userRankDict.ContainsKey(board))
+        {
+            userRankDict.Add(board, new LeaderBoardEntryData());
+        }
+
+        return userRankDict[board];
+    }
+    
     public List<LeaderBoardEntryData> GetLeaderBoardEntryData(string board)
     {
         return LeaderBoardEntryDataDict.TryGetValue(board, out var data) ? data : null;
@@ -138,9 +157,9 @@ public class LeaderboardManager : MonoBehaviour
         if (!userRankDict.ContainsKey(leaderBoardName))
         {
             userRankDict.Add(leaderBoardName, new LeaderBoardEntryData());
+            userRankDict[leaderBoardName].userName = SteamFriends.GetPersonaName();
         }
 
-        userRankDict[leaderBoardName].userName = SteamFriends.GetPersonaName();
         userRankDict[leaderBoardName].m_nScore = result.m_nScore;
         userRankDict[leaderBoardName].m_nGlobalRank = result.m_nGlobalRankNew;
         userRankDict[leaderBoardName].m_oGlobalRank = result.m_nGlobalRankPrevious;
@@ -216,9 +235,8 @@ public class LeaderboardManager : MonoBehaviour
                 if (!userRankDict.ContainsKey(leaderboardName))
                 {
                     userRankDict.Add(leaderboardName, new LeaderBoardEntryData());
+                    userRankDict[leaderboardName].userName = SteamFriends.GetPersonaName();
                 }
-
-                userRankDict[leaderboardName].userName = SteamFriends.GetPersonaName();
                 userRankDict[leaderboardName].m_nScore = entry.m_nScore;
                 userRankDict[leaderboardName].m_nGlobalRank = entry.m_nGlobalRank;
                 userRankDict[leaderboardName].m_oGlobalRank = 0;

@@ -136,9 +136,6 @@ public class SteamManager : MonoBehaviour {
 		
 		Debug.Log("SteamMamager INIT SUCCESSFULLY !!!!!!!!!!!!!!!");
 		s_EverInitialized = true;
-		
-		//for Leaderboard
-		LeaderboardManager.Instance.Init();
 	}
 
 	// This should only ever get called on first load and after an Assembly reload, You should never Disable the Steamworks Manager yourself.
