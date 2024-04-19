@@ -125,7 +125,10 @@ namespace HegaCore
 
             foreach (var part in InteractParts)
             {
-                if (part.returnWeight <= 0 && part.allowedClotheIDs.Contains(_cubismController.curClothesID))
+                if (part.returnWeight <= 0 && 
+                    (part.allowedClotheIDs == null || 
+                     part.allowedClotheIDs.Count == 0 || 
+                     part.allowedClotheIDs.Contains(_cubismController.curClothesID)))
                 {
                     result.Add(part.Parameter.name, part.currentParamValue);
                 }
@@ -140,28 +143,59 @@ namespace HegaCore
             needReset = true;
         }
 
-        public void LoadInteractPartValues(Dictionary<string, float> savedDict)
+        public void LoadInteractPartValues(Dictionary<string, float> savedDict, string subFix)
         {
+            // if (savedDict == null || savedDict.Count == 0)
+            // {
+            //     return;
+            // }
+            //
+            // foreach (var savedPair in savedDict)
+            // {
+            //     foreach (var part in InteractParts)
+            //     {
+            //         if (part.returnWeight > 0 || !part.allowedClotheIDs.Contains(_cubismController.curClothesID))
+            //         {
+            //             continue;
+            //         }
+            //
+            //         if (string.Equals(part.Parameter.name, savedPair.Key))
+            //         {
+            //             part.BlendPrameter(savedPair.Value);
+            //         }
+            //     }
+            // }
+            //
+            //
+            
+            
+            
             if (savedDict == null || savedDict.Count == 0)
             {
                 return;
             }
-
+            
             foreach (var savedPair in savedDict)
             {
                 foreach (var part in InteractParts)
                 {
                     if (part.returnWeight > 0 || !part.allowedClotheIDs.Contains(_cubismController.curClothesID))
                     {
+                        part.BlendPrameter(part.normalValue);
                         continue;
                     }
 
-                    if (string.Equals(part.Parameter.name, savedPair.Key))
+                    string converted = $"{subFix}_{part.Parameter.name}";
+                    UnuLogger.Log($"{converted}");
+                
+                    if (string.Equals(converted, savedPair.Key))
                     {
+                        UnuLogger.Log($"{savedPair.Key} --- Load: {savedPair.Value}");
                         part.BlendPrameter(savedPair.Value);
                     }
                 }
             }
+            
         }
         
         public int GetRayCastDrawableArtMesh(ref CubismRaycastHit[] Results)

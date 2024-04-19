@@ -35,7 +35,8 @@ namespace HegaCore
 
         public CharacterProgressMap CharacterProgressMap = new CharacterProgressMap();
 
-        Dictionary<int, UserCharacter> UserCharacterDict = new Dictionary<int, UserCharacter>();
+        public Dictionary<int, UserCharacter> UserCharacterDict = new Dictionary<int, UserCharacter>();
+        public List<int> UnlockedGallery = new List<int>();
         
         protected PlayerData()
         {
@@ -59,6 +60,7 @@ namespace HegaCore
             this.CharacterProgressMap.Clear();
             this.GameMode = GameMode.Normal;
             this.UserCharacterDict.Clear();
+            this.UnlockedGallery.Clear();
         }
 
         protected void CopyFrom(PlayerData data)
@@ -91,6 +93,7 @@ namespace HegaCore
             
             Copy(this.UserCharacterDict, data.UserCharacterDict);
             Copy(this.CharacterProgressMap, data.CharacterProgressMap);
+            Copy(this.UnlockedGallery, data.UnlockedGallery);
         }
         
         public UserCharacter GetUserCharacter(int index)
@@ -157,6 +160,9 @@ namespace HegaCore
 
     [Serializable]
     public sealed class CharacterProgressMap : SerializableDictionary<int, int> { }
+    
+    [Serializable]
+    public sealed class CharacterInteractMap : SerializableDictionary<string, float> { }
     
     [Serializable]
     public class UserCharacter

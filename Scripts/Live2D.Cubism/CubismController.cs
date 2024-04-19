@@ -368,9 +368,10 @@ namespace HegaCore
             {
                 return;
             }
-
+            
             curClothesID = clothesID;
             BlendParamToValue("Var", clothesMap[curClothesID].value);
+            LoadInteractPartValues();
         }
 
 
@@ -393,7 +394,7 @@ namespace HegaCore
             live2DCharInteract?.EndInteract();
         }
 
-        public Dictionary<string, float> GetInteractPartValues()
+        private Dictionary<string, float> GetInteractPartValues()
         {
             if (live2DCharInteract != null)
             {
@@ -409,10 +410,41 @@ namespace HegaCore
             if (DataManager.Instance.DarkLord)// && allowClothesID.Contains(curClothesID))
             {
                 var userCharacterData = DataManager.DataContainer.Player.GetUserCharacter(CharIndex);
-                live2DCharInteract?.LoadInteractPartValues(userCharacterData.interactValues);
+                live2DCharInteract?.LoadInteractPartValues(userCharacterData.interactValues, Id);
             }
             else
                 live2DCharInteract?.ResetInteractValue();
+        }
+        
+        public void SaveCurrentInteractParts()
+        {
+            var userCharacterData = DataManager.DataContainer.Player.GetUserCharacter(CharIndex);
+            
+            if (userCharacterData.interactValues == null)
+            {
+                userCharacterData.interactValues = new Dictionary<string, float>();
+            }
+            var savePart = GetInteractPartValues();
+		
+            if (savePart != null && savePart.Count > 0)
+            {
+                foreach (var pair in savePart)
+                {
+                    string convertedKey = $"{Id}_{pair.Key}" ;
+                    
+                    if (!userCharacterData.interactValues.ContainsKey(convertedKey))
+                    {
+                        UnuLogger.Log($"<color=green>Add key pair value:</color> [{convertedKey}] - [{pair.Value}]");
+                        userCharacterData.interactValues.Add(convertedKey, pair.Value);
+                    }
+                    else
+                    {
+                        UnuLogger.Log($"<color=yellow>EDIT key pair value:</color> [{convertedKey}] - [{pair.Value}]");
+                        userCharacterData.interactValues[convertedKey] = pair.Value;
+                    }
+                }
+                
+            }
         }
         
         #endregion

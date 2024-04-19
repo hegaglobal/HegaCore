@@ -7,6 +7,16 @@ using VisualNovelData.Data;
 
 namespace HegaCore
 {
+    // public enum SkinCodename
+    // {
+    //     NONE = 0,
+    //     G1 = 1,
+    //     G2 = 2,
+    //     G3 = 3,
+    //     G4 = 4,
+    //     G5 = 5,
+    // }
+    
     public sealed class CubismSpawner : MonoBehaviour, IKeyedPool<CubismController>
     {
         [SerializeField]
