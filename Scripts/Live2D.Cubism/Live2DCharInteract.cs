@@ -237,16 +237,24 @@ public class InteractPart
     public float dragMultiplier = 0.01f;
 
     [Title("React")] 
+    public bool canReact = false;
+    [ShowIf("canReact")] 
     public float reactValue;
+    [ShowIf("canReact")] 
+    public string reactTriggerName;
+    [ShowIf("canReact")] 
+    public string reactVoice;
+    [ShowIf("canReact")] 
+    public float reactReturn;
+    [ShowIf("canReact")] 
+    public float reactReturnDelay;
     
-    [Title("Return")] 
-    //Use Anim to Return part to normal
     [InfoBox("Set returnWeight to 0 to reject return and save value.")]
     [Space(10)]
     [FoldoutGroup("RETURN SETTING", false)]
     public float returnWeight = 5;
     [FoldoutGroup("RETURN SETTING",false)]
-    private float returnSpeed;
+    public float returnDelay = 0;
     [FoldoutGroup("RETURN SETTING",false)]
     public UnityEvent OnReturnCompleted;
     
@@ -255,11 +263,36 @@ public class InteractPart
     
     [ShowInInspector, ReadOnly]
     private bool isInNormal = true;
+    [ShowInInspector, ReadOnly]
+    private float curReturnDelay;
+    [ShowInInspector, ReadOnly]
+    private float returnSpeed;
+    
+    // public void DoReturn()
+    // {
+    //     if (returnWeight > 0 && !isInNormal)
+    //     {
+    //         currentParamValue += returnSpeed;
+    //
+    //         BlendPrameter();
+    //         if (Mathf.Abs(currentParamValue - normalValue) < 0.01f)
+    //         {
+    //             isInNormal = true;
+    //             OnReturnCompleted?.Invoke();
+    //         }
+    //     }
+    // }
     
     public void DoReturn()
     {
-        if (returnWeight > 0 && !isInNormal)
+        if ((returnWeight > 0 || reactReturn > 0) && !isInNormal)
         {
+            curReturnDelay -= Time.deltaTime;
+            if (curReturnDelay > 0)
+            {
+                return;
+            }
+            
             currentParamValue += returnSpeed;
     
             BlendPrameter();
@@ -313,9 +346,19 @@ public class InteractPart
         return false;
     }
     
-    public void EndDrag()
+    public void EndDrag(bool forceEnd = false)
     {
-        returnSpeed = dragMultiplier * returnWeight * (normalValue - dragValue);
+        if (forceEnd)
+        {
+            returnSpeed = dragMultiplier * reactReturn * (normalValue - dragValue);
+            curReturnDelay = reactReturnDelay;
+        }
+        else
+        {
+            returnSpeed = dragMultiplier * returnWeight * (normalValue - dragValue);
+            curReturnDelay = returnDelay;
+        }
+        Debug.Log("Return Speed: ---------------------------------- " + returnSpeed);
     }
 
     //[Button("Blend Param", ButtonSizes.Large)]
