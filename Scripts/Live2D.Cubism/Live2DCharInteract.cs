@@ -45,8 +45,15 @@ namespace HegaCore
 
                 if (curPart.NeedReact())
                 {
+                    if (!string.IsNullOrEmpty(curPart.reactTriggerName))
+                        _cubismController.Animator.SetTrigger(curPart.reactTriggerName);
+
+                    if (!string.IsNullOrEmpty(curPart.reactVoice))
+                    {
+                        //PlayVoice(curPart.reactVoice);
+                    }
+                    
                     EndInteract();
-                    _cubismController.Animator.SetTrigger("Interact");
                     return;
                 }
                 
@@ -328,18 +335,21 @@ public class InteractPart
 
     public bool NeedReact()
     {
-        if (reactValue < normalValue && reactValue > dragValue)
+        if (canReact)
         {
-            if (currentParamValue > reactValue)
+            if (reactValue < normalValue && reactValue > dragValue)
             {
-                return true;
+                if (currentParamValue > reactValue)
+                {
+                    return true;
+                }
             }
-        }
-        else if (reactValue > normalValue && reactValue < dragValue)
-        {
-            if (currentParamValue > reactValue)
+            else if (reactValue > normalValue && reactValue < dragValue)
             {
-                return true;
+                if (currentParamValue > reactValue)
+                {
+                    return true;
+                }
             }
         }
 
@@ -358,7 +368,7 @@ public class InteractPart
             returnSpeed = dragMultiplier * returnWeight * (normalValue - dragValue);
             curReturnDelay = returnDelay;
         }
-        Debug.Log("Return Speed: ---------------------------------- " + returnSpeed);
+        UnuLogger.Log("Return Speed: ---------------------------------- " + returnSpeed);
     }
 
     //[Button("Blend Param", ButtonSizes.Large)]

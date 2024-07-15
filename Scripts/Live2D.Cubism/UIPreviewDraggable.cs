@@ -32,7 +32,8 @@ public class UIPreviewDraggable : MonoBehaviour, IDragHandler, IPointerDownHandl
     //public List<CubismDrawable> Drawables = new List<CubismDrawable>();
     public void OnPointerDown(PointerEventData eventData)
     {
-        if (CubismManager.Instance.CurCharacter == null || CubismManager.Instance.CurCharacter.live2DCharInteract == null)
+        if (CubismManager.Instance.CurCharacter == null || 
+            CubismManager.Instance.CurCharacter.live2DCharInteract == null)
         {
             return;
         }

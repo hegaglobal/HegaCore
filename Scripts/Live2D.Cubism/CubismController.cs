@@ -60,6 +60,7 @@ namespace HegaCore
         [BoxGroup("Interact")] 
         public int curClothesID;
         [BoxGroup("Interact")] 
+        [InfoBox("0 is SFW")]
         [TableList]
         public List<IntMap> clothesMap;
         
