@@ -4,6 +4,7 @@ using Live2D.Cubism.Core;
 using Live2D.Cubism.Framework;
 using Live2D.Cubism.Framework.Raycasting;
 using Sirenix.OdinInspector;
+using UnityEditor;
 using UnityEngine;
 using UnityEngine.Events;
 
@@ -16,6 +17,8 @@ namespace HegaCore
 
         private CubismController _cubismController;
 
+        [ListDrawerSettings(HideAddButton = false,Expanded = true,DraggableItems = true,HideRemoveButton = true)]
+        [Searchable(FilterOptions = SearchFilterOptions.ISearchFilterableInterface)]
         public List<InteractPart> InteractParts;
 
         
@@ -25,8 +28,32 @@ namespace HegaCore
         private InteractPart curPart;
 
         public Action OnInteractEnoughToGetReward;
-
-        void Start()
+        
+#if UNITY_EDITOR
+        [Button(ButtonSizes.Large), GUIColor(1f,0f,1f)]
+        public void SetUpRaycast()
+        {
+            var drawables = transform.Find("Drawables");
+            
+            foreach (var part in InteractParts)
+            {
+                foreach (var meshName in part.artMeshNames)
+                {
+                    var obj = drawables.Find(meshName);
+                    if (obj != null)
+                    {
+                        if (!obj.TryGetComponent<CubismRaycastable>(out CubismRaycastable r))
+                        {
+                            var newR = obj.gameObject.AddComponent<CubismRaycastable>();
+                            newR.Precision = CubismRaycastablePrecision.Triangles;
+                            EditorUtility.SetDirty(obj);
+                        }
+                    }
+                }
+            }
+        }
+#endif
+        void Awake()
         {
             _cubismController = GetComponentInParent<CubismController>();
             cubismRaycaster = GetComponent<CubismRaycaster>();
@@ -53,7 +80,7 @@ namespace HegaCore
                         //PlayVoice(curPart.reactVoice);
                     }
                     
-                    EndInteract();
+                    EndInteract(true);
                     return;
                 }
                 
@@ -115,11 +142,11 @@ namespace HegaCore
             dragDelta = delta;
         }
 
-        public void EndInteract()
+        public void EndInteract(bool forceEnd = false)
         {
             if (isInteracting)
             {
-                curPart.EndDrag();
+                curPart.EndDrag(forceEnd);
                 curPart = null;
             }
 
@@ -152,31 +179,6 @@ namespace HegaCore
 
         public void LoadInteractPartValues(Dictionary<string, float> savedDict, string subFix)
         {
-            // if (savedDict == null || savedDict.Count == 0)
-            // {
-            //     return;
-            // }
-            //
-            // foreach (var savedPair in savedDict)
-            // {
-            //     foreach (var part in InteractParts)
-            //     {
-            //         if (part.returnWeight > 0 || !part.allowedClotheIDs.Contains(_cubismController.curClothesID))
-            //         {
-            //             continue;
-            //         }
-            //
-            //         if (string.Equals(part.Parameter.name, savedPair.Key))
-            //         {
-            //             part.BlendPrameter(savedPair.Value);
-            //         }
-            //     }
-            // }
-            //
-            //
-            
-            
-            
             if (savedDict == null || savedDict.Count == 0)
             {
                 return;
@@ -227,12 +229,13 @@ namespace HegaCore
 }
 
 [Serializable]
-public class InteractPart
+public class InteractPart : ISearchFilterable
 {
-    [Title("$partName", " ============================== ",TitleAlignments.Centered),GUIColor(0.3f, 0.8f, 0.8f, 1f)]
+    [Title("$partName", " ============================== ",TitleAlignments.Centered)]
+    [InlineButton("Rename")]
+    [GUIColor(1f, 1f, 0f)]
     public string partName = string.Empty;
     
-    [InlineButton("Rename")]
     public CubismParameter Parameter;
     public List<string> artMeshNames;
     public List<int> allowedClotheIDs;
@@ -258,14 +261,12 @@ public class InteractPart
     
     [InfoBox("Set returnWeight to 0 to reject return and save value.")]
     [Space(10)]
-    [FoldoutGroup("RETURN SETTING", false)]
+    [Title("AUTO RETURN SETTING")] 
     public float returnWeight = 5;
-    [FoldoutGroup("RETURN SETTING",false)]
     public float returnDelay = 0;
-    [FoldoutGroup("RETURN SETTING",false)]
     public UnityEvent OnReturnCompleted;
     
-    [ReadOnly]
+    [ReadOnly][GUIColor(0f, 1f, 0f)]
     public float currentParamValue;
     
     [ShowInInspector, ReadOnly]
@@ -275,24 +276,9 @@ public class InteractPart
     [ShowInInspector, ReadOnly]
     private float returnSpeed;
     
-    // public void DoReturn()
-    // {
-    //     if (returnWeight > 0 && !isInNormal)
-    //     {
-    //         currentParamValue += returnSpeed;
-    //
-    //         BlendPrameter();
-    //         if (Mathf.Abs(currentParamValue - normalValue) < 0.01f)
-    //         {
-    //             isInNormal = true;
-    //             OnReturnCompleted?.Invoke();
-    //         }
-    //     }
-    // }
-    
     public void DoReturn()
     {
-        if ((returnWeight > 0 || reactReturn > 0) && !isInNormal)
+        if ((returnWeight > 0 || reactReturn > 0 || returnSpeed > 0) && !isInNormal) 
         {
             curReturnDelay -= Time.deltaTime;
             if (curReturnDelay > 0)
@@ -391,5 +377,10 @@ public class InteractPart
     public void Rename()
     {
         partName = Parameter != null ? Parameter.gameObject.name : string.Empty;
+    }
+
+    public bool IsMatch(string searchString)
+    {
+        return string.IsNullOrEmpty(searchString) || partName.IndexOf(searchString, StringComparison.OrdinalIgnoreCase) >= 0;
     }
 }

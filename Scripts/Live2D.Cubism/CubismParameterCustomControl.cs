@@ -91,5 +91,25 @@ namespace HegaCore
         {
             BlendToValue(cubismParameter.MaximumValue, duration, delay);
         }
+
+        public void BlendToMaxValue(float duration)
+        {
+            BlendToValue(cubismParameter.MaximumValue, duration, 0);
+        }
+
+        public void BlendToMinValue(float duration)
+        {
+            BlendToValue(cubismParameter.MinimumValue, duration, 0);
+        }
+        
+        public void BlendToMaxValueDelay(float delay)
+        {
+            BlendToValue(cubismParameter.MaximumValue, 0, delay);
+        }
+
+        public void BlendToMinValueDelay(float delay)
+        {
+            BlendToValue(cubismParameter.MinimumValue, 0, delay);
+        }
     }
 }
