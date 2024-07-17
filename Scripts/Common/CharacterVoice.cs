@@ -5,6 +5,7 @@ using Cysharp.Threading.Tasks;
 using HegaCore;
 using Sirenix.OdinInspector;
 using UnityEngine;
+using Random = UnityEngine.Random;
 
 [Serializable]
 public class VoiceData
@@ -16,13 +17,14 @@ public class VoiceData
 
 public class CharacterVoice : MonoBehaviour
 {
+    [InfoBox("Random Talk")]
     [TableList]
     public List<VoiceData> VoiceDatas;
 
-    private int voiceIndex = 0;
     [SerializeField]
     private Animator _animator;
-    
+
+    private List<int> indexes;
     void Awake()
     {
         PrepareVoice().Forget();
@@ -43,7 +45,7 @@ public class CharacterVoice : MonoBehaviour
     {
         StartCoroutine(PlayVoiceCO());
     }
-
+    
     void OnDisable()
     {
         StopAllCoroutines();
@@ -52,10 +54,12 @@ public class CharacterVoice : MonoBehaviour
 
     IEnumerator PlayVoiceCO()
     {
+        RenewPool();
+        
         yield return new WaitForSeconds(3);
         while (this.gameObject.activeSelf)
         {
-            var data = VoiceDatas[voiceIndex];
+            var data = VoiceDatas[GetRandomVoice()];
             if (AudioManager.Instance.TryGetVoice(data.voiceKey, out var voiceClip))
             {
                 AudioManager.Instance.Player.PlayVoice(data.voiceKey);
@@ -75,13 +79,34 @@ public class CharacterVoice : MonoBehaviour
             {
                 yield return new WaitForSeconds(1f);
             }
-
-            voiceIndex++;
-            if (voiceIndex>= VoiceDatas.Count)
-            {
-                voiceIndex = 0;
-            }
         }
+    }
+
+    void RenewPool()
+    {
+        indexes = new List<int>(VoiceDatas.Count);
+        for (int i = 0; i < VoiceDatas.Count; i++)
+        {
+            indexes.Add(i);
+        }
+    }
+
+    int GetRandomVoice()
+    {
+        if (indexes.Count == 0)
+        {
+            RenewPool();
+        }
+
+        int index = 0;
+        if (indexes.Count > 1)
+        {
+            index = Random.Range(0, indexes.Count);
+        }
+
+        int result = indexes[index];
+        indexes.RemoveAt(index);
+        return result;
     }
 }
 
