@@ -16,7 +16,8 @@ namespace HegaCore
         [ShowInInspector, ReadOnly] private Vector2 dragDelta;
 
         private CubismController _cubismController;
-
+        private CharacterVoice _characterVoice;
+        
         [ListDrawerSettings(HideAddButton = false,Expanded = true,DraggableItems = true,HideRemoveButton = true)]
         [Searchable(FilterOptions = SearchFilterOptions.ISearchFilterableInterface)]
         public List<InteractPart> InteractParts;
@@ -57,6 +58,7 @@ namespace HegaCore
         {
             _cubismController = GetComponentInParent<CubismController>();
             cubismRaycaster = GetComponent<CubismRaycaster>();
+            _characterVoice = GetComponentInParent<CharacterVoice>();
         }
 
         void OnEnable()
@@ -69,16 +71,11 @@ namespace HegaCore
             if (isInteracting)
             {
                 curPart.DoDrag(dragDelta);
-
-                if (curPart.NeedReact())
+                
+                if (curPart.NeedReact(_cubismController.UserCharacter.HeartLevel))
                 {
-                    if (!string.IsNullOrEmpty(curPart.reactTriggerName))
-                        _cubismController.Animator.SetTrigger(curPart.reactTriggerName);
-
-                    if (!string.IsNullOrEmpty(curPart.reactVoice))
-                    {
-                        //PlayVoice(curPart.reactVoice);
-                    }
+                    if (_characterVoice != null)
+                        _characterVoice.PlayAngryVoice();
                     
                     EndInteract(true);
                     return;
@@ -251,6 +248,8 @@ public class InteractPart : ISearchFilterable
     [ShowIf("canReact")] 
     public float reactValue;
     [ShowIf("canReact")] 
+    public float ignoreAtLevel = -1;
+    [ShowIf("canReact")] 
     public string reactTriggerName;
     [ShowIf("canReact")] 
     public string reactVoice;
@@ -319,8 +318,13 @@ public class InteractPart : ISearchFilterable
         BlendPrameter();
     }
 
-    public bool NeedReact()
+    public bool NeedReact(int curLevel)
     {
+        if (curLevel >= ignoreAtLevel)
+        {
+            return false;
+        }
+        
         if (canReact)
         {
             if (reactValue < normalValue && reactValue > dragValue)

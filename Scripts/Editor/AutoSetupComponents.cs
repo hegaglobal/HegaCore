@@ -143,8 +143,6 @@ namespace HegaCore
 
                     newPart.canReact = part.canReact;
                     newPart.reactValue = part.reactValue;
-                    newPart.reactTriggerName = part.reactTriggerName;
-                    newPart.reactVoice = part.reactVoice;
                     newPart.reactReturn = part.reactReturn;
                     newPart.reactReturnDelay = part.reactReturnDelay;
                     

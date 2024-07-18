@@ -64,16 +64,15 @@ namespace HegaCore
         [TableList]
         public List<IntMap> clothesMap;
         
-        // [BoxGroup("Interact")]
-        // public List<int> allowClothesID;
-
-
         [BoxGroup("Lip syns")] public CubismMouthController MouthController;
         [BoxGroup("Lip syns")] public CubismAudioMouthInput AudioMouthInput;
 
         [BoxGroup("Custom Parameters")] [ShowInInspector, ReadOnly]
         private List<CubismParameterCustomControl> parameterControls = new List<CubismParameterCustomControl>();
-        
+
+        [ShowInInspector] private UserCharacter userCharacter;
+        public UserCharacter UserCharacter => userCharacter;
+
         [Button(ButtonSizes.Large)]
         private void GetRef()
         {
@@ -410,8 +409,8 @@ namespace HegaCore
             //Debug.Log("LoadInteractPartValues: "  + curClothesID);
             if (DataManager.Instance.DarkLord)// && allowClothesID.Contains(curClothesID))
             {
-                var userCharacterData = DataManager.DataContainer.Player.GetUserCharacter(CharIndex);
-                live2DCharInteract?.LoadInteractPartValues(userCharacterData.interactValues, Id);
+                userCharacter = DataManager.DataContainer.Player.GetUserCharacter(CharIndex);
+                live2DCharInteract?.LoadInteractPartValues(userCharacter.interactValues, Id);
             }
             else
                 live2DCharInteract?.ResetInteractValue();

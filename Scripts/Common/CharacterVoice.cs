@@ -15,73 +15,28 @@ public class VoiceData
     public string animtrigger = string.Empty;
 }
 
-public class CharacterVoice : MonoBehaviour
+[Serializable]
+public class VoicePool
 {
-    [InfoBox("Random Talk")]
+    [ListDrawerSettings(Expanded = true)]
     [TableList]
     public List<VoiceData> VoiceDatas;
+    private List<int> indexes = new List<int>();
 
-    [SerializeField]
-    private Animator _animator;
-
-    private List<int> indexes;
-    void Awake()
+    public async UniTaskVoid PrepareVoice()
     {
-        PrepareVoice().Forget();
-    }
-
-    async UniTaskVoid PrepareVoice()
-    {
-        string[] voices = new string[VoiceDatas.Count];
-        for (int i = 0; i < VoiceDatas.Count; i++)
+        if (VoiceDatas.Count > 0)
         {
-            voices[i] = VoiceDatas[i].voiceKey;
-        }
-        
-        await AudioManager.Instance.PrepareVoiceAsync(true, voices);
-    }
-    
-    void OnEnable()
-    {
-        StartCoroutine(PlayVoiceCO());
-    }
-    
-    void OnDisable()
-    {
-        StopAllCoroutines();
-        AudioManager.Instance.Player.StopVoice();
-    }
-
-    IEnumerator PlayVoiceCO()
-    {
-        RenewPool();
-        
-        yield return new WaitForSeconds(3);
-        while (this.gameObject.activeSelf)
-        {
-            var data = VoiceDatas[GetRandomVoice()];
-            if (AudioManager.Instance.TryGetVoice(data.voiceKey, out var voiceClip))
+            List<string> voices = new List<string>(VoiceDatas.Count);
+            for (int i = 0; i < VoiceDatas.Count; i++)
             {
-                AudioManager.Instance.Player.PlayVoice(data.voiceKey);
-                if (data.animInt > 0)
-                {
-                    _animator.SetInteger("ID", data.animInt);
-                }
+                voices.Add(VoiceDatas[i].voiceKey);
+            }
 
-                if (!string.IsNullOrEmpty(data.animtrigger))
-                {
-                    _animator.SetTrigger(data.animtrigger);
-                }
-                
-                yield return new WaitForSeconds(voiceClip.length + 15f);
-            }
-            else
-            {
-                yield return new WaitForSeconds(1f);
-            }
+            await AudioManager.Instance.PrepareVoiceAsync(true, voices.ToArray());
         }
     }
-
+    
     void RenewPool()
     {
         indexes = new List<int>(VoiceDatas.Count);
@@ -90,8 +45,8 @@ public class CharacterVoice : MonoBehaviour
             indexes.Add(i);
         }
     }
-
-    int GetRandomVoice()
+    
+    public VoiceData GetRandomVoiceData()
     {
         if (indexes.Count == 0)
         {
@@ -106,7 +61,114 @@ public class CharacterVoice : MonoBehaviour
 
         int result = indexes[index];
         indexes.RemoveAt(index);
-        return result;
+        return VoiceDatas[result];
+    }
+    
+    public VoiceData GetVoiceData(string key)
+    {
+        foreach (var data in VoiceDatas)
+        {
+            if (string.Equals(data.voiceKey, key))
+            {
+                return data;
+            }
+        }
+
+        return null;
+    }
+}
+
+public class CharacterVoice : MonoBehaviour
+{
+    [SerializeField]
+    private Animator _animator;
+    
+    public VoicePool RandomVoices;
+    public VoicePool AngryVoices;
+    public VoicePool HappyVoices;
+    
+    private float specialVoiceDelay = 0;
+    
+    private List<int> indexes;
+    void Awake()
+    {
+        RandomVoices.PrepareVoice().Forget();
+        AngryVoices.PrepareVoice().Forget();
+        HappyVoices.PrepareVoice().Forget();
+    }
+    
+    void OnEnable()
+    {
+        StartCoroutine(PlayVoiceCO());
+    }
+    
+    void OnDisable()
+    {
+#if UNITY_EDITOR
+        if (!Application.isPlaying)
+            return;
+#endif
+        AudioManager.Instance.Player.StopVoice();
+        StopAllCoroutines();
+    }
+
+    private void FixedUpdate()
+    {
+        specialVoiceDelay -= Time.fixedDeltaTime;
+    }
+
+    IEnumerator PlayVoiceCO()
+    {
+        yield return new WaitForSeconds(3);
+        while (this.gameObject.activeSelf)
+        {
+            while (specialVoiceDelay > 0f)
+            {
+                yield return new WaitForSeconds(10f);
+            }
+
+            var data = RandomVoices.GetRandomVoiceData();
+            var delay = PlayVoiceData(data);
+            yield return new WaitForSeconds(delay);
+        }
+    }
+
+    public void PlayAngryVoice()
+    {
+        AudioManager.Instance.Player.StopVoice();
+        var data = AngryVoices.GetRandomVoiceData();
+        specialVoiceDelay = PlayVoiceData(data);
+    }
+
+    public void PlayHappyVoice()
+    {
+        AudioManager.Instance.Player.StopVoice();
+        var data = HappyVoices.GetRandomVoiceData();
+        specialVoiceDelay = PlayVoiceData(data);
+    }
+
+    private float PlayVoiceData(VoiceData data)
+    {
+        if (AudioManager.Instance.TryGetVoice(data.voiceKey, out var voiceClip))
+        {
+            AudioManager.Instance.Player.PlayVoice(data.voiceKey);
+            
+            if (data.animInt > 0)
+            {
+                _animator.SetInteger("ID", data.animInt);
+            }
+            
+            if (!string.IsNullOrEmpty(data.animtrigger))
+            {
+                _animator.SetTrigger(data.animtrigger);
+            }
+            
+            return voiceClip.length + 5f;
+        }
+        else
+        {
+            return 5f;
+        }
     }
 }
 
