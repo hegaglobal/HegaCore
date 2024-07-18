@@ -250,10 +250,6 @@ public class InteractPart : ISearchFilterable
     [ShowIf("canReact")] 
     public float ignoreAtLevel = -1;
     [ShowIf("canReact")] 
-    public string reactTriggerName;
-    [ShowIf("canReact")] 
-    public string reactVoice;
-    [ShowIf("canReact")] 
     public float reactReturn;
     [ShowIf("canReact")] 
     public float reactReturnDelay;
