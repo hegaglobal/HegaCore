@@ -112,7 +112,7 @@ namespace HegaCore
         public void Hide()
         {
             SetLayer(0);
-
+            SaveCurrentInteractParts();
             this.color = Color.white.With(a: 0f);
             SetColor(in this.color);
 
@@ -362,13 +362,20 @@ namespace HegaCore
 
         #region Clothes
 
+        public void ChangeClothes()
+        {
+            curClothesID = userCharacter.standClothesID;
+            BlendParamToValue("Var", clothesMap[curClothesID].value);
+            LoadInteractPartValues();
+        }
+        
         public void ChangeClothes(int clothesID)
         {
-            if (curClothesID == clothesID)
+            if (curClothesID == clothesID || userCharacter.HeartLevel < clothesID)
             {
                 return;
             }
-            
+            userCharacter.standClothesID = clothesID;
             curClothesID = clothesID;
             BlendParamToValue("Var", clothesMap[curClothesID].value);
             LoadInteractPartValues();
@@ -409,11 +416,15 @@ namespace HegaCore
             //Debug.Log("LoadInteractPartValues: "  + curClothesID);
             if (DataManager.Instance.DarkLord)// && allowClothesID.Contains(curClothesID))
             {
-                userCharacter = DataManager.DataContainer.Player.GetUserCharacter(CharIndex);
                 live2DCharInteract?.LoadInteractPartValues(userCharacter.interactValues, Id);
             }
             else
                 live2DCharInteract?.ResetInteractValue();
+        }
+
+        public void GetUserCharacter()
+        {
+            userCharacter = DataManager.DataContainer.Player.GetUserCharacter(CharIndex);
         }
         
         public void SaveCurrentInteractParts()

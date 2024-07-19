@@ -97,6 +97,37 @@ namespace HegaCore
             newCubismRenderController.MutualTexturePath = oldCubismRenderController.MutualTexturePath;
             newCubismRenderController.UseMutualTexturePath = oldCubismRenderController.UseMutualTexturePath;
             newCubismRenderController.ForceUseTexturePath = oldCubismRenderController.ForceUseTexturePath;
+
+            
+            var oldCharacterVoice = fromObject.GetComponentInParent<CharacterVoice>();
+            if (oldCharacterVoice != null)
+            {
+                var newCharacterVoice = toTarget.transform.parent.AddComponent<CharacterVoice>();
+                newCharacterVoice._animator = oldCharacterVoice._animator;
+                if (oldCharacterVoice.RandomVoices != null &&
+                    oldCharacterVoice.RandomVoices.VoiceDatas != null &&
+                    oldCharacterVoice.RandomVoices.VoiceDatas.Count > 0)
+                {
+                    newCharacterVoice.RandomVoices = new VoicePool();
+                    newCharacterVoice.RandomVoices.VoiceDatas.AddRange(oldCharacterVoice.RandomVoices.VoiceDatas);
+                }
+                
+                if (oldCharacterVoice.AngryVoices != null &&
+                    oldCharacterVoice.AngryVoices.VoiceDatas != null &&
+                    oldCharacterVoice.AngryVoices.VoiceDatas.Count > 0)
+                {
+                    newCharacterVoice.AngryVoices = new VoicePool();
+                    newCharacterVoice.AngryVoices.VoiceDatas.AddRange(oldCharacterVoice.AngryVoices.VoiceDatas);
+                }
+                
+                if (oldCharacterVoice.HappyVoices != null &&
+                    oldCharacterVoice.HappyVoices.VoiceDatas != null &&
+                    oldCharacterVoice.HappyVoices.VoiceDatas.Count > 0)
+                {
+                    newCharacterVoice.HappyVoices = new VoicePool();
+                    newCharacterVoice.HappyVoices.VoiceDatas.AddRange(oldCharacterVoice.HappyVoices.VoiceDatas);
+                }
+            }
             
             var fromInteract = fromObject.GetComponent<Live2DCharInteract>();
             if (fromInteract)
@@ -143,6 +174,7 @@ namespace HegaCore
 
                     newPart.canReact = part.canReact;
                     newPart.reactValue = part.reactValue;
+                    newPart.ignoreAtLevel = part.ignoreAtLevel;
                     newPart.reactReturn = part.reactReturn;
                     newPart.reactReturnDelay = part.reactReturnDelay;
                     

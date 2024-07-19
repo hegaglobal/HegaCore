@@ -80,9 +80,8 @@ public class VoicePool
 
 public class CharacterVoice : MonoBehaviour
 {
-    [SerializeField]
-    private Animator _animator;
-    
+    public Animator _animator;
+
     public VoicePool RandomVoices;
     public VoicePool AngryVoices;
     public VoicePool HappyVoices;
@@ -151,6 +150,7 @@ public class CharacterVoice : MonoBehaviour
     {
         if (AudioManager.Instance.TryGetVoice(data.voiceKey, out var voiceClip))
         {
+            Debug.Log($"Play Voice Data: {data.voiceKey}");
             AudioManager.Instance.Player.PlayVoice(data.voiceKey);
             
             if (data.animInt > 0)

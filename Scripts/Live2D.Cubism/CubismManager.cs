@@ -181,6 +181,7 @@ namespace HegaCore
                 model.SetScale(scale.Value);
 
             model.Show();
+            model.GetUserCharacter();
             return model;
         }
 
