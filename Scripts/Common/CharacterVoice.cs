@@ -127,7 +127,7 @@ public class CharacterVoice : MonoBehaviour
             }
 
             var data = RandomVoices.GetRandomVoiceData();
-            var delay = PlayVoiceData(data);
+            var delay = PlayVoiceData(data) + 10;
             yield return new WaitForSeconds(delay);
         }
     }

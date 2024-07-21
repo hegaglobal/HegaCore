@@ -7,7 +7,6 @@ using HegaCore.UI;
 using Sirenix.OdinInspector;
 using Live2D.Cubism.Framework.MouthMovement;
 using Live2D.Cubism.Framework.Raycasting;
-using UnityEngine.Serialization;
 
 namespace HegaCore
 {
@@ -63,6 +62,8 @@ namespace HegaCore
         [InfoBox("0 is SFW")]
         [TableList]
         public List<IntMap> clothesMap;
+
+        public List<int> skinIDs;
         
         [BoxGroup("Lip syns")] public CubismMouthController MouthController;
         [BoxGroup("Lip syns")] public CubismAudioMouthInput AudioMouthInput;
