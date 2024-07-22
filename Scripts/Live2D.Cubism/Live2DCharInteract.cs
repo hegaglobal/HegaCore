@@ -88,15 +88,15 @@ namespace HegaCore
 
                 dragDelta = Vector2.zero;
             }
-            else if (needReset)
-            {
-                foreach (var part in InteractParts)
-                {
-                    part.BlendPrameter(part.normalValue);
-                }
-
-                needReset = false;
-            }
+            // else if (needReset)
+            // {
+            //     foreach (var part in InteractParts)
+            //     {
+            //         part.BlendPrameter(part.normalValue);
+            //     }
+            //
+            //     needReset = false;
+            // }
             else
             {
                 foreach (var part in InteractParts)
@@ -150,27 +150,9 @@ namespace HegaCore
             isInteracting = false;
         }
 
-        public Dictionary<string, float> GetInteractPartValues()
-        {
-            Dictionary<string, float> result = new Dictionary<string, float>();
-
-            foreach (var part in InteractParts)
-            {
-                if (part.returnWeight <= 0 && 
-                    (part.allowedClotheIDs == null || 
-                     part.allowedClotheIDs.Count == 0 || 
-                     part.allowedClotheIDs.Contains(_cubismController.curClothesID)))
-                {
-                    result.Add(part.Parameter.name, part.currentParamValue);
-                }
-            }
-
-            return result;
-        }
-
         public void ResetInteractValue()
         {
-            //Debug.Log("Reset ------------------ ");
+            UnuLogger.Log("Reset ------------------ ");
             needReset = true;
         }
 
@@ -180,26 +162,27 @@ namespace HegaCore
             {
                 return;
             }
-            
-            foreach (var savedPair in savedDict)
+            foreach (var part in InteractParts)
             {
-                foreach (var part in InteractParts)
-                {
+                //foreach (var savedPair in savedDict)
+                //{
                     if (part.returnWeight > 0 || !part.allowedClotheIDs.Contains(_cubismController.curClothesID))
                     {
+                        UnuLogger.Log( "RESET PARAM: --------- " + part.Parameter.gameObject.name);
                         part.BlendPrameter(part.normalValue);
                         continue;
                     }
 
                     string converted = $"{subFix}_{part.Parameter.name}";
-                    UnuLogger.Log($"{converted}");
+                    UnuLogger.Log($"CONVERTED: {converted}");
                 
-                    if (string.Equals(converted, savedPair.Key))
+                    if (savedDict.TryGetValue(converted, out var value))// string.Equals(converted, savedPair.Key))
                     {
-                        UnuLogger.Log($"{savedPair.Key} --- Load: {savedPair.Value}");
-                        part.BlendPrameter(savedPair.Value);
+                        UnuLogger.Log($"LOAD: +++++++++ {part} == {converted} --- Load: {value}");
+                        //part.BlendPrameter(value);
+                        _cubismController.BlendParamToValue(part.Parameter.name, value);
                     }
-                }
+                //}
             }
             
         }

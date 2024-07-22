@@ -370,12 +370,18 @@ namespace HegaCore
             LoadInteractPartValues();
         }
         
-        public void ChangeClothes(int clothesID)
+        public void ChangeClothes(int clothesID, bool save = false)
         {
             if (curClothesID == clothesID || userCharacter.HeartLevel < clothesID)
             {
                 return;
             }
+
+            if (save)
+            {
+                SaveCurrentInteractParts();
+            }
+            
             userCharacter.standClothesID = clothesID;
             curClothesID = clothesID;
             BlendParamToValue("Var", clothesMap[curClothesID].value);
@@ -406,7 +412,22 @@ namespace HegaCore
         {
             if (live2DCharInteract != null)
             {
-                return live2DCharInteract.GetInteractPartValues();
+                Dictionary<string, float> result = new Dictionary<string, float>();
+                var interactParts = live2DCharInteract.InteractParts;
+                
+                foreach (var part in interactParts)
+                {
+                    if (part.returnWeight <= 0 && 
+                        (part.allowedClotheIDs == null || 
+                         part.allowedClotheIDs.Count == 0 || 
+                         part.allowedClotheIDs.Contains(curClothesID)))
+                    {
+                        UnuLogger.Log($"GET PART + {part.Parameter.name} --- {part.currentParamValue}");
+                        result.Add(part.Parameter.name, part.Parameter.Value);
+                    }
+                }
+
+                return result;
             }
 
             return null;
@@ -419,16 +440,16 @@ namespace HegaCore
             {
                 live2DCharInteract?.LoadInteractPartValues(userCharacter.interactValues, Id);
             }
-            else
-                live2DCharInteract?.ResetInteractValue();
+            // else 
+            //     live2DCharInteract?.ResetInteractValue();
         }
 
         public void GetUserCharacter()
         {
             userCharacter = DataManager.DataContainer.Player.GetUserCharacter(CharIndex);
         }
-        
-        public void SaveCurrentInteractParts()
+
+        private void SaveCurrentInteractParts()
         {
             var userCharacterData = DataManager.DataContainer.Player.GetUserCharacter(CharIndex);
             
