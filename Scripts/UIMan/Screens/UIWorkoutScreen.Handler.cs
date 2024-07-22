@@ -273,10 +273,13 @@ public partial class UIWorkoutScreen : UIManScreen
 		for (int i = 0; i < 5; i++)
 		{
 			var row_i = currentWorkoutData.GetAt(i);
-			firstAudio.Add(row_i.voice);
+			if (!string.Equals("stop", row_i.voice))
+				firstAudio.Add(row_i.voice);
+			
 			if (!string.IsNullOrEmpty(row_i.bgvoice) && !string.Equals(row_i.bgvoice, "stop"))
 			{
 				firstAudio.Add(row_i.bgvoice);
+				UnuLogger.Log("Load:" + row_i.bgvoice);
 			}
 		}
 		await AudioManager.Instance.PrepareVoiceAsync(true, firstAudio.ToArray());
@@ -285,10 +288,13 @@ public partial class UIWorkoutScreen : UIManScreen
 		for (int i = 5; i < rows; i++)
 		{
 			var row_i = currentWorkoutData.GetAt(i);
-			followAudio.Add(row_i.voice);
+			if (!string.Equals("stop", row_i.voice))
+				followAudio.Add(row_i.voice);
+			
 			if (!string.IsNullOrEmpty(row_i.bgvoice) && !string.Equals(row_i.bgvoice, "stop"))
 			{
 				followAudio.Add(row_i.bgvoice);
+				UnuLogger.Log("Load Follow:" + row_i.bgvoice);
 			}
 		}
 		
@@ -395,6 +401,11 @@ public partial class UIWorkoutScreen : UIManScreen
 			
 			if (!string.IsNullOrEmpty(currentRow.voice))
 			{
+				if (string.Equals("stop", currentRow.voice))
+				{
+					AudioManager.Instance.Player.StopVoice();
+				}
+				
 				if (AudioManager.Instance.TryGetVoice(currentRow.voice, out var voiceClip))
 				{
 #if UNITY_EDITOR
