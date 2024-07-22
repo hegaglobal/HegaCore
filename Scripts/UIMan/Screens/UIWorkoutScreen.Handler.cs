@@ -301,7 +301,6 @@ public partial class UIWorkoutScreen : UIManScreen
 		//yield return new WaitForSeconds(0.5f);
 		AudioManager.Instance.Player.PlayAsync(currentSceneData.BGMusic, AudioType.Music);
 		onShowCompleted?.Invoke();
-		currentRowIndex = 0;
 		RunHscene();
 		await AudioManager.Instance.PrepareVoiceAsync(true, followAudio.ToArray());
 	}
@@ -337,7 +336,8 @@ public partial class UIWorkoutScreen : UIManScreen
 	{
 		CommandProcessor.PoseShow(currentSceneData.firstPoseID);
 		busy = false;
-		currentRow = currentWorkoutData.GetAt(0);
+		currentRowIndex = 0;
+		currentRow = currentWorkoutData.GetAt(currentRowIndex);
 		while (currentRow != null && !isQuiting)
 		{
 			yield return new WaitUntil(() => (CommandProcessor.waitForSeconds <= 0));
@@ -405,20 +405,22 @@ public partial class UIWorkoutScreen : UIManScreen
 				{
 					AudioManager.Instance.Player.StopVoice();
 				}
-				
-				if (AudioManager.Instance.TryGetVoice(currentRow.voice, out var voiceClip))
-				{
-#if UNITY_EDITOR
-					curClip = voiceClip;
-#endif
-					AudioManager.Instance.Player.PlayVoice(currentRow.voice);
-					CommandProcessor.autoNextSeconds = voiceClip.length + 0.15f;
-					soundBGText.gameObject.SetActive(false);
-				}
 				else
 				{
-					UnuLogger.Log("Addressable Load Voice Failed: " + currentRow.voice);
-					CommandProcessor.autoNextSeconds = 3.5f;
+					if (AudioManager.Instance.TryGetVoice(currentRow.voice, out var voiceClip))
+					{
+#if UNITY_EDITOR
+						curClip = voiceClip;
+#endif
+						AudioManager.Instance.Player.PlayVoice(currentRow.voice);
+						CommandProcessor.autoNextSeconds = voiceClip.length + 0.15f;
+						soundBGText.gameObject.SetActive(false);
+					}
+					else
+					{
+						UnuLogger.Log("Addressable Load Voice Failed: " + currentRow.voice);
+						CommandProcessor.autoNextSeconds = 3.5f;
+					}
 				}
 			}
 			else
