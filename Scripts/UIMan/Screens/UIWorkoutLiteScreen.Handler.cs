@@ -265,11 +265,15 @@ public partial class UIWorkoutLiteScreen : UIManScreen
 		//SFX
 		if (!string.IsNullOrEmpty(currentRow.sfx))
 		{
-			if (string.Equals("stop",currentRow.sfx))
+			if (string.Equals("stop", currentRow.sfx))
+			{
 				AudioManager.Instance.Player.StopVoiceBG();
+				AudioManager.Instance.Player.StopVoice();
+			}
 			else
+			{
 				AudioManager.Instance.Player.PlayVoiceBG(currentRow.sfx, !currentRow.loop_sfx);
-			
+			}
 			//AudioControl.Instance.PlaySoundAsyns(currentRow.sfx, AudioControl.AudioType.VoiceBG,0, currentRow.loop_sfx);
 		}
 		
@@ -332,7 +336,7 @@ public partial class UIWorkoutLiteScreen : UIManScreen
 				if (AudioManager.Instance.TryGetVoice(vID, out var voiceClip))
 				{
 					AudioManager.Instance.Player.PlayVoice(vID);
-					CommandProcessor.waitForSeconds = voiceClip.length + currentRow.delay;
+					CommandProcessor.waitForSeconds = voiceClip.length;
 				}
 				else
 				{
@@ -341,6 +345,18 @@ public partial class UIWorkoutLiteScreen : UIManScreen
 				}
 			}
 			yield return new WaitUntil(()=> CommandProcessor.waitForSeconds <= 0 || newRow || isQuiting);
+
+			if (!newRow)
+			{
+				CommandProcessor.waitForSeconds = currentRow.delay;
+
+				if (!string.IsNullOrEmpty(currentRow.voice_default))
+				{
+					AudioManager.Instance.Player.PlayVoice(currentRow.voice_default);
+				}
+				
+				yield return new WaitUntil(()=> CommandProcessor.waitForSeconds <= 0 || newRow || isQuiting);
+			}
 		}
 	}
 

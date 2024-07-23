@@ -12,7 +12,8 @@ public class WorkoutLiteData
 		public string command;
 		public string sfx;
 		public bool loop_sfx; // empty = no loop. 
-		public float delay; // delay between 2 audioClip. Input 10000 to play once. 
+		public float delay; // delay between 2 audioClip. Input 10000 to play once.
+		public string voice_default;
 		public List<string> voices;
 	}
 
@@ -50,9 +51,8 @@ public class WorkoutLiteData
 			else
 				row.delay = grid[i][5].ParseFloatUS();
 			
+			row.voice_default = grid[i][6];
 			row.voices = new List<string>();
-			if (!string.IsNullOrEmpty(grid[i][6]))
-				row.voices.Add(grid[i][6]);
 			if (!string.IsNullOrEmpty(grid[i][7]))
 				row.voices.Add(grid[i][7]);
 			if (!string.IsNullOrEmpty(grid[i][8]))
@@ -61,6 +61,8 @@ public class WorkoutLiteData
 				row.voices.Add(grid[i][9]);
 			if (!string.IsNullOrEmpty(grid[i][10]))
 				row.voices.Add(grid[i][10]);
+			if (!string.IsNullOrEmpty(grid[i][11]))
+				row.voices.Add(grid[i][11]);
 			rowList.Add(row);
 		}
 
