@@ -434,7 +434,7 @@ public partial class UIWorkoutScreen : UIManScreen
 
 #if UNITY_EDITOR
 			voiceText.text =
-				$"[{currentRow.id}] - {currentRow.textID} - {currentWorkoutTextData.GetTextByVoiceID(currentRow.textID, DataManager.GameSettings.Language)}"; // - [{currentRow.voice}]  // .Text()
+				$"[{currentRowIndex}] - {currentRow.textID} - {currentWorkoutTextData.GetTextByVoiceID(currentRow.textID, DataManager.GameSettings.Language)}"; // - [{currentRow.voice}]  // .Text()
 #else
 			voiceText.text = currentWorkoutTextData.GetTextByVoiceID(currentRow.textID,DataManager.GameSettings.Language);
 #endif
