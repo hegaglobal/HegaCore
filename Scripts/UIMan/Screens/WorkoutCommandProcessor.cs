@@ -1,6 +1,7 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using HegaCore;
+using Sirenix.OdinInspector;
 using UnityEngine;
 using UnityEngine.UI;
 using UnuGames;
@@ -35,8 +36,8 @@ public class WorkoutCommandProcessor : MonoBehaviour
 	private HPoseController currentPose;
 	
 	private List<DelayCommandData> DelayCommandDatas;
-	[SerializeField]
-	private float currentDelayCharged;
+	[ReadOnly]
+	public float currentDelayCharged;
 	
 #if UNITY_EDITOR
 	void OnGUI()
@@ -326,11 +327,14 @@ public class WorkoutCommandProcessor : MonoBehaviour
 		{
 			if (string.Equals("stop", sfx))
 			{
+				UnuLogger.Log($"STOPPPPPPPPPPPP VOICE BG -----: {sfx}");
 				AudioManager.Instance.Player.StopVoiceBG();
-				AudioManager.Instance.Player.StopVoice();
 			}
 			else
+			{
+				UnuLogger.Log($"PLAYYYYYYYYYYYYYYYYYYY VOICE BG =====: {sfx}");
 				AudioManager.Instance.Player.PlayVoiceBG(sfx,!loop);
+			}
 		}
 	}
 	

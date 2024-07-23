@@ -85,11 +85,12 @@ public partial class UIWorkoutScreen : UIManScreen
 		
 		isQuiting = false;
 
-		#if TEST_HSCENE
+#if TEST_HSCENE
 		needClick = true;
-		#else
+		soundBGText.gameObject.SetActive(true);
+#else
 		needClick = false;
-		#endif
+#endif
 		
 		Debug.Log("Get Data");
 		DataManager.Instance.GetWorkoutData(currentSceneData.dataPath, (work, worktext) =>
@@ -126,6 +127,7 @@ public partial class UIWorkoutScreen : UIManScreen
 		{
 			CanvasGroup.alpha = 0;
 		}
+		soundBGText.text = $"<color=red>TIME</color>: {CommandProcessor.currentDelayCharged:#.00}";
 #endif
 		CommandProcessor.UpdateProcessor();
 
@@ -163,7 +165,7 @@ public partial class UIWorkoutScreen : UIManScreen
 	{
 		if (!busy)
 		{
-			if (GUI.Button(new Rect(20, 20, 100, 50), ">>"))
+			if (GUI.Button(new Rect(450, 20, 100, 50), ">>"))
 			{
 				ClickNext();
 			}
@@ -403,6 +405,7 @@ public partial class UIWorkoutScreen : UIManScreen
 			{
 				if (string.Equals("stop", currentRow.voice))
 				{
+					UnuLogger.Log($"STOPPPPPPPPPPPP VOICE -----------------");
 					AudioManager.Instance.Player.StopVoice();
 				}
 				else
@@ -414,7 +417,7 @@ public partial class UIWorkoutScreen : UIManScreen
 #endif
 						AudioManager.Instance.Player.PlayVoice(currentRow.voice);
 						CommandProcessor.autoNextSeconds = voiceClip.length + 0.15f;
-						soundBGText.gameObject.SetActive(false);
+						//soundBGText.gameObject.SetActive(false);
 					}
 					else
 					{
@@ -426,7 +429,7 @@ public partial class UIWorkoutScreen : UIManScreen
 			else
 			{
 				CommandProcessor.autoNextSeconds = 3.5f;
-				StartCoroutine(VoiceBGTextCO());
+				//StartCoroutine(VoiceBGTextCO());
 			}
 
 #if UNITY_EDITOR
