@@ -8,6 +8,7 @@ using UnityEngine;
 using UnityEngine.UI;
 using UnuGames;
 using Sirenix.OdinInspector;
+using VisualNovelData.Data;
 using AudioType = HegaCore.AudioType;
 
 [Serializable]
@@ -431,12 +432,24 @@ public partial class UIWorkoutScreen : UIManScreen
 				CommandProcessor.autoNextSeconds = 3.5f;
 				//StartCoroutine(VoiceBGTextCO());
 			}
+			
+			var id = currentRow.speaker;
+			var characterData = VisualNovelDataset.Character;
+			var data = characterData.GetCharacter(id);
 
+			string spkName = String.Empty;
+			if (!data.IsNullOrNone())
+			{
+				spkName = characterData.GetContent(data.ContentId).
+					GetLocalization(DataManager.GameSettings.Language);
+			}
+			string text = currentWorkoutTextData.GetTextByVoiceID(currentRow.textID, DataManager.GameSettings.Language);
+			
 #if UNITY_EDITOR
 			voiceText.text =
-				$"[{currentRowIndex}] - {currentRow.textID} - {currentWorkoutTextData.GetTextByVoiceID(currentRow.textID, DataManager.GameSettings.Language)}"; // - [{currentRow.voice}]  // .Text()
+				$"[{currentRowIndex}] [{spkName}]- {currentRow.textID} - {currentWorkoutTextData.GetTextByVoiceID(currentRow.textID, DataManager.GameSettings.Language)}"; // - [{currentRow.voice}]  // .Text()
 #else
-			voiceText.text = currentWorkoutTextData.GetTextByVoiceID(currentRow.textID,DataManager.GameSettings.Language);
+			voiceText.text = !string.IsNullOrEmpty(spkName) ? $"{spkName} -  {text}" : text;
 #endif
 			
 			yield return new WaitUntil(() => CommandProcessor.waitForSeconds <= 0);

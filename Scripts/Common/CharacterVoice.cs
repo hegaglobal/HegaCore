@@ -170,5 +170,10 @@ public class CharacterVoice : MonoBehaviour
             return 5f;
         }
     }
+    
+    public void PlaySFX(string sfx)
+    {
+        AudioManager.Instance.Player.PlayAsync(sfx, HegaCore.AudioType.Sound);
+    }
 }
 

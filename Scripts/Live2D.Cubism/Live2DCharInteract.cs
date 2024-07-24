@@ -168,8 +168,8 @@ namespace HegaCore
                 //{
                     if (part.returnWeight > 0 || !part.allowedClotheIDs.Contains(_cubismController.curClothesID))
                     {
-                        UnuLogger.Log( "RESET PARAM: --------- " + part.Parameter.gameObject.name);
-                        part.BlendPrameter(part.normalValue);
+                        UnuLogger.Log( $"RESET PARAM: --------- {part.Parameter.gameObject.name} --  {part.normalValue}"  );
+                        _cubismController.BlendParamToValue(part.Parameter.name, part.normalValue);
                         continue;
                     }
 
@@ -256,7 +256,7 @@ public class InteractPart : ISearchFilterable
     
     public void DoReturn()
     {
-        if ((returnWeight > 0 || reactReturn > 0 || returnSpeed > 0) && !isInNormal) 
+        if (returnSpeed != 0 && !isInNormal)  // (returnWeight > 0 || reactReturn > 0 || returnSpeed > 0)
         {
             curReturnDelay -= Time.deltaTime;
             if (curReturnDelay > 0)
@@ -337,7 +337,7 @@ public class InteractPart : ISearchFilterable
             returnSpeed = dragMultiplier * returnWeight * (normalValue - dragValue);
             curReturnDelay = returnDelay;
         }
-        UnuLogger.Log("Return Speed: ---------------------------------- " + returnSpeed);
+        UnuLogger.Log( Parameter.gameObject.name + "  Return Speed: ---------------------------------- " + returnSpeed);
     }
 
     //[Button("Blend Param", ButtonSizes.Large)]
@@ -347,7 +347,7 @@ public class InteractPart : ISearchFilterable
             ? Mathf.Clamp(currentParamValue, dragValue, normalValue) 
             : Mathf.Clamp(currentParamValue, normalValue,dragValue);
             
-        //Debug.Log($"Blend: {Parameter.name} -- {currentParamValue}");
+        Debug.Log($"Blend: {Parameter.name} -- {currentParamValue}");
         Parameter.BlendToValue(CubismParameterBlendMode.Override, currentParamValue);
     }
 
