@@ -211,6 +211,11 @@ public partial class UIWorkoutLiteScreen : UIManScreen
 			{
 				firstAudioList.Add(row_i.sfx);
 			}
+
+			if (!firstAudioList.Contains(row_i.voice_default))
+			{
+				firstAudioList.Add(row_i.voice_default);
+			}
 		}
 
 		var firstAudio = firstAudioList.ToArray();
@@ -229,6 +234,11 @@ public partial class UIWorkoutLiteScreen : UIManScreen
 			if (!followAudio.Contains(row_i.sfx) && !string.IsNullOrEmpty(row_i.sfx) && !string.Equals(row_i.sfx, "stop"))
 			{
 				followAudio.Add(row_i.sfx);
+			}
+			
+			if (!followAudio.Contains(row_i.voice_default))
+			{
+				followAudio.Add(row_i.voice_default);
 			}
 		}
 
