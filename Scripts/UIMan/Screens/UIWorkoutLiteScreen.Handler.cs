@@ -151,11 +151,11 @@ public partial class UIWorkoutLiteScreen : UIManScreen
 		// 	(agrs) => { UIButton_Back(); },
 		// 	(objects => busy = false));
 		UIModalDialog.ShowProceed("",
-			"Are you sure to exit the scene?", //L10n.Localize("exit-hscene"),
+			L10n.Localize("exit-hscene"),
 			UIButton_Back,
 			() => busy = false,
-			"YES", //L10n.Localize("yes"),
-			"CANCEL"); //L10n.Localize("no"));
+			L10n.Localize("YES_BTN"),
+			L10n.Localize("CANCEL_BTN"));
 	}
 	
 	public void UIButton_Back()

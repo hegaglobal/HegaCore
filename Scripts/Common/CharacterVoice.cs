@@ -103,10 +103,9 @@ public class CharacterVoice : MonoBehaviour
     
     void OnDisable()
     {
-#if UNITY_EDITOR
-        if (!Application.isPlaying)
+        if (SingletonBehaviour.Quitting)
             return;
-#endif
+        
         AudioManager.Instance.Player.StopVoice();
         StopAllCoroutines();
     }
