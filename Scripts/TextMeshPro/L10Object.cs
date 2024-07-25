@@ -4,21 +4,13 @@ using Cysharp.Threading.Tasks;
 using SimpleLocalization;
 using System.Collections.Generic;
 using Sirenix.OdinInspector;
-using UnityEngine.UI;
+using System.Xml;
 
 namespace HegaCore
 {
     //[RequireComponent(typeof(TMP_Text))]
-    public class TMP_L10n : MonoBehaviour, IL10n
+    public class L10Object : MonoBehaviour, IL10n
     {
-        [SerializeField]
-        private string key = string.Empty;
-
-        [SerializeField] private bool upperCase = false;
-        
-        [SerializeField]
-        private bool silent = false;
-
         [SerializeField]
         private TMP_Text text = null;
         [SerializeField]
@@ -38,7 +30,6 @@ namespace HegaCore
         {
 
             L10n.Register(this);
-
             LazyLocalize().Forget();
 
         }
@@ -59,18 +50,9 @@ namespace HegaCore
 
         public void Localize()
         {
-            if (!string.IsNullOrEmpty(key))
-            {
-                var text = "";
-                if (upperCase)
-                    text = L10n.Localize(this.key, this.silent).ToUpper();
-                else
-                    text = L10n.Localize(this.key, this.silent);
-
-                this.text.SetText(text);
-            }
             CheckFont();
         }
+
         void CheckFont()
         {
             if (LocalizeFontAsset.Instance.CurrentFont != null)
@@ -85,7 +67,7 @@ namespace HegaCore
                         text.fontMaterial = fontData.materialPreset;
                         text.material = fontData.materialPreset;
                     }
-                    if(fontData.fontSize > 0)
+                    if (fontData.fontSize > 0)
                         text.fontSize = fontData.fontSize;
                 }
             }
@@ -95,14 +77,14 @@ namespace HegaCore
                     text.font = defaultFont;
                 if (defaultFontMat)
                     text.fontMaterial = defaultFontMat;
-                    text.material = defaultFontMat;
+                text.material = defaultFontMat;
             }
         }
 
 
 
-#if UNITY_EDITOR
 
+#if UNITY_EDITOR
         [Button]
         private void LoadMaterialButton()
         {
@@ -122,38 +104,5 @@ namespace HegaCore
             UnityEditor.AssetDatabase.SaveAssets();
         }
 #endif
-    }
-
-
-    [System.Serializable]
-    public class CustomMaterialPreset
-    {
-        [SerializeField]
-        private List<LanguageFontConfig> languageFontPairs = new List<LanguageFontConfig>();
-        public FontData GetFontData(eLanguage _language)
-        {
-            var config = languageFontPairs.Find(c => c.language == _language);
-            if (config != null)
-            {
-                return config.fontData;
-            }
-
-            return null;
-        }
-    }
-
-    [System.Serializable]
-    public class LanguageFontConfig
-    {
-        public eLanguage language;
-        public FontData fontData;
-    }
-
-    [System.Serializable]
-    public class FontData
-    {
-        public Material materialPreset = null;
-        [InfoBox("if fonsize > 0 then override current font size of textmeshpro")]
-        public int fontSize = 0;
     }
 }
