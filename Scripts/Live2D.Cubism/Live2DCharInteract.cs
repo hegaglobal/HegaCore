@@ -347,7 +347,7 @@ public class InteractPart : ISearchFilterable
             ? Mathf.Clamp(currentParamValue, dragValue, normalValue) 
             : Mathf.Clamp(currentParamValue, normalValue,dragValue);
             
-        Debug.Log($"Blend: {Parameter.name} -- {currentParamValue}");
+        //Debug.Log($"Blend: {Parameter.name} -- {currentParamValue}");
         Parameter.BlendToValue(CubismParameterBlendMode.Override, currentParamValue);
     }
 

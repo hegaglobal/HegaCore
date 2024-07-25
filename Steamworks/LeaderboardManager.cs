@@ -96,6 +96,8 @@ public class LeaderboardManager : MonoBehaviour
         if (definedLeaderBoards == null)
             yield break;
         
+        Debug.Log("Leader Board Initialized ==========");
+        
         for (int i = 0; i < definedLeaderBoards.Count; i++)
         {
             TryUploadToLeaderboard(definedLeaderBoards[i].boardName, 0); // to download all leaderboard.
@@ -160,7 +162,7 @@ public class LeaderboardManager : MonoBehaviour
     {
         if (!userRankDict.ContainsKey(board))
         {
-            Debug.Log("Get User Rank --- ");
+            Log("Get User Rank --- ");
             userRankDict.Add(board, new LeaderBoardEntryData());
         }
 
@@ -207,7 +209,7 @@ public class LeaderboardManager : MonoBehaviour
     {
         if (!Initialized)
         {
-            Debug.Log("Steam SDK not Initialized");
+            Debug.LogError("Steam SDK not Initialized");
             InvokeCallBack(leaderboardName);
             return;
         }
@@ -216,7 +218,7 @@ public class LeaderboardManager : MonoBehaviour
 
         FindOrCreateLeaderboard(leaderboardName, info.SortMethod, info.DisplayType, (
                 (n,t) => { UploadToLeaderboard(n, t, valueToUpload); }),
-            () => { Debug.Log("Failed to upload score to Leaderboard: " + leaderboardName); });
+            () => { Log("Failed to upload score to Leaderboard: " + leaderboardName); });
     }
 
     private void UploadToLeaderboard(string leaderboardName, SteamLeaderboard_t steamLeaderboardT, int score)
@@ -238,10 +240,7 @@ public class LeaderboardManager : MonoBehaviour
             Debug.LogError("Failed to upload score");
             return;
         }
-        Debug.Log($"UPLOAD COMPLETED: {leaderBoardName} -- {result.m_nScore} -- {result.m_nGlobalRankNew} -- {result.m_nGlobalRankPrevious}");
-
-
-            
+        Log($"UPLOAD COMPLETED: {leaderBoardName} -- {result.m_nScore} -- {result.m_nGlobalRankNew} -- {result.m_nGlobalRankPrevious}");
         
         if (!userRankDict.ContainsKey(leaderBoardName))
         {
@@ -263,10 +262,12 @@ public class LeaderboardManager : MonoBehaviour
             
             DownloadGlobalRank(leaderBoardName, result.m_hSteamLeaderboard);
         }
+#if UNITY_EDITOR
         else
         {
             Debug.Log("Upload Completed: not changed");
         }
+#endif
     }
     #endregion
 
@@ -292,12 +293,12 @@ public class LeaderboardManager : MonoBehaviour
         var info = GetLeaderBoardInfo(leaderboardName);
         
         FindOrCreateLeaderboard(leaderboardName, info.SortMethod, info.DisplayType, DownloadGlobalRank,
-            () => { Debug.Log("Failed to download leaderboard: " + leaderboardName); });
+            () => { Log("Failed to download leaderboard: " + leaderboardName); });
     }
 
     private void DownloadGlobalRank(string leaderboardName, SteamLeaderboard_t leaderboardHandle)
     {
-        Debug.Log("DownloadGlobalRank");
+        Log("DownloadGlobalRank");
         
         SteamAPICall_t downloadCall = SteamUserStats.DownloadLeaderboardEntries(leaderboardHandle,
             ELeaderboardDataRequest.k_ELeaderboardDataRequestGlobal, 1, entryCount);
@@ -310,7 +311,7 @@ public class LeaderboardManager : MonoBehaviour
     
     private void DownloadUserRank(string leaderboardName, SteamLeaderboard_t leaderboardHandle)
     {
-        Debug.Log("Download User Rank");
+        Log("Download User Rank");
         
         SteamAPICall_t downloadCall = SteamUserStats.DownloadLeaderboardEntries(leaderboardHandle,
             ELeaderboardDataRequest.k_ELeaderboardDataRequestGlobalAroundUser, -1, 1);
@@ -329,10 +330,6 @@ public class LeaderboardManager : MonoBehaviour
             return;
         }
         
-        // SteamUserStats.GetDownloadedLeaderboardEntry(result.m_hSteamLeaderboardEntries, 0,
-        //     out LeaderboardEntry_t leaderboardEntries, null, 0);
-        
-        Debug.Log(result.m_cEntryCount + "///////////////////////////////////////");
         var leaderboardEntries = new LeaderboardEntry_t[result.m_cEntryCount];
         for (int i = 0; i < result.m_cEntryCount; i++)
         {
@@ -345,7 +342,7 @@ public class LeaderboardManager : MonoBehaviour
         
         foreach (var entry in leaderboardEntries)
         {
-            Debug.Log($"Download USER Rank Completed: Rank: {entry.m_nGlobalRank} -- {entry.m_nScore}");
+            Log($"Download USER Rank Completed: Rank: {entry.m_nGlobalRank} -- {entry.m_nScore}");
             if (myID.Equals(entry.m_steamIDUser))
             {
                 userRank.m_nScore = entry.m_nScore;
@@ -365,7 +362,7 @@ public class LeaderboardManager : MonoBehaviour
             return;
         }
 
-        Debug.Log("Download Global Rank Completed");
+        Log("Download Global Rank Completed");
 
         var leaderboardEntries = new LeaderboardEntry_t[result.m_cEntryCount];
         for (int i = 0; i < result.m_cEntryCount; i++)
@@ -400,12 +397,12 @@ public class LeaderboardManager : MonoBehaviour
         
         if (LeaderBoardEntryDataDict.ContainsKey(leaderboardName))
         {
-            Debug.Log("Update Existed Cache");
+            Log("Update Existed Cache");
             LeaderBoardEntryDataDict[leaderboardName] = leaderboardEntriesData;
         }
         else
         {
-            Debug.Log("Init New cache");
+            Log("Init New cache");
             LeaderBoardEntryDataDict.Add(leaderboardName, leaderboardEntriesData);
         }
         
@@ -424,60 +421,16 @@ public class LeaderboardManager : MonoBehaviour
     #endregion
 
 
-    #region DATA
-    
+    public bool allowLog = false;
+    void Log(string log)
+    {
+        if (allowLog)
+        {
+            Debug.Log(log);
+        }
+    }
 
-    #endregion
+
 }
 
-
-
-// using Steamworks;
-//
-// public class LeaderboardManager : MonoBehaviour
-// {
-//     private SteamLeaderboard_t m_SteamLeaderboard;
-//
-//     void Start()
-//     {
-//         if (SteamManager.Initialized)
-//         {
-// // Find or create the leaderboard
-//             SteamAPICall_t handle = SteamUserStats.FindOrCreateLeaderboard("LeaderboardName",
-//                 ELeaderboardSortMethod.k_ELeaderboardSortMethodDescending,
-//                 ELeaderboardDisplayType.k_ELeaderboardDisplayTypeNumeric);
-//             OnFindOrCreateLeaderboard(handle);
-//         }
-//     }
-
-// void OnFindOrCreateLeaderboard(SteamAPICall_t handle)
-// {
-// // Handle the result of finding or creating the leaderboard
-// // Assuming the leaderboard is found or created successfully
-//     m_SteamLeaderboard = handle;
-//
-// // Get the local user's Steam ID
-//     CSteamID[] users = { SteamUser.GetSteamID() };
-//
-// // Download the leaderboard entries for the user
-//     SteamAPICall_t downloadHandle =
-//         SteamUserStats.DownloadLeaderboardEntriesForUsers(m_SteamLeaderboard, users, users.Length);
-//     OnDownloadLeaderboardEntries(downloadHandle);
-// }
-//
-// void OnDownloadLeaderboardEntries(SteamAPICall_t handle)
-// {
-// // Handle the result of downloading the leaderboard entries
-// // Assuming the entries are downloaded successfully
-//     LeaderboardEntry_t entry;
-//     int[] details = new int[1]; // Adjust size based on your needs
-//     SteamUserStats.GetDownloadedLeaderboardEntry(handle, 0, out entry, details, details.Length);
-//
-// // Output the user's score and rank
-//     Debug.Log("User Score: " + entry.m_nScore);
-//     Debug.Log("User Rank: " + entry.m_nGlobalRank);
-// }
-//
-//     
-// }
     
