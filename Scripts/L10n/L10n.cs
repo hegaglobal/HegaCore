@@ -73,6 +73,14 @@ namespace HegaCore
                 return keyAsDefault ? key : string.Empty;
             }
 
+            if (string.IsNullOrEmpty(text.Id))
+            {
+                if (!silent)
+                {
+                    return "[MissingKey]" + key;
+                }
+            }
+
             return _data.GetContent(text.ContentId).GetLocalization(_language.GetLanguage());
         }
 
