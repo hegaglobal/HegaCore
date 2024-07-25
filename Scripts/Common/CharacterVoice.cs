@@ -149,7 +149,6 @@ public class CharacterVoice : MonoBehaviour
     {
         if (AudioManager.Instance.TryGetVoice(data.voiceKey, out var voiceClip))
         {
-            Debug.Log($"Play Voice Data: {data.voiceKey}");
             AudioManager.Instance.Player.PlayVoice(data.voiceKey);
             
             if (data.animInt > 0)

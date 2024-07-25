@@ -14,6 +14,7 @@
 using UnityEngine;
 using System.Collections;
 using Steamworks;
+using UnityEngine.Events;
 
 //
 // The SteamManager provides a base implementation of Steamworks.NET on which you can build upon.
@@ -23,7 +24,8 @@ using Steamworks;
 public class SteamManager : MonoBehaviour {
 
 	public bool steamEnabled;
-
+	public UnityEvent OnInitialized;
+	
 	protected static SteamManager s_instance;
 	protected static SteamManager Instance {
 		get {
@@ -136,6 +138,8 @@ public class SteamManager : MonoBehaviour {
 		
 		Debug.Log("SteamMamager INIT SUCCESSFULLY !!!!!!!!!!!!!!!");
 		s_EverInitialized = true;
+		OnInitialized?.Invoke();
+		LeaderboardManager.Instance.Init();
 	}
 
 	// This should only ever get called on first load and after an Assembly reload, You should never Disable the Steamworks Manager yourself.

@@ -1,4 +1,5 @@
-﻿using UnuGames;
+﻿using System;
+using UnuGames;
 using UnuGames.MVVM;
 
 [System.Serializable]
@@ -13,9 +14,9 @@ public class LeaderBoardEntryData
 
 public class LeaderBoardItem : UIManModule<LeaderBoardEntryData>
 {
-    private int m_rank = default;
+    private string m_rank = default;
     [UIManAutoProperty]
-    public int Rank
+    public string Rank
     {
         get { return this.m_rank; }
         set { this.m_rank = value; OnPropertyChanged(nameof(this.Rank), value); }
@@ -29,9 +30,9 @@ public class LeaderBoardItem : UIManModule<LeaderBoardEntryData>
         set { this.m_userName = value; OnPropertyChanged(nameof(this.UserName), value); }
     }
     
-    private int m_entryValue = default;
+    private string m_entryValue = default;
     [UIManAutoProperty]
-    public int EntryValue
+    public string EntryValue
     {
         get { return this.m_entryValue; }
         set { this.m_entryValue = value; OnPropertyChanged(nameof(this.EntryValue), value); }
@@ -45,13 +46,22 @@ public class LeaderBoardItem : UIManModule<LeaderBoardEntryData>
 
     private void Refresh()
     {
-        Rank = DataInstance.m_nGlobalRank;
-        UserName = DataInstance.userName;
-        EntryValue = DataInstance.m_nScore;
+        if (string.IsNullOrEmpty(DataInstance.userName))
+        {
+            UserName = string.Empty;
+            Rank = string.Empty;
+            EntryValue = string.Empty;
+        }
+        else
+        {
+            Rank = DataInstance.m_nGlobalRank.ToString();
+            UserName = DataInstance.userName;
+            EntryValue = DataInstance.m_nScore.ToString();
+        }
     }
 
     public void UpdateScore()
     {
-        EntryValue = DataInstance.m_nScore;
+        EntryValue = DataInstance.m_nScore.ToString();
     }
 }
