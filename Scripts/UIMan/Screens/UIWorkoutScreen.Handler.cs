@@ -52,7 +52,8 @@ public partial class UIWorkoutScreen : UIManScreen
 	private bool busy = false;
 	
 	public WorkoutCommandProcessor CommandProcessor;
-	public Text voiceText;
+	//public Text voiceText;
+	public TMPro.TextMeshProUGUI voiceText;
 
 	public string stage;
 	public Text soundBGText;
