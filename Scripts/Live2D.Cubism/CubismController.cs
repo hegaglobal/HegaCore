@@ -73,13 +73,16 @@ namespace HegaCore
 
         [ShowInInspector] private UserCharacter userCharacter;
         public UserCharacter UserCharacter => userCharacter;
-
+        private CharacterVoice _characterVoice;
+        public CharacterVoice CharacterVoice => _characterVoice;
+        
         [Button(ButtonSizes.Large)]
         private void GetRef()
         {
             this.animator = GetComponentInChildren<Animator>();
             this.cubismRenderer = GetComponentInChildren<CubismRenderController>();
             this.spriteRenderer = GetComponentInChildren<SpriteRenderer>();
+            this._characterVoice = GetComponent<CharacterVoice>();
         }
 
         private void Awake()
