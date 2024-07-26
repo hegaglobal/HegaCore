@@ -63,8 +63,11 @@ public class WorkoutTextData
 			row.id = grid[i][0];
 			row.textID = grid[i][1];
 			row.EN = grid[i][2];
-			row.CN = grid[i][3];
-			row.ZH = grid[i][4];
+			row.RU = grid[i][3];
+			row.JA = grid[i][4];
+			row.KR = grid[i][5];
+			row.CN = grid[i][6];
+			row.ZH = grid[i][7];
 			rowList.Add(row);
 		}
 		isLoaded = true;
