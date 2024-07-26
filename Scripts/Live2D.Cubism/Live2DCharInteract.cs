@@ -72,13 +72,26 @@ namespace HegaCore
             {
                 curPart.DoDrag(dragDelta);
                 
-                if (curPart.NeedReact(_cubismController.UserCharacter.HeartLevel))
+                if (curPart.NeedReact())
                 {
+                    if (curPart.ignoreDelay > 0)
+                    {
+                        curPart.ignoreDelay -= Time.deltaTime;
+                        return;
+                    }
+                    
                     if (_characterVoice != null)
                         _characterVoice.PlayAngryVoice();
-                    
-                    EndInteract(true);
-                    return;
+
+                    if (curPart.Ignore(_cubismController.UserCharacter.HeartLevel))
+                    {
+                        curPart.ignoreDelay = 2f;
+                    }
+                    else
+                    {
+                        EndInteract(true);
+                        return;
+                    }
                 }
                 
                 if (curPart.currentParamValue >= 0.8f)
@@ -143,12 +156,7 @@ namespace HegaCore
         {
             if (isInteracting)
             {
-                int level = 0;
-                if (forceEnd)
-                {
-                    level = _cubismController.UserCharacter.HeartLevel;
-                }
-                curPart.EndDrag(forceEnd,level);
+                curPart.EndDrag(forceEnd);
                 curPart = null;
             }
 
@@ -230,7 +238,7 @@ public class InteractPart : ISearchFilterable
     public float dragValue = 1;
     public Vector2 dragDirection;
     public float dragMultiplier = 0.01f;
-    
+
     [Title("React")] 
     public bool canReact = false;
     [ShowIf("canReact")] 
@@ -258,6 +266,9 @@ public class InteractPart : ISearchFilterable
     private float curReturnDelay;
     [ShowInInspector, ReadOnly]
     private float returnSpeed;
+
+    [HideInInspector]
+    public float ignoreDelay = 0f;
     
     public void DoReturn()
     {
@@ -302,22 +313,25 @@ public class InteractPart : ISearchFilterable
         BlendPrameter();
     }
 
-    public bool NeedReact(int level)
+    public bool Ignore(int level)
+    {
+        return level >= ignoreAtLevel;
+    }
+    
+    public bool NeedReact()
     {
         if (canReact)
         {
             if (reactValue < normalValue && reactValue > dragValue)
             {
-                var toR = (level >= ignoreAtLevel) ? (reactValue + dragValue) / 2 : reactValue;
-                if (currentParamValue < toR)
+                if (currentParamValue > reactValue)
                 {
                     return true;
                 }
             }
             else if (reactValue > normalValue && reactValue < dragValue)
             {
-                var toR = (level >= ignoreAtLevel) ? (reactValue + dragValue) / 2 : reactValue;
-                if (currentParamValue > toR)
+                if (currentParamValue > reactValue)
                 {
                     return true;
                 }
@@ -327,15 +341,9 @@ public class InteractPart : ISearchFilterable
         return false;
     }
     
-    public void EndDrag(bool forceEnd = false, int level = 0)
+    public void EndDrag(bool forceEnd = false)
     {
-        if (level >= ignoreAtLevel)
-        {
-            returnSpeed = 0;
-            isInNormal = true;
-            return;
-        }
-        
+        ignoreDelay = 0;
         if (forceEnd)
         {
             returnSpeed = dragMultiplier * reactReturn * (normalValue - dragValue);
