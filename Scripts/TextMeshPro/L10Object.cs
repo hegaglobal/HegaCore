@@ -5,12 +5,15 @@ using SimpleLocalization;
 using System.Collections.Generic;
 using Sirenix.OdinInspector;
 using System.Xml;
+using UnityEngine.Events;
+using UnityEngine.UI;
 
 namespace HegaCore
 {
     //[RequireComponent(typeof(TMP_Text))]
-    public class L10Object : MonoBehaviour, IL10n
+    public class L10Object : RefreshableUI, IL10n
     {
+        
         [SerializeField]
         private TMP_Text text = null;
         [SerializeField]
@@ -24,7 +27,7 @@ namespace HegaCore
         private float defaultFontSize = 0;
         [SerializeField]
         private bool defaultAutosize = false;
-
+        
 #if UNITY_EDITOR
         private void OnValidate()
         {
@@ -41,10 +44,8 @@ namespace HegaCore
 
         private void Start()
         {
-
             L10n.Register(this);
             LazyLocalize().Forget();
-
         }
 
         private async UniTaskVoid LazyLocalize()
@@ -64,6 +65,7 @@ namespace HegaCore
         public void Localize()
         {
             CheckFont();
+            Refresh();
         }
 
         void CheckFont()
