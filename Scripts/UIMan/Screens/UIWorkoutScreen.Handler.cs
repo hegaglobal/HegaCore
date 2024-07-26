@@ -247,6 +247,7 @@ public partial class UIWorkoutScreen : UIManScreen
 		CommandProcessor.RenderZoom(1);
 		CommandProcessor.Rotate(Vector3.zero);
 		CommandProcessor.RenderPosition(Vector2.zero);
+		CommandProcessor.StopShake();
 		HideMe();
 
 		yield return StartCoroutine(CommandProcessor.HidePoses());
@@ -258,8 +259,9 @@ public partial class UIWorkoutScreen : UIManScreen
 
 	IEnumerator ReturnToPreviousScreenOrDialog()
 	{
-		yield return new WaitForSeconds(1f);
 		onHideCompleted?.Invoke();
+		yield return new WaitForSeconds(0.1f);
+		UIDefaultActivity.Hide(0.5f);
 	}
 
 	async UniTaskVoid PrepareHscene()
@@ -483,7 +485,12 @@ public partial class UIWorkoutScreen : UIManScreen
 			return;
 		}
 		busy = true;
-		UISettingsDialog.Show(()=> busy = false);
+		LockInput();
+		UISettingsDialog.Show(()=>
+		{
+			busy = false;
+			UnlockInput();
+		});
 		//UIMan.Instance.ShowDialog<UISettingDialog>(new UICallback((objects => busy = false)), false, true);
 	}
 	

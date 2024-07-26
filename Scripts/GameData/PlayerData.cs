@@ -212,7 +212,7 @@ namespace HegaCore
         
         public int GetHeartExpToUpHeart()
         {
-            int max = 50;
+            int max = 40;
             for (int i = 0; i < HeartLevel; i++)
             {
                 max += i * 10;
