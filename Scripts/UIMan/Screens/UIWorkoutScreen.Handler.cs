@@ -247,7 +247,7 @@ public partial class UIWorkoutScreen : UIManScreen
 		CommandProcessor.RenderZoom(1);
 		CommandProcessor.Rotate(Vector3.zero);
 		CommandProcessor.RenderPosition(Vector2.zero);
-		CommandProcessor.StopShake();
+		CommandProcessor.StopShake(true);
 		HideMe();
 
 		yield return StartCoroutine(CommandProcessor.HidePoses());
