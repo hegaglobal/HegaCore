@@ -143,7 +143,12 @@ namespace HegaCore
         {
             if (isInteracting)
             {
-                curPart.EndDrag(forceEnd);
+                int level = 0;
+                if (forceEnd)
+                {
+                    level = _cubismController.UserCharacter.HeartLevel;
+                }
+                curPart.EndDrag(forceEnd,level);
                 curPart = null;
             }
 
@@ -225,7 +230,7 @@ public class InteractPart : ISearchFilterable
     public float dragValue = 1;
     public Vector2 dragDirection;
     public float dragMultiplier = 0.01f;
-
+    
     [Title("React")] 
     public bool canReact = false;
     [ShowIf("canReact")] 
@@ -297,25 +302,22 @@ public class InteractPart : ISearchFilterable
         BlendPrameter();
     }
 
-    public bool NeedReact(int curLevel)
+    public bool NeedReact(int level)
     {
-        if (curLevel >= ignoreAtLevel)
-        {
-            return false;
-        }
-        
         if (canReact)
         {
             if (reactValue < normalValue && reactValue > dragValue)
             {
-                if (currentParamValue > reactValue)
+                var toR = (level >= ignoreAtLevel) ? (reactValue + dragValue) / 2 : reactValue;
+                if (currentParamValue < toR)
                 {
                     return true;
                 }
             }
             else if (reactValue > normalValue && reactValue < dragValue)
             {
-                if (currentParamValue > reactValue)
+                var toR = (level >= ignoreAtLevel) ? (reactValue + dragValue) / 2 : reactValue;
+                if (currentParamValue > toR)
                 {
                     return true;
                 }
@@ -325,8 +327,15 @@ public class InteractPart : ISearchFilterable
         return false;
     }
     
-    public void EndDrag(bool forceEnd = false)
+    public void EndDrag(bool forceEnd = false, int level = 0)
     {
+        if (level >= ignoreAtLevel)
+        {
+            returnSpeed = 0;
+            isInNormal = true;
+            return;
+        }
+        
         if (forceEnd)
         {
             returnSpeed = dragMultiplier * reactReturn * (normalValue - dragValue);
