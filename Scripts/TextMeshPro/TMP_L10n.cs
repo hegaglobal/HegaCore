@@ -28,11 +28,20 @@ namespace HegaCore
         private TMP_FontAsset defaultFont;
         [SerializeField]
         private Material defaultFontMat;
+        [SerializeField]
+        private float defaultFontSize = 0;
+        [SerializeField]
+        private bool defaultAutosize = false;
 
+#if UNITY_EDITOR
         private void OnValidate()
         {
+            if (UnityEditor.EditorApplication.isPlaying) return;
             this.text = GetComponent<TMP_Text>();
+            defaultFontSize = text.fontSize;
+            defaultAutosize = text.enableAutoSizing;
         }
+#endif
 
         private void Start()
         {
@@ -85,8 +94,16 @@ namespace HegaCore
                         text.fontMaterial = fontData.materialPreset;
                         text.material = fontData.materialPreset;
                     }
-                    if(fontData.fontSize > 0)
+                    if (fontData.fontSize > 0)
+                    {
+                        if (text.enableAutoSizing) text.enableAutoSizing = false;
                         text.fontSize = fontData.fontSize;
+                    }
+                    else if (defaultFontSize > 0)
+                    {
+                        text.fontSize = defaultFontSize;
+                        text.enableAutoSizing = defaultAutosize;
+                    }
                 }
             }
             else
@@ -94,10 +111,20 @@ namespace HegaCore
                 if (defaultFont)
                     text.font = defaultFont;
                 if (defaultFontMat)
+                {
                     text.fontMaterial = defaultFontMat;
                     text.material = defaultFontMat;
+                }
+
+                if (defaultFontSize > 0)
+                {
+                    text.fontSize = defaultFontSize;
+                }
+                text.enableAutoSizing = defaultAutosize;
             }
         }
+
+
 
 
 
