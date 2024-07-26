@@ -11,9 +11,9 @@ namespace HegaCore
         private Dictionary<string, WorkoutData> workoutDict;
         private Dictionary<string, WorkoutTextData> workoutTextDict;
         private Dictionary<string, WorkoutLiteData> workoutLiteDict;
-
         private Dictionary<Type, Dictionary<string, Type>> DataDict;
-
+        
+        
         protected override void OnAwake()
         {
             base.OnAwake();
@@ -23,7 +23,8 @@ namespace HegaCore
             workoutTextDict = new Dictionary<string, WorkoutTextData>();
             workoutLiteDict = new Dictionary<string, WorkoutLiteData>();
         }
-
+        
+        
         #region R18
 
         public void GetWorkoutLiteData(string workoutLiteID, Action<WorkoutLiteData> callback)

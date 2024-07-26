@@ -188,5 +188,37 @@ namespace HegaCore
             interactValues = new Dictionary<string, float>();
             hasBeenRewardedByInteract = false;
         }
+
+        public bool AddHeartExp(int exp)
+        {
+            HeartEXP += exp;
+            
+            int lvUpExp = -1;
+            if (HeartLevel < 4)
+            {
+                lvUpExp = GetHeartExpToUpHeart();
+            }
+            Debug.Log($"Cur LV {HeartLevel} -- EXP: {HeartEXP} -- Next: {lvUpExp}");
+            if (lvUpExp > 0 && HeartEXP >= lvUpExp)
+            {
+                HeartEXP -= lvUpExp;
+                HeartLevel += 1;
+                
+                return true;
+            }
+
+            return false;
+        }
+        
+        public int GetHeartExpToUpHeart()
+        {
+            int max = 50;
+            for (int i = 0; i < HeartLevel; i++)
+            {
+                max += i * 10;
+            }
+
+            return max;
+        }
     }
 }

@@ -10,6 +10,9 @@ public class WorkoutTextData
 		public string id;
 		public string textID;
 		public string EN;
+		public string RU;
+		public string JA;
+		public string KR;
 		public string CN;
 		public string ZH;
 		public string Text(string langKey)
@@ -22,6 +25,12 @@ public class WorkoutTextData
 					return CN;
 				case "zh":
 					return ZH;
+				case "ja":
+					return JA;
+				case "kr":
+					return KR;
+				case "ru":
+					return RU;
 			}
 
 			return $"<color=red>[{langKey}]</color> NO Key !!!!";
