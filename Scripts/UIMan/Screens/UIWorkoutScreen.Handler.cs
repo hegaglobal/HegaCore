@@ -315,7 +315,7 @@ public partial class UIWorkoutScreen : UIManScreen
 	void RunHscene(params object[] args)
 	{
 		UIDefaultActivity.Hide(0.5f);
-		AudioManager.Instance.Player.PlayMusicAsync("audiostock_825440");
+		AudioManager.Instance.Player.PlayMusicAsync("audiostock_1124932");
 		StartCoroutine(RunHsceneCO());
 	}
 

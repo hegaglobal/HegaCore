@@ -257,7 +257,7 @@ public partial class UIWorkoutLiteScreen : UIManScreen
 
 	void RunHscene(params object[] args)
 	{
-		AudioManager.Instance.Player.PlayMusicAsync("audiostock_825440");
+		AudioManager.Instance.Player.PlayMusicAsync("audiostock_1483793");
 		RunCurrentRow();
 		//AudioControl.Instance.CheckAndPlayBGM("H_BGM");
 		// Random Voice
