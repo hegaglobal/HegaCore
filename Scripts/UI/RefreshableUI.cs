@@ -1,6 +1,5 @@
 ﻿using UnityEngine;
 using UnityEngine.UI;
-using UnuGames.MVVM;
 
 public class RefreshableUI : MonoBehaviour
 {
