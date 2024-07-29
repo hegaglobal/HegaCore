@@ -19,6 +19,9 @@ namespace HegaCore
         [SerializeField]
         private bool silent = false;
 
+        [Header("Localize font config")]
+        [InfoBox("if true & config preset = null in curent language use defaultFont & fallback language")]
+        [SerializeField] private bool updateFontWithNullConfig = true;
         [SerializeField]
         private TMP_Text text = null;
         [SerializeField]
@@ -33,13 +36,27 @@ namespace HegaCore
         [SerializeField]
         private bool defaultAutosize = false;
 
+        // Add Spacing Options
+        [Header("Spacing Options")]
+        [SerializeField]
+        private float defaultCharacterSpacing = 0;  // Default character spacing
+        [SerializeField]
+        private float defaultLineSpacing = 0;       // Default line spacing
+
 #if UNITY_EDITOR
         private void OnValidate()
         {
             if (UnityEditor.EditorApplication.isPlaying) return;
             this.text = GetComponent<TMP_Text>();
+            if (this.text == null)
+            {
+                return;
+            }
             defaultFontSize = text.fontSize;
             defaultAutosize = text.enableAutoSizing;
+            defaultCharacterSpacing = text.characterSpacing;
+            defaultLineSpacing = text.lineSpacing;
+            LoadMaterialDefault();
         }
 #endif
 
@@ -84,9 +101,15 @@ namespace HegaCore
         {
             if (LocalizeFontAsset.Instance.CurrentFont != null)
             {
-                text.font = LocalizeFontAsset.Instance.CurrentFont;
+
                 var fontData = preset.GetFontData(LocalizeFontAsset.Instance.CurrentLanguage);
 
+                if(fontData == null && !updateFontWithNullConfig)
+                {
+                    SetDefaultFont();
+                    return;
+                }
+                text.font = LocalizeFontAsset.Instance.CurrentFont;
                 if (fontData != null)
                 {
                     if (fontData.materialPreset != null)
@@ -104,49 +127,148 @@ namespace HegaCore
                         text.fontSize = defaultFontSize;
                         text.enableAutoSizing = defaultAutosize;
                     }
+                    // Apply custom spacing options
+                    text.characterSpacing = fontData.characterSpacing != 0 ? fontData.characterSpacing : defaultCharacterSpacing;
+                    text.lineSpacing = fontData.lineSpacing != 0 ? fontData.lineSpacing : defaultLineSpacing;
                 }
+                
             }
             else
             {
-                if (defaultFont)
-                    text.font = defaultFont;
-                if (defaultFontMat)
-                {
-                    text.fontMaterial = defaultFontMat;
-                    text.material = defaultFontMat;
-                }
-
-                if (defaultFontSize > 0)
-                {
-                    text.fontSize = defaultFontSize;
-                }
-                text.enableAutoSizing = defaultAutosize;
+                SetDefaultFont();
             }
         }
 
+        void SetDefaultFont()
+        {
+            if (defaultFont)
+                text.font = defaultFont;
+            if (defaultFontMat)
+            {
+                text.fontMaterial = defaultFontMat;
+                text.material = defaultFontMat;
+            }
 
+            if (defaultFontSize > 0)
+            {
+                text.fontSize = defaultFontSize;
+            }
+            text.enableAutoSizing = defaultAutosize;
+
+            // Apply default spacing
+            text.characterSpacing = defaultCharacterSpacing;
+            text.lineSpacing = defaultLineSpacing;
+        }
 
 
 
 #if UNITY_EDITOR
 
         [Button]
-        private void LoadMaterialButton()
+        private void LoadMaterialDefault()
         {
 
             if (text == null)
                 this.text = GetComponent<TMP_Text>();
 
-            if (defaultFont == null)
+            // Retrieve the original font asset from the project
+            TMP_FontAsset originalFont = GetOriginalFontAsset(text.font);
+            if (originalFont != null)
             {
-                defaultFont = text.font;
+                defaultFont = originalFont;
+
+                // Use the current material preset used by the TMP_Text component
+                Material currentMaterialPreset = text.fontSharedMaterial;
+                if (currentMaterialPreset != null)
+                {
+                    defaultFontMat = GetOriginalMaterial(currentMaterialPreset);
+                }
             }
-            //if (defaultFontMat == null)
-            //{
-            //    defaultFontMat = text.font;
-            //}
-            UnityEditor.EditorUtility.SetDirty(transform.root);
-            UnityEditor.AssetDatabase.SaveAssets();
+            else
+            {
+                Debug.LogWarning("Could not find the original font asset in the project.");
+            }
+
+            UnityEditor.EditorUtility.SetDirty(this);
+            //UnityEditor.AssetDatabase.SaveAssets();
+        }
+
+        // Helper method to find the original TMP_FontAsset in the project
+        private TMP_FontAsset GetOriginalFontAsset(TMP_FontAsset fontInstance)
+        {
+            // Check if the font instance is a dynamic copy (indicating it's an instance and not the original)
+            if (UnityEditor.AssetDatabase.Contains(fontInstance))
+            {
+                return fontInstance;
+            }
+
+            // Find all TMP_FontAssets in the project
+            string[] fontGuids = UnityEditor.AssetDatabase.FindAssets("t:TMP_FontAsset");
+            foreach (string guid in fontGuids)
+            {
+                string path = UnityEditor.AssetDatabase.GUIDToAssetPath(guid);
+                TMP_FontAsset assetFont = UnityEditor.AssetDatabase.LoadAssetAtPath<TMP_FontAsset>(path);
+                if (assetFont != null && assetFont.name == fontInstance.name)
+                {
+                    return assetFont;
+                }
+            }
+            return null;
+        }
+
+        // Helper method to find the original Material in the project
+        private Material GetOriginalMaterial(Material materialInstance)
+        {
+            // Check if the material instance is a dynamic copy (indicating it's an instance and not the original)
+            if (UnityEditor.AssetDatabase.Contains(materialInstance))
+            {
+                return materialInstance;
+            }
+
+            // Find all Materials in the project
+            string[] materialGuids = UnityEditor.AssetDatabase.FindAssets("t:Material");
+            foreach (string guid in materialGuids)
+            {
+                string path = UnityEditor.AssetDatabase.GUIDToAssetPath(guid);
+                Material assetMaterial = UnityEditor.AssetDatabase.LoadAssetAtPath<Material>(path);
+                if (assetMaterial != null && assetMaterial.name == materialInstance.name)
+                {
+                    return assetMaterial;
+                }
+            }
+            return null;
+        }
+
+        [Button]
+        public void TestFontSetting(eLanguage language)
+        {
+            var fontData = preset.GetFontData(language);
+
+            if (fontData != null)
+            {
+                if (fontData.materialPreset != null)
+                {
+                    text.fontMaterial = fontData.materialPreset;
+                    text.material = fontData.materialPreset;
+                }
+                if (fontData.fontSize > 0)
+                {
+                    if (text.enableAutoSizing) text.enableAutoSizing = false;
+                    text.fontSize = fontData.fontSize;
+                }
+                else if (defaultFontSize > 0)
+                {
+                    text.fontSize = defaultFontSize;
+                    text.enableAutoSizing = defaultAutosize;
+                }
+                // Apply custom spacing options
+                text.characterSpacing = fontData.characterSpacing != 0 ? fontData.characterSpacing : defaultCharacterSpacing;
+                text.lineSpacing = fontData.lineSpacing != 0 ? fontData.lineSpacing : defaultLineSpacing;
+            }
+            else
+            {
+                Debug.Log($"<color=red>Config of language <color=yellow>{language}</color> is null</color>");
+            }
         }
 #endif
     }
@@ -155,7 +277,7 @@ namespace HegaCore
     [System.Serializable]
     public class CustomMaterialPreset
     {
-        [SerializeField]
+        [SerializeField,ListDrawerSettings(ShowIndexLabels = true)]
         private List<LanguageFontConfig> languageFontPairs = new List<LanguageFontConfig>();
         public FontData GetFontData(eLanguage _language)
         {
@@ -167,6 +289,7 @@ namespace HegaCore
 
             return null;
         }
+
     }
 
     [System.Serializable]
@@ -181,6 +304,9 @@ namespace HegaCore
     {
         public Material materialPreset = null;
         [InfoBox("if fonsize > 0 then override current font size of textmeshpro")]
-        public int fontSize = 0;
+        public float fontSize = 0;
+
+        public float characterSpacing = 0;
+        public float lineSpacing = 0;
     }
 }
