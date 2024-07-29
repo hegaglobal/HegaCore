@@ -149,6 +149,7 @@ namespace HegaCore
         [Button]
         private void LoadMaterialDefault()
         {
+            if (UnityEditor.EditorApplication.isPlaying) return;
 
             if (text == null)
                 this.text = GetComponent<TMP_Text>();
