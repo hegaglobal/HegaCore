@@ -46,6 +46,13 @@ public class SteamManager : MonoBehaviour {
 			return Instance.m_bInitialized;
 		}
 	}
+	
+	protected bool m_bInitializing;
+	public static bool Initializing {
+		get {
+			return Instance.m_bInitializing;
+		}
+	}
 
 	protected SteamAPIWarningMessageHook_t m_SteamAPIWarningMessageHook;
 	protected static void SteamAPIDebugTextHook(int nSeverity, System.Text.StringBuilder pchDebugText) {
@@ -58,6 +65,8 @@ public class SteamManager : MonoBehaviour {
 			Destroy(gameObject);
 			return;
 		}
+
+		m_bInitializing = true;
 		s_instance = this;
 
 #if CHEAT || DISABLESTEAMWORKS
@@ -66,6 +75,7 @@ public class SteamManager : MonoBehaviour {
 		
 		if (!steamEnabled)
 		{
+			m_bInitializing = false;
 			gameObject.SetActive(false);
 			return;
 		}
@@ -138,8 +148,8 @@ public class SteamManager : MonoBehaviour {
 		
 		Debug.Log("SteamMamager INIT SUCCESSFULLY !!!!!!!!!!!!!!!");
 		s_EverInitialized = true;
+		m_bInitializing = false;
 		OnInitialized?.Invoke();
-		LeaderboardManager.Instance.Init();
 	}
 
 	// This should only ever get called on first load and after an Assembly reload, You should never Disable the Steamworks Manager yourself.

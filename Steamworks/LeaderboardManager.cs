@@ -78,15 +78,23 @@ public class LeaderboardManager : MonoBehaviour
     private Dictionary<string, List<Action<string>>> onLeaderBoardUpdated =
         new Dictionary<string, List<Action<string>>>();
 
-    public void Init()
+    public void Init(Dictionary<string, int> scoreDict)
     {
         Debug.Log("Leader Board Manager Init");
-        StartCoroutine(InitCO());
+        StartCoroutine(InitCO(scoreDict));
     }
 
-    private IEnumerator InitCO()
+    private IEnumerator InitCO(Dictionary<string, int> scoreDict)
     {
-        yield return new WaitForSeconds(1f); // Wait Steam Manager
+        yield return new WaitForSeconds(1f);
+        // Wait Steam Manager
+        int timeout = 0;
+        while (timeout < 1000 && SteamManager.Initializing)
+        {
+            timeout++;
+            yield return null;
+        }
+        
         s_initialized = SteamManager.Initialized;
         gameObject.SetActive(s_initialized);
 
@@ -100,8 +108,8 @@ public class LeaderboardManager : MonoBehaviour
         
         for (int i = 0; i < definedLeaderBoards.Count; i++)
         {
-            TryUploadToLeaderboard(definedLeaderBoards[i].boardName, 0); // to download all leaderboard.
-            yield return new WaitForSeconds(0.5f); 
+            TryUploadToLeaderboard(definedLeaderBoards[i].boardName, scoreDict[definedLeaderBoards[i].boardName]); // to download all leaderboard.
+            yield return new WaitForSeconds(2f); 
         }
     }
 
@@ -240,13 +248,14 @@ public class LeaderboardManager : MonoBehaviour
             Debug.LogError("Failed to upload score");
             return;
         }
-        Log($"UPLOAD COMPLETED: {leaderBoardName} -- {result.m_nScore} -- {result.m_nGlobalRankNew} -- {result.m_nGlobalRankPrevious}");
+        Log($"UPLOAD COMPLETED: {leaderBoardName.AddColor("green")} -- {result.m_nScore} -- {result.m_nGlobalRankNew} -- {result.m_nGlobalRankPrevious}");
         
         if (!userRankDict.ContainsKey(leaderBoardName))
         {
             userRankDict.Add(leaderBoardName, new LeaderBoardEntryData());
             userRankDict[leaderBoardName].userName = SteamFriends.GetPersonaName();
-
+            userRankDict[leaderBoardName].m_nGlobalRank = result.m_nGlobalRankNew;
+            
             if (result.m_nGlobalRankNew > 10)
                 DownloadUserRank(leaderBoardName, result.m_hSteamLeaderboard); 
         }
