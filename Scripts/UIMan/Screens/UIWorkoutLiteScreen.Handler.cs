@@ -31,6 +31,7 @@ public partial class UIWorkoutLiteScreen : UIManScreen
 		UIDefaultActivity.Show(1, false,
 			() =>
 			{
+				CubismManager.Instance.HideAll();
 				UIMan.Instance.ShowScreen<UIWorkoutLiteScreen>(girlIndex, onShowCompleted, onHide, onHideCompleted);
 			});
 	}
