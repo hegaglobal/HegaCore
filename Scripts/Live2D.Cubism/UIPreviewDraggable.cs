@@ -1,9 +1,11 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using HegaCore;
 using Live2D.Cubism.Core;
 using Live2D.Cubism.Framework.Raycasting;
 using Sirenix.OdinInspector;
 using UnityEngine;
+using UnityEngine.Events;
 using UnityEngine.EventSystems;
 using UnityEngine.UI;
 
@@ -15,6 +17,8 @@ public class UIPreviewDraggable : MonoBehaviour, IDragHandler, IPointerDownHandl
     public float Multiplier = 1;
     public Toggle dragToggle;
 
+    public Action onDragTutorial;
+    
     void Start()
     {
         if (dragToggle)
@@ -24,7 +28,9 @@ public class UIPreviewDraggable : MonoBehaviour, IDragHandler, IPointerDownHandl
     public void OnDrag(PointerEventData eventData)
     {
         if (isInteracting)
+        {
             CubismManager.Instance.CurCharacter.UpdateInteractDrag(eventData.delta);
+        }
         // else if (DataManager.GameSettings.allowDragPreview)
         //     CubismManager.Instance.CurCharacter.transform.position += (Vector3) eventData.delta * Multiplier;
     }
@@ -45,8 +51,12 @@ public class UIPreviewDraggable : MonoBehaviour, IDragHandler, IPointerDownHandl
 
     public void OnPointerUp(PointerEventData eventData)
     {
-        isInteracting = false;
-        CubismManager.Instance.CurCharacter.EndInteract();
+        if (isInteracting)
+        {
+            onDragTutorial?.Invoke();
+            isInteracting = false;
+            CubismManager.Instance.CurCharacter.EndInteract();
+        }
     }
 
     public void OnClickToggleMove()
