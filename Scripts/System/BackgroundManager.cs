@@ -24,6 +24,12 @@ namespace HegaCore
         [SerializeField] 
         private GameObject CameraTexture;
 
+        [SerializeField]
+        private LayerMask lobbyLayer;
+
+        [SerializeField]
+        private LayerMask hsceneLayer;
+
         [SerializeField] private GameObject RawImageObject;
         
         public MoveTweener MoveTweener;
@@ -69,6 +75,11 @@ namespace HegaCore
         {
             CameraTexture.SetActive(on);
             RawImageObject.SetActive(on);
+
+            if (on)
+                Camera.main.cullingMask = hsceneLayer;
+            else
+                Camera.main.cullingMask = lobbyLayer;
         }
     }
 }
