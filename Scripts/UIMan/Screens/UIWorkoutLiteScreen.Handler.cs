@@ -88,6 +88,8 @@ public partial class UIWorkoutLiteScreen : UIManScreen
 		
 		isQuiting = false;
 
+		BackgroundManager.Instance.SetRawImage(true);
+		
 		DataManager.Instance.GetWorkoutLiteData(currentSceneData.dataPath, (result) =>
 		{
 			UnuLogger.Log("Loaded Workoutlite: "  + currentSceneData.dataPath);
@@ -110,6 +112,7 @@ public partial class UIWorkoutLiteScreen : UIManScreen
 	public override void OnHideComplete()
 	{
 		base.OnHideComplete();
+		BackgroundManager.Instance.SetRawImage(false);
 		StartCoroutine(ReturnToPreviousScreenOrDialog());
 	}
 

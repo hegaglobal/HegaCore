@@ -95,7 +95,7 @@ public partial class UIWorkoutScreen : UIManScreen
 		needClick = false;
 #endif
 		
-		Debug.Log("Get Data");
+		BackgroundManager.Instance.SetRawImage(true);
 		DataManager.Instance.GetWorkoutData(currentSceneData.dataPath, (work, worktext) =>
 		{
 			Debug.Log("Get Data Done");
@@ -118,7 +118,7 @@ public partial class UIWorkoutScreen : UIManScreen
 	public override void OnHideComplete()
 	{
 		base.OnHideComplete();
-		CommandProcessor.StopShake();
+		BackgroundManager.Instance.SetRawImage(false);
 		StartCoroutine(ReturnToPreviousScreenOrDialog());
 	}
 

@@ -21,6 +21,11 @@ namespace HegaCore
         [SerializeField] 
         private GameObject BlurObject;
 
+        [SerializeField] 
+        private GameObject CameraTexture;
+
+        [SerializeField] private GameObject RawImageObject;
+        
         public MoveTweener MoveTweener;
         public ShakeTweener ShakeTweener;
         public ZoomTweener ZoomTweener;
@@ -58,6 +63,12 @@ namespace HegaCore
         public void SetBlur(bool blur)
         {
             BlurObject.SetActive(blur);
+        }
+
+        public void SetRawImage(bool on)
+        {
+            CameraTexture.SetActive(on);
+            RawImageObject.SetActive(on);
         }
     }
 }
