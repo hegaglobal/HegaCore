@@ -1,0 +1,64 @@
+﻿using System.Collections;
+using System.Collections.Generic;
+using Cysharp.Threading.Tasks;
+using HegaCore;
+using UnityEngine;
+using UnityEngine.AddressableAssets;
+using AudioType = HegaCore.AudioType;
+
+public class BGMPool : MonoBehaviour
+{
+    public List<string> BGMs;
+    
+    private ProbabilityPool BGMpool;
+
+    private void InitListBGM()
+    {
+        var items = new List<ProbabilityItem>();
+        foreach (var t in BGMs)
+        {
+            items.Add(new ProbabilityItem(){name  = t, chance = 1});
+        }
+        
+        BGMpool = new ProbabilityPool(items);
+    }
+    
+    public void PlayRandomBattleBGM()
+    {
+        if (BGMpool == null || BGMpool.ItemCount == 0)
+        {
+            InitListBGM();
+        }
+
+        var bgm = BGMpool.SelectItem(true);
+        
+        AddressablesManager.LoadAsset<AudioClip>(bgm.name, ((s, asset) =>
+        {
+            AudioManager.Instance.Player.Play(s, AudioType.Music);
+            StartCoroutine(PlayNext(asset.length));
+        }));
+    }
+
+#if UNITY_EDITOR
+    public bool debug = false;
+    IEnumerator PlayNext(float time)
+    {
+        yield return new WaitForSeconds( debug ? 10f : time);
+#else
+    IEnumerator PlayNext(float time)
+    {
+        yield return new WaitForSeconds(time);
+#endif
+        PlayRandomBattleBGM();
+    }
+
+    public void Stop()
+    {
+        StopAllCoroutines();
+    }
+
+    public void LoadBGM()
+    {
+        AudioManager.Instance.PrepareMusicAsync(false, BGMs.ToArray()).Forget();
+    }
+}

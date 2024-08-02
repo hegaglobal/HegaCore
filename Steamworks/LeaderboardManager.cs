@@ -371,7 +371,7 @@ public class LeaderboardManager : MonoBehaviour
             return;
         }
 
-        Log("Download Global Rank Completed");
+        Log("Download Global Rank Completed -- " + leaderboardName.AddColor("red"));
 
         var leaderboardEntries = new LeaderboardEntry_t[result.m_cEntryCount];
         for (int i = 0; i < result.m_cEntryCount; i++)
@@ -401,17 +401,18 @@ public class LeaderboardManager : MonoBehaviour
                 m_oGlobalRank = entry.m_nGlobalRank,
                 m_nScore = entry.m_nScore
             };
+            Log($"{leaderboardName} --{data.m_nGlobalRank} {data.userName} -- {data.m_nScore}");
             leaderboardEntriesData.Add(data);
         }
         
         if (LeaderBoardEntryDataDict.ContainsKey(leaderboardName))
         {
-            Log("Update Existed Cache");
+            Log("Update Existed Cache -- " + leaderboardName.AddColor("red"));
             LeaderBoardEntryDataDict[leaderboardName] = leaderboardEntriesData;
         }
         else
         {
-            Log("Init New cache");
+            Log("Init New cache --- "+ leaderboardName.AddColor("red"));
             LeaderBoardEntryDataDict.Add(leaderboardName, leaderboardEntriesData);
         }
         
