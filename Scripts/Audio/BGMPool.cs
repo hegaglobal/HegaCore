@@ -35,7 +35,7 @@ public class BGMPool : MonoBehaviour
         AddressablesManager.LoadAsset<AudioClip>(bgm.name, ((s, asset) =>
         {
             AudioManager.Instance.Player.Play(s, AudioType.Music);
-            StartCoroutine(PlayNext(asset.length));
+            StartCoroutine(PlayNext(asset.length + 3f));
         }));
     }
 
@@ -43,6 +43,7 @@ public class BGMPool : MonoBehaviour
     public bool debug = false;
     IEnumerator PlayNext(float time)
     {
+        Debug.Log(time + " wait BGMMMMMMMMMMM");
         yield return new WaitForSeconds( debug ? 10f : time);
 #else
     IEnumerator PlayNext(float time)
