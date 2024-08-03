@@ -198,7 +198,7 @@ namespace HegaCore
             {
                 lvUpExp = GetHeartExpToUpHeart();
             }
-            Debug.Log($"Cur LV {HeartLevel} -- EXP: {HeartEXP} -- Next: {lvUpExp}");
+            UnuLogger.Log($"Cur LV {HeartLevel} -- EXP: {HeartEXP} -- Next: {lvUpExp}");
             if (lvUpExp > 0 && HeartEXP >= lvUpExp)
             {
                 HeartEXP -= lvUpExp;
