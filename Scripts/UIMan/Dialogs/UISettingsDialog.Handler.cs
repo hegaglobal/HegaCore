@@ -91,6 +91,10 @@ namespace HegaCore.UI
 
             RefreshResolutions(Settings.Resolutions);
             RefreshLanguages(Settings.Languages);
+            foreach (var language in Settings.Languages)
+            {
+                Debug.Log($"------{language}------");
+            }
 
             SubscribeAction(nameof(this.Music), Music_OnChanged);
             SubscribeAction(nameof(this.Sound), Sound_OnChanged);
@@ -183,7 +187,7 @@ namespace HegaCore.UI
             Settings.AudioPlayer.ChangeVoiceVolume(this.Voice);
         }
 
-        private void SelectedLanguage_OnChanged(object value)
+        public void SelectedLanguage_OnChanged(object value)
         {
             Settings.Data.Language = this.Languages[this.SelectedLanguage].Key;
             L10n.Relocalize();

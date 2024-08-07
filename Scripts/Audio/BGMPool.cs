@@ -35,21 +35,57 @@ public class BGMPool : MonoBehaviour
         AddressablesManager.LoadAsset<AudioClip>(bgm.name, ((s, asset) =>
         {
             AudioManager.Instance.Player.Play(s, AudioType.Music);
+            StartCoroutine(PlayNextRandom(asset.length + 3f));
+        }));
+    }
+
+    int currentIndex = 0;
+    List<string> BGMPlaylist = new List<string>();
+    public void PlayBGMPlaylist(List<string> keys)
+    {
+        if (BGMpool == null || BGMpool.ItemCount == 0)
+        {
+            InitListBGM();
+        }
+        BGMPlaylist = keys;
+        AddressablesManager.LoadAsset<AudioClip>(keys[currentIndex], ((s, asset) =>
+        {
+            AudioManager.Instance.Player.Play(s, AudioType.Music);
+            StartCoroutine(PlayNext(asset.length + 3f));
+        }));
+    }
+
+    IEnumerator PlayNext(float time)
+    {
+//#if UNITY_EDITOR
+//        if(debug)
+//        {
+//            yield return new WaitForSeconds(10f);
+//        }
+//#else
+        yield return new WaitForSeconds(time);
+//#endif
+        currentIndex++;
+        if (currentIndex >= BGMPlaylist.Count) currentIndex = 0;
+        AddressablesManager.LoadAsset<AudioClip>(BGMPlaylist[currentIndex], ((s, asset) =>
+        {
+            AudioManager.Instance.Player.Play(s, AudioType.Music);
             StartCoroutine(PlayNext(asset.length + 3f));
         }));
     }
 
 #if UNITY_EDITOR
     public bool debug = false;
-    IEnumerator PlayNext(float time)
+    IEnumerator PlayNextRandom(float time)
     {
         Debug.Log(time + " wait BGMMMMMMMMMMM");
         yield return new WaitForSeconds( debug ? 10f : time);
 #else
-    IEnumerator PlayNext(float time)
+    IEnumerator PlayNextRandom(float time)
     {
         yield return new WaitForSeconds(time);
 #endif
+
         PlayRandomBattleBGM();
     }
 
