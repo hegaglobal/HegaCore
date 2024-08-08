@@ -31,7 +31,7 @@ public class BGMPool : MonoBehaviour
         }
 
         var bgm = BGMpool.SelectItem(true);
-        
+
         AddressablesManager.LoadAsset<AudioClip>(bgm.name, ((s, asset) =>
         {
             AudioManager.Instance.Player.Play(s, AudioType.Music);
@@ -57,14 +57,13 @@ public class BGMPool : MonoBehaviour
 
     IEnumerator PlayNext(float time)
     {
-//#if UNITY_EDITOR
-//        if(debug)
-//        {
-//            yield return new WaitForSeconds(10f);
-//        }
-//#else
         yield return new WaitForSeconds(time);
-//#endif
+        if (BGMPlaylist == null || BGMPlaylist.Count <= 0)
+        {
+            PlayRandomBattleBGM();
+            yield break;
+        }
+
         currentIndex++;
         if (currentIndex >= BGMPlaylist.Count) currentIndex = 0;
         AddressablesManager.LoadAsset<AudioClip>(BGMPlaylist[currentIndex], ((s, asset) =>
