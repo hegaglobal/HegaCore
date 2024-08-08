@@ -18,7 +18,7 @@ namespace HegaCore
         private CubismController _cubismController;
         private CharacterVoice _characterVoice;
         
-        [ListDrawerSettings(HideAddButton = false,Expanded = true,DraggableItems = true,HideRemoveButton = true)]
+        [ListDrawerSettings(HideAddButton = false,Expanded = true,DraggableItems = true,HideRemoveButton = false)]
         [Searchable(FilterOptions = SearchFilterOptions.ISearchFilterableInterface)]
         public List<InteractPart> InteractParts;
 
