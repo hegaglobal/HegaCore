@@ -2700,7 +2700,12 @@ MonoBehaviour:
   m_FontFeatureTable:
     m_GlyphPairAdjustmentRecords: []
   fallbackFontAssets: []
-  m_FallbackFontAssetTable: []
+  m_FallbackFontAssetTable:
+  - {fileID: 11400000, guid: fc9b6830d02135f4d86c61c78007b2b1, type: 2}
+  - {fileID: 11400000, guid: 494f3186ac39bbc419058150379db53c, type: 2}
+  - {fileID: 11400000, guid: 1f4250cc31dd25546a0925a0ac3071d6, type: 2}
+  - {fileID: 11400000, guid: f471db8761e3a214e9e77ef386f32b24, type: 2}
+  - {fileID: 11400000, guid: 79bf9e47446495f40a3c6caeb5a152c6, type: 2}
   m_CreationSettings:
     sourceFontFileName: 
     sourceFontFileGUID: 67a0fcc5f2e93754e92d41dc46f8f08a
