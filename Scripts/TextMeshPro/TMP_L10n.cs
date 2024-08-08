@@ -13,6 +13,8 @@ namespace HegaCore
     {
         [SerializeField]
         private string key = string.Empty;
+        
+        public string CustomString = string.Empty;
 
         [SerializeField] private bool upperCase = false;
         
@@ -93,6 +95,10 @@ namespace HegaCore
                 else
                     text = L10n.Localize(this.key, this.silent);
 
+                if (!string.IsNullOrEmpty(CustomString))
+                {
+                    text += CustomString;
+                }
                 this.text.SetText(text);
             }
             CheckFont();
