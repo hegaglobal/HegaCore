@@ -21,8 +21,10 @@ using UnityEngine.Events;
 // It handles the basics of starting up and shutting down the SteamAPI for use.
 //
 [DisallowMultipleComponent]
-public class SteamManager : MonoBehaviour {
+public class SteamManager : MonoBehaviour
+{
 
+	public bool editorEnabled;
 	public bool steamEnabled;
 	public UnityEvent OnInitialized;
 	
@@ -71,6 +73,10 @@ public class SteamManager : MonoBehaviour {
 
 #if CHEAT || DISABLESTEAMWORKS
 		steamEnabled = false;
+#endif
+		
+#if UNITY_EDITOR
+			steamEnabled = editorEnabled;
 #endif
 		
 		if (!steamEnabled)

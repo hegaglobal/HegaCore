@@ -122,11 +122,11 @@ public class CharacterVoice : MonoBehaviour
         {
             while (specialVoiceDelay > 0f)
             {
-                yield return new WaitForSeconds(10f);
+                yield return new WaitForSeconds(25f);
             }
 
             var data = RandomVoices.GetRandomVoiceData();
-            var delay = PlayVoiceData(data) + 10;
+            var delay = PlayVoiceData(data) + 25;
             yield return new WaitForSeconds(delay);
         }
     }
