@@ -91,7 +91,8 @@ public class BGMPool : MonoBehaviour
     private IEnumerator ScheduleNextBGM(float time, bool isPlaylist)
     {
 #if UNITY_EDITOR
-        Debug.Log(time + " wait BGMMMMMMMMMMM");
+        if(debug)
+            Debug.Log(time + " wait BGMMMMMMMMMMM");
         yield return new WaitForSeconds(debug ? 10f : time);
 #else
         yield return new WaitForSeconds(time);
