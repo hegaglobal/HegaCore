@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Sirenix.OdinInspector;
+using System;
 using System.Collections.Generic;
 
 [Serializable]
@@ -8,8 +9,10 @@ public class ProbabilityItem
     public int chance;  // chance of getting this Item
 }
 
+[Serializable]
 public class ProbabilityPool
 {
+    [ShowInInspector]
     List<ProbabilityItem> items;
     public ProbabilityPool (List<ProbabilityItem> _items)
     {
