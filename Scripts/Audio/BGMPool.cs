@@ -81,7 +81,7 @@ public class BGMPool : MonoBehaviour
             Debug.Log($"<color=yellow>Current play Track {(BGMs.IndexOf(bgm.name) + 1)}</color>");
 #endif
 
-            StartCoroutine(ScheduleNextBGM(asset.length + 3f, isPlaylist));
+            StartCoroutine(ScheduleNextBGM(asset.length - 1f, isPlaylist));
         });
     }
 

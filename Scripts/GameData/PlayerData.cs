@@ -102,7 +102,7 @@ namespace HegaCore
             {
                 UserCharacter newChar = new UserCharacter
                 {
-                    standClothesID = DataManager.Instance.DarkLord ? 1 : 0
+                    standClothesID = 1 // DataManager.Instance.DarkLord ? 1 : 0
                 };
                 UserCharacterDict.Add(index, newChar);
             }
